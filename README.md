@@ -437,4 +437,4 @@ Os **dados geoespaciais e estatísticos** produzidos e disponibilizados neste re
 Os dados de terceiros (RAIS, INEP, CNES, MapBiomas, Google Open Buildings) estão sujeitos às suas respectivas licenças de uso.
 ---
 
-** Projeto desenvolvido com apoio do Banco Interamericano de Desenvolvimento (BID) e do Centro Interinstitucional de Observação e Previsão de Eventos Extremos (CIEX)**
+**Projeto desenvolvido com apoio do Banco Interamericano de Desenvolvimento (BID) e do Centro Interinstitucional de Observação e Previsão de Eventos Extremos (CIEX)**
