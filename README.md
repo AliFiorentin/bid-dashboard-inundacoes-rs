@@ -1,4 +1,4 @@
-# Dashboard BID — Impacto de Inundações no Sul do Brasil
+# Avaliação de Impactos Socioeconômicos
 
 > Painel WebGIS interativo para análise socioeconômica do impacto das enchentes de 2024 nos municípios do Rio Grande do Sul, desenvolvido em parceria com o BID (Banco Interamericano de Desenvolvimento), GPEa e CIEX/FURG.
 
