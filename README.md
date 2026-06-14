@@ -59,13 +59,13 @@ As manchas são armazenadas como `{municipio_slug}___{cenario_slug}.geojson` em 
 
 #### 2.1 Elementos pontuais (empresas, escolas, saúde)
 
-Um elemento $a$ do conjunto base $A_\text{base}$ é classificado como **atingido** se seu ponto georref­erenciado cair dentro da mancha de inundação $M$:
+Um elemento $a$ do conjunto base $A_\text{base}$ é classificado como **atingido** se seu ponto georreferenciado cair dentro da mancha de inundação $M$:
 
-$$A_\text{at} = \bigl\{a \in A_\text{base} \mid \text{ponto}(a) \in M\bigr\}$$
+$$A_\text{at} = \left\{a \in A_\text{base} \mid \text{ponto}(a) \in M\right\}$$
 
 O percentual atingido é:
 
-$$p = \frac{|A_\text{at}|}{|A_\text{base}|} \times 100\%$$
+$$p = \frac{\lvert A_\text{at} \rvert}{\lvert A_\text{base} \rvert} \times 100\%$$
 
 A interseção espacial é realizada em Python (GeoPandas / Shapely) durante o pipeline de pré-processamento. O frontend recebe os GeoJSONs já filtrados (`*_ATINGIDOS_*.geojson`) e não executa operações geoespaciais em tempo real.
 
@@ -73,7 +73,7 @@ A interseção espacial é realizada em Python (GeoPandas / Shapely) durante o p
 
 As edificações são representadas como polígonos. Uma edificação $e$ é classificada como **atingida** se seu polígono intersecta a mancha $M$:
 
-$$E_\text{at} = \bigl\{e \in E_\text{base} \mid \text{geom}(e) \cap M \neq \emptyset\bigr\}$$
+$$E_\text{at} = \left\{e \in E_\text{base} \mid \text{geom}(e) \cap M \neq \emptyset\right\}$$
 
 O dataset base provém do **Google Open Buildings v3** (arquivo `951_buildings.csv.gz`, ~7,4 M polígonos para o RS), filtrado por:
 - Confiança $\geq 0{,}65$ (geral) ou $\geq 0{,}80$ (Porto Alegre, para controle de tamanho de arquivo)
@@ -84,7 +84,7 @@ O dataset base provém do **Google Open Buildings v3** (arquivo `951_buildings.c
 
 Para camadas de linha (logradouros, rede de esgoto, rotas de ônibus) e polígonos (lotes, quarteirões), aplica-se a mesma lógica de interseção não-vazia com a mancha:
 
-$$I_\text{at} = \bigl\{i \in I_\text{base} \mid \text{geom}(i) \cap M \neq \emptyset\bigr\}$$
+$$I_\text{at} = \left\{i \in I_\text{base} \mid \text{geom}(i) \cap M \neq \emptyset\right\}$$
 
 Para rotas de ônibus, o KPI "Rotas Únicas" deduplica pelo identificador da linha antes de contar. O KPI "KM de Rotas" soma os comprimentos geodésicos dos segmentos atingidos.
 
@@ -98,7 +98,9 @@ $$\text{Emp}_s = \sum_{a \in A_\text{at},\ \text{cnae}(a) = s} \text{emp}(a)$$
 
 A massa salarial atingida (R$/mês) é:
 
-$$W = \sum_{a \in A_\text{at}} \text{massa\_salarial}(a)$$
+$$W = \sum_{a \in A_\text{at}} w(a)$$
+
+onde $w(a)$ é a massa salarial mensal do estabelecimento $a$ (em R$).
 
 #### 3.2 Impacto Agrícola
 
@@ -106,9 +108,9 @@ A área atingida por cultura $c$ (em hectares) é obtida pelo recorte do raster 
 
 $$I_c = A_c \cdot \kappa_c$$
 
-onde $\kappa_c$ é o coeficiente de perda (R\$/ha) para a cultura $c$ no período fenológico do evento, tabelado a partir de preços mínimos CONAB 2024 e dados EMATER-RS:
+onde $\kappa_c$ é o coeficiente de perda em R$/ha para a cultura $c$ no período fenológico do evento, tabelado a partir de preços mínimos CONAB 2024 e dados EMATER-RS:
 
-| Cultura | Período (evento maio/2024) | $\kappa_c$ (R\$/ha) | Justificativa |
+| Cultura | Período (evento maio/2024) | Coef. R$/ha | Justificativa |
 |---|---|---:|---|
 | Soja | Colhida (fev–abr/2024) | 1.100 | Compactação do solo e insumos para próxima safra |
 | Arroz | Colhido (fev–abr/2024) | 1.100 | Compactação e infraestrutura de irrigação |
@@ -122,7 +124,9 @@ $$I_\text{total} = \sum_c I_c = \sum_c A_c \cdot \kappa_c$$
 
 O número de matrículas atingidas por etapa $e$ é:
 
-$$M_e = \sum_{u \in A_\text{at},\ \text{etapa}=e} \text{matrículas}(u)$$
+$$M_e = \sum_{\substack{u \in A_\text{at} \\ \text{etapa}(u) = e}} m(u)$$
+
+onde $m(u)$ é o número de matrículas do estabelecimento $u$ na etapa $e$.
 
 As etapas consideradas seguem a classificação INEP: Educação Infantil, Ensino Fundamental I/II, Ensino Médio, EJA, Educação Especial e Ensino Superior.
 
