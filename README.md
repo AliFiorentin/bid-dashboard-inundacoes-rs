@@ -398,13 +398,10 @@ Valores em hectares. Gerado pelo recorte do raster MapBiomas (30 m/pixel) pela b
 ## Autores
 
 **Alisson T. G. Fiorentin**
-Universidade Federal do Rio Grande (FURG) — [ORCID](https://orcid.org/0009-0002-7233-3640)
+Universidade Federal do Rio Grande do Sul (UFRGS) — [ORCID](https://orcid.org/0009-0002-7233-3640)
 
 **Patrízia Raggi Abdallah**
 Universidade Federal do Rio Grande (FURG) — [ORCID](https://orcid.org/0000-0001-6417-7524)
-
-**Grupo de Pesquisa em Economia Azul (GPEa)**
-FURG — [gpea-furg.com](https://sites.google.com/view/gpea-furg/home)
 
 **Centro Interinstitucional de Observação e Previsão de Eventos Extremos (CIEX)**
 FURG — [@ciexfurg](https://www.instagram.com/ciexfurg/)
@@ -417,10 +414,8 @@ Se você utilizar este software ou os dados gerados por ele, por favor cite:
 
 ```bibtex
 @software{fiorentin2026bid,
-  author       = {Fiorentin, Alisson T. G. and Abdallah, Patrízia Raggi and
-                  {Grupo de Pesquisa em Economia Azul (GPEa)} and
-                  {Centro Interinstitucional de Observação e Previsão de Eventos Extremos (CIEX)}},
-  title        = {{Dashboard BID — Impacto de Inundações no Sul do Brasil}},
+  author       = {Fiorentin, Alisson T. G. and Abdallah, Patrízia Raggi and Centro Interinstitucional de Observação e Previsão de Eventos Extremos - {CIEX}},
+  title        = {{Avaliação de Impactos Socioeconômicos}},
   year         = {2026},
   version      = {1.0.0},
   publisher    = {GitHub},
@@ -440,3 +435,6 @@ O **código-fonte** deste projeto está licenciado sob a [GNU General Public Lic
 Os **dados geoespaciais e estatísticos** produzidos e disponibilizados neste repositório estão licenciados sob [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
 
 Os dados de terceiros (RAIS, INEP, CNES, MapBiomas, Google Open Buildings) estão sujeitos às suas respectivas licenças de uso.
+---
+
+** Projeto desenvolvido com apoio do Banco Interamericano de Desenvolvimento (BID) e do Centro Interinstitucional de Observação e Previsão de Eventos Extremos (CIEX)**
