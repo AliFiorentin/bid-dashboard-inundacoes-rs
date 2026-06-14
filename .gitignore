@@ -1,0 +1,59 @@
+# AI / Claude / code-agent tools
+.claude/
+CLAUDE.md
+.agents/
+.codegraph/
+skills/
+skills-lock.json
+CHANGELOG.md
+*.agents.md
+
+# Next.js
+/.next/
+/out/
+/build
+
+# Node
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Cobertura de testes
+/coverage
+
+# Ambiente
+.env*.local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# OS
+.DS_Store
+Thumbs.db
+*.pem
+
+# Editores
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Arquivos temporários / gerados localmente
+lista_arquivos.txt
+test-merge.ts

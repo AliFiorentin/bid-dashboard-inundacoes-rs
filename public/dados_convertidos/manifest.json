@@ -1,0 +1,59 @@
+{
+  "municipios": {
+    "Eldorado do Sul": {
+      "slug": "eldorado_do_sul",
+      "empresas": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\eldorado_do_sul\\empresas_BASE.geojson",
+      "educacao": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\eldorado_do_sul\\educacao_BASE.geojson",
+      "saude": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\eldorado_do_sul\\saude_BASE.geojson",
+      "cenarios": {
+        "Cenário ADA": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\eldorado_do_sul\\cenarios\\eldorado_do_sul___cenario_ada.geojson"
+      },
+      "infraestrutura": {}
+    },
+    "Lajeado": {
+      "slug": "lajeado",
+      "empresas": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\lajeado\\empresas_BASE.geojson",
+      "educacao": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\lajeado\\educacao_BASE.geojson",
+      "saude": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\lajeado\\saude_BASE.geojson",
+      "cenarios": {
+        "Cenário 27m": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\lajeado\\cenarios\\lajeado___cenario_27m.geojson",
+        "Cenário 30m": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\lajeado\\cenarios\\lajeado___cenario_30m.geojson"
+      },
+      "infraestrutura": {}
+    },
+    "Porto Alegre": {
+      "slug": "porto_alegre",
+      "empresas": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\porto_alegre\\empresas_BASE.geojson",
+      "educacao": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\porto_alegre\\educacao_BASE.geojson",
+      "saude": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\porto_alegre\\saude_BASE.geojson",
+      "cenarios": {
+        "Cenário ADA": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\porto_alegre\\cenarios\\porto_alegre___cenario_ada.geojson"
+      },
+      "infraestrutura": {
+        "Terminais": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\porto_alegre\\infraestrutura\\terminais_BASE.geojson",
+        "Rede Esgoto": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\porto_alegre\\infraestrutura\\rede_esgoto_BASE.geojson",
+        "Quarteirões": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\porto_alegre\\infraestrutura\\quarteiroes_BASE.geojson",
+        "Paradas": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\porto_alegre\\infraestrutura\\paradas_BASE.geojson",
+        "Ônibus": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\porto_alegre\\infraestrutura\\onibus_BASE.geojson",
+        "Hidrantes": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\porto_alegre\\infraestrutura\\hidrantes_BASE.geojson",
+        "Gás": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\porto_alegre\\infraestrutura\\gas_BASE.geojson",
+        "Bocas de Lobo": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\porto_alegre\\infraestrutura\\bocas_de_lobo_BASE.geojson",
+        "Eixos Logradouros": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\porto_alegre\\infraestrutura\\eixos_logradouros_BASE.geojson",
+        "Poste": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\porto_alegre\\infraestrutura\\poste_BASE.geojson",
+        "Lotes": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\porto_alegre\\infraestrutura\\lotes_BASE.geojson"
+      }
+    },
+    "Rio Grande": {
+      "slug": "rio_grande",
+      "empresas": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\rio_grande\\empresas_BASE.geojson",
+      "educacao": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\rio_grande\\educacao_BASE.geojson",
+      "saude": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\rio_grande\\saude_BASE.geojson",
+      "cenarios": {
+        "Cenário Setembro 2023": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\rio_grande\\cenarios\\rio_grande___cenario_setembro_2023.geojson",
+        "Cenário Maio 2024": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\rio_grande\\cenarios\\rio_grande___cenario_maio_2024.geojson",
+        "Cenário Maio 2024 + 50%": "C:\\Users\\Administrator\\Documents\\Dashboard BID\\dados_convertidos\\rio_grande\\cenarios\\rio_grande___cenario_maio_2024_50.geojson"
+      },
+      "infraestrutura": {}
+    }
+  }
+}

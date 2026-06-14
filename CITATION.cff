@@ -1,0 +1,40 @@
+cff-version: 1.2.0
+message: "Se você utilizar este software ou os dados gerados por ele, por favor, cite-o utilizando os metadados abaixo."
+title: "Dashboard BID — Impacto de Inundações no Sul do Brasil"
+version: "1.0.0"
+date-released: "2026-06-14"
+repository-code: "https://github.com/AliFiorentin/bid-dashboard-inundacoes-rs"
+license:
+  - "GPL-3.0-only"
+  - "CC-BY-4.0"
+type: software
+abstract: >
+  Painel WebGIS interativo para análise socioeconômica do impacto das enchentes de 2024
+  nos municípios do Rio Grande do Sul. Integra dados de empresas (RAIS), educação (INEP),
+  saúde (CNES), infraestrutura urbana e uso do solo agrícola com manchas de inundação
+  para quantificar empregos, matrículas, profissionais de saúde, edificações e perdas
+  agrícolas atingidos por cenário de cheia.
+authors:
+  - family-names: "Fiorentin"
+    given-names: "Alisson T. G."
+    orcid: "https://orcid.org/0009-0002-7233-3640"
+    affiliation: "Universidade Federal do Rio Grande (FURG)"
+  - family-names: "Abdallah"
+    given-names: "Patrízia Raggi"
+    orcid: "https://orcid.org/0000-0001-6417-7524"
+    affiliation: "Universidade Federal do Rio Grande (FURG)"
+  - name: "Grupo de Pesquisa em Economia Azul (GPEa)"
+    website: "https://sites.google.com/view/gpea-furg/home"
+    affiliation: "Universidade Federal do Rio Grande (FURG)"
+  - name: "Centro Interinstitucional de Observação e Previsão de Eventos Extremos (CIEX)"
+    website: "https://www.instagram.com/ciexfurg/"
+    affiliation: "Universidade Federal do Rio Grande (FURG)"
+keywords:
+  - "inundações"
+  - "impacto econômico"
+  - "desastres naturais"
+  - "WebGIS"
+  - "Rio Grande do Sul"
+  - "enchentes 2024"
+  - "MapLibre"
+  - "Next.js"
