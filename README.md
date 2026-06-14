@@ -280,6 +280,119 @@ python scripts/recorte_edificacoes_atingidos.py # ATINGIDOS: clip edificações 
 
 ---
 
+## Dados
+
+### Disponibilidade
+
+Todos os GeoJSONs processados estão incluídos neste repositório em `public/dados_convertidos/`. Os dois arquivos maiores que 100 MB são armazenados via **Git LFS**:
+
+| Arquivo | Tamanho | Armazenamento |
+|---|---:|---|
+| `porto_alegre/infraestrutura/edificacoes_BASE.geojson` | 139 MB | Git LFS |
+| `porto_alegre/infraestrutura/lotes_BASE.geojson` | 124 MB | Git LFS |
+| `porto_alegre/infraestrutura/rede_esgoto_BASE.geojson` | 65 MB | Git normal |
+| `rio_grande/infraestrutura/edificacoes_BASE.geojson` | 61 MB | Git normal |
+
+> Para clonar incluindo os arquivos LFS: `git lfs pull` após o `git clone`.
+
+Os dados brutos originais (RAIS, INEP, CNES, MapBiomas raster, Google Open Buildings CSV) **não estão incluídos** — devem ser obtidos diretamente nas fontes listadas abaixo e processados com os scripts em `scripts/`.
+
+---
+
+### Dicionário de Dados
+
+#### Empresas (`empresas_BASE.geojson`)
+
+Fonte: RAIS/MTE. Um ponto por estabelecimento formal.
+
+| Campo | Tipo | Descrição |
+|---|---|---|
+| `cnpj / cei` | int | CNPJ do estabelecimento |
+| `cnae` | int | Código CNAE 7 dígitos |
+| `cnae_2` | str | Seção CNAE (nível 2) por extenso |
+| `classe` | int | Código CNAE classe (5 dígitos) |
+| `empregados` | int | Vínculos empregatícios ativos |
+| `massa_salarial` | float | Massa salarial mensal (R$) |
+| `média salarial` | float | Salário médio mensal (R$) |
+| `razão social` | str | Razão social |
+| `nome logradouro` | str | Endereço |
+| `nome bairro` | str | Bairro |
+| `latitude` / `longitude` | float | Coordenadas WGS 84 |
+| `tipo_precisao` | str | Qualidade da geocodificação |
+| `municipio` | int | Código IBGE do município |
+
+#### Educação (`educacao_BASE.geojson`)
+
+Fonte: Censo Escolar INEP 2023/2024. Um ponto por escola.
+
+| Campo | Tipo | Descrição |
+|---|---|---|
+| `co_entidade` | int | Código INEP da escola |
+| `no_entidade` | str | Nome da escola |
+| `tp_dependencia` | str | Dependência: Federal / Estadual / Municipal / Privada |
+| `tp_localizacao` | str | 1 = Urbana, 2 = Rural |
+| `qtd_prof` | int | Total de professores |
+| `qtd_matri_inf` | int | Matrículas — Educação Infantil |
+| `qtd_matri_fund` | int | Matrículas — Ensino Fundamental |
+| `qtd_matri_med` | int | Matrículas — Ensino Médio |
+| `qtd_matri_prof` | int | Matrículas — Educação Profissional |
+| `qtd_matri_eja` | int | Matrículas — EJA |
+| `qtd_matri_esp` | int | Matrículas — Educação Especial |
+| `no_municipio` | str | Nome do município |
+| `ds_endereco` | str | Logradouro |
+| `no_bairro` | str | Bairro |
+
+#### Saúde (`saude_BASE.geojson`)
+
+Fonte: CNES/DataSUS 2024. Um ponto por estabelecimento de saúde.
+
+| Campo | Tipo | Descrição |
+|---|---|---|
+| `co_cnes` | str | Código CNES |
+| `no_fantasia` | str | Nome fantasia |
+| `tp_unidade` | str | Código do tipo de unidade (CNES) |
+| `nivel_dep` | str | 1=Federal, 2=Estadual, 3=Municipal, 4=Privada |
+| `co_atividade` | str | Código de atividade do estabelecimento |
+| `staff_medicos` | int | Médicos |
+| `staff_enfermagem` | int | Profissionais de enfermagem |
+| `staff_odontologia` | int | Profissionais de odontologia |
+| `staff_farmacia` | int | Profissionais de farmácia |
+| `staff_diag_lab_imagem` | int | Diagnóstico / laboratório / imagem |
+| `staff_acs_endemias` | int | ACS e agentes de endemias |
+| `staff_admin_gestao_apoio` | int | Administrativo e gestão |
+| `staff_transporte_urgencia` | int | Transporte e urgência |
+| `staff_servicos_gerais` | int | Serviços gerais |
+| `staff_outros` | int | Outros profissionais |
+| `nu_latitude` / `nu_longitude` | str | Coordenadas WGS 84 |
+| `no_logradouro` / `no_bairro` | str | Endereço |
+
+#### Edificações (`infraestrutura/edificacoes_BASE.geojson`)
+
+Fonte: Google Open Buildings v3. Um polígono por edificação.
+
+| Campo | Tipo | Descrição |
+|---|---|---|
+| `area_m2` | float | Área da planta baixa em m² |
+| `geometry` | Polygon | Polígono WGS 84 simplificado (tolerância 0,00002°) |
+
+Filtros aplicados: confiança ≥ 0,65 (geral) ou ≥ 0,80 (Porto Alegre).
+
+#### Agricultura (`agricultura_stats_BASE.json`)
+
+Estatísticas pré-computadas — não é GeoJSON de pontos.
+
+```json
+{
+  "Soja": 12345.6,
+  "Arroz": 8901.2,
+  "Outras Lavouras Temporárias": 3456.7
+}
+```
+
+Valores em hectares. Gerado pelo recorte do raster MapBiomas (30 m/pixel) pela bounding box do município.
+
+---
+
 ## Autores
 
 **Alisson T. G. Fiorentin**
