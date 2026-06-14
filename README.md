@@ -310,7 +310,6 @@ Fonte: RAIS/MTE. Um ponto por estabelecimento formal.
 
 | Campo | Tipo | Descrição |
 |---|---|---|
-| `cnpj / cei` | int | CNPJ do estabelecimento |
 | `cnae` | int | Código CNAE 7 dígitos |
 | `cnae_2` | str | Seção CNAE (nível 2) por extenso |
 | `classe` | int | Código CNAE classe (5 dígitos) |
