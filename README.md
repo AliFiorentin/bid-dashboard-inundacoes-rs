@@ -435,6 +435,7 @@ O **código-fonte** deste projeto está licenciado sob a [GNU General Public Lic
 Os **dados geoespaciais e estatísticos** produzidos e disponibilizados neste repositório estão licenciados sob [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
 
 Os dados de terceiros (RAIS, INEP, CNES, MapBiomas, Google Open Buildings) estão sujeitos às suas respectivas licenças de uso.
+
 ---
 
 **Projeto desenvolvido com apoio do Banco Interamericano de Desenvolvimento (BID) e do Centro Interinstitucional de Observação e Previsão de Eventos Extremos (CIEX)**
