@@ -61,7 +61,7 @@ As manchas são armazenadas como `{municipio_slug}___{cenario_slug}.geojson` em 
 
 Um elemento $a$ do conjunto base $A_\text{base}$ é classificado como **atingido** se seu ponto georreferenciado cair dentro da mancha de inundação $M$:
 
-$$A_\text{at} = \left\{a \in A_\text{base} \mid \text{ponto}(a) \in M\right\}$$
+$$A_\text{at} = \lbrace\, a \in A_\text{base} \mid \text{ponto}(a) \in M \,\rbrace$$
 
 O percentual atingido é:
 
@@ -73,7 +73,7 @@ A interseção espacial é realizada em Python (GeoPandas / Shapely) durante o p
 
 As edificações são representadas como polígonos. Uma edificação $e$ é classificada como **atingida** se seu polígono intersecta a mancha $M$:
 
-$$E_\text{at} = \left\{e \in E_\text{base} \mid \text{geom}(e) \cap M \neq \emptyset\right\}$$
+$$E_\text{at} = \lbrace\, e \in E_\text{base} \mid \text{geom}(e) \cap M \neq \emptyset \,\rbrace$$
 
 O dataset base provém do **Google Open Buildings v3** (arquivo `951_buildings.csv.gz`, ~7,4 M polígonos para o RS), filtrado por:
 - Confiança $\geq 0{,}65$ (geral) ou $\geq 0{,}80$ (Porto Alegre, para controle de tamanho de arquivo)
@@ -84,7 +84,7 @@ O dataset base provém do **Google Open Buildings v3** (arquivo `951_buildings.c
 
 Para camadas de linha (logradouros, rede de esgoto, rotas de ônibus) e polígonos (lotes, quarteirões), aplica-se a mesma lógica de interseção não-vazia com a mancha:
 
-$$I_\text{at} = \left\{i \in I_\text{base} \mid \text{geom}(i) \cap M \neq \emptyset\right\}$$
+$$I_\text{at} = \lbrace\, i \in I_\text{base} \mid \text{geom}(i) \cap M \neq \emptyset \,\rbrace$$
 
 Para rotas de ônibus, o KPI "Rotas Únicas" deduplica pelo identificador da linha antes de contar. O KPI "KM de Rotas" soma os comprimentos geodésicos dos segmentos atingidos.
 
