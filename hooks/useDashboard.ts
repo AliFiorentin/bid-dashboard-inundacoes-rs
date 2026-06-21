@@ -16,6 +16,8 @@ import {
 export function useDashboard() {
   const mapRef = useRef<MapRef>(null);
   const permalinkCenarioRef = useRef<string | null>(null);
+  const headerRef = useRef<HTMLElement>(null);
+  const [headerBottom, setHeaderBottom] = useState(82);
 
   const [municipio, setMunicipio] = useState<string>("Visão Geral RS");
   const [cenario, setCenario] = useState<string>("(nenhum)");
@@ -540,8 +542,19 @@ export function useDashboard() {
     setPopupInfo({ lngLat: [event.lngLat.lng, event.lngLat.lat], properties: props ?? {}, source: feature.source });
   };
 
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => {
+      setHeaderBottom(el.getBoundingClientRect().bottom + 8);
+    });
+    ro.observe(el);
+    setHeaderBottom(el.getBoundingClientRect().bottom + 8);
+    return () => ro.disconnect();
+  }, []);
+
   return {
-    mapRef,
+    mapRef, headerRef, headerBottom,
     municipio, setMunicipio, renderMunicipio,
     cenario, setCenario,
     camadas,

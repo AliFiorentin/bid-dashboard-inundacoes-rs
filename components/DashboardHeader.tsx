@@ -21,10 +21,11 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
     infraAtivas,
     isVisaoGeral, possuiInfra,
     toggleCamada, toggleInfra, toggleMenuInfra,
+    headerRef,
   } = dash;
 
   return (
-    <header className="absolute top-2 left-4 right-4 px-3 py-1.5 flex flex-wrap gap-2.5 items-center z-20 rounded-2xl" style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 4px 24px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)" }}>
+    <header ref={headerRef} className="absolute top-2 left-4 right-4 px-3 py-1.5 flex flex-wrap gap-2.5 items-center z-20 rounded-2xl" style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 4px 24px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)" }}>
       <div className="flex items-center gap-2 border-r border-slate-200/60 pr-3">
         <Image src="/BID.png" alt="BID Logo" width={80} height={32} className="h-7 w-auto object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
         <Image src="/GPEA.png" alt="GPEA Logo" width={80} height={32} className="h-7 w-auto object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />

@@ -20,6 +20,7 @@ interface AnalysisPanelProps {
 export function AnalysisPanel({ dash }: AnalysisPanelProps) {
   const {
     showPainelAnalise, setShowPainelAnalise,
+    headerBottom,
     exportarExcel,
     municipio, cenario,
     mostraImpacto, isVisaoGeral,
@@ -45,7 +46,7 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
   return (
     <>
       {showPainelAnalise && (
-        <div className="absolute top-[82px] left-4 bottom-2 w-[380px] flex flex-col rounded-2xl overflow-hidden z-20 print:static print:w-full print:shadow-none print:max-h-none print:h-auto print:overflow-visible print:border-slate-200" style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)", animation: "panelSlideIn 320ms var(--ease-drawer) both" }}>
+        <div className="hidden lg:flex absolute left-4 bottom-2 w-[380px] flex-col rounded-2xl overflow-hidden z-20 print:flex print:static print:w-full print:shadow-none print:max-h-none print:h-auto print:overflow-visible print:border-slate-200" style={{ top: headerBottom, backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)", animation: "panelSlideIn 320ms var(--ease-drawer) both" }}>
           <div className="px-4 pt-4 pb-3 shrink-0 rounded-t-2xl" style={{ background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)" }}>
             <h2 className="text-lg font-black text-white tracking-tight flex items-center justify-between">
               Painel
@@ -123,8 +124,8 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
           variant="outline"
           size="sm"
           onClick={() => setShowPainelAnalise(true)}
-          className="absolute top-[100px] left-4 z-20 rounded-2xl text-xs font-black shadow-lg"
-          style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}
+          className="hidden lg:flex absolute left-4 z-20 rounded-2xl text-xs font-black shadow-lg"
+          style={{ top: headerBottom, backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}
         >
           <PanelLeft size={12} strokeWidth={2.5} />Abrir Painel de Análise
         </Button>
