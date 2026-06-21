@@ -1,8 +1,13 @@
 import React from "react";
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
-import type { ValueType } from "recharts/types/component/DefaultTooltipContent";
+import { PieChart, Pie, Label } from "recharts";
 import type { Feature } from "geojson";
+import { ChevronDown } from "lucide-react";
 import { TabsContent } from "@/components/ui/tabs";
+import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 import { COLORS, DONUT_COLORS, STAFF_COLS, STAFF_LABELS } from "@/lib/constants";
 import { compactoBr, calcPct } from "@/lib/geo-utils";
 import { KPIRow } from "@/components/KPIRow";
@@ -42,35 +47,49 @@ export function SaudeTab({ dash }: Props) {
         };
         const srcFeats = atingidosSaude?.features ?? [];
         const tipos = mostraImpacto ? metricasSau.impacto.tipos : metricasSau.base.tipos;
-        const pieData = Object.entries(tipos).filter(([, v]) => (v as number) > 0).sort((a, b) => (b[1] as number) - (a[1] as number)).map(([name, value]) => ({ name, value: value as number }));
+        const chartConfig: ChartConfig = {};
+        const pieData = Object.entries(tipos).filter(([, v]) => (v as number) > 0).sort((a, b) => (b[1] as number) - (a[1] as number)).map(([name, value], i) => {
+          const key = `h${i}`;
+          chartConfig[key] = { label: name, color: DONUT_COLORS[i % DONUT_COLORS.length] };
+          return { key, name, value: value as number, fill: `var(--color-h${i})` };
+        });
         const totalU = pieData.reduce((s, d) => s + d.value, 0);
         if (pieData.length === 0) return null;
+
         return (
           <>
-            <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-wider mt-2 mb-1 border-b border-slate-200/60 pb-1">Unidades por Tipo</h3>
-            <div className="relative flex items-center justify-center">
-              <ResponsiveContainer width="100%" height={170}>
-                <PieChart>
-                  <Pie data={pieData} cx="50%" cy="50%" innerRadius={50} outerRadius={76} paddingAngle={2} dataKey="value" stroke="none">
-                    {pieData.map((_, i) => <Cell key={i} fill={DONUT_COLORS[i % DONUT_COLORS.length]} />)}
-                  </Pie>
-                  <Tooltip formatter={(v: ValueType | undefined) => [`${v} unidade${v !== 1 ? "s" : ""}`, ""]} contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid #e2e5e2", padding: "4px 10px" }} />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="absolute flex flex-col items-center pointer-events-none">
-                <span className="text-2xl font-black leading-none text-slate-800">{totalU}</span>
-                {mostraImpacto
-                  ? <><span className="text-[9px] font-medium text-slate-500">{Math.round(totalU / metricasSau.base.unidades * 100)}% unidades</span><span className="text-[9px] text-slate-500">de {metricasSau.base.unidades}</span></>
-                  : <span className="text-[10px] font-medium text-slate-500">unidades</span>}
-              </div>
-            </div>
+            <h3 className="text-xs font-black text-muted-foreground uppercase tracking-wider mt-2 mb-1 pb-1">Unidades por Tipo</h3>
+            <Separator className="mb-2" />
+            <ChartContainer config={chartConfig} className="aspect-auto h-[170px] w-full" initialDimension={{ width: 320, height: 170 }}>
+              <PieChart>
+                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                <Pie data={pieData} cx="50%" cy="50%" innerRadius={50} outerRadius={76} dataKey="value" nameKey="key" strokeWidth={5}>
+                  <Label
+                    content={({ viewBox }) => {
+                      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                        return (
+                          <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
+                            <tspan x={viewBox.cx} y={viewBox.cy} className="fill-foreground text-2xl font-black">
+                              {totalU}
+                            </tspan>
+                            <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 18} className="fill-muted-foreground text-[10px]">
+                              {mostraImpacto ? `${Math.round(totalU / metricasSau.base.unidades * 100)}% de ${metricasSau.base.unidades}` : "unidades"}
+                            </tspan>
+                          </text>
+                        );
+                      }
+                    }}
+                  />
+                </Pie>
+              </PieChart>
+            </ChartContainer>
             <div className="flex flex-col gap-1.5 mb-3">
               {pieData.map((d, i) => (
                 <div key={d.name} className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length] }} />
-                  <span className="text-[11px] flex-1 truncate text-slate-500" title={d.name}>{d.name}</span>
-                  <span className="text-[11px] font-bold tabular-nums text-slate-800">{d.value}</span>
-                  <span className="text-[11px] w-9 text-right tabular-nums text-slate-500">{Math.round(d.value / totalU * 100)}%</span>
+                  <span className="text-xs flex-1 truncate text-muted-foreground" title={d.name}>{d.name}</span>
+                  <span className="text-xs font-bold tabular-nums text-foreground">{d.value}</span>
+                  <span className="text-xs w-9 text-right tabular-nums text-muted-foreground">{Math.round(d.value / totalU * 100)}%</span>
                 </div>
               ))}
             </div>
@@ -81,20 +100,21 @@ export function SaudeTab({ dash }: Props) {
                   const lista = feats.map((f: Feature) => { const p = f.properties as Record<string, unknown>; return String(p?.no_fantasia || p?.no_razao_social || "").trim(); }).filter(Boolean).sort((a: string, b: string) => a.localeCompare(b, "pt-BR"));
                   if (lista.length === 0) return null;
                   return (
-                    <div key={tipoKey}>
-                      <button onClick={() => cfg.setState(p => !p)}
-                        className="w-full flex items-center justify-between text-[10px] font-bold px-2.5 py-1.5 rounded-lg bg-slate-100/60 text-slate-700 border border-slate-200/60">
-                        <span>{cfg.label} ({lista.length})</span>
-                        <span style={{ fontSize: 9 }}>{cfg.state ? "▲" : "▼"}</span>
-                      </button>
-                      {cfg.state && (
-                        <div className="flex flex-col gap-0.5 mt-1 max-h-44 overflow-y-auto rounded-lg p-1.5 bg-slate-100/60 border border-slate-200/60">
+                    <Collapsible key={tipoKey} open={cfg.state} onOpenChange={() => cfg.setState(p => !p)}>
+                      <CollapsibleTrigger asChild>
+                        <Button variant="outline" size="sm" className="w-full justify-between text-[10px] font-bold">
+                          <span>{cfg.label} ({lista.length})</span>
+                          <ChevronDown className={cn("h-3 w-3 transition-transform", cfg.state && "rotate-180")} />
+                        </Button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <div className="flex flex-col gap-0.5 mt-1 max-h-44 overflow-y-auto rounded-lg p-1.5 bg-muted/50 border">
                           {lista.map((nome: string, i: number) => (
-                            <span key={i} className="text-[10px] px-1.5 py-0.5 rounded text-slate-500" title={nome}>{nome}</span>
+                            <span key={i} className="text-[10px] px-1.5 py-0.5 rounded text-muted-foreground" title={nome}>{nome}</span>
                           ))}
                         </div>
-                      )}
-                    </div>
+                      </CollapsibleContent>
+                    </Collapsible>
                   );
                 })}
               </div>
@@ -102,7 +122,8 @@ export function SaudeTab({ dash }: Props) {
           </>
         );
       })()}
-      <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-wider mt-2 mb-2 border-b border-slate-200/60 pb-1">Profissionais</h3>
+      <h3 className="text-xs font-black text-muted-foreground uppercase tracking-wider mt-2 mb-2 pb-1">Profissionais</h3>
+      <Separator className="mb-2" />
       {(() => {
         const totalBase = STAFF_COLS.reduce((s, c) => s + (metricasSau.base.staff[c] ?? 0), 0);
         const totalAtg  = STAFF_COLS.reduce((s, c) => s + (metricasSau.impacto.staff[c] ?? 0), 0);
@@ -127,8 +148,8 @@ export function SaudeTab({ dash }: Props) {
           <div className="flex flex-col gap-1.5 pb-2 mt-2">
             {staffData.map((d, i) => (
               <div key={d.name} className="flex items-center gap-2">
-                <span className="text-[9px] w-20 shrink-0 truncate text-slate-500" title={d.name}>{d.name}</span>
-                <div className="flex-1 rounded-full h-2.5 overflow-hidden bg-slate-100">
+                <span className="text-[10px] w-20 shrink-0 truncate text-muted-foreground" title={d.name}>{d.name}</span>
+                <div className="flex-1 rounded-full h-2.5 overflow-hidden bg-muted">
                   <div className="h-full rounded-full" style={{
                     width: mostraImpacto
                       ? `${d.base > 0 ? Math.min((d.atg / d.base) * 100, 100) : 0}%`
@@ -136,10 +157,10 @@ export function SaudeTab({ dash }: Props) {
                     backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length],
                   }} />
                 </div>
-                <span className="text-[9px] font-bold tabular-nums w-14 text-right shrink-0 text-slate-700">
+                <span className="text-[10px] font-bold tabular-nums w-14 text-right shrink-0 text-foreground">
                   {compactoBr(mostraImpacto ? d.atg : d.base, 0)}
                   {mostraImpacto && d.base > 0 && (
-                    <span className="text-slate-400 font-normal ml-0.5">({Math.round(d.atg / d.base * 100)}%)</span>
+                    <span className="text-muted-foreground font-normal ml-0.5">({Math.round(d.atg / d.base * 100)}%)</span>
                   )}
                 </span>
               </div>
@@ -147,7 +168,8 @@ export function SaudeTab({ dash }: Props) {
           </div>
         );
       })()}
-      <p className="text-[9px] italic mt-2 pt-2 border-t border-slate-200/60 text-slate-400">Fonte: CNES — Cadastro Nacional de Estabelecimentos de Saúde</p>
+      <Separator className="mt-2" />
+      <p className="text-[10px] italic pt-2 text-muted-foreground">Fonte: CNES — Cadastro Nacional de Estabelecimentos de Saúde</p>
     </TabsContent>
   );
 }

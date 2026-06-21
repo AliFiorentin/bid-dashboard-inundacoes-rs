@@ -1,11 +1,16 @@
 import React from "react";
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
-import type { ValueType } from "recharts/types/component/DefaultTooltipContent";
+import { PieChart, Pie, Label } from "recharts";
 import type { Feature } from "geojson";
+import { ChevronDown } from "lucide-react";
 import { TabsContent } from "@/components/ui/tabs";
+import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { COLORS, DONUT_COLORS, normalizeDep } from "@/lib/constants";
 import { compactoBr, calcPct } from "@/lib/geo-utils";
 import { KPIRow } from "@/components/KPIRow";
+import { cn } from "@/lib/utils";
 import type { DashboardState } from "@/hooks/useDashboard";
 
 interface Props {
@@ -39,57 +44,72 @@ export function EducacaoTab({ dash }: Props) {
           const dep = normalizeDep(String(f.properties?.tp_dependencia || ""));
           if (dep) counts[dep] = (counts[dep] || 0) + 1;
         });
-        const pieData = Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([name, value]) => ({ name, value }));
+        const escolasConfig: ChartConfig = {};
+        const pieData = Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([name, value], i) => {
+          const key = `e${i}`;
+          escolasConfig[key] = { label: name, color: DONUT_COLORS[i % DONUT_COLORS.length] };
+          return { key, name, value, fill: `var(--color-e${i})` };
+        });
         const totalDep = pieData.reduce((s, d) => s + d.value, 0);
         const baseTotalDep = mostraImpacto ? (baseEducacao?.features?.length ?? 0) : totalDep;
         if (pieData.length === 0) return null;
         const lista = mostraImpacto && !isVisaoGeral && (atingidosEducacao?.features?.length ?? 0) > 0
           ? [...(atingidosEducacao?.features ?? [])].map((f: Feature) => String((f.properties as Record<string, unknown>)?.no_entidade ?? "").trim()).filter(Boolean).sort((a: string, b: string) => a.localeCompare(b, "pt-BR"))
           : [];
+
         return (
           <>
-            <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-wider mb-1 border-b border-slate-200/60 pb-1">Escolas</h3>
-            <div className="relative flex items-center justify-center">
-              <ResponsiveContainer width="100%" height={160}>
-                <PieChart>
-                  <Pie data={pieData} cx="50%" cy="50%" innerRadius={46} outerRadius={70} paddingAngle={2} dataKey="value" stroke="none">
-                    {pieData.map((_, i) => <Cell key={i} fill={DONUT_COLORS[i % DONUT_COLORS.length]} />)}
-                  </Pie>
-                  <Tooltip formatter={(v: ValueType | undefined) => [`${v} escola${v !== 1 ? "s" : ""}`, ""]} contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid #e2e5e2", padding: "4px 10px" }} />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="absolute flex flex-col items-center pointer-events-none">
-                <span className="text-2xl font-black leading-none text-slate-800">{totalDep}</span>
-                {mostraImpacto
-                  ? <><span className="text-[9px] font-medium text-slate-500">{Math.round(totalDep / baseTotalDep * 100)}% escolas</span><span className="text-[9px] text-slate-500">de {baseTotalDep}</span></>
-                  : <span className="text-[10px] font-medium text-slate-500">escolas</span>}
-              </div>
-            </div>
+            <h3 className="text-xs font-black text-slate-700 uppercase tracking-wider mb-1">Escolas</h3>
+            <Separator className="mb-2" />
+            <ChartContainer config={escolasConfig} className="aspect-auto h-[160px] w-full" initialDimension={{ width: 320, height: 160 }}>
+              <PieChart>
+                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                <Pie data={pieData} cx="50%" cy="50%" innerRadius={46} outerRadius={70} dataKey="value" nameKey="key" strokeWidth={5}>
+                  <Label
+                    content={({ viewBox }) => {
+                      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                        return (
+                          <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
+                            <tspan x={viewBox.cx} y={viewBox.cy} className="fill-foreground text-2xl font-black">
+                              {totalDep}
+                            </tspan>
+                            <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 18} className="fill-muted-foreground text-[10px]">
+                              {mostraImpacto ? `${Math.round(totalDep / baseTotalDep * 100)}% de ${baseTotalDep}` : "escolas"}
+                            </tspan>
+                          </text>
+                        );
+                      }
+                    }}
+                  />
+                </Pie>
+              </PieChart>
+            </ChartContainer>
             <div className="flex flex-col gap-1.5 mb-2">
               {pieData.map((d, i) => (
                 <div key={d.name} className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length] }} />
-                  <span className="text-[11px] flex-1 text-slate-500">{d.name}</span>
-                  <span className="text-[11px] font-bold tabular-nums text-slate-800">{d.value}</span>
-                  <span className="text-[11px] w-9 text-right tabular-nums text-slate-500">{Math.round(d.value / totalDep * 100)}%</span>
+                  <span className="text-xs flex-1 text-muted-foreground">{d.name}</span>
+                  <span className="text-xs font-bold tabular-nums text-foreground">{d.value}</span>
+                  <span className="text-xs w-9 text-right tabular-nums text-muted-foreground">{Math.round(d.value / totalDep * 100)}%</span>
                 </div>
               ))}
             </div>
             {lista.length > 0 && (
-              <div className="flex flex-col gap-1 mb-2">
-                <button onClick={() => setShowListaEscolas(p => !p)}
-                  className="w-full flex items-center justify-between text-[10px] font-bold px-2.5 py-1.5 rounded-lg bg-slate-100/60 text-slate-700 border border-slate-200/60">
-                  <span>Escolas Atingidas ({lista.length})</span>
-                  <span style={{ fontSize: 9 }}>{showListaEscolas ? "▲" : "▼"}</span>
-                </button>
-                {showListaEscolas && (
-                  <div className="flex flex-col gap-0.5 max-h-52 overflow-y-auto rounded-lg p-1.5 bg-slate-100/60 border border-slate-200/60">
+              <Collapsible open={showListaEscolas} onOpenChange={() => setShowListaEscolas(p => !p)} className="mb-2">
+                <CollapsibleTrigger asChild>
+                  <Button variant="outline" size="sm" className="w-full justify-between text-[10px] font-bold">
+                    <span>Escolas Atingidas ({lista.length})</span>
+                    <ChevronDown className={cn("h-3 w-3 transition-transform", showListaEscolas && "rotate-180")} />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="flex flex-col gap-0.5 mt-1 max-h-52 overflow-y-auto rounded-lg p-1.5 bg-muted/50 border">
                     {lista.map((nome: string, i: number) => (
-                      <span key={i} className="text-[10px] px-1.5 py-0.5 rounded text-slate-500" title={nome}>{nome}</span>
+                      <span key={i} className="text-[10px] px-1.5 py-0.5 rounded text-muted-foreground" title={nome}>{nome}</span>
                     ))}
                   </div>
-                )}
-              </div>
+                </CollapsibleContent>
+              </Collapsible>
             )}
           </>
         );
@@ -97,17 +117,17 @@ export function EducacaoTab({ dash }: Props) {
       <div className="flex flex-col gap-2 mt-2">
         <KPIRow titulo="Professores" cor={COLORS.educacao} valor={compactoBr(mostraImpacto ? metricasEdu.impacto.prof : metricasEdu.base.prof, 0)} sub={mostraImpacto ? "Atingidos" : "Total"} delta={mostraImpacto ? `de ${compactoBr(metricasEdu.base.prof, 0)} (${calcPct(metricasEdu.impacto.prof, metricasEdu.base.prof)})` : undefined} />
         {mostraImpacto && professoresDepChart.length > 0 && (
-          <div className="flex flex-col gap-1 px-1 py-2 bg-slate-50/70 rounded-lg border border-slate-200/60 -mt-1 mb-1">
-            <span className="text-[9px] font-black uppercase tracking-wider text-slate-500 mb-0.5">Professores por Dependência</span>
+          <div className="flex flex-col gap-1 px-1 py-2 bg-muted/30 rounded-lg border -mt-1 mb-1">
+            <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground mb-0.5">Professores por Dependência</span>
             {professoresDepChart.map(({ dep, base, atg }) => (
               <div key={dep} className="flex items-center gap-1.5">
-                <span className="text-[8px] w-14 shrink-0 text-slate-500">{dep}</span>
-                <div className="flex-1 h-1.5 rounded-full bg-slate-200 overflow-hidden">
+                <span className="text-[9px] w-14 shrink-0 text-muted-foreground">{dep}</span>
+                <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
                   <div className="h-full rounded-full bg-green-600" style={{ width: `${base > 0 ? (atg / base) * 100 : 0}%` }} />
                 </div>
-                <span className="text-[8px] font-bold tabular-nums text-slate-700 w-16 text-right shrink-0">
+                <span className="text-[9px] font-bold tabular-nums text-foreground w-16 text-right shrink-0">
                   {compactoBr(atg, 0)}{" "}
-                  <span className="text-slate-400 font-normal">({base > 0 ? Math.round(atg / base * 100) : 0}%)</span>
+                  <span className="text-muted-foreground font-normal">({base > 0 ? Math.round(atg / base * 100) : 0}%)</span>
                 </span>
               </div>
             ))}
@@ -121,44 +141,59 @@ export function EducacaoTab({ dash }: Props) {
         ];
         const srcM = mostraImpacto ? metricasEdu.impacto : metricasEdu.base;
         const srcMRecord = srcM as Record<string, number>;
-        const pieData = NIVEIS.map(([name, key]) => ({ name, value: srcMRecord[key] })).filter(d => d.value > 0);
+        const alunosConfig: ChartConfig = {};
+        const pieData = NIVEIS.map(([name, key]) => ({ name, value: srcMRecord[key] })).filter(d => d.value > 0).map((d, i) => {
+          const k = `a${i}`;
+          alunosConfig[k] = { label: d.name, color: DONUT_COLORS[i % DONUT_COLORS.length] };
+          return { ...d, key: k, fill: `var(--color-a${i})` };
+        });
         const totalAlunos = pieData.reduce((s, d) => s + d.value, 0);
         const baseRecord = metricasEdu.base as Record<string, number>;
         const baseAlunos = NIVEIS.reduce((s, [, key]) => s + (baseRecord[key] || 0), 0);
         if (pieData.length === 0) return null;
+
         return (
           <>
-            <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-wider mt-4 mb-1 border-b border-slate-200/60 pb-1">Educação</h3>
-            <div className="relative flex items-center justify-center">
-              <ResponsiveContainer width="100%" height={170}>
-                <PieChart>
-                  <Pie data={pieData} cx="50%" cy="50%" innerRadius={50} outerRadius={76} paddingAngle={2} dataKey="value" stroke="none">
-                    {pieData.map((_, i) => <Cell key={i} fill={DONUT_COLORS[i % DONUT_COLORS.length]} />)}
-                  </Pie>
-                  <Tooltip formatter={(v: ValueType | undefined) => [`${compactoBr(Number(v ?? 0), 0)} alunos`, ""]} contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid #e2e5e2", padding: "4px 10px" }} />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="absolute flex flex-col items-center pointer-events-none">
-                <span className="text-2xl font-black leading-none text-slate-800">{compactoBr(totalAlunos, 0)}</span>
-                {mostraImpacto
-                  ? <><span className="text-[9px] font-medium text-slate-500">{baseAlunos > 0 ? Math.round(totalAlunos / baseAlunos * 100) : 0}% alunos</span><span className="text-[9px] text-slate-500">de {compactoBr(baseAlunos, 0)}</span></>
-                  : <span className="text-[10px] font-medium text-slate-500">alunos</span>}
-              </div>
-            </div>
+            <h3 className="text-xs font-black text-slate-700 uppercase tracking-wider mt-4 mb-1">Educação</h3>
+            <Separator className="mb-2" />
+            <ChartContainer config={alunosConfig} className="aspect-auto h-[170px] w-full" initialDimension={{ width: 320, height: 170 }}>
+              <PieChart>
+                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                <Pie data={pieData} cx="50%" cy="50%" innerRadius={50} outerRadius={76} dataKey="value" nameKey="key" strokeWidth={5}>
+                  <Label
+                    content={({ viewBox }) => {
+                      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                        return (
+                          <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
+                            <tspan x={viewBox.cx} y={viewBox.cy} className="fill-foreground text-2xl font-black">
+                              {compactoBr(totalAlunos, 0)}
+                            </tspan>
+                            <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 18} className="fill-muted-foreground text-[10px]">
+                              {mostraImpacto ? `${baseAlunos > 0 ? Math.round(totalAlunos / baseAlunos * 100) : 0}% de ${compactoBr(baseAlunos, 0)}` : "alunos"}
+                            </tspan>
+                          </text>
+                        );
+                      }
+                    }}
+                  />
+                </Pie>
+              </PieChart>
+            </ChartContainer>
             <div className="flex flex-col gap-1.5 pb-2">
               {pieData.map((d, i) => (
                 <div key={d.name} className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length] }} />
-                  <span className="text-[11px] flex-1 text-slate-500">{d.name}</span>
-                  <span className="text-[11px] font-bold tabular-nums text-slate-800">{compactoBr(d.value, 0)}</span>
-                  <span className="text-[11px] w-9 text-right tabular-nums text-slate-500">{Math.round(d.value / totalAlunos * 100)}%</span>
+                  <span className="text-xs flex-1 text-muted-foreground">{d.name}</span>
+                  <span className="text-xs font-bold tabular-nums text-foreground">{compactoBr(d.value, 0)}</span>
+                  <span className="text-xs w-9 text-right tabular-nums text-muted-foreground">{Math.round(d.value / totalAlunos * 100)}%</span>
                 </div>
               ))}
             </div>
           </>
         );
       })()}
-      <p className="text-[9px] italic mt-2 pt-2 border-t border-slate-200/60 text-slate-400">Fonte: IBGE — Censo Escolar</p>
+      <Separator className="mt-2" />
+      <p className="text-[10px] italic mt-2 text-muted-foreground">Fonte: IBGE — Censo Escolar</p>
     </TabsContent>
   );
 }

@@ -3,6 +3,8 @@
 import React from "react";
 import { Download, Printer, EyeOff, PanelLeft, Building2, GraduationCap, HeartPulse, Sprout, Wrench } from "lucide-react";
 import { Tabs } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { AGRI_BOUNDS } from "@/lib/constants";
 import { EmpresasTab } from "@/components/tabs/EmpresasTab";
 import { EducacaoTab } from "@/components/tabs/EducacaoTab";
@@ -43,39 +45,28 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
   return (
     <>
       {showPainelAnalise && (
-        <div className="absolute top-[72px] left-4 bottom-2 w-[330px] flex flex-col rounded-2xl p-4 overflow-hidden z-20 print:static print:w-full print:shadow-none print:max-h-none print:h-auto print:overflow-visible print:border-slate-200" style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)", animation: "panelSlideIn 320ms var(--ease-drawer) both" }}>
-          <div className="mb-3 shrink-0">
-            <h2 className="text-lg font-black text-slate-800 tracking-tight flex items-center justify-between">
+        <div className="absolute top-[72px] left-4 bottom-2 w-[380px] flex flex-col rounded-2xl overflow-hidden z-20 print:static print:w-full print:shadow-none print:max-h-none print:h-auto print:overflow-visible print:border-slate-200" style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)", animation: "panelSlideIn 320ms var(--ease-drawer) both" }}>
+          <div className="px-4 pt-4 pb-3 shrink-0 rounded-t-2xl" style={{ background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)" }}>
+            <h2 className="text-lg font-black text-white tracking-tight flex items-center justify-between">
               Painel
               <div className="flex gap-1">
-                <button
-                  onClick={exportarExcel}
-                  className="flex items-center gap-1 text-[9px] font-bold px-2.5 py-1 rounded-md transition-[background-color,color,transform] duration-150 active:scale-[0.97] shadow-sm cursor-pointer border hover:text-white hover:bg-[#055071] active:bg-[#033a52]"
-                  style={{ backgroundColor: "#ffffff", color: "#055071", borderColor: "#b3cdd8" }}
-                >
+                <Button variant="outline" size="xs" onClick={exportarExcel} className="text-[9px] font-bold border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
                   <Download size={10} strokeWidth={2.5} />Baixar
-                </button>
-                <button onClick={() => window.print()}
-                  className="flex items-center gap-1 text-[9px] font-bold px-2.5 py-1 rounded-md transition-[background-color,color,transform] duration-150 active:scale-[0.97] shadow-sm print:hidden border hover:text-white hover:bg-[#055071] active:bg-[#033a52]"
-                  style={{ backgroundColor: "#ffffff", color: "#055071", borderColor: "#b3cdd8" }}
-                >
+                </Button>
+                <Button variant="outline" size="xs" onClick={() => window.print()} className="text-[9px] font-bold border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white print:hidden">
                   <Printer size={10} strokeWidth={2.5} />Imprimir
-                </button>
-                <button onClick={() => setShowPainelAnalise(false)}
-                  className="flex items-center gap-1 text-[9px] font-bold px-2.5 py-1 rounded-md transition-[background-color,color,transform] duration-150 active:scale-[0.97] shadow-sm print:hidden border hover:text-white hover:bg-[#055071] active:bg-[#033a52]"
-                  style={{ backgroundColor: "#ffffff", color: "#055071", borderColor: "#b3cdd8" }}
-                >
+                </Button>
+                <Button variant="outline" size="xs" onClick={() => setShowPainelAnalise(false)} className="text-[9px] font-bold border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white print:hidden">
                   <EyeOff size={10} strokeWidth={2.5} />Ocultar
-                </button>
+                </Button>
               </div>
             </h2>
-            <p className="text-xs text-slate-500 font-medium mt-1 leading-tight">
-              <strong className="text-slate-700">{municipio}</strong> {mostraImpacto && (isVisaoGeral ? ` - Piores Cenários` : ` - ${cenario}`)}
+            <p className="text-xs text-white/80 font-medium mt-1 leading-tight">
+              <strong className="text-white">{municipio}</strong> {mostraImpacto && (isVisaoGeral ? ` — Piores Cenários` : ` — ${cenario}`)}
             </p>
           </div>
-
-          <Tabs value={tabAtiva} className="w-full flex-1 flex flex-col overflow-hidden print:overflow-visible print:h-auto">
-            <div className="flex flex-wrap gap-1.5 shrink-0 pb-3 border-b border-slate-200/60">
+          <Tabs value={tabAtiva} className="w-full flex-1 flex flex-col overflow-hidden px-4 pt-3 print:overflow-visible print:h-auto">
+            <div className="flex flex-wrap gap-1.5 shrink-0 pb-3">
               {([
                 { value: "empresas", label: "Empresas", icon: <Building2     size={11} strokeWidth={2.5} /> },
                 { value: "educacao", label: "Educação", icon: <GraduationCap size={11} strokeWidth={2.5} /> },
@@ -87,16 +78,15 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
                   ? [{ value: "infra", label: "Infraestrutura", icon: <Wrench size={11} strokeWidth={2.5} /> }]
                   : []),
               ] as { value: string; label: string; icon: React.ReactNode }[]).map(({ value, label, icon }) => (
-                <button
+                <Button
                   key={value}
+                  variant={tabAtiva === value ? "default" : "outline"}
+                  size="xs"
                   onClick={() => setTabAtiva(value)}
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10px] font-bold transition-[background-color,color,box-shadow] duration-150 border focus-visible:outline-none"
-                  style={tabAtiva === value
-                    ? { backgroundColor: "#055071", color: "#fff", borderColor: "#033a52", boxShadow: "0 1px 3px rgba(0,0,0,.18)" }
-                    : { backgroundColor: "#fff", color: "#3d7a94", borderColor: "#b3cdd8" }}
+                  className="rounded-full text-[10px] font-bold"
                 >
                   {icon}{label}
-                </button>
+                </Button>
               ))}
             </div>
 
@@ -129,13 +119,15 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
       )}
 
       {!showPainelAnalise && (
-        <button
+        <Button
+          variant="outline"
+          size="sm"
           onClick={() => setShowPainelAnalise(true)}
-          className="absolute top-[100px] left-4 text-slate-800 text-xs font-black px-4 py-2 rounded-2xl z-20 transition-[background-color,transform] duration-150 active:scale-[0.97] flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-1"
+          className="absolute top-[100px] left-4 z-20 rounded-2xl text-xs font-black shadow-lg"
           style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}
         >
           <PanelLeft size={12} strokeWidth={2.5} />Abrir Painel de Análise
-        </button>
+        </Button>
       )}
 
     </>

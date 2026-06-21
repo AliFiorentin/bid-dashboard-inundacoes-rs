@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Building2, GraduationCap, HeartPulse, Wrench, Sprout } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { MUNICIPIOS, CENARIOS_CONFIG, INFRAESTRUTURA_CONFIG, AGRI_BOUNDS } from "@/lib/constants";
 import type { DashboardState } from "@/hooks/useDashboard";
 
@@ -69,17 +70,33 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
       </div>
 
       <div className="flex gap-1.5 items-center">
-        <button onClick={() => toggleCamada("Empresas")} className={`h-7 px-2.5 rounded-md text-[10px] font-black transition-[background-color,transform,box-shadow] duration-150 border shadow-sm active:scale-[0.97] flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#055071]/40 focus-visible:ring-offset-1 ${camadas.includes("Empresas") ? "text-white border-[#033a52]" : "bg-white/80 text-slate-600 border-slate-200/60 hover:bg-slate-100/90"}`} style={camadas.includes("Empresas") ? { backgroundColor: "#055071" } : {}}><Building2 size={11} strokeWidth={2.5} />Empresas</button>
-        <button onClick={() => toggleCamada("Educação")} className={`h-7 px-2.5 rounded-md text-[10px] font-black transition-[background-color,transform,box-shadow] duration-150 border shadow-sm active:scale-[0.97] flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#055071]/40 focus-visible:ring-offset-1 ${camadas.includes("Educação") ? "text-white border-[#033a52]" : "bg-white/80 text-slate-600 border-slate-200/60 hover:bg-slate-100/90"}`} style={camadas.includes("Educação") ? { backgroundColor: "#055071" } : {}}><GraduationCap size={11} strokeWidth={2.5} />Educação</button>
-        <button onClick={() => toggleCamada("Saúde")} className={`h-7 px-2.5 rounded-md text-[10px] font-black transition-[background-color,transform,box-shadow] duration-150 border shadow-sm active:scale-[0.97] flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#055071]/40 focus-visible:ring-offset-1 ${camadas.includes("Saúde") ? "text-white border-[#033a52]" : "bg-white/80 text-slate-600 border-slate-200/60 hover:bg-slate-100/90"}`} style={camadas.includes("Saúde") ? { backgroundColor: "#055071" } : {}}><HeartPulse size={11} strokeWidth={2.5} />Saúde</button>
-        {(isVisaoGeral || AGRI_BOUNDS[municipio]) && (
-          <button onClick={() => toggleCamada("Agricultura")} className={`h-7 px-2.5 rounded-md text-[10px] font-black transition-[background-color,transform,box-shadow] duration-150 border shadow-sm active:scale-[0.97] flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#055071]/40 focus-visible:ring-offset-1 ${camadas.includes("Agricultura") ? "text-white border-[#033a52]" : "bg-white/80 text-slate-600 border-slate-200/60 hover:bg-slate-100/90"}`} style={camadas.includes("Agricultura") ? { backgroundColor: "#055071" } : {}}><Sprout size={11} strokeWidth={2.5} />Agricultura</button>
-        )}
+        {([
+          { camada: "Empresas", icon: <Building2 size={11} strokeWidth={2.5} /> },
+          { camada: "Educação", icon: <GraduationCap size={11} strokeWidth={2.5} /> },
+          { camada: "Saúde", icon: <HeartPulse size={11} strokeWidth={2.5} /> },
+          ...((isVisaoGeral || AGRI_BOUNDS[municipio]) ? [{ camada: "Agricultura", icon: <Sprout size={11} strokeWidth={2.5} /> }] : []),
+        ] as { camada: string; icon: React.ReactNode }[]).map(({ camada, icon }) => (
+          <Button
+            key={camada}
+            variant={camadas.includes(camada) ? "default" : "outline"}
+            size="xs"
+            onClick={() => toggleCamada(camada)}
+            className="text-[10px] font-black gap-1"
+          >
+            {icon}{camada}
+          </Button>
+        ))}
 
         <DropdownMenu>
-          <DropdownMenuTrigger disabled={isVisaoGeral || !possuiInfra} className={`h-7 px-2.5 flex items-center justify-between gap-1.5 rounded-md text-[10px] font-black transition-[background-color,transform,box-shadow] duration-150 border shadow-sm active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed ${camadas.includes("Infraestrutura") && infraAtivas.length > 0 ? "text-white border-[#033a52]" : "bg-white/80 text-slate-600 border-slate-200/60 hover:bg-slate-100/90"}`} style={camadas.includes("Infraestrutura") && infraAtivas.length > 0 ? { backgroundColor: "#055071" } : {}}>
-            <span className="flex items-center gap-1"><Wrench size={11} strokeWidth={2.5} />Infraestrutura {infraAtivas.length > 0 && `(${infraAtivas.length})`}</span>
-            <span className="text-[7px] opacity-70">▼</span>
+          <DropdownMenuTrigger asChild disabled={isVisaoGeral || !possuiInfra}>
+            <Button
+              variant={camadas.includes("Infraestrutura") && infraAtivas.length > 0 ? "default" : "outline"}
+              size="xs"
+              className="text-[10px] font-black gap-1"
+            >
+              <Wrench size={11} strokeWidth={2.5} />Infraestrutura {infraAtivas.length > 0 && `(${infraAtivas.length})`}
+              <span className="text-[7px] opacity-70">▼</span>
+            </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end">
             <button onClick={toggleMenuInfra} className="w-full text-left text-xs font-bold px-2 py-1 mb-1 text-slate-500 hover:bg-slate-100 border-b border-slate-200/60 transition-colors duration-150 focus-visible:outline-none focus-visible:bg-slate-100">
