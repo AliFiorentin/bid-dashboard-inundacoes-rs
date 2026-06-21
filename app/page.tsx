@@ -33,27 +33,27 @@ export default function Dashboard() {
   return (
     <div className="relative w-screen h-screen font-sans overflow-hidden bg-slate-100 text-slate-900 print:overflow-visible print:h-auto print:w-full">
 
-      <div className="lg:hidden fixed inset-0 z-[100] flex flex-col items-center justify-center gap-6 px-8 text-center" style={{ background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)" }}>
+      <div className="lg:hidden fixed inset-0 z-[100] flex flex-col items-center justify-center gap-6 px-8 text-center bg-white">
         <Image src="/BID.png" alt="BID" width={160} height={64} className="h-12 w-auto object-contain" />
         <div className="flex flex-col gap-2">
-          <h1 className="text-xl font-black text-white leading-tight">Avaliação de Impactos Socioeconômicos</h1>
-          <p className="text-sm text-white/80">Painel de Monitoramento</p>
+          <h1 className="text-xl font-black leading-tight" style={{ color: "#055071" }}>Avaliação de Impactos Socioeconômicos</h1>
+          <p className="text-sm text-slate-500">Painel de Monitoramento</p>
         </div>
-        <div className="rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md px-6 py-5 flex flex-col items-center gap-3 max-w-sm">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <div className="rounded-2xl px-6 py-5 flex flex-col items-center gap-3 max-w-sm" style={{ backgroundColor: "#f0f7fa", border: "1px solid #b3cdd8" }}>
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#055071" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <rect x="2" y="3" width="20" height="14" rx="2" />
             <line x1="8" y1="21" x2="16" y2="21" />
             <line x1="12" y1="17" x2="12" y2="21" />
           </svg>
-          <p className="text-white font-bold text-sm">Acesse pelo computador</p>
-          <p className="text-white/70 text-xs leading-relaxed">
+          <p className="font-bold text-sm" style={{ color: "#055071" }}>Acesse pelo computador</p>
+          <p className="text-slate-500 text-xs leading-relaxed">
             Este painel interativo com mapas e gráficos foi projetado para telas maiores.
             Para a melhor experiência, acesse em um computador ou tablet em modo paisagem.
           </p>
         </div>
         <div className="flex items-center gap-3 mt-2">
-          <Image src="/GPEA.png" alt="GPEa" width={80} height={32} className="h-7 w-auto object-contain opacity-80" />
-          <Image src="/CIEX2.png" alt="CIEX" width={80} height={32} className="h-7 w-auto object-contain opacity-80" />
+          <Image src="/GPEA.png" alt="GPEa" width={80} height={32} className="h-7 w-auto object-contain" />
+          <Image src="/CIEX2.png" alt="CIEX" width={80} height={32} className="h-7 w-auto object-contain" />
         </div>
       </div>
 
