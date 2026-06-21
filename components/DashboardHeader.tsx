@@ -30,15 +30,15 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
         <Image src="/GPEA.png" alt="GPEA Logo" width={80} height={32} className="h-7 w-auto object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
         <Image src="/CIEX2.png" alt="CIEX Logo" width={80} height={32} className="h-7 w-auto object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
         <div className="pl-2 flex flex-col justify-center">
-          <h1 className="text-sm font-black text-slate-800 leading-tight">Avaliação de Impactos Socioeconômicos</h1>
-          <span className="text-[8px] text-slate-500 font-medium tracking-wider uppercase">Painel de Monitoramento</span>
+          <h1 className="text-base font-black text-slate-800 leading-tight">Avaliação de Impactos Socioeconômicos</h1>
+          <span className="text-[10px] text-slate-500 font-medium tracking-wider uppercase">Painel de Monitoramento</span>
         </div>
       </div>
       <a
         href="/metodologia"
         target="_blank"
         rel="noopener noreferrer"
-        className="h-8 px-2.5 rounded-md text-[10px] font-bold border border-slate-200/80 bg-white/70 text-slate-500 hover:bg-slate-100 hover:text-slate-700 hover:border-slate-300 transition-colors duration-150 flex items-center gap-1.5 shrink-0 mr-auto"
+        className="h-8 px-2.5 rounded-md text-xs font-bold border border-slate-200/80 bg-white/70 text-slate-500 hover:bg-slate-100 hover:text-slate-700 hover:border-slate-300 transition-colors duration-150 flex items-center gap-1.5 shrink-0 mr-auto"
         title="Ver metodologia de cálculo"
       >
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
@@ -47,7 +47,7 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
 
       <div className="flex gap-2 items-center">
         <div className="flex flex-col gap-0.5 w-36">
-          <label className="text-[8px] font-bold text-slate-500 uppercase tracking-wider">Município</label>
+          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Município</label>
           <Select value={municipio} onValueChange={setMunicipio}>
             <SelectTrigger className="bg-slate-50/80 h-7 text-xs"><SelectValue /></SelectTrigger>
             <SelectContent>
@@ -58,7 +58,7 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
         </div>
 
         <div className="flex flex-col gap-0.5 w-40 border-r border-slate-200/60 pr-3">
-          <label className="text-[8px] font-bold text-slate-500 uppercase tracking-wider">Cenário de Inundação</label>
+          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Cenário de Inundação</label>
           <Select value={cenario} onValueChange={setCenario} disabled={isVisaoGeral}>
             <SelectTrigger className="bg-slate-50/80 h-7 text-xs"><SelectValue placeholder={isVisaoGeral ? "Piores Cenários" : "(nenhum)"} /></SelectTrigger>
             <SelectContent>
@@ -81,7 +81,7 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
             variant={camadas.includes(camada) ? "default" : "outline"}
             size="xs"
             onClick={() => toggleCamada(camada)}
-            className="text-[10px] font-black gap-1"
+            className="text-xs font-black gap-1"
           >
             {icon}{camada}
           </Button>
@@ -92,7 +92,7 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
             <Button
               variant={camadas.includes("Infraestrutura") && infraAtivas.length > 0 ? "default" : "outline"}
               size="xs"
-              className="text-[10px] font-black gap-1"
+              className="text-xs font-black gap-1"
             >
               <Wrench size={11} strokeWidth={2.5} />Infraestrutura {infraAtivas.length > 0 && `(${infraAtivas.length})`}
               <span className="text-[7px] opacity-70">▼</span>
