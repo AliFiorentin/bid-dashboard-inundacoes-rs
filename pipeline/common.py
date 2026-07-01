@@ -275,8 +275,12 @@ def intersect_points_with_mancha(base_gj, mancha_path):
     return {"type": "FeatureCollection", "features": features_at}
 
 
-def mancha_to_geojson(mancha_path):
-    """Converte o shapefile da mancha em GeoJSON (EPSG:4326), corrigindo geometria invalida."""
+def mancha_to_geojson(mancha_path, clip_geom=None, simplify_tolerance=0.0003):
+    """Converte o shapefile da mancha em GeoJSON (EPSG:4326).
+
+    clip_geom: geometria Shapely em WGS84 para recortar a mancha ao limite municipal.
+    simplify_tolerance: suaviza bordas denteadas (artefatos raster→vetor, ~30m em lat -30°).
+    """
     import geopandas as gpd
 
     mancha_path = Path(mancha_path)
@@ -287,6 +291,16 @@ def mancha_to_geojson(mancha_path):
     if mancha.crs is not None and str(mancha.crs) != "EPSG:4326":
         mancha = mancha.to_crs(epsg=4326)
     union = mancha.geometry.buffer(0).union_all()
+
+    if clip_geom is not None:
+        try:
+            union = union.intersection(clip_geom)
+        except Exception:
+            pass  # mantém sem clip se a intersecção falhar
+
+    if simplify_tolerance > 0:
+        union = union.simplify(simplify_tolerance, preserve_topology=True)
+
     gdf = gpd.GeoDataFrame(geometry=[union], crs="EPSG:4326")
     return json.loads(gdf.to_json())
 

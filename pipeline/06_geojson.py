@@ -161,7 +161,7 @@ def make_agricultura(df_stats: pd.DataFrame, nome: str, slug: str) -> int:
 # Atingidos (intersecao ponto-em-poligono com manchas de inundacao)
 # ---------------------------------------------------------------------------
 
-def make_atingidos(nome: str, cfg: dict, slug: str) -> None:
+def make_atingidos(nome: str, cfg: dict, slug: str, limite_geom=None) -> None:
     manchas_mun = MANCHAS.get(nome, {})
 
     for cen in cfg["cenarios"]:
@@ -176,7 +176,7 @@ def make_atingidos(nome: str, cfg: dict, slug: str) -> None:
         print(f"    {cen_label}:")
 
         # --- mancha (a propria area de inundacao, em GeoJSON) ---
-        mancha_gj = mancha_to_geojson(mancha_path)
+        mancha_gj = mancha_to_geojson(mancha_path, clip_geom=limite_geom)
         if mancha_gj:
             save_geojson(mancha_gj, DASH_DATA / slug / "cenarios" / f"{cen_slug}.geojson")
 
@@ -235,19 +235,22 @@ def make_atingidos(nome: str, cfg: dict, slug: str) -> None:
 # Limites municipais
 # ---------------------------------------------------------------------------
 
-def make_limite(nome: str, slug: str, ibge7: int) -> None:
-    """Gera limite_BASE.geojson usando geobr."""
+def make_limite(nome: str, slug: str, ibge7: int, simplify_tol: float = 0.0008):
+    """Gera limite_BASE.geojson usando geobr. Retorna a geometria Shapely (WGS84) para uso no clip da mancha."""
     import geobr
     try:
         gdf = geobr.read_municipality(code_muni=ibge7, year=2022)
         gdf = gdf.to_crs(epsg=4326)
+        gdf["geometry"] = gdf.geometry.simplify(simplify_tol, preserve_topology=True)
         import json as _json
         gj = _json.loads(gdf[["geometry"]].to_json())
         out_path = DASH_DATA / slug / "limite_BASE.geojson"
         save_geojson(gj, out_path)
         print(f"    limite_BASE.geojson: {len(gj['features'])} feature(s)")
+        return gdf.geometry.union_all()
     except Exception as e:
         print(f"    AVISO: limite_BASE.geojson não gerado: {e}")
+        return None
 
 
 # ---------------------------------------------------------------------------
@@ -287,6 +290,9 @@ def main():
         print(f"  {nome}")
         print(f"{'='*60}")
 
+        print("  LIMITES:")
+        limite_geom = make_limite(nome, slug, cfg["ibge7"])
+
         print("  BASE:")
         n_emp = _make_base(empresas, nome, slug, "empresas", "estabelecimento")
         n_edu = _make_base(escolas, nome, slug, "educacao", "escola")
@@ -298,10 +304,7 @@ def main():
         print(f"    agricultura: {n_agr} features")
 
         print("  ATINGIDOS:")
-        make_atingidos(nome, cfg, slug)
-
-        print("  LIMITES:")
-        make_limite(nome, slug, cfg["ibge7"])
+        make_atingidos(nome, cfg, slug, limite_geom)
 
     # --- mancha RS (Visão Geral) ---
     print("\n  Gerando mancha_rs_enchente_2024.geojson...")
