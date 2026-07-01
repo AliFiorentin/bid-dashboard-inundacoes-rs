@@ -240,6 +240,12 @@ def main():
 
     estab["municipio"] = estab["municipio"].apply(map_mun)
 
+    n_antes = len(estab)
+    estab = estab[estab["municipio"].isin(list(targets.keys()))].copy()
+    n_descartados = n_antes - len(estab)
+    if n_descartados > 0:
+        print(f"  Descartados {n_descartados} estabelecimentos fora dos municípios-alvo")
+
     estab["cnae20_classe"] = estab["cnae20_classe"].astype(str).str.strip()
     parsed = estab.apply(
         lambda r: parse_endereco(r["nome_logradouro"], r["numero_logradouro"]),

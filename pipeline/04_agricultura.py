@@ -81,16 +81,16 @@ def get_municipio_geom(ibge7: int) -> gpd.GeoDataFrame:
 # Processamento raster
 # ---------------------------------------------------------------------------
 
-def compute_pixel_area_ha(src, transform=None):
-    """Calcula area de um pixel em hectares, ajustando para CRS geografico."""
-    t = transform or src.transform
-    if src.crs and src.crs.is_geographic:
-        lat_center = (src.bounds.top + src.bounds.bottom) / 2
-        m_per_deg_lon = 111320 * math.cos(math.radians(lat_center))
-        m_per_deg_lat = 111320
-        pixel_area_m2 = abs(t.a * m_per_deg_lon * t.e * m_per_deg_lat)
-    else:
-        pixel_area_m2 = abs(t.a * t.e)
+def compute_pixel_area_ha(transform, shape):
+    """Calcula area de um pixel em hectares usando a latitude central da janela recortada."""
+    nrows, ncols = shape
+    # Coordenadas do centro da janela recortada (geografico)
+    lat_center = transform.f + transform.e * (nrows / 2)
+    if abs(lat_center) > 90:  # sanity check
+        lat_center = -15.0
+    m_per_deg_lon = 111320 * math.cos(math.radians(lat_center))
+    m_per_deg_lat = 111320
+    pixel_area_m2 = abs(transform.a * m_per_deg_lon * transform.e * m_per_deg_lat)
     return pixel_area_m2 / 10000
 
 
@@ -116,7 +116,7 @@ def process_municipio(tiff_path: Path, nome: str, cfg: dict, ano: int) -> tuple:
             return pd.DataFrame(), None
 
         data = out_image[0]
-        pixel_ha = compute_pixel_area_ha(src, out_transform)
+        pixel_ha = compute_pixel_area_ha(out_transform, data.shape)
         print(f"    Pixel: {pixel_ha:.4f} ha ({math.sqrt(pixel_ha * 10000):.0f} m)")
 
     # --- Estatisticas ---

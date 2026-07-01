@@ -18,7 +18,7 @@ RAIS_PARQUET = Path("D:/RAIS/data/rais_db/vinculos/ano=2023/uf=43/RAIS_VINC_ID_S
 CENSO_ESCOLAR_DIR = Path("D:/Censo Escolar 2024 - Microdados")
 CENSO_ESCOLAR_CSV = CENSO_ESCOLAR_DIR / "dados" / "microdados_ed_basica_2024.csv"
 
-CNES_ZIP = Path(r"C:\Users\Alisson Fiorentin\Downloads\BASE_DE_DADOS_CNES_202404.ZIP")
+CNES_ZIP = Path(r"D:\CNES 042024.ZIP")
 DATA_RAW_DATASUS = DATA_RAW / "datasus"
 SIA_SIH_ANO = 2024
 SIA_MESES = [1, 2, 3, 4, 5, 6, 7]
@@ -34,9 +34,9 @@ MAPBIOMAS_CLASSES = {
     39: "Soja",
     20: "Arroz",
     40: "Arroz",
-    41: "Outras Lavouras Temporarias",
-    46: "Outras Lavouras Temporarias",
-    62: "Outras Lavouras Temporarias",
+    41: "Outras Lavouras Temporárias",
+    46: "Outras Lavouras Temporárias",
+    62: "Outras Lavouras Temporárias",
 }
 
 # Colunas RAIS que usamos
@@ -231,12 +231,12 @@ IMPACTO_AGRICOLA = {
     "maio_2024": {
         "Soja": {"coef": 1100, "status": "Colhida (fev-abr/2024)"},
         "Arroz": {"coef": 1100, "status": "Colhido (fev-abr/2024)"},
-        "Outras Lavouras Temporarias": {"coef": 1400, "status": "Plantio inicial (mai-jun/2024)"},
+        "Outras Lavouras Temporárias": {"coef": 1400, "status": "Plantio inicial (mai-jun/2024)"},
     },
     "setembro_2023": {
         "Soja": {"coef": 250, "status": "Pre-plantio (set/2023)"},
         "Arroz": {"coef": 250, "status": "Pre-plantio (set/2023)"},
-        "Outras Lavouras Temporarias": {"coef": 2800, "status": "Colheita (set-out/2023)"},
+        "Outras Lavouras Temporárias": {"coef": 2800, "status": "Colheita (set-out/2023)"},
     },
 }
 

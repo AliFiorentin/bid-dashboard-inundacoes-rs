@@ -81,6 +81,7 @@ _LABEL_ACCENT_FIX = {
 
 def _add_dashboard_aliases_saude(saude: pd.DataFrame) -> pd.DataFrame:
     saude["co_tipo_estabelecimento"] = saude["tp_unidade_label"].replace(_LABEL_ACCENT_FIX)
+    saude["no_razao_social"] = saude["no_fantasia"]  # alias para fallback do dashboard
 
     prof_path = DATA_BASES / "saude_profissionais.csv"
     if not prof_path.exists():
@@ -231,6 +232,25 @@ def make_atingidos(nome: str, cfg: dict, slug: str) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Limites municipais
+# ---------------------------------------------------------------------------
+
+def make_limite(nome: str, slug: str, ibge7: int) -> None:
+    """Gera limite_BASE.geojson usando geobr."""
+    import geobr
+    try:
+        gdf = geobr.read_municipality(code_muni=ibge7, year=2022)
+        gdf = gdf.to_crs(epsg=4326)
+        import json as _json
+        gj = _json.loads(gdf[["geometry"]].to_json())
+        out_path = DASH_DATA / slug / "limite_BASE.geojson"
+        save_geojson(gj, out_path)
+        print(f"    limite_BASE.geojson: {len(gj['features'])} feature(s)")
+    except Exception as e:
+        print(f"    AVISO: limite_BASE.geojson não gerado: {e}")
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -279,6 +299,31 @@ def main():
 
         print("  ATINGIDOS:")
         make_atingidos(nome, cfg, slug)
+
+        print("  LIMITES:")
+        make_limite(nome, slug, cfg["ibge7"])
+
+    # --- mancha RS (Visão Geral) ---
+    print("\n  Gerando mancha_rs_enchente_2024.geojson...")
+    piores = {
+        "eldorado_do_sul": "eldorado_do_sul___cenario_ada",
+        "lajeado": "lajeado___cenario_30m",
+        "porto_alegre": "porto_alegre___cenario_ada",
+        "rio_grande": "rio_grande___cenario_maio_2024_50",
+    }
+    features_rs = []
+    for slug_m, cen_slug in piores.items():
+        mancha_path = DASH_DATA / slug_m / "cenarios" / f"{cen_slug}.geojson"
+        gj = load_geojson(mancha_path)
+        if gj:
+            features_rs.extend(gj["features"])
+    if features_rs:
+        mancha_rs = {"type": "FeatureCollection", "features": features_rs}
+        out_rs = DASH_DATA / "mancha_rs_enchente_2024.geojson"
+        save_geojson(mancha_rs, out_rs)
+        print(f"    mancha_rs_enchente_2024.geojson: {len(features_rs)} features")
+    else:
+        print("    AVISO: nenhuma mancha encontrada para Visão Geral RS")
 
     print("\nConcluido.")
 
