@@ -71,13 +71,20 @@ export default function Dashboard() {
         </div>
       )}
 
-      <div className={`absolute bottom-4 rounded-xl shadow-lg z-10 print:hidden transition-[left] duration-300 ${showPainelAnalise ? "left-[380px]" : "left-4"}`} style={{ backgroundColor: "#fff", border: "1px solid #b3cdd8", transitionTimingFunction: "var(--ease-out)" }}>
-        <button onClick={() => setShowLegenda(p => !p)} className="w-full flex items-center justify-between gap-3 px-2.5 py-2 rounded-xl" style={{ color: "#055071" }}>
-          <span className="text-[9px] font-black uppercase tracking-wider">Legenda</span>
-          <span style={{ fontSize: 8 }}>{showLegenda ? "▼" : "▲"}</span>
+      <div
+        className={`absolute bottom-4 rounded-xl z-10 print:hidden transition-[left] duration-300 overflow-hidden ${showPainelAnalise ? "left-[380px]" : "left-4"}`}
+        style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)", transitionTimingFunction: "var(--ease-out)" }}
+      >
+        <button
+          onClick={() => setShowLegenda(p => !p)}
+          className="w-full flex items-center justify-between gap-3 px-2.5 py-2"
+          style={{ background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)" }}
+        >
+          <span className="text-[9px] font-black uppercase tracking-wider text-white">Legenda</span>
+          <span className="text-white" style={{ fontSize: 8 }}>{showLegenda ? "▼" : "▲"}</span>
         </button>
         {showLegenda && (
-          <div className="flex flex-col gap-1.5 px-2.5 pb-2.5">
+          <div className="flex flex-col gap-1.5 px-2.5 py-2.5">
             {camadas.includes("Empresas") && renderEmp?.features && <LegendItem cor={COLORS.empresas} label="Empresas" />}
             {camadas.includes("Educação") && renderEdu?.features && <LegendItem cor={COLORS.educacao} label="Educação" />}
             {camadas.includes("Saúde") && renderSau?.features && <LegendItem cor={COLORS.saude} label="Saúde" />}
@@ -94,9 +101,12 @@ export default function Dashboard() {
       </div>
 
       <div className="absolute bottom-4 inset-x-0 flex justify-center z-10 print:hidden pointer-events-none">
-        <div className="px-2.5 py-0.5 rounded-xl shadow-lg select-none leading-none text-center" style={{ backgroundColor: "#fff", border: "1px solid #b3cdd8" }}>
-          <span className="text-[9px] font-black uppercase tracking-wider" style={{ color: "#1C293D" }}>© GPEa - Grupo de Pesquisa em Economia Azul</span>
-          <span className="text-[9px]" style={{ color: "#1C293D" }}> | Alisson Tallys Geraldo Fiorentin</span>
+        <div
+          className="px-3 py-1 rounded-xl select-none leading-none text-center"
+          style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}
+        >
+          <span className="text-[9px] font-black uppercase tracking-wider" style={{ color: "#055071" }}>© GPEa - Grupo de Pesquisa em Economia Azul</span>
+          <span className="text-[9px]" style={{ color: "#055071" }}> | Alisson Tallys Geraldo Fiorentin</span>
         </div>
       </div>
 
