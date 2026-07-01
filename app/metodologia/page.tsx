@@ -68,6 +68,7 @@ export default function MetodologiaPage() {
             ["Porto Alegre",    "Cenário ADA",             "Maio 2024",                      "MUP / Gov. RS"],
             ["Rio Grande",      "Cenário Maio 2024",       "Maio 2024",                      "CIEX/FURG"],
             ["Rio Grande",      "Cenário Maio 2024 + 50%", "Maio 2024 com extensão de 50%",  "CIEX/FURG"],
+            ["Rio Grande",      "Cenário Setembro 2023",   "Setembro 2023",                  "CIEX/FURG"],
           ]} />
           <p>
             <strong>ADA (Área Diretamente Afetada)</strong> refere-se à extensão máxima da mancha
@@ -87,6 +88,13 @@ export default function MetodologiaPage() {
               <ExtLink href="https://ciex.furg.br">CIEX — Centro Interinstitucional de Observação e Previsão de Eventos Extremos da FURG</ExtLink>
             </li>
           </ul>
+          <SubTitle>Origem dos dados</SubTitle>
+          <DataTable rows={[
+            ["Fonte de dados",    "Referência temporal",        "Municípios / Observações"],
+            ["MUP / Gov. RS",     "Maio 2024",                  "Eldorado do Sul · Porto Alegre"],
+            ["LabModel",          "Maio 2024",                  "Lajeado — cotas 27 m e 30 m"],
+            ["CIEX/FURG",         "Maio 2024 · Setembro 2023",  "Rio Grande"],
+          ]} />
           <SectionSources links={[
             ["MUP — Mapa Único do Plano Rio Grande (Gov. RS)", "https://mup.rs.gov.br/"],
             ["LabModel — Laboratório de Modelagem", ""],
@@ -127,7 +135,7 @@ export default function MetodologiaPage() {
             </p>
             <MathBlock exprs={[
               { tex: "\\text{atingido}(F) = 1 \\iff F \\cap M \\neq \\emptyset" },
-              { label: "Área atingida [m²] =", tex: "\\text{area}(F \\cap M) \\quad \\small{\\text{(EPSG:31982)}}" },
+              { label: "Área atingida [m²] =", tex: "\\text{area}(F \\cap M) \\quad \\small{\\text{(EPSG:32722)}}" },
               { label: "Área atingida [ha] =", tex: "\\dfrac{\\text{area}(F \\cap M)}{10{.}000}" },
             ]} />
           </GeoCard>
@@ -142,7 +150,7 @@ export default function MetodologiaPage() {
             </p>
             <MathBlock exprs={[
               { tex: "\\text{atingido}(L) = 1 \\iff L \\cap M \\neq \\emptyset" },
-              { label: "Comprimento [m] =",  tex: "\\text{length}(L \\cap M) \\quad \\small{\\text{(EPSG:31982)}}" },
+              { label: "Comprimento [m] =",  tex: "\\text{length}(L \\cap M) \\quad \\small{\\text{(EPSG:32722)}}" },
               { label: "Comprimento [km] =", tex: "\\dfrac{\\text{length}(L \\cap M)}{1{.}000}" },
             ]} />
           </GeoCard>
@@ -164,7 +172,7 @@ export default function MetodologiaPage() {
           ]} />
           <p className="text-[11px] italic text-[#3d7a94]">
             CRS: SIRGAS 2000 (EPSG:4674) nos dados cadastrais RS →
-            EPSG:31982 para cálculos de área/comprimento →
+            EPSG:32722 para cálculos de área/comprimento →
             WGS 84 (EPSG:4326) na saída para MapLibre GL.
           </p>
           <SectionSources links={[
@@ -186,7 +194,7 @@ export default function MetodologiaPage() {
             <ExtLink href="https://www.gov.br/trabalho-e-emprego/pt-br/assuntos/estatisticas-trabalho/rais">
               RAIS — Relação Anual de Informações Sociais (MTE)
             </ExtLink>,
-            complementados por endereços da Receita Federal e georreferenciados via Google API.
+            complementados por endereços da própria base e georreferenciados via Nominatim (OSM, instância local).
             Cada estabelecimento é representado como um ponto{" "}
             <code className="text-xs font-mono bg-[#e8f4f8] px-1 py-0.5 rounded">Cᵢ ⊂ ℝ²</code>.
           </p>
@@ -205,9 +213,14 @@ export default function MetodologiaPage() {
             formal, ver Teixeira et al. (2025) — metodologia Diferenças em Diferenças sobre RAIS
             — nas referências.
           </Note>
+          <SubTitle>Origem dos dados</SubTitle>
+          <DataTable rows={[
+            ["Fonte de dados",             "Referência temporal", "Observações"],
+            ["RAIS (MTE)",                 "2023",               "Vínculos ativos, estabelecimentos e endereços"],
+            ["OpenStreetMap / Nominatim",  "—",                  "Geocodificação de endereços (instância local)"],
+          ]} />
           <SectionSources links={[
             ["RAIS — Microdados MTE", "https://www.gov.br/trabalho-e-emprego/pt-br/assuntos/estatisticas-trabalho/rais"],
-            ["Receita Federal — Dados Abertos (CNPJ)", "https://dados.gov.br/dados/conjuntos-dados/cadastro-nacional-da-pessoa-juridica---cnpj"],
           ]} />
         </Section>
 
@@ -224,7 +237,7 @@ export default function MetodologiaPage() {
             <ExtLink href="https://brasil.mapbiomas.org/colecoes-mapbiomas-1/">
               MapaBiomas Coleção 10
             </ExtLink>{" "}
-            (resolução 30 m, referência 2024). A área é calculada por contagem de pixels:
+            (resolução 30 m — anos 2023 e 2024: 2023 para cenários de Setembro 2023, 2024 para cenários de Maio 2024). A área é calculada por contagem de pixels:
           </p>
           <DataTable rows={[
             ["Código", "Classe",                      "Cor"],
@@ -266,6 +279,13 @@ export default function MetodologiaPage() {
             Custos diretos de produção apenas. Não inclui renda futura, contratos forward,
             recuperação de solo ou pecuária.
           </Note>
+          <SubTitle>Origem dos dados</SubTitle>
+          <DataTable rows={[
+            ["Fonte de dados",            "Referência temporal", "Observações"],
+            ["MapBiomas Coleção 10",      "2023 e 2024",        "Raster 30 m; ano conforme período do cenário"],
+            ["CONAB — Mapeamento Agrícola","Safra 2023/24",     "Soja e Arroz (shapefiles)"],
+            ["CONAB — Preços Mínimos",    "2024",               "Coeficientes R$/ha por cultura e período"],
+          ]} />
           <SectionSources links={[
             ["MapaBiomas — Coleção 10", "https://brasil.mapbiomas.org/colecoes-mapbiomas-1/"],
             ["CONAB — Mapeamento Agrícola", "https://www.conab.gov.br/info-agro/safras/mapeamento-agricola"],
@@ -290,9 +310,15 @@ export default function MetodologiaPage() {
             Interrupção do ano letivo, reconstrução predial e reposição de equipamentos requerem
             levantamento de campo específico e não são estimados pelo painel.
           </Note>
+          <SubTitle>Origem dos dados</SubTitle>
+          <DataTable rows={[
+            ["Fonte de dados",            "Referência temporal", "Observações"],
+            ["INEP — Censo Escolar",      "2024",               "Estabelecimentos, matrículas e profissionais"],
+            ["OpenStreetMap / Nominatim", "—",                  "Geocodificação de endereços (instância local)"],
+          ]} />
           <SectionSources links={[
             ["INEP — Censo Escolar", "https://www.gov.br/inep/pt-br/areas-de-atuacao/pesquisas-estatisticas-e-indicadores/censo-escolar"],
-            ["INEP — Microdados Censo Escolar 2023", "https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-escolar"],
+            ["INEP — Microdados Censo Escolar 2024", "https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-escolar"],
           ]} />
         </Section>
 
@@ -319,6 +345,11 @@ export default function MetodologiaPage() {
             Reconstrução e reposição de equipamentos hospitalares exigem avaliação técnica de
             engenharia — não estimados pelo painel.
           </Note>
+          <SubTitle>Origem dos dados</SubTitle>
+          <DataTable rows={[
+            ["Fonte de dados",  "Referência temporal", "Observações"],
+            ["CNES — DataSUS",  "Abril/2024",          "Estabelecimentos com coordenadas georreferenciadas na fonte"],
+          ]} />
           <SectionSources links={[
             ["CNES — DataSUS", "https://cnes.datasus.gov.br"],
             ["DataSUS — Dados Abertos", "https://datasus.saude.gov.br/acesso-a-informacao/producao-hospitalar-sih-sus"],
@@ -328,16 +359,23 @@ export default function MetodologiaPage() {
         {/* ── 7. Infraestrutura ───────────────────────────────────── */}
         <Section id="infraestrutura" num="7" title="Infraestrutura Urbana">
           <DataTable rows={[
-            ["Município",    "Camadas",                                                                                                     "Geometria"],
-            ["Porto Alegre", "Eixos Logradouros, Lotes, Quarteirões, Terminais, Rede Esgoto, Paradas, Ônibus, Hidrantes, Gás, Bocas de Lobo, Postes", "Linha, Polígono, Ponto"],
-            ["Rio Grande",   "Logradouros, Quadras, Terrenos, Imóveis, Prédios Públicos, Segurança",                                        "Linha, Polígono, Ponto"],
-            ["Lajeado",      "Iluminação Pública, Logradouros, Lotes, Quadras",                                                             "Ponto, Linha, Polígono"],
+            ["Município",       "Camadas",                                                                                                     "Geometria"],
+            ["Eldorado do Sul", "Edificações",                                                                                                 "Polígono"],
+            ["Porto Alegre",    "Eixos Logradouros, Lotes, Quarteirões, Terminais, Rede Esgoto, Paradas, Ônibus, Hidrantes, Gás, Bocas de Lobo, Postes", "Linha, Polígono, Ponto"],
+            ["Rio Grande",      "Logradouros, Quadras, Terrenos, Imóveis, Prédios Públicos, Segurança",                                       "Linha, Polígono, Ponto"],
+            ["Lajeado",         "Iluminação Pública, Logradouros, Lotes, Quadras",                                                            "Ponto, Linha, Polígono"],
           ]} />
           <ul className="list-disc list-inside space-y-1 text-sm text-[#3d7a94]">
             <li><strong className="text-slate-800">Contagem atingida</strong> — pontos/segmentos/polígonos com interseção com a mancha.</li>
-            <li><strong className="text-slate-800">Comprimento (km)</strong> — interseção geométrica de linhas em EPSG:31982.</li>
-            <li><strong className="text-slate-800">Área (ha)</strong> — interseção geométrica de polígonos em EPSG:31982.</li>
+            <li><strong className="text-slate-800">Comprimento (km)</strong> — interseção geométrica de linhas em EPSG:32722.</li>
+            <li><strong className="text-slate-800">Área (ha)</strong> — interseção geométrica de polígonos em EPSG:32722.</li>
           </ul>
+          <SubTitle>Origem dos dados</SubTitle>
+          <DataTable rows={[
+            ["Fonte de dados",               "Referência temporal", "Observações"],
+            ["Prefeituras e órgãos municipais", "—",               "Camadas vetoriais (logradouros, lotes, quadras, etc.)"],
+            ["Google Open Buildings",         "2023",              "Edificações — footprints detectados por visão computacional"],
+          ]} />
           <SectionSources links={[
             ["POA Dados Abertos", "https://dadosabertos.poa.br"],
             ["EPTC Porto Alegre", "https://www2.portoalegre.rs.gov.br/eptc"],
@@ -452,19 +490,22 @@ export default function MetodologiaPage() {
             <RefBlock title="Dados Socioeconômicos">
               <RefItem href="https://www.gov.br/trabalho-e-emprego/pt-br/assuntos/estatisticas-trabalho/rais"
                 label="RAIS — Relação Anual de Informações Sociais (MTE)"
-                desc="Microdados de estabelecimentos, empregados e massa salarial por município" />
+                desc="Microdados de estabelecimentos, empregados e massa salarial por município (ano-base 2023)" />
               <RefItem href="https://www.gov.br/inep/pt-br/areas-de-atuacao/pesquisas-estatisticas-e-indicadores/censo-escolar"
                 label="INEP — Censo Escolar"
-                desc="Estabelecimentos de ensino, matrículas, turmas e dependência administrativa" />
+                desc="Estabelecimentos de ensino, matrículas, turmas e dependência administrativa (ano-base 2024)" />
               <RefItem href="https://cnes.datasus.gov.br"
                 label="CNES — DataSUS"
-                desc="Unidades de saúde e vínculos de profissionais de saúde por categoria" />
+                desc="Unidades de saúde e vínculos de profissionais de saúde por categoria (referência abril/2024)" />
+              <RefItem href="https://nominatim.org"
+                label="OpenStreetMap / Nominatim"
+                desc="Geocodificação de endereços de estabelecimentos e escolas (instância local)" />
             </RefBlock>
 
             <RefBlock title="Dados Agrícolas">
               <RefItem href="https://brasil.mapbiomas.org/colecoes-mapbiomas-1/"
                 label="MapaBiomas — Coleção 10"
-                desc="Mapeamento anual de uso e cobertura do solo no Brasil (resolução 30 m, referência 2024)" />
+                desc="Mapeamento anual de uso e cobertura do solo no Brasil (resolução 30 m — anos 2023 e 2024)" />
               <RefItem href="https://www.conab.gov.br/info-agro/safras/mapeamento-agricola"
                 label="CONAB — Mapeamento Agrícola"
                 desc="Shapefiles georeferenciados de área cultivada de soja e arroz por safra" />

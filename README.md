@@ -40,7 +40,7 @@ O painel integra dados das enchentes de 2024 que afetaram mais de 400 município
 | Eldorado do Sul | Cenário ADA                                     | Enchentes de maio de 2024  |
 | Lajeado         | Cenário 27m · Cenário 30m                       | Enchentes de maio de 2024  |
 | Porto Alegre    | Cenário ADA                                     | Enchentes de maio de 2024  |
-| Rio Grande      | Cenário Maio 2024 · Cenário Maio 2024 +50%      | Tormenta de maio de 2024   |
+| Rio Grande      | Cenário Maio 2024 · Cenário Maio 2024 +50% · Cenário Setembro 2023 | Tormenta de maio de 2024 · Setembro de 2023 |
 
 A **Visão Geral RS** exibe os 4 municípios simultaneamente com o pior cenário de cada um aplicado e a mancha de inundação estadual de referência.
 
@@ -52,9 +52,9 @@ A **Visão Geral RS** exibe os 4 municípios simultaneamente com o pior cenário
 
 As manchas de inundação (polígonos vetoriais) provêm de estudos hidrológicos específicos por município:
 
-- **Porto Alegre e Eldorado do Sul:** Área Diretamente Afetada (ADA) mapeada pelo IPH/UFRGS com base em imagens de satélite e dados de monitoramento hidrométrico (maio/2024).
-- **Lajeado:** Simulação hidráulica do rio Taquari para cotas de 27 m e 30 m (SNO/ANA).
-- **Rio Grande:** Cenário observado (maio/2024) e projeção +50% de precipitação.
+- **Porto Alegre e Eldorado do Sul:** Área Diretamente Afetada (ADA) — MUP / Mapa Único do Plano Rio Grande (Gov. RS), maio/2024.
+- **Lajeado:** Simulação hidráulica do rio Taquari para cotas de 27 m e 30 m (LabModel).
+- **Rio Grande:** Modelagem hidrológica e hidráulica (CIEX/FURG) — cenários de maio/2024 e setembro/2023.
 
 As manchas são armazenadas como `{municipio_slug}___{cenario_slug}.geojson` em projeção WGS 84 (EPSG:4326).
 
@@ -176,10 +176,14 @@ Dashboard BID/
 ├── lib/
 │   ├── constants.ts          # Configurações (municípios, cenários, cores, coeficientes)
 │   └── geo-utils.ts          # slugify, scenarioSlug, formatoBr, calcEmp/Edu/Sau
-├── scripts/                  # Pipeline Python para pré-processamento dos dados
-│   ├── converter_edificacoes.py
-│   ├── recorte_edificacoes_atingidos.py
-│   └── ...
+├── pipeline/                 # Pipeline Python para pré-processamento dos dados (raiz do repo BID)
+│   ├── 01_rais.py            # RAIS → estabelecimentos geocodificados
+│   ├── 02_educacao.py        # Censo Escolar → escolas geocodificadas
+│   ├── 03_saude.py           # CNES → unidades de saúde
+│   ├── 04_agricultura.py     # MapBiomas → uso do solo agrícola
+│   ├── 05_geocodificar.py    # Geocodificação via Nominatim (OSM local)
+│   ├── 06_geojson.py         # Gera BASE + ATINGIDOS → public/dados_convertidos/
+│   └── 07_danos.py           # Estimativas de danos operacionais
 └── public/
     └── dados_convertidos/
         ├── {municipio_slug}/
@@ -230,20 +234,25 @@ npm run format
 
 ## Pipeline de Dados (Python)
 
-Os GeoJSONs em `public/dados_convertidos/` são gerados por scripts Python que realizam a interseção espacial offline. Dependências: `shapely`, `geopandas`, `pandas`.
+Os GeoJSONs em `public/dados_convertidos/` são gerados pelo pipeline Python em `pipeline/` (raiz do repo BID). Dependências: `shapely`, `geopandas`, `pandas`.
 
 ```
-Fontes brutas (RAIS, INEP, CNES, MapBiomas, Google Open Buildings, shapefiles IPH/SNO)
-        ↓  Python / GeoPandas / Shapely
-Limpeza + transformação para GeoJSON (WGS 84)
-        ↓  Interseção espacial com mancha de inundação
-*_ATINGIDOS_*.geojson  →  public/dados_convertidos/  →  Next.js serve estático
+Fontes brutas (RAIS, INEP, CNES, MapBiomas Coleção 10, Google Open Buildings, shapefiles manchas)
+        ↓  pipeline/01..05 — limpeza, filtragem, geocodificação (Nominatim/OSM)
+Dados processados (CSV por município)
+        ↓  pipeline/06_geojson.py — interseção espacial, BASE + ATINGIDOS
+*_BASE.geojson / *_ATINGIDOS_*.geojson  →  public/dados_convertidos/  →  Next.js serve estático
 ```
 
-Para regenerar as edificações atingidas:
+Para regenerar todos os GeoJSONs do dashboard (assumindo dados brutos disponíveis):
 ```bash
-python scripts/converter_edificacoes.py        # BASE: CSV.gz → GeoJSON por município
-python scripts/recorte_edificacoes_atingidos.py # ATINGIDOS: clip edificações × mancha
+# Executar na raiz do repo BID, em sequência
+python pipeline/01_rais.py
+python pipeline/02_educacao.py
+python pipeline/03_saude.py
+python pipeline/04_agricultura.py
+python pipeline/05_geocodificar.py   # requer Nominatim em localhost:8080
+python pipeline/06_geojson.py
 ```
 
 ---
@@ -267,17 +276,18 @@ python scripts/recorte_edificacoes_atingidos.py # ATINGIDOS: clip edificações 
 
 | Dado | Fonte | Período |
 |---|---|---|
-| Empregos e estabelecimentos | RAIS/MTE | 2022–2023 |
-| Escolas e matrículas | Censo Escolar/INEP | 2023 |
-| Estabelecimentos de saúde | CNES/DataSUS | 2024 |
-| Manchas de inundação PA e EDS | IPH/UFRGS | maio/2024 |
-| Manchas de inundação Lajeado | SNO/ANA | maio/2024 |
-| Manchas de inundação Rio Grande | Elaboração própria | maio/2024 |
+| Empregos e estabelecimentos | RAIS/MTE | 2023 |
+| Escolas e matrículas | Censo Escolar/INEP | 2024 |
+| Estabelecimentos de saúde | CNES/DataSUS | abril/2024 |
+| Geocodificação de endereços | OpenStreetMap / Nominatim | — |
+| Manchas de inundação PA e EDS | MUP / Gov. RS | maio/2024 |
+| Manchas de inundação Lajeado | LabModel | maio/2024 |
+| Manchas de inundação Rio Grande | CIEX/FURG | maio/2024 · set/2023 |
 | Infraestrutura urbana POA | IPPOA / Dados Abertos | 2023–2024 |
 | Infraestrutura Rio Grande | Prefeitura RG | 2023–2024 |
 | Infraestrutura Lajeado | Prefeitura Lajeado | 2023–2024 |
 | Edificações | Google Open Buildings v3 | 2023 |
-| Uso do solo agrícola | MapBiomas Coleção 8 | 2023 |
+| Uso do solo agrícola | MapBiomas Coleção 10 | 2023 e 2024 |
 | Área cultivada (contexto) | CONAB | Safra 2023/24 |
 | Coeficientes de perda agrícola | EMATER-RS / CONAB | 2024 |
 
@@ -298,7 +308,7 @@ Todos os GeoJSONs processados estão incluídos neste repositório em `public/da
 
 > Para clonar incluindo os arquivos LFS: `git lfs pull` após o `git clone`.
 
-Os dados brutos originais (RAIS, INEP, CNES, MapBiomas raster, Google Open Buildings CSV) **não estão incluídos** — devem ser obtidos diretamente nas fontes listadas abaixo e processados com os scripts em `scripts/`.
+Os dados brutos originais (RAIS, INEP, CNES, MapBiomas raster, Google Open Buildings CSV) **não estão incluídos** — devem ser obtidos diretamente nas fontes listadas acima e processados com os scripts em `pipeline/`.
 
 ---
 
@@ -325,7 +335,7 @@ Fonte: RAIS/MTE. Um ponto por estabelecimento formal.
 
 #### Educação (`educacao_BASE.geojson`)
 
-Fonte: Censo Escolar INEP 2023/2024. Um ponto por escola.
+Fonte: Censo Escolar INEP 2024. Um ponto por escola.
 
 | Campo | Tipo | Descrição |
 |---|---|---|
