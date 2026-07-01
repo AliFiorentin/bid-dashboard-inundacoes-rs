@@ -2,6 +2,8 @@ import React from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import type { ValueType } from "recharts/types/component/DefaultTooltipContent";
 import { C, INFRA_COLORS } from "@/lib/constants";
+
+const PANEL_HDR = { background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)" } as const;
 import { compactoBr, countFlag, countEquals } from "@/lib/geo-utils";
 import { BarServico } from "@/components/ui/BarServico";
 import type { DashboardState } from "@/hooks/useDashboard";
@@ -38,18 +40,12 @@ export function TerrenosSection({ dash }: Props) {
 
   return (
     <div>
-      <h3
-        className="text-[11px] font-black uppercase tracking-wider pb-1 mb-2 flex items-center gap-1.5"
-        style={{ color: cor, borderBottom: `1px solid ${C.border}` }}
-      >
-        <span
-          className="w-2.5 h-2.5 rounded-full inline-block shrink-0"
-          style={{ backgroundColor: cor }}
-        />
-        Terrenos
-      </h3>
+      <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg mb-2" style={PANEL_HDR}>
+        <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: cor }} />
+        <h3 className="text-[10px] font-black uppercase tracking-wider text-white">Terrenos</h3>
+      </div>
       {!base || (mostraImpacto && !atg) ? (
-        <p className="text-xs text-center py-2" style={{ color: C.muted }}>
+        <p className="text-xs text-center py-2 text-muted-foreground">
           Carregando...
         </p>
       ) : (
@@ -108,12 +104,9 @@ export function TerrenosSection({ dash }: Props) {
                 </div>
               );
             })()}
-          <h4
-            className="text-[10px] font-bold uppercase tracking-wider pt-2 pb-1 border-t"
-            style={{ color: cor, borderColor: C.border }}
-          >
-            Cobertura de Serviços
-          </h4>
+          <div className="flex items-center px-2.5 py-1 rounded-lg mt-1" style={PANEL_HDR}>
+            <h4 className="text-[9px] font-black uppercase tracking-wider text-white">Cobertura de Serviços</h4>
+          </div>
           {(() => {
             const t = total;
             const items = [

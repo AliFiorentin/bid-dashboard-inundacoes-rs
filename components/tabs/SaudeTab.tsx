@@ -1,18 +1,21 @@
-import React from "react";
+﻿import React from "react";
 import { PieChart, Pie, Label } from "recharts";
 import type { Feature } from "geojson";
 import { ChevronDown } from "lucide-react";
 import { TabsContent } from "@/components/ui/tabs";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
 import { COLORS, DONUT_COLORS, STAFF_COLS, STAFF_LABELS } from "@/lib/constants";
 import { compactoBr, inteiroBr, calcPct } from "@/lib/geo-utils";
 import { KPIRow } from "@/components/KPIRow";
 import { ChartCenterLabel } from "@/components/ChartCenterLabel";
+import { cn } from "@/lib/utils";
 import type { DashboardState } from "@/hooks/useDashboard";
+
+const PANEL_HDR = { background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)" } as const;
+const PANEL_GLASS: React.CSSProperties = {
+  border: "1px solid rgba(5,80,113,0.15)",
+};
 
 interface Props {
   dash: Pick<DashboardState,
@@ -26,16 +29,11 @@ interface Props {
 
 export function SaudeTab({ dash }: Props) {
   const {
-    metricasSau,
-    mostraImpacto,
-    isVisaoGeral,
+    metricasSau, mostraImpacto, isVisaoGeral,
     atingidosSaude,
-    showListaHospitais,
-    setShowListaHospitais,
-    showListaUBS,
-    setShowListaUBS,
-    showListaAmbulat,
-    setShowListaAmbulat,
+    showListaHospitais, setShowListaHospitais,
+    showListaUBS, setShowListaUBS,
+    showListaAmbulat, setShowListaAmbulat,
   } = dash;
 
   return (
@@ -61,8 +59,9 @@ export function SaudeTab({ dash }: Props) {
 
         return (
           <>
-            <h3 className="text-xs font-black text-muted-foreground uppercase tracking-wider mt-2 mb-1 pb-1">Unidades por Tipo</h3>
-            <Separator className="mb-2" />
+            <div className="flex items-center px-2.5 py-1.5 rounded-lg mb-3 mt-2" style={PANEL_HDR}>
+              <h3 className="text-[10px] font-black uppercase tracking-wider text-white">Unidades por Tipo</h3>
+            </div>
             <ChartContainer config={chartConfig} className="aspect-auto h-[170px] w-full" initialDimension={{ width: 320, height: 170 }}>
               <PieChart>
                 <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
@@ -105,15 +104,15 @@ export function SaudeTab({ dash }: Props) {
                   const lista = feats.map((f: Feature) => { const p = f.properties as Record<string, unknown>; return String(p?.no_fantasia || p?.no_razao_social || "").trim(); }).filter(Boolean).sort((a: string, b: string) => a.localeCompare(b, "pt-BR"));
                   if (lista.length === 0) return null;
                   return (
-                    <Collapsible key={tipoKey} open={cfg.state} onOpenChange={() => cfg.setState(p => !p)}>
+                    <Collapsible key={tipoKey} open={cfg.state} onOpenChange={() => cfg.setState(p => !p)} className="rounded-lg overflow-hidden">
                       <CollapsibleTrigger asChild>
-                        <Button variant="outline" size="sm" className="w-full justify-between text-[10px] font-bold">
+                        <button className="w-full flex items-center justify-between px-3 py-2 text-[10px] font-bold text-white" style={PANEL_HDR}>
                           <span>{cfg.label} ({lista.length})</span>
-                          <ChevronDown className={cn("h-3 w-3 transition-transform", cfg.state && "rotate-180")} />
-                        </Button>
+                          <ChevronDown className={cn("h-3 w-3 transition-transform shrink-0", cfg.state && "rotate-180")} />
+                        </button>
                       </CollapsibleTrigger>
                       <CollapsibleContent>
-                        <div className="flex flex-col gap-0.5 mt-1 max-h-44 overflow-y-auto rounded-lg p-1.5 bg-muted/50 border">
+                        <div className="flex flex-col gap-0.5 max-h-44 overflow-y-auto p-1.5" style={PANEL_GLASS}>
                           {lista.map((nome: string, i: number) => (
                             <span key={i} className="text-[10px] px-1.5 py-0.5 rounded text-muted-foreground" title={nome}>{nome}</span>
                           ))}
@@ -127,8 +126,9 @@ export function SaudeTab({ dash }: Props) {
           </>
         );
       })()}
-      <h3 className="text-xs font-black text-muted-foreground uppercase tracking-wider mt-2 mb-2 pb-1">Profissionais</h3>
-      <Separator className="mb-2" />
+      <div className="flex items-center px-2.5 py-1.5 rounded-lg mt-2 mb-2" style={PANEL_HDR}>
+        <h3 className="text-[10px] font-black uppercase tracking-wider text-white">Profissionais de Saúde</h3>
+      </div>
       {(() => {
         const totalBase = STAFF_COLS.reduce((s, c) => s + (metricasSau.base.staff[c] ?? 0), 0);
         const totalAtg  = STAFF_COLS.reduce((s, c) => s + (metricasSau.impacto.staff[c] ?? 0), 0);
@@ -176,7 +176,6 @@ export function SaudeTab({ dash }: Props) {
           </div>
         );
       })()}
-      <Separator className="mt-2" />
       <p className="text-[10px] italic pt-2 text-muted-foreground">Fonte: CNES — Cadastro Nacional de Estabelecimentos de Saúde</p>
     </TabsContent>
   );

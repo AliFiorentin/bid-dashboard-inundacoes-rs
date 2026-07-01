@@ -1,5 +1,7 @@
 import React from "react";
-import { C, INFRA_COLORS } from "@/lib/constants";
+import { INFRA_COLORS } from "@/lib/constants";
+
+const PANEL_HDR = { background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)" } as const;
 import { compactoBr, calcPct } from "@/lib/geo-utils";
 import { KPIRow } from "@/components/KPIRow";
 import type { DashboardState } from "@/hooks/useDashboard";
@@ -19,18 +21,12 @@ export function QuadrasSection({ dash }: Props) {
 
   return (
     <div>
-      <h3
-        className="text-[11px] font-black uppercase tracking-wider pb-1 mb-2 flex items-center gap-1.5"
-        style={{ color: cor, borderBottom: `1px solid ${C.border}` }}
-      >
-        <span
-          className="w-2.5 h-2.5 rounded-full inline-block shrink-0"
-          style={{ backgroundColor: cor }}
-        />
-        Quadras
-      </h3>
+      <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg mb-2" style={PANEL_HDR}>
+        <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: cor }} />
+        <h3 className="text-[10px] font-black uppercase tracking-wider text-white">Quadras</h3>
+      </div>
       {!base || (mostraImpacto && !atg) ? (
-        <p className="text-xs text-center py-2" style={{ color: C.muted }}>
+        <p className="text-xs text-center py-2 text-muted-foreground">
           Carregando...
         </p>
       ) : (

@@ -1,5 +1,6 @@
-import React from "react";
-import { C, COLORS, INFRA_COLORS } from "@/lib/constants";
+﻿import React from "react";
+import { ChevronDown } from "lucide-react";
+import { INFRA_COLORS } from "@/lib/constants";
 import {
   compactoBr,
   calcPct,
@@ -9,7 +10,13 @@ import {
   getRuasListPOA,
 } from "@/lib/geo-utils";
 import { KPIRow } from "@/components/KPIRow";
+import { cn } from "@/lib/utils";
 import type { DashboardState } from "@/hooks/useDashboard";
+
+const PANEL_HDR = { background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)" } as const;
+const PANEL_GLASS: React.CSSProperties = {
+  border: "1px solid rgba(5,80,113,0.15)",
+};
 
 interface Props {
   infraNome: string;
@@ -30,7 +37,7 @@ export function GenericInfraSection({ infraNome, dash }: Props) {
   const atingido = atingidosInfra[infraNome];
   const totalBase = base?.features?.length ?? 0;
   const totalAtg  = atingido?.features?.length ?? 0;
-  const cor = INFRA_COLORS[infraNome] ?? COLORS.infra;
+  const cor = INFRA_COLORS[infraNome] ?? "#f59e0b";
   const baseF = base?.features ?? [];
   const atgF  = atingido?.features ?? [];
 
@@ -77,20 +84,14 @@ export function GenericInfraSection({ infraNome, dash }: Props) {
 
   return (
     <div key={infraNome}>
-      <h3
-        className="text-[11px] font-black uppercase tracking-wider pb-1 mb-2 flex items-center gap-1.5"
-        style={{ color: cor, borderBottom: `1px solid ${C.border}` }}
-      >
-        <span
-          className="w-2.5 h-2.5 rounded-full inline-block shrink-0"
-          style={{ backgroundColor: cor }}
-        />
-        {infraNome}
-      </h3>
+      {/* Section header */}
+      <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg mb-2" style={PANEL_HDR}>
+        <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: cor }} />
+        <h3 className="text-[10px] font-black uppercase tracking-wider text-white">{infraNome}</h3>
+      </div>
+
       {!base ? (
-        <p className="text-xs text-center py-2" style={{ color: C.muted }}>
-          Carregando...
-        </p>
+        <p className="text-xs text-center py-2 text-muted-foreground">Carregando...</p>
       ) : (
         <div className="flex flex-col gap-2">
           <KPIRow
@@ -98,11 +99,7 @@ export function GenericInfraSection({ infraNome, dash }: Props) {
             cor={cor}
             valor={compactoBr(mostraImpacto ? valAtg : valBase, 0)}
             sub={mostraImpacto ? "Atingidos" : "Total"}
-            delta={
-              mostraImpacto
-                ? `de ${compactoBr(valBase, 0)} (${calcPct(valAtg, valBase)})`
-                : undefined
-            }
+            delta={mostraImpacto ? `de ${compactoBr(valBase, 0)} (${calcPct(valAtg, valBase)})` : undefined}
           />
           {kpi2 && (
             <KPIRow
@@ -110,56 +107,37 @@ export function GenericInfraSection({ infraNome, dash }: Props) {
               cor={cor}
               valor={compactoBr(mostraImpacto ? kpi2.valAtg : kpi2.valBase, 1)}
               sub={mostraImpacto ? "Atingidos" : "Total"}
-              delta={
-                mostraImpacto
-                  ? `de ${compactoBr(kpi2.valBase, 1)} (${calcPct(kpi2.valAtg, kpi2.valBase)})`
-                  : undefined
-              }
+              delta={mostraImpacto ? `de ${compactoBr(kpi2.valBase, 1)} (${calcPct(kpi2.valAtg, kpi2.valBase)})` : undefined}
             />
           )}
-          {infraNome === "Eixos Logradouros" &&
-            mostraImpacto &&
-            (() => {
-              const lista = getRuasListPOA(atgF);
-              if (!lista.length) return null;
-              return (
-                <>
-                  <button
-                    onClick={() => setShowListaEixos((p) => !p)}
-                    className="w-full flex items-center justify-between text-[10px] font-bold px-2.5 py-1.5 rounded-lg"
-                    style={{
-                      backgroundColor: C.cardBg,
-                      color: C.primary,
-                      border: `1px solid ${C.border}`,
-                    }}
+          {infraNome === "Eixos Logradouros" && mostraImpacto && (() => {
+            const lista = getRuasListPOA(atgF);
+            if (!lista.length) return null;
+            return (
+              <div className="rounded-lg overflow-hidden">
+                <button
+                  onClick={() => setShowListaEixos((p) => !p)}
+                  className="w-full flex items-center justify-between px-3 py-2 text-[10px] font-bold text-white"
+                  style={PANEL_HDR}
+                >
+                  <span>Ruas Atingidas ({lista.length})</span>
+                  <ChevronDown className={cn("h-3 w-3 transition-transform shrink-0", showListaEixos && "rotate-180")} />
+                </button>
+                {showListaEixos && (
+                  <div
+                    className="flex flex-col gap-0.5 max-h-52 overflow-y-auto p-1.5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#055071] [&::-webkit-scrollbar-thumb]:rounded-full"
+                    style={{ ...PANEL_GLASS, scrollbarColor: "#055071 transparent" }}
                   >
-                    <span>Ruas Atingidas ({lista.length})</span>
-                    <span style={{ fontSize: 9 }}>{showListaEixos ? "▲" : "▼"}</span>
-                  </button>
-                  {showListaEixos && (
-                    <div
-                      className="flex flex-col gap-0.5 max-h-52 overflow-y-auto rounded-lg p-1.5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#055071] [&::-webkit-scrollbar-thumb]:rounded-full"
-                      style={{
-                        backgroundColor: "#ffffff",
-                        border: `1px solid ${C.border}`,
-                        scrollbarColor: "#055071 transparent",
-                      }}
-                    >
-                      {lista.map((label, i) => (
-                        <span
-                          key={i}
-                          className="text-[10px] px-1.5 py-0.5 rounded"
-                          style={{ color: C.muted }}
-                          title={label}
-                        >
-                          {label}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </>
-              );
-            })()}
+                    {lista.map((label, i) => (
+                      <span key={i} className="text-[10px] px-1.5 py-0.5 rounded text-muted-foreground" title={label}>
+                        {label}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
         </div>
       )}
     </div>

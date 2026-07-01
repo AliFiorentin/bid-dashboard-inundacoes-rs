@@ -80,16 +80,25 @@ export function DashboardMap({ dash }: Props) {
           </Popup>
         )}
 
-        {limitePA && (
-          <Source id="limite-poa" type="geojson" data={limitePA}>
-            <Layer id="limite-poa-line" type="line" paint={{ "line-color": "#055071", "line-width": 2, "line-opacity": 0.7, "line-dasharray": [4, 3] }} />
-          </Source>
-        )}
-
+        {/* 1. Manchas — primeiro (base da pilha) */}
         {isVisaoGeral && manchaRS && showMancha && (
           <Source id="mancha-rs" type="geojson" data={manchaRS}>
             <Layer id="mancha-rs-fill" type="fill" paint={{ "fill-color": COLORS.cenario, "fill-opacity": 0.22 }} />
             <Layer id="mancha-rs-line" type="line" paint={{ "line-color": COLORS.cenario, "line-width": 1.5, "line-opacity": 0.7 }} />
+          </Source>
+        )}
+
+        {manchaCenario && !isVisaoGeral && showMancha && (
+          <Source id="cenario" type="geojson" data={manchaCenario}>
+            <Layer id="cenario-fill" type="fill" paint={{ "fill-color": COLORS.cenario, "fill-opacity": 0.18 }} />
+            <Layer id="cenario-line" type="line" paint={{ "line-color": COLORS.cenario, "line-width": 2, "line-opacity": 0.8 }} />
+          </Source>
+        )}
+
+        {/* 2. Limite, Agricultura, Infraestrutura */}
+        {limitePA && (
+          <Source id="limite-poa" type="geojson" data={limitePA}>
+            <Layer id="limite-poa-line" type="line" paint={{ "line-color": "#055071", "line-width": 2, "line-opacity": 0.7, "line-dasharray": [4, 3] }} />
           </Source>
         )}
 
@@ -98,7 +107,7 @@ export function DashboardMap({ dash }: Props) {
           if (!agriGeo?.features?.length) return null;
           return (
             <Source id="agricultura-geo" type="geojson" data={agriGeo}>
-              <Layer id="agricultura-fill" beforeId={limitePA ? "limite-poa-line" : undefined} type="fill" paint={{ "fill-color": AGRI_FILL_COLOR, "fill-opacity": 0.65 }} />
+              <Layer id="agricultura-fill" type="fill" paint={{ "fill-color": AGRI_FILL_COLOR, "fill-opacity": 0.65 }} />
             </Source>
           );
         })()}
@@ -111,25 +120,19 @@ export function DashboardMap({ dash }: Props) {
           const dataGeo = cenarioSelecionado
             ? (atingidosInfra[nomeInfra] ?? { type: 'FeatureCollection', features: [] })
             : dadosTotal;
-          const anchorId = undefined;
           return (
             <Source key={srcId} id={srcId} type="geojson" data={dataGeo}>
-              <Layer id={`${srcId}-fill`} beforeId={anchorId} type="fill" filter={['any', ['==', ['geometry-type'], 'Polygon'], ['==', ['geometry-type'], 'MultiPolygon']]} paint={{ 'fill-color': infraCor, 'fill-opacity': 0.25, 'fill-outline-color': infraCor }} />
-              <Layer id={`${srcId}-line`} beforeId={anchorId} type="line" filter={['any', ['==', ['geometry-type'], 'LineString'], ['==', ['geometry-type'], 'MultiLineString']]} paint={{ 'line-color': infraCor, 'line-width': 2.5 }} />
-              <Layer id={`${srcId}-point`} beforeId={anchorId} type="circle" filter={['any', ['==', ['geometry-type'], 'Point'], ['==', ['geometry-type'], 'MultiPoint']]} paint={{ 'circle-color': infraCor, 'circle-radius': 4.5, 'circle-stroke-width': 1.5, 'circle-stroke-color': '#fff' }} />
+              <Layer id={`${srcId}-fill`} beforeId="anchor-pts" type="fill" filter={['any', ['==', ['geometry-type'], 'Polygon'], ['==', ['geometry-type'], 'MultiPolygon']]} paint={{ 'fill-color': infraCor, 'fill-opacity': 0.25, 'fill-outline-color': infraCor }} />
+              <Layer id={`${srcId}-line`} beforeId="anchor-pts" type="line" filter={['any', ['==', ['geometry-type'], 'LineString'], ['==', ['geometry-type'], 'MultiLineString']]} paint={{ 'line-color': infraCor, 'line-width': 2.5 }} />
+              <Layer id={`${srcId}-point`} beforeId="anchor-pts" type="circle" filter={['any', ['==', ['geometry-type'], 'Point'], ['==', ['geometry-type'], 'MultiPoint']]} paint={{ 'circle-color': infraCor, 'circle-radius': 4.5, 'circle-stroke-width': 1.5, 'circle-stroke-color': '#fff' }} />
             </Source>
           );
         })}
 
-        {manchaCenario && !isVisaoGeral && showMancha && (() => {
-          const aboveCenario = undefined;
-          return (
-            <Source id="cenario" type="geojson" data={manchaCenario}>
-              <Layer id="cenario-fill" beforeId={aboveCenario} type="fill" paint={{ "fill-color": COLORS.cenario, "fill-opacity": 0.18 }} />
-              <Layer id="cenario-line" beforeId={aboveCenario} type="line" paint={{ "line-color": COLORS.cenario, "line-width": 2, "line-opacity": 0.8 }} />
-            </Source>
-          );
-        })()}
+        {/* Âncora permanente: garante que Infra fique sempre abaixo dos pontos, independente do timing */}
+        <Source id="anchor-src" type="geojson" data={{ type: 'FeatureCollection' as const, features: [] }}>
+          <Layer id="anchor-pts" type="circle" paint={{ 'circle-radius': 0, 'circle-opacity': 0 }} />
+        </Source>
 
         {camadas.includes("Empresas") && renderEmp?.features && (
           <Source id="empresas" type="geojson" data={renderEmp} cluster={true} clusterMaxZoom={14} clusterRadius={40}>

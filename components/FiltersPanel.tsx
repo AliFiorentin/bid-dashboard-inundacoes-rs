@@ -4,7 +4,7 @@ import React from "react";
 import { SlidersHorizontal } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { COLORS } from "@/lib/constants";
+import { COLORS, CNAE_LABELS } from "@/lib/constants";
 import type { DashboardState } from "@/hooks/useDashboard";
 
 interface FiltersPanelProps {
@@ -43,7 +43,7 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="(todos)">(todos)</SelectItem>
-                  {setoresUnicos.map((s: string) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                  {setoresUnicos.map((s: string) => <SelectItem key={s} value={s}>{CNAE_LABELS[s] ?? s}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>

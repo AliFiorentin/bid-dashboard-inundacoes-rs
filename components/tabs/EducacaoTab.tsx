@@ -1,18 +1,21 @@
-import React from "react";
+﻿import React from "react";
 import { PieChart, Pie, Label } from "recharts";
 import type { Feature } from "geojson";
 import { ChevronDown } from "lucide-react";
 import { TabsContent } from "@/components/ui/tabs";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { COLORS, DONUT_COLORS, normalizeDep } from "@/lib/constants";
 import { compactoBr, inteiroBr, calcPct } from "@/lib/geo-utils";
 import { KPIRow } from "@/components/KPIRow";
 import { ChartCenterLabel } from "@/components/ChartCenterLabel";
 import { cn } from "@/lib/utils";
 import type { DashboardState } from "@/hooks/useDashboard";
+
+const PANEL_HDR = { background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)" } as const;
+const PANEL_GLASS: React.CSSProperties = {
+  border: "1px solid rgba(5,80,113,0.15)",
+};
 
 interface Props {
   dash: Pick<DashboardState,
@@ -25,13 +28,9 @@ interface Props {
 
 export function EducacaoTab({ dash }: Props) {
   const {
-    metricasEdu,
-    mostraImpacto,
-    isVisaoGeral,
-    atingidosEducacao,
-    baseEducacao,
-    showListaEscolas,
-    setShowListaEscolas,
+    metricasEdu, mostraImpacto, isVisaoGeral,
+    atingidosEducacao, baseEducacao,
+    showListaEscolas, setShowListaEscolas,
     professoresDepChart,
   } = dash;
 
@@ -64,8 +63,9 @@ export function EducacaoTab({ dash }: Props) {
 
         return (
           <>
-            <h3 className="text-xs font-black text-slate-700 uppercase tracking-wider mb-1">Escolas</h3>
-            <Separator className="mb-2" />
+            <div className="flex items-center px-2.5 py-1.5 rounded-lg mb-3" style={PANEL_HDR}>
+              <h3 className="text-[10px] font-black uppercase tracking-wider text-white">Escolas por Dependência</h3>
+            </div>
             <ChartContainer config={escolasConfig} className="aspect-auto h-[160px] w-full" initialDimension={{ width: 320, height: 160 }}>
               <PieChart>
                 <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
@@ -102,15 +102,15 @@ export function EducacaoTab({ dash }: Props) {
               ))}
             </div>
             {lista.length > 0 && (
-              <Collapsible open={showListaEscolas} onOpenChange={() => setShowListaEscolas(p => !p)} className="mb-2">
+              <Collapsible open={showListaEscolas} onOpenChange={() => setShowListaEscolas(p => !p)} className="mb-2 rounded-lg overflow-hidden">
                 <CollapsibleTrigger asChild>
-                  <Button variant="outline" size="sm" className="w-full justify-between text-[10px] font-bold">
+                  <button className="w-full flex items-center justify-between px-3 py-2 text-[10px] font-bold text-white" style={PANEL_HDR}>
                     <span>Escolas Atingidas ({lista.length})</span>
-                    <ChevronDown className={cn("h-3 w-3 transition-transform", showListaEscolas && "rotate-180")} />
-                  </Button>
+                    <ChevronDown className={cn("h-3 w-3 transition-transform shrink-0", showListaEscolas && "rotate-180")} />
+                  </button>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                  <div className="flex flex-col gap-0.5 mt-1 max-h-52 overflow-y-auto rounded-lg p-1.5 bg-muted/50 border">
+                  <div className="flex flex-col gap-0.5 max-h-52 overflow-y-auto p-1.5" style={PANEL_GLASS}>
                     {lista.map((nome: string, i: number) => (
                       <span key={i} className="text-[10px] px-1.5 py-0.5 rounded text-muted-foreground" title={nome}>{nome}</span>
                     ))}
@@ -125,23 +125,27 @@ export function EducacaoTab({ dash }: Props) {
         <KPIRow titulo="Profissionais" cor={COLORS.educacao} valor={compactoBr(mostraImpacto ? metricasEdu.impacto.prof : metricasEdu.base.prof, 0)} sub={mostraImpacto ? "Atingidos" : "Total"} delta={mostraImpacto ? `de ${compactoBr(metricasEdu.base.prof, 0)} (${calcPct(metricasEdu.impacto.prof, metricasEdu.base.prof)})` : undefined} />
         <KPIRow titulo="Docentes" cor={COLORS.educacao} valor={compactoBr(mostraImpacto ? metricasEdu.impacto.doc : metricasEdu.base.doc, 0)} sub={mostraImpacto ? "Atingidos" : "Total"} delta={mostraImpacto ? `de ${compactoBr(metricasEdu.base.doc, 0)} (${calcPct(metricasEdu.impacto.doc, metricasEdu.base.doc)})` : undefined} />
         {professoresDepChart.length > 0 && (
-          <div className="flex flex-col gap-1 px-1 py-2 bg-muted/30 rounded-lg border -mt-1 mb-1">
-            <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground mb-0.5">Professores por Dependência</span>
-            {professoresDepChart.map(({ dep, base, atg }) => {
-              const pct = base > 0 ? Math.round(atg / base * 100) : 0;
-              return (
-                <div key={dep} className="flex items-center gap-1.5">
-                  <span className="text-[9px] w-14 shrink-0 text-muted-foreground">{dep}</span>
-                  <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
-                    <div className="h-full rounded-full bg-green-600" style={{ width: `${mostraImpacto ? pct : 100}%` }} />
+          <div className="rounded-lg overflow-hidden -mt-1 mb-1">
+            <div className="flex items-center px-2.5 py-1.5" style={PANEL_HDR}>
+              <span className="text-[10px] font-black uppercase tracking-wider text-white">Professores por Dependência</span>
+            </div>
+            <div className="flex flex-col gap-1 px-2.5 py-2" style={PANEL_GLASS}>
+              {professoresDepChart.map(({ dep, base, atg }) => {
+                const pct = base > 0 ? Math.round(atg / base * 100) : 0;
+                return (
+                  <div key={dep} className="flex items-center gap-1.5">
+                    <span className="text-[9px] w-14 shrink-0 text-muted-foreground">{dep}</span>
+                    <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                      <div className="h-full rounded-full bg-green-600" style={{ width: `${mostraImpacto ? pct : 100}%` }} />
+                    </div>
+                    <span className="text-[9px] font-bold tabular-nums text-foreground w-16 text-right shrink-0">
+                      {mostraImpacto ? `${inteiroBr(atg)}/${inteiroBr(base)}` : inteiroBr(base)}{" "}
+                      {mostraImpacto && <span className="text-muted-foreground font-normal">({pct}%)</span>}
+                    </span>
                   </div>
-                  <span className="text-[9px] font-bold tabular-nums text-foreground w-16 text-right shrink-0">
-                    {mostraImpacto ? `${inteiroBr(atg)}/${inteiroBr(base)}` : inteiroBr(base)}{" "}
-                    {mostraImpacto && <span className="text-muted-foreground font-normal">({pct}%)</span>}
-                  </span>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         )}
       </div>
@@ -164,8 +168,9 @@ export function EducacaoTab({ dash }: Props) {
 
         return (
           <>
-            <h3 className="text-xs font-black text-slate-700 uppercase tracking-wider mt-4 mb-1">Matriculas</h3>
-            <Separator className="mb-2" />
+            <div className="flex items-center px-2.5 py-1.5 rounded-lg mt-3 mb-3" style={PANEL_HDR}>
+              <h3 className="text-[10px] font-black uppercase tracking-wider text-white">Matrículas por Nível</h3>
+            </div>
             <ChartContainer config={alunosConfig} className="aspect-auto h-[170px] w-full" initialDimension={{ width: 320, height: 170 }}>
               <PieChart>
                 <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
@@ -204,7 +209,6 @@ export function EducacaoTab({ dash }: Props) {
           </>
         );
       })()}
-      <Separator className="mt-2" />
       <p className="text-[10px] italic mt-2 text-muted-foreground">Fonte: IBGE — Censo Escolar</p>
     </TabsContent>
   );

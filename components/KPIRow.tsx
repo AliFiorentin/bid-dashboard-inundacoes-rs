@@ -1,6 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-
 interface KPIRowProps {
   titulo: string;
   valor: string | number;
@@ -11,23 +8,34 @@ interface KPIRowProps {
 
 export function KPIRow({ titulo, valor, sub, delta, cor }: KPIRowProps) {
   return (
-    <Card
-      size="sm"
-      className="py-0 gap-0 print:break-inside-avoid"
-      style={{ borderLeftWidth: 3, borderLeftColor: cor ?? "#055071" }}
+    <div
+      className="rounded-lg overflow-hidden print:break-inside-avoid"
+      style={{
+        border: "1px solid rgba(5,80,113,0.15)",
+      }}
     >
-      <CardContent className="flex items-center justify-between gap-3 p-3">
+      <div
+        className="flex items-center px-3 py-1.5"
+        style={{
+          background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)",
+          borderLeft: `3px solid ${cor ?? "rgba(255,255,255,0.4)"}`,
+        }}
+      >
+        <span className="text-[10px] font-black uppercase tracking-wider text-white leading-none">
+          {titulo}
+        </span>
+      </div>
+      <div className="flex items-center justify-between gap-3 px-3 py-2.5">
         <div className="flex flex-col min-w-0">
-          <span className="text-[11px] font-bold uppercase tracking-wider leading-tight text-muted-foreground">{titulo}</span>
-          <span className="text-[10px] leading-none mt-0.5 text-muted-foreground/60">{sub}</span>
+          <span className="text-[10px] leading-none text-muted-foreground">{sub}</span>
           {delta && (
-            <Badge variant="outline" className="mt-1.5 text-[9px] font-semibold w-fit">
-              {delta}
-            </Badge>
+            <span className="mt-1 text-[9px] font-medium text-muted-foreground">{delta}</span>
           )}
         </div>
-        <span className="text-2xl font-black shrink-0 leading-none text-card-foreground">{valor}</span>
-      </CardContent>
-    </Card>
+        <span className="text-2xl font-black shrink-0 leading-none" style={{ color: "#022536" }}>
+          {valor}
+        </span>
+      </div>
+    </div>
   );
 }

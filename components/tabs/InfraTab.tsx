@@ -51,8 +51,8 @@ export function InfraTab({ dash }: Props) {
     >
       {disponiveis.length > 0 && (
         <div
-          className="flex flex-wrap gap-1.5 mb-4 p-2.5 rounded-lg border"
-          style={{ backgroundColor: "#f0f7fa", borderColor: C.border }}
+          className="flex flex-wrap gap-1.5 mb-4 p-2.5 rounded-lg"
+          style={{ backgroundColor: "rgba(255,255,255,0.38)", backdropFilter: "saturate(160%) blur(10px)", WebkitBackdropFilter: "saturate(160%) blur(10px)", border: "0.5px solid rgba(255,255,255,0.55)" }}
         >
           <span
             className="w-full text-[9px] font-black uppercase tracking-wider mb-0.5"
