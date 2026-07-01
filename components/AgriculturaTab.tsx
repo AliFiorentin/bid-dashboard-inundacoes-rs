@@ -15,6 +15,7 @@ import {
   C, AGRI_COLORS, CENARIO_PERIODO, IMPACTO_AGRICOLA, MUNICIPIOS,
 } from "@/lib/constants";
 import { scenarioSlug } from "@/lib/geo-utils";
+import { ChartCenterLabel } from "@/components/ChartCenterLabel";
 
 interface ConabStats {
   soja: { area_ha: number };
@@ -174,18 +175,17 @@ export function AgriculturaTab({
             <Pie data={pieData} cx="50%" cy="50%" innerRadius={48} outerRadius={72} dataKey="value" nameKey="key" strokeWidth={5}>
               <Label
                 content={({ viewBox }) => {
-                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                  if (viewBox && "cx" in viewBox && "cy" in viewBox && viewBox.cx != null && viewBox.cy != null) {
                     return (
-                      <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
-                        <tspan x={viewBox.cx} y={viewBox.cy} className="fill-foreground text-xl font-black">
-                          {haTotal.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
-                        </tspan>
-                        <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 18} className="fill-muted-foreground text-[10px]">
-                          {isCenarioAtivo
-                            ? `${haTotalBase > 0 ? (haTotal / haTotalBase * 100).toFixed(1) : "0,0"}% de ${haTotalBase.toLocaleString("pt-BR", { maximumFractionDigits: 0 })} ha`
-                            : "ha"}
-                        </tspan>
-                      </text>
+                      <ChartCenterLabel
+                        cx={viewBox.cx}
+                        cy={viewBox.cy}
+                        bigSize="text-xl"
+                        big={haTotal.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
+                        small={isCenarioAtivo
+                          ? `de ${haTotalBase.toLocaleString("pt-BR", { maximumFractionDigits: 0 })} ha (${haTotalBase > 0 ? (haTotal / haTotalBase * 100).toFixed(1) : "0,0"}%)`
+                          : "ha"}
+                      />
                     );
                   }
                 }}

@@ -9,8 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { COLORS, DONUT_COLORS, STAFF_COLS, STAFF_LABELS } from "@/lib/constants";
-import { compactoBr, calcPct } from "@/lib/geo-utils";
+import { compactoBr, inteiroBr, calcPct } from "@/lib/geo-utils";
 import { KPIRow } from "@/components/KPIRow";
+import { ChartCenterLabel } from "@/components/ChartCenterLabel";
 import type { DashboardState } from "@/hooks/useDashboard";
 
 interface Props {
@@ -46,14 +47,16 @@ export function SaudeTab({ dash }: Props) {
           "Ambulatório":             { label: "Ambulatórios",               state: showListaAmbulat,   setState: setShowListaAmbulat },
         };
         const srcFeats = atingidosSaude?.features ?? [];
-        const tipos = mostraImpacto ? metricasSau.impacto.tipos : metricasSau.base.tipos;
+        const baseTipos = metricasSau.base.tipos;
+        const atgTipos = metricasSau.impacto.tipos;
         const chartConfig: ChartConfig = {};
-        const pieData = Object.entries(tipos).filter(([, v]) => (v as number) > 0).sort((a, b) => (b[1] as number) - (a[1] as number)).map(([name, value], i) => {
+        const pieData = Object.entries(baseTipos).filter(([, v]) => (v as number) > 0).sort((a, b) => (b[1] as number) - (a[1] as number)).map(([name, value], i) => {
           const key = `h${i}`;
           chartConfig[key] = { label: name, color: DONUT_COLORS[i % DONUT_COLORS.length] };
-          return { key, name, value: value as number, fill: `var(--color-h${i})` };
+          return { key, name, value: value as number, atg: (atgTipos[name] as number) ?? 0, fill: `var(--color-h${i})` };
         });
-        const totalU = pieData.reduce((s, d) => s + d.value, 0);
+        const totalBase = pieData.reduce((s, d) => s + d.value, 0);
+        const totalAtg = pieData.reduce((s, d) => s + d.atg, 0);
         if (pieData.length === 0) return null;
 
         return (
@@ -66,16 +69,14 @@ export function SaudeTab({ dash }: Props) {
                 <Pie data={pieData} cx="50%" cy="50%" innerRadius={50} outerRadius={76} dataKey="value" nameKey="key" strokeWidth={5}>
                   <Label
                     content={({ viewBox }) => {
-                      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                      if (viewBox && "cx" in viewBox && "cy" in viewBox && viewBox.cx != null && viewBox.cy != null) {
                         return (
-                          <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
-                            <tspan x={viewBox.cx} y={viewBox.cy} className="fill-foreground text-2xl font-black">
-                              {totalU}
-                            </tspan>
-                            <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 18} className="fill-muted-foreground text-[10px]">
-                              {mostraImpacto ? `${Math.round(totalU / metricasSau.base.unidades * 100)}% de ${metricasSau.base.unidades}` : "unidades"}
-                            </tspan>
-                          </text>
+                          <ChartCenterLabel
+                            cx={viewBox.cx}
+                            cy={viewBox.cy}
+                            big={mostraImpacto ? inteiroBr(totalAtg) : inteiroBr(totalBase)}
+                            small={mostraImpacto ? `de ${inteiroBr(totalBase)} (${totalBase > 0 ? Math.round(totalAtg / totalBase * 100) : 0}%)` : "unidades"}
+                          />
                         );
                       }
                     }}
@@ -88,8 +89,12 @@ export function SaudeTab({ dash }: Props) {
                 <div key={d.name} className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length] }} />
                   <span className="text-xs flex-1 truncate text-muted-foreground" title={d.name}>{d.name}</span>
-                  <span className="text-xs font-bold tabular-nums text-foreground">{d.value}</span>
-                  <span className="text-xs w-9 text-right tabular-nums text-muted-foreground">{Math.round(d.value / totalU * 100)}%</span>
+                  <span className="text-xs font-bold tabular-nums text-foreground">
+                    {mostraImpacto ? `${inteiroBr(d.atg)}/${inteiroBr(d.value)}` : inteiroBr(d.value)}
+                  </span>
+                  <span className="text-xs w-9 text-right tabular-nums text-muted-foreground">
+                    {mostraImpacto ? `${d.value > 0 ? Math.round(d.atg / d.value * 100) : 0}%` : `${Math.round(d.value / totalBase * 100)}%`}
+                  </span>
                 </div>
               ))}
             </div>
@@ -146,25 +151,28 @@ export function SaudeTab({ dash }: Props) {
           .sort((a, b) => b.base - a.base);
         return (
           <div className="flex flex-col gap-1.5 pb-2 mt-2">
-            {staffData.map((d, i) => (
-              <div key={d.name} className="flex items-center gap-2">
-                <span className="text-[10px] w-20 shrink-0 truncate text-muted-foreground" title={d.name}>{d.name}</span>
-                <div className="flex-1 rounded-full h-2.5 overflow-hidden bg-muted">
-                  <div className="h-full rounded-full" style={{
-                    width: mostraImpacto
-                      ? `${d.base > 0 ? Math.min((d.atg / d.base) * 100, 100) : 0}%`
-                      : `${staffData[0]?.base > 0 ? (d.base / staffData[0].base) * 100 : 0}%`,
-                    backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length],
-                  }} />
+            {staffData.map((d, i) => {
+              const pct = d.base > 0 ? Math.round(d.atg / d.base * 100) : 0;
+              return (
+                <div key={d.name} className="flex items-center gap-2">
+                  <span className="text-[10px] w-20 shrink-0 truncate text-muted-foreground" title={d.name}>{d.name}</span>
+                  <div className="flex-1 rounded-full h-2.5 overflow-hidden bg-muted">
+                    <div className="h-full rounded-full" style={{
+                      width: mostraImpacto
+                        ? `${Math.min(pct, 100)}%`
+                        : `${staffData[0]?.base > 0 ? (d.base / staffData[0].base) * 100 : 0}%`,
+                      backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length],
+                    }} />
+                  </div>
+                  <span className="text-[10px] font-bold tabular-nums w-20 text-right shrink-0 text-foreground">
+                    {mostraImpacto ? `${inteiroBr(d.atg)}/${inteiroBr(d.base)}` : inteiroBr(d.base)}
+                    {mostraImpacto && d.base > 0 && (
+                      <span className="text-muted-foreground font-normal ml-0.5">({pct}%)</span>
+                    )}
+                  </span>
                 </div>
-                <span className="text-[10px] font-bold tabular-nums w-14 text-right shrink-0 text-foreground">
-                  {compactoBr(mostraImpacto ? d.atg : d.base, 0)}
-                  {mostraImpacto && d.base > 0 && (
-                    <span className="text-muted-foreground font-normal ml-0.5">({Math.round(d.atg / d.base * 100)}%)</span>
-                  )}
-                </span>
-              </div>
-            ))}
+              );
+            })}
           </div>
         );
       })()}

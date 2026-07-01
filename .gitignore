@@ -58,3 +58,4 @@ Thumbs.db
 # Arquivos temporários / gerados localmente
 lista_arquivos.txt
 test-merge.ts
+graphify-out/

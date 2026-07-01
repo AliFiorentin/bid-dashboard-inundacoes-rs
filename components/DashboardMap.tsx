@@ -2,8 +2,8 @@
 import React from "react";
 import Map, { Source, Layer, NavigationControl, Popup } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { COLORS, INFRA_COLORS, AGRI_BOUNDS, MUNICIPIO_VIEW } from "@/lib/constants";
-import { slugify, scenarioSlug } from "@/lib/geo-utils";
+import { COLORS, INFRA_COLORS, AGRI_BOUNDS, AGRI_COLORS, MUNICIPIO_VIEW } from "@/lib/constants";
+import { slugify } from "@/lib/geo-utils";
 import { MapPopup } from "@/components/MapPopup";
 import type { DashboardState } from "@/hooks/useDashboard";
 
@@ -34,9 +34,18 @@ export function DashboardMap({ dash }: Props) {
     renderEmp,
     renderEdu,
     renderSau,
+    baseAgriGeo,
+    atingidosAgriGeo,
     interactiveLayerIds,
     handleMapClick,
   } = dash;
+
+  const AGRI_FILL_COLOR = [
+    "match", ["get", "cultura"],
+    ...Object.entries(AGRI_COLORS).flatMap(([cultura, cor]) => [cultura, cor]),
+    "#6B8E23",
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ] as any;
 
   return (
     <div className="absolute inset-0 z-0">
@@ -85,13 +94,11 @@ export function DashboardMap({ dash }: Props) {
         )}
 
         {camadas.includes("Agricultura") && municipio === renderMunicipio && renderMunicipio !== "Visão Geral RS" && AGRI_BOUNDS[renderMunicipio] && (() => {
-          const munSlug = slugify(renderMunicipio);
-          const agriUrl = isCenarioAtivo && cenario !== "(nenhum)"
-            ? `/dados_convertidos/${munSlug}/cenarios/agricultura_raster_${scenarioSlug(renderMunicipio, cenario)}.png`
-            : `/dados_convertidos/${munSlug}/agricultura_BASE.png`;
+          const agriGeo = isCenarioAtivo ? atingidosAgriGeo : baseAgriGeo;
+          if (!agriGeo?.features?.length) return null;
           return (
-            <Source key={`agri-${agriUrl}`} id="agricultura-raster" type="image" url={agriUrl} coordinates={AGRI_BOUNDS[renderMunicipio]}>
-              <Layer id="agricultura-raster-layer" beforeId={limitePA ? "limite-poa-line" : undefined} type="raster" paint={{ "raster-opacity": 0.82 }} />
+            <Source id="agricultura-geo" type="geojson" data={agriGeo}>
+              <Layer id="agricultura-fill" beforeId={limitePA ? "limite-poa-line" : undefined} type="fill" paint={{ "fill-color": AGRI_FILL_COLOR, "fill-opacity": 0.65 }} />
             </Source>
           );
         })()}
@@ -104,11 +111,7 @@ export function DashboardMap({ dash }: Props) {
           const dataGeo = cenarioSelecionado
             ? (atingidosInfra[nomeInfra] ?? { type: 'FeatureCollection', features: [] })
             : dadosTotal;
-          const anchorId = limitePA ? "limite-poa-line"
-            : camadas.includes("Empresas") && renderEmp?.features ? "empresas-cluster"
-            : camadas.includes("Educação") && renderEdu?.features ? "educacao-cluster"
-            : camadas.includes("Saúde")   && renderSau?.features ? "saude-cluster"
-            : undefined;
+          const anchorId = undefined;
           return (
             <Source key={srcId} id={srcId} type="geojson" data={dataGeo}>
               <Layer id={`${srcId}-fill`} beforeId={anchorId} type="fill" filter={['any', ['==', ['geometry-type'], 'Polygon'], ['==', ['geometry-type'], 'MultiPolygon']]} paint={{ 'fill-color': infraCor, 'fill-opacity': 0.25, 'fill-outline-color': infraCor }} />
@@ -119,12 +122,7 @@ export function DashboardMap({ dash }: Props) {
         })}
 
         {manchaCenario && !isVisaoGeral && showMancha && (() => {
-          const aboveCenario =
-            limitePA                                                        ? "limite-poa-line"   :
-            camadas.includes("Empresas") && renderEmp?.features            ? "empresas-cluster"  :
-            camadas.includes("Educação") && renderEdu?.features            ? "educacao-cluster"  :
-            camadas.includes("Saúde")   && renderSau?.features             ? "saude-cluster"     :
-            undefined;
+          const aboveCenario = undefined;
           return (
             <Source id="cenario" type="geojson" data={manchaCenario}>
               <Layer id="cenario-fill" beforeId={aboveCenario} type="fill" paint={{ "fill-color": COLORS.cenario, "fill-opacity": 0.18 }} />

@@ -94,6 +94,9 @@ export const AGRI_COLORS: Record<string, string> = {
   "Outras Lavouras Temporárias": "#AED581",
 };
 
+// Ano do MapBiomas usado como "atual" para a camada BASE de agricultura (sem cenario ativo)
+export const AGRI_ANO_BASE = 2024;
+
 export const AGRI_BOUNDS: Record<string, [[number,number],[number,number],[number,number],[number,number]]> = {
   "Lajeado":         [[-52.133728,-29.396200],[-51.913281,-29.396200],[-51.913281,-29.501303],[-52.133728,-29.501303]],
   "Eldorado do Sul": [[-51.707387,-29.944082],[-51.256253,-29.944082],[-51.256253,-30.218697],[-51.707387,-30.218697]],

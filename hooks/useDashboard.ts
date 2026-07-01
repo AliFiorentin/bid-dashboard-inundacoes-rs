@@ -4,7 +4,7 @@ import type { MapRef, MapLayerMouseEvent } from "react-map-gl/maplibre";
 import * as XLSX from "xlsx";
 import {
   MUNICIPIOS, CENARIOS_CONFIG, INFRAESTRUTURA_CONFIG, MUNICIPIO_VIEW,
-  AGRI_BOUNDS, CENARIO_PERIODO, IMPACTO_AGRICOLA, INFRA_TAMANHOS_MB,
+  AGRI_BOUNDS, AGRI_ANO_BASE, CENARIO_PERIODO, IMPACTO_AGRICOLA, INFRA_TAMANHOS_MB,
   normalizeDep, PIORES_CENARIOS,
 } from "@/lib/constants";
 import {
@@ -47,6 +47,8 @@ export function useDashboard() {
   const [limitePA, setLimitePA] = useState<FeatureCollection | null>(null);
   const [baseAgriStats, setBaseAgriStats] = useState<Record<string, number> | null>(null);
   const [atingidosAgriStats, setAtingidosAgriStats] = useState<Record<string, number> | null>(null);
+  const [baseAgriGeo, setBaseAgriGeo] = useState<FeatureCollection | null>(null);
+  const [atingidosAgriGeo, setAtingidosAgriGeo] = useState<FeatureCollection | null>(null);
   const [conabStats, setConabStats] = useState<{ soja: { area_ha: number }; arroz: { area_ha: number } } | null>(null);
   const [allMunAgriStats, setAllMunAgriStats] = useState<Record<string, Record<string, number>> | null>(null);
   const [allMunAgriAtingidosStats, setAllMunAgriAtingidosStats] = useState<Record<string, Record<string, number>> | null>(null);
@@ -86,6 +88,7 @@ export function useDashboard() {
     setAtingidosEmpresas(null); setAtingidosEducacao(null); setAtingidosSaude(null);
     setManchaCenario(null); setManchaRS(null); setLimitePA(null);
     setBaseInfra({}); setAtingidosInfra({});
+    setBaseAgriGeo(null); setAtingidosAgriGeo(null);
 
     if (municipio === "Visão Geral RS") {
       const carregarVisaoGeral = async () => {
@@ -156,18 +159,20 @@ export function useDashboard() {
       fetch(`/dados_convertidos/${munSlug}/saude_BASE.geojson`, { signal }).then(r => r.ok ? r.json() : null),
       AGRI_BOUNDS[municipio] ? fetch(`/dados_convertidos/${munSlug}/agricultura_stats_BASE.json`, { signal }).then(r => r.ok ? r.json() : null) : Promise.resolve(null),
       fetch(`/dados_convertidos/${munSlug}/limite_BASE.geojson`, { signal }).then(r => r.ok ? r.json() : null),
+      AGRI_BOUNDS[municipio] ? fetch(`/dados_convertidos/${munSlug}/agricultura_${AGRI_ANO_BASE}_BASE.geojson`, { signal }).then(r => r.ok ? r.json() : null) : Promise.resolve(null),
     ]);
 
     Promise.all([
       basePromises,
       new Promise(res => setTimeout(res, 3000))
-    ]).then(([[emp, edu, sau, agri, limite]]) => {
+    ]).then(([[emp, edu, sau, agri, limite, agriGeo]]) => {
       if (signal.aborted) return;
 
       setRenderMunicipio(municipio);
       setAtingidosInfra({});
       setBaseAgriStats(null); setAtingidosAgriStats(null); setConabStats(null);
       setAllMunAgriStats(null); setAllMunAgriAtingidosStats(null);
+      setBaseAgriGeo(null); setAtingidosAgriGeo(null);
       setFiltroSetor("(todos)"); setFiltroDep("(todas)"); setFiltroTipo("(todas)");
       setBaseInfra({});
 
@@ -198,6 +203,7 @@ export function useDashboard() {
       setBaseEmpresas(emp); setBaseEducacao(edu); setBaseSaude(sau);
       setBaseAgriStats(agri);
       setLimitePA(limite);
+      setBaseAgriGeo(agriGeo);
 
       setIsLoading(false);
     }).catch(e => { if ((e as Error).name !== 'AbortError') console.error(e); });
@@ -211,7 +217,7 @@ export function useDashboard() {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setManchaCenario(null); setAtingidosEmpresas(null); setAtingidosEducacao(null); setAtingidosSaude(null);
       setAtingidosInfra(prev => Object.keys(prev).length === 0 ? prev : {});
-      setAtingidosAgriStats(null); setConabStats(null);
+      setAtingidosAgriStats(null); setConabStats(null); setAtingidosAgriGeo(null);
       return;
     }
 
@@ -245,6 +251,11 @@ export function useDashboard() {
       fetch(`/dados_convertidos/${munSlug}/cenarios/conab_stats_${sSlug}.json`, { signal })
         .then(r => r.ok ? r.json() : null)
         .then(d => { if (!signal.aborted) setConabStats(d); })
+        .catch(e => { if ((e as Error).name !== 'AbortError') console.error(e); });
+
+      fetch(`/dados_convertidos/${munSlug}/cenarios/agricultura_ATINGIDOS_${sSlug}.geojson`, { signal })
+        .then(r => r.ok ? r.json() : null)
+        .then(d => { if (!signal.aborted) setAtingidosAgriGeo(d); })
         .catch(e => { if ((e as Error).name !== 'AbortError') console.error(e); });
     }
 
@@ -391,19 +402,25 @@ export function useDashboard() {
   const temCamadaTabular = camadas.includes("Empresas") || camadas.includes("Educação") || camadas.includes("Saúde") || camadas.includes("Agricultura") || camadas.includes("Infraestrutura");
 
   const setoresChart = useMemo(() => {
-    const src = mostraImpacto ? atingidosEmpresas : baseEmpresas;
-    if (!src?.features) return [] as [string, number][];
-    const counts: Record<string, number> = {};
-    src.features.forEach((f) => {
+    if (!baseEmpresas?.features) return [] as { setor: string; base: number; atg: number }[];
+    const baseCounts: Record<string, number> = {};
+    const atgCounts: Record<string, number> = {};
+    baseEmpresas.features.forEach((f) => {
       const s = String((f.properties as Record<string, unknown>)?.CNAE_2 || '');
-      if (s) counts[s] = (counts[s] || 0) + 1;
+      if (s) baseCounts[s] = (baseCounts[s] || 0) + 1;
     });
-    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]) as [string, number][];
+    (atingidosEmpresas?.features ?? []).forEach((f) => {
+      const s = String((f.properties as Record<string, unknown>)?.CNAE_2 || '');
+      if (s) atgCounts[s] = (atgCounts[s] || 0) + 1;
+    });
+    const sorted = Object.entries(baseCounts).sort((a, b) => b[1] - a[1]);
     const top = sorted.slice(0, 9);
-    const outros = sorted.slice(9).reduce((s, [, c]) => s + c, 0);
-    if (outros > 0) top.push(["Outros", outros]);
-    return top;
-  }, [mostraImpacto, atingidosEmpresas, baseEmpresas]);
+    const outrosBase = sorted.slice(9).reduce((s, [, c]) => s + c, 0);
+    const outrosAtg = sorted.slice(9).reduce((s, [k]) => s + (atgCounts[k] ?? 0), 0);
+    const result = top.map(([setor, base]) => ({ setor, base, atg: atgCounts[setor] ?? 0 }));
+    if (outrosBase > 0) result.push({ setor: "Outros", base: outrosBase, atg: outrosAtg });
+    return result;
+  }, [baseEmpresas, atingidosEmpresas]);
 
   const setoresEmpregadosChart = useMemo(() => {
     const baseFeats = baseEmpresas?.features ?? [];
@@ -571,6 +588,7 @@ export function useDashboard() {
     atingidosEmpresas, atingidosEducacao, atingidosSaude, atingidosInfra,
     manchaCenario, manchaRS, limitePA,
     baseAgriStats, atingidosAgriStats, conabStats,
+    baseAgriGeo, atingidosAgriGeo,
     allMunAgriStats, allMunAgriAtingidosStats,
     cursor, setCursor,
     popupInfo, setPopupInfo,

@@ -1,0 +1,38 @@
+[
+  {
+    "ano": 2023,
+    "cultura": "Soja",
+    "area_ha": 10733.32,
+    "area_pct": 3.59
+  },
+  {
+    "ano": 2023,
+    "cultura": "Arroz",
+    "area_ha": 20551.16,
+    "area_pct": 6.88
+  },
+  {
+    "ano": 2023,
+    "cultura": "Outras Lavouras Temporárias",
+    "area_ha": 13266.92,
+    "area_pct": 4.44
+  },
+  {
+    "ano": 2024,
+    "cultura": "Soja",
+    "area_ha": 10248.55,
+    "area_pct": 3.43
+  },
+  {
+    "ano": 2024,
+    "cultura": "Arroz",
+    "area_ha": 17399.15,
+    "area_pct": 5.82
+  },
+  {
+    "ano": 2024,
+    "cultura": "Outras Lavouras Temporárias",
+    "area_ha": 10958.12,
+    "area_pct": 3.67
+  }
+]

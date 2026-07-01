@@ -16,6 +16,9 @@ export const scenarioSlug = (mun: string, cen: string) =>
 export const formatoBr = (num: number, casas = 0) =>
   num.toLocaleString("pt-BR", { minimumFractionDigits: casas, maximumFractionDigits: casas });
 
+export const inteiroBr = (n: number): string =>
+  Math.round(n).toLocaleString("pt-BR", { maximumFractionDigits: 0 });
+
 export const compactoBr = (n: number, casas = 1): string => {
   if (n === undefined || n === null || isNaN(n)) return "0";
   const abs = Math.abs(n);
@@ -128,9 +131,9 @@ export const calcEmp = (base: FeatureCollection | null | undefined) => {
 };
 
 export const calcEdu = (base: FeatureCollection | null | undefined) => {
-  if (!base || !Array.isArray(base.features)) return { escolas: 0, prof: 0, inf: 0, fund: 0, med: 0, profis: 0, eja: 0, esp: 0 };
+  if (!base || !Array.isArray(base.features)) return { escolas: 0, prof: 0, doc: 0, inf: 0, fund: 0, med: 0, profis: 0, eja: 0, esp: 0 };
   const sum = (prop: string) => base.features.reduce((acc, f) => acc + ((f.properties as Record<string, unknown>)?.[prop] as number || 0), 0);
-  return { escolas: base.features.length, prof: sum("qtd_prof"), inf: sum("qtd_matri_inf"), fund: sum("qtd_matri_fund"), med: sum("qtd_matri_med"), profis: sum("qtd_matri_prof"), eja: sum("qtd_matri_eja"), esp: sum("qtd_matri_esp") };
+  return { escolas: base.features.length, prof: sum("qtd_prof"), doc: sum("qtd_doc"), inf: sum("qtd_matri_inf"), fund: sum("qtd_matri_fund"), med: sum("qtd_matri_med"), profis: sum("qtd_matri_prof"), eja: sum("qtd_matri_eja"), esp: sum("qtd_matri_esp") };
 };
 
 export const calcSau = (base: FeatureCollection | null | undefined) => {
