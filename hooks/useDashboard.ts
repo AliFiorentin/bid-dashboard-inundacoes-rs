@@ -5,7 +5,7 @@ import * as XLSX from "xlsx";
 import {
   MUNICIPIOS, CENARIOS_CONFIG, INFRAESTRUTURA_CONFIG, MUNICIPIO_VIEW,
   AGRI_BOUNDS, AGRI_ANO_BASE, CENARIO_PERIODO, IMPACTO_AGRICOLA, INFRA_TAMANHOS_MB,
-  normalizeDep, PIORES_CENARIOS,
+  normalizeDep, PIORES_CENARIOS, CNAE_LABELS,
 } from "@/lib/constants";
 import {
   slugify, scenarioSlug, mergeGeoJSON,
@@ -417,7 +417,7 @@ export function useDashboard() {
     const top = sorted.slice(0, 9);
     const outrosBase = sorted.slice(9).reduce((s, [, c]) => s + c, 0);
     const outrosAtg = sorted.slice(9).reduce((s, [k]) => s + (atgCounts[k] ?? 0), 0);
-    const result = top.map(([setor, base]) => ({ setor, base, atg: atgCounts[setor] ?? 0 }));
+    const result = top.map(([setor, base]) => ({ setor: CNAE_LABELS[setor] ?? setor, base, atg: atgCounts[setor] ?? 0 }));
     if (outrosBase > 0) result.push({ setor: "Outros", base: outrosBase, atg: outrosAtg });
     return result;
   }, [baseEmpresas, atingidosEmpresas]);
@@ -440,7 +440,7 @@ export function useDashboard() {
     return Object.entries(baseAcc)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 8)
-      .map(([setor, base]) => ({ setor, base, atg: atgAcc[setor] ?? 0 }));
+      .map(([setor, base]) => ({ setor: CNAE_LABELS[setor] ?? setor, base, atg: atgAcc[setor] ?? 0 }));
   }, [baseEmpresas, atingidosEmpresas]);
 
   const professoresDepChart = useMemo(() => {

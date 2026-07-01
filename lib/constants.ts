@@ -22,6 +22,31 @@ export const DONUT_COLORS = [
   "#d97706","#7c3aed","#0891b2","#be185d","#059669","#b45309",
 ];
 
+// ── CNAE — nomes curtos para exibição nos gráficos ──────────────────────────
+export const CNAE_LABELS: Record<string, string> = {
+  "ADMINISTRACAO PUBLICA, DEFESA E SEGURIDADE SOCIAL":                       "Adm. Pública",
+  "AGRICULTURA, PECUARIA, PRODUCAO FLORESTAL, PESCA E AQUICULTURA":          "Agropecuária",
+  "AGUA, ESGOTO, GESTAO DE RESIDUOS E DESCONTAMINACAO":                      "Saneamento",
+  "ALOJAMENTO E ALIMENTACAO":                                                 "Alimentação",
+  "ARTES, CULTURA, ESPORTE E RECREACAO":                                     "Cultura/Esporte",
+  "ATIVIDADES ADMINISTRATIVAS E SERVICOS COMPLEMENTARES":                    "Serv. Administrativos",
+  "ATIVIDADES FINANCEIRAS E SEGUROS":                                        "Finanças/Seguros",
+  "ATIVIDADES IMOBILIARIAS":                                                  "Imobiliário",
+  "ATIVIDADES PROFISSIONAIS, CIENTIFICAS E TECNICAS":                        "Prof./Científico",
+  "COMERCIO; REPARACAO DE VEICULOS":                                         "Comércio",
+  "CONSTRUCAO":                                                               "Construção",
+  "EDUCACAO":                                                                 "Educação",
+  "ELETRICIDADE E GAS":                                                       "Energia/Gás",
+  "INDUSTRIAS DE TRANSFORMACAO":                                              "Ind. Transformação",
+  "INDUSTRIAS EXTRATIVAS":                                                    "Ind. Extrativa",
+  "INFORMACAO E COMUNICACAO":                                                 "TI/Comunicação",
+  "ORGANISMOS INTERNACIONAIS":                                                "Org. Internacional",
+  "OUTRAS ATIVIDADES DE SERVICOS":                                            "Outros Serviços",
+  "SAUDE HUMANA E SERVICOS SOCIAIS":                                         "Saúde/Social",
+  "SERVICOS DOMESTICOS":                                                      "Serv. Domésticos",
+  "TRANSPORTE, ARMAZENAGEM E CORREIO":                                       "Transporte/Logística",
+};
+
 // ── Infraestrutura ───────────────────────────────────────────────────────────
 export const INFRA_COLORS: Record<string, string> = {
   "Edificações":        "#6b7280",

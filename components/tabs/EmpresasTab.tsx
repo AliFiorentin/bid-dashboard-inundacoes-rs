@@ -81,19 +81,18 @@ export function EmpresasTab({ dash }: Props) {
         {setoresEmpregadosChart.length > 0 && (
           <div className="flex flex-col gap-1.5 px-2 py-2.5 bg-muted/40 rounded-lg border -mt-1 mb-1">
             <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground mb-0.5">Empregados por Setor</span>
-            {setoresEmpregadosChart.map(({ setor, base, atg }) => {
-              const barColor = setorColorMap[setor] ?? DONUT_COLORS[0];
-              const pct = base > 0 ? Math.round(atg / base * 100) : 0;
+            {setoresEmpregadosChart.map(({ setor, base, atg }, i) => {
+              const barColor = setorColorMap[setor] ?? DONUT_COLORS[i % DONUT_COLORS.length];
+              const totalBase = setoresEmpregadosChart.reduce((s, r) => s + r.base, 0);
               return (
-                <div key={setor} className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ backgroundColor: barColor }} />
-                  <span className="text-[9px] flex-1 truncate text-muted-foreground" title={setor}>{setor}</span>
-                  <div className="w-16 h-2 rounded-full bg-muted overflow-hidden shrink-0">
-                    <div className="h-full rounded-full" style={{ width: `${mostraImpacto ? pct : 100}%`, backgroundColor: barColor }} />
-                  </div>
-                  <span className="text-[9px] font-bold tabular-nums text-foreground w-20 text-right shrink-0">
-                    {mostraImpacto ? `${inteiroBr(atg)}/${inteiroBr(base)}` : inteiroBr(base)}{" "}
-                    {mostraImpacto && <span className="text-muted-foreground font-normal">({pct}%)</span>}
+                <div key={setor} className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: barColor }} />
+                  <span className="text-[10px] flex-1 truncate text-muted-foreground" title={setor}>{setor}</span>
+                  <span className="text-[10px] font-bold tabular-nums text-foreground">
+                    {mostraImpacto ? `${inteiroBr(atg)}/${inteiroBr(base)}` : inteiroBr(base)}
+                  </span>
+                  <span className="text-[10px] w-9 text-right tabular-nums text-muted-foreground">
+                    {mostraImpacto ? `${base > 0 ? Math.round(atg / base * 100) : 0}%` : `${Math.round(base / totalBase * 100)}%`}
                   </span>
                 </div>
               );
