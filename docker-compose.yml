@@ -1,0 +1,10 @@
+services:
+  dashboard:
+    build:
+      context: "./Dashboard BID"
+      dockerfile: Dockerfile
+    image: bid-dashboard:latest
+    container_name: bid-dashboard
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
