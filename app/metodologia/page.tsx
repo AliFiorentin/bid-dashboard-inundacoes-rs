@@ -72,22 +72,8 @@ export default function MetodologiaPage() {
           ]} />
           <p>
             <strong>ADA (Área Diretamente Afetada)</strong> refere-se à extensão máxima da mancha
-            registrada durante o evento de maio de 2024. As manchas provêm de três origens:
+            registrada durante o evento de maio de 2024.
           </p>
-          <ul className="list-disc list-inside space-y-1 text-sm text-[#3d7a94]">
-            <li>
-              <strong className="text-slate-800">Eldorado do Sul · Porto Alegre —{" "}</strong>
-              <ExtLink href="https://mup.rs.gov.br/">MUP — Mapa Único do Plano Rio Grande (Governo do RS)</ExtLink>
-            </li>
-            <li>
-              <strong className="text-slate-800">Lajeado —{" "}</strong>
-              LabModel — Laboratório de Modelagem
-            </li>
-            <li>
-              <strong className="text-slate-800">Rio Grande —{" "}</strong>
-              <ExtLink href="https://ciex.furg.br">CIEX — Centro Interinstitucional de Observação e Previsão de Eventos Extremos da FURG</ExtLink>
-            </li>
-          </ul>
           <SubTitle>Origem dos dados</SubTitle>
           <DataTable rows={[
             ["Fonte de dados",    "Referência temporal",        "Municípios / Observações"],
@@ -105,12 +91,23 @@ export default function MetodologiaPage() {
         {/* ── 2. Sobreposição ─────────────────────────────────────── */}
         <Section id="sobreposicao" num="2" title="Sobreposição Espacial — Cálculo dos Atingidos">
           <p>
-            O cálculo de quais features são atingidas é feito{" "}
-            <strong>inteiramente offline</strong> por um pipeline Python com{" "}
-            <ExtLink href="https://geopandas.org">GeoPandas</ExtLink>.
-            O painel web <strong>não realiza interseção espacial em tempo real</strong> — apenas
-            carrega os arquivos pré-computados.
+            A identificação dos elementos atingidos é realizada por{" "}
+            <strong>sobreposição espacial (overlay) entre as feições georreferenciadas e o polígono
+            da mancha de inundação</strong>. Todo o processamento usa{" "}
+            <ExtLink href="https://geopandas.org">GeoPandas</ExtLink> e{" "}
+            <ExtLink href="https://shapely.readthedocs.io">Shapely</ExtLink> em Python. O método
+            varia conforme o tipo de geometria da camada:
           </p>
+          <ul className="list-disc list-inside space-y-1 text-sm text-[#3d7a94]">
+            <li><strong className="text-slate-800">Pontos</strong> — predicado <code className="text-xs font-mono bg-[#e8f4f8] px-1 py-0.5 rounded">within</code>: o ponto deve estar contido no polígono da mancha.</li>
+            <li><strong className="text-slate-800">Polígonos</strong> — predicado <code className="text-xs font-mono bg-[#e8f4f8] px-1 py-0.5 rounded">intersects</code> seguido de <code className="text-xs font-mono bg-[#e8f4f8] px-1 py-0.5 rounded">intersection()</code>: a área atingida é a interseção geométrica, reprojetada em EPSG:32722 (WGS 84 / UTM zone 22S) para cálculo em metros.</li>
+            <li><strong className="text-slate-800">Linhas</strong> — predicado <code className="text-xs font-mono bg-[#e8f4f8] px-1 py-0.5 rounded">intersects</code> seguido de <code className="text-xs font-mono bg-[#e8f4f8] px-1 py-0.5 rounded">intersection()</code>: o comprimento atingido é o trecho da linha dentro da mancha, igualmente em EPSG:32722.</li>
+          </ul>
+          <Note type="info">
+            O cálculo de quais features são atingidas é feito inteiramente offline por um pipeline
+            Python com GeoPandas. O painel web não realiza interseção espacial em tempo real —
+            apenas carrega os arquivos pré-computados.
+          </Note>
 
           <GeoCard
             title="Pontos — Empresas · Escolas · Unidades de Saúde"
@@ -360,10 +357,10 @@ export default function MetodologiaPage() {
         <Section id="infraestrutura" num="7" title="Infraestrutura Urbana">
           <DataTable rows={[
             ["Município",       "Camadas",                                                                                                     "Geometria"],
-            ["Eldorado do Sul", "Edificações",                                                                                                 "Polígono"],
-            ["Porto Alegre",    "Eixos Logradouros, Lotes, Quarteirões, Terminais, Rede Esgoto, Paradas, Ônibus, Hidrantes, Gás, Bocas de Lobo, Postes", "Linha, Polígono, Ponto"],
-            ["Rio Grande",      "Logradouros, Quadras, Terrenos, Imóveis, Prédios Públicos, Segurança",                                       "Linha, Polígono, Ponto"],
-            ["Lajeado",         "Iluminação Pública, Logradouros, Lotes, Quadras",                                                            "Ponto, Linha, Polígono"],
+            ["Eldorado do Sul", "Edificações",                                                                                                                       "Polígono"],
+            ["Porto Alegre",    "Eixos Logradouros, Lotes, Quarteirões, Terminais, Rede Esgoto, Paradas, Ônibus, Hidrantes, Gás, Bocas de Lobo, Postes, Edificações", "Linha, Polígono, Ponto"],
+            ["Rio Grande",      "Logradouros, Quadras, Terrenos, Imóveis, Prédios Públicos, Segurança, Edificações",                                                   "Linha, Polígono, Ponto"],
+            ["Lajeado",         "Iluminação Pública, Logradouros, Lotes, Quadras, Edificações",                                                                        "Ponto, Linha, Polígono"],
           ]} />
           <ul className="list-disc list-inside space-y-1 text-sm text-[#3d7a94]">
             <li><strong className="text-slate-800">Contagem atingida</strong> — pontos/segmentos/polígonos com interseção com a mancha.</li>
@@ -444,17 +441,6 @@ export default function MetodologiaPage() {
             ["Edificações atingidas",   <Math key="cnt" tex={"N_a = \\sum_{i} \\mathbf{1}[F_i \\cap M \\neq \\emptyset]"} />, "unidades"],
             ["Percentual atingido",     <Math key="pct" tex={"P = N_a / N_t \\times 100\\,\\%"} />,                  "%"],
             ["Área construída atingida",<Math key="area" tex={"A_a = \\sum_{i: \\text{atingida}} \\text{area\\_m2}_i"} />, "m²"],
-          ]} />
-
-          <SubTitle>Resultados por cenário</SubTitle>
-          <DataTable rows={[
-            ["Município",      "Cenário",                  "Atingidas", "% do total", "Arquivo ATINGIDOS"],
-            ["Porto Alegre",   "Cenário ADA",               "32.005",    "6,5%",       "~9,6 MB"],
-            ["Rio Grande",     "Cenário Maio 2024",         "19.897",    "9,0%",       "~5,8 MB"],
-            ["Rio Grande",     "Cenário Maio 2024 + 50%",  "66.353",    "30,1%",      "~19,3 MB"],
-            ["Lajeado",        "Cenário 27 m",              "2.571",     "3,0%",       "~0,8 MB"],
-            ["Lajeado",        "Cenário 30 m",              "4.162",     "4,9%",       "~1,2 MB"],
-            ["Eldorado do Sul","Cenário ADA",               "22.557",    "15,8%",      "~6,6 MB"],
           ]} />
 
           <Note type="warning">
