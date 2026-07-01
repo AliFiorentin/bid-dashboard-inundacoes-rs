@@ -1,0 +1,10 @@
+Dashboard BID/node_modules/
+Dashboard BID/.next/
+data/raw/datasus/
+data/raw/mapbiomas/
+data/processed/
+data/interim/
+__pycache__/
+*.pyc
+*.pyo
+.env
