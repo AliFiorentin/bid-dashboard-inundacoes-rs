@@ -1,0 +1,87 @@
+{
+  "Eldorado do Sul": {
+    "Cenario ADA": {
+      "dias_agudo": 30,
+      "dias_efetivos": 60,
+      "f_interrup": 0.164384,
+      "empresas_vab": 403075054.73,
+      "educacao_perdas": 11112505.4,
+      "educacao_custo_adicional": 11112505.4,
+      "saude_producao": 83170.67,
+      "agricultura_perdas": 9096160.0,
+      "total": 434479396.2
+    }
+  },
+  "Lajeado": {
+    "Cenario 27m": {
+      "dias_agudo": 30,
+      "dias_efetivos": 60,
+      "f_interrup": 0.164384,
+      "empresas_vab": 19836506.23,
+      "educacao_perdas": 1719989.39,
+      "educacao_custo_adicional": 1719989.39,
+      "saude_producao": 7662817.55,
+      "agricultura_perdas": 389970.0,
+      "total": 31329272.56
+    },
+    "Cenario 30m": {
+      "dias_agudo": 30,
+      "dias_efetivos": 60,
+      "f_interrup": 0.164384,
+      "empresas_vab": 33082577.9,
+      "educacao_perdas": 1797592.46,
+      "educacao_custo_adicional": 1797592.46,
+      "saude_producao": 7690511.59,
+      "agricultura_perdas": 437500.0,
+      "total": 44805774.41
+    }
+  },
+  "Porto Alegre": {
+    "Cenario ADA": {
+      "dias_agudo": 30,
+      "dias_efetivos": 60,
+      "f_interrup": 0.164384,
+      "empresas_vab": 4410522315.45,
+      "educacao_perdas": 42289857.425,
+      "educacao_custo_adicional": 42289857.425,
+      "saude_producao": 7730338.63,
+      "agricultura_perdas": 456810.0,
+      "total": 4503289178.93
+    }
+  },
+  "Rio Grande": {
+    "Cenario Maio 2024": {
+      "dias_agudo": 30,
+      "dias_efetivos": 60,
+      "f_interrup": 0.164384,
+      "empresas_vab": 77178858.58,
+      "educacao_perdas": 9163523.345,
+      "educacao_custo_adicional": 9163523.345,
+      "saude_producao": 9131.69,
+      "agricultura_perdas": 140.0,
+      "total": 95515176.96
+    },
+    "Cenario Maio 2024 + 50%": {
+      "dias_agudo": 30,
+      "dias_efetivos": 60,
+      "f_interrup": 0.164384,
+      "empresas_vab": 460048560.8,
+      "educacao_perdas": 37017937.285,
+      "educacao_custo_adicional": 37017937.285,
+      "saude_producao": 9850834.15,
+      "agricultura_perdas": 63390.0,
+      "total": 543998659.52
+    },
+    "Cenario Setembro 2023": {
+      "dias_agudo": 15,
+      "dias_efetivos": 30,
+      "f_interrup": 0.082192,
+      "empresas_vab": 10001754.11,
+      "educacao_perdas": 1345331.935,
+      "educacao_custo_adicional": 1345331.935,
+      "saude_producao": 0.0,
+      "agricultura_perdas": 0.0,
+      "total": 12692417.99
+    }
+  }
+}
