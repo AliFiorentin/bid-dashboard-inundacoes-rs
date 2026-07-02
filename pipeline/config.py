@@ -210,6 +210,18 @@ SALARIOS = {
 }
 
 # --- Agricultura ---
+# Parametros de interrupcao DaLA por periodo do cenario.
+# Curva de recuperacao linear: f_efetivo = dias_agudo + dias_recuperacao * 0.5
+# Fonte: CEPAL/BID — "Avaliacao dos efeitos e impactos das inundacoes no RS", nov/2024.
+# Logica: durante fase aguda (area alagada) interrupcao = 100%;
+#         durante recuperacao gradual (escoamento + retomada) interrupcao media = 50%.
+#   Maio 2024  : area alagada ~30 dias; recuperacao operacional ~60 dias -> f = 60/365
+#   Setembro 2023: evento menor, area alagada ~15 dias; recuperacao ~30 dias -> f = 30/365
+INTERRUPCAO_DALA = {
+    "maio_2024":     {"dias_agudo": 30, "dias_recuperacao": 60},
+    "setembro_2023": {"dias_agudo": 15, "dias_recuperacao": 30},
+}
+
 CENARIO_PERIODO = {
     "lajeado___cenario_27m": "maio_2024",
     "lajeado___cenario_30m": "maio_2024",
@@ -240,19 +252,36 @@ IMPACTO_AGRICOLA = {
     },
 }
 
-# Labor share setorial (Remuneracoes/VAB, Tabela 17 SCN/IBGE)
+# Labor share setorial (LS = Remuneracoes / VAB).
+# Fonte: IBGE, Tabela 17 — Conta de Geracao da Renda por Atividade (SCN 2021).
+# URL: ftp.ibge.gov.br/Contas_Nacionais/Sistema_de_Contas_Nacionais/2021/tabelas_xls/sinoticas/tab17.xls
+#
+# Calculo por categoria (mapeamento via cnae_to_setor):
+#   agro      = setor 01 empresas nao financeiras: Rem 55.047 / VAB 312.235
+#               (coluna empresas exclui rendimento misto agricultores familiares,
+#                que distorceria para baixo o LS do setor formal coberto pelo RAIS)
+#   industria = setores 02+03+04 (extrativas+transformacao+eletric/gas/agua):
+#               Rem 580.273 / VAB 1.718.688
+#   servicos  = setores 05+06+07+08+09+10+11 (construcao+comercio+transporte+
+#               info+financeiras+imobiliarias+outras — CNAE 41-43,45-83,85-96):
+#               Rem 1.811.470 / VAB 4.185.270
+#               Obs: Imobiliarias (LS=1,4%) inclui alugueis imputados sem vinculos;
+#               sem imobiliarias LS seria 51,7%; valor total utilizado por consistencia.
+#   adm_pub   = setor 12: Rem 1.076.913 / VAB 1.218.956
+#   total     = total economia: Rem 3.534.648 / VAB 7.713.999
 LABOR_SHARE = {
-    "agro": 0.235,
-    "industria": 0.426,
-    "servicos": 0.494,
-    "adm_pub": 0.906,
-    "total": 0.490,
+    "agro":      0.176,
+    "industria": 0.338,
+    "servicos":  0.433,
+    "adm_pub":   0.883,
+    "total":     0.458,
 }
 
-# FUNDEB VAAT-MIN 2024
-FUNDEB_VAAT_MIN = 8510.81
+# FUNDEB VAAT-MIN 2024 (Portaria Interministerial MEC/MF nº 9, de 28/08/2024, DOU 30/08/2024)
+# Revisao quadrimestral de agosto: R$ 8.481,21 (VAAT-MIN) e R$ 5.559,73 (VAAF-MIN)
+# Fonte: fnde.gov.br/acesso-a-informacao/financiamento/fundeb/legislacao/2024
+FUNDEB_VAAT_MIN = 8481.21
 DIAS_LETIVOS = 200
-DIAS_REPOSICAO_PADRAO = 37
 
 # Bounding box RS
 LAT_MIN, LAT_MAX = -34.0, -27.0
