@@ -114,6 +114,7 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
             {camadas.includes("Infraestrutura") && !isVisaoGeral && infraAtivas.length > 0 && (
               <InfraTab dash={{ infraAtivas, toggleInfra, municipio, mostraImpacto, isCenarioAtivo, baseInfra, atingidosInfra, showListaLogradouros, setShowListaLogradouros, showListaEixos, setShowListaEixos }} />
             )}
+
           </Tabs>
         </div>
       )}

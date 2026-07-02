@@ -13,6 +13,7 @@ import { useDashboard } from "@/hooks/useDashboard";
 import { AnalysisPanel } from "@/components/AnalysisPanel";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { FiltersPanel } from "@/components/FiltersPanel";
+import { WelcomeModal } from "@/components/WelcomeModal";
 
 export default function Dashboard() {
   const dash = useDashboard();
@@ -109,6 +110,8 @@ export default function Dashboard() {
           <span className="text-[9px]" style={{ color: "#055071" }}> | Alisson Tallys Geraldo Fiorentin</span>
         </div>
       </div>
+
+      <WelcomeModal />
 
       <DashboardHeader dash={dash} />
 

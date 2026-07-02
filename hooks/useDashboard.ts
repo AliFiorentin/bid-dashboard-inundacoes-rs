@@ -53,6 +53,7 @@ export function useDashboard() {
   const [allMunAgriStats, setAllMunAgriStats] = useState<Record<string, Record<string, number>> | null>(null);
   const [allMunAgriAtingidosStats, setAllMunAgriAtingidosStats] = useState<Record<string, Record<string, number>> | null>(null);
   const [manchaRS, setManchaRS] = useState<FeatureCollection | null>(null);
+  const [danosData, setDanosData] = useState<import("@/components/tabs/DanosTab").DanosData | null>(null);
 
   const [cursor, setCursor] = useState<string>("grab");
   const [popupInfo, setPopupInfo] = useState<{ lngLat: [number, number], properties: Record<string, unknown>, source: string } | null>(null);
@@ -66,6 +67,14 @@ export function useDashboard() {
   const [showListaAmbulat, setShowListaAmbulat] = useState(false);
   const [showListaLogradouros, setShowListaLogradouros] = useState(false);
   const [showListaEixos, setShowListaEixos] = useState(false);
+
+  useEffect(() => {
+    fetch("/dados_convertidos/danos_operacionais.json")
+      .then(r => r.ok ? r.json() : null)
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      .then(d => d && setDanosData(d))
+      .catch(() => {/* silently ignore if file not available */});
+  }, []);
 
   useEffect(() => {
     const view = MUNICIPIO_VIEW[municipio];
@@ -610,6 +619,7 @@ export function useDashboard() {
     toggleCamada, toggleInfra, toggleMenuInfra,
     handleMapClick,
     exportarExcel,
+    danosData,
     // geo-utils re-exports needed in JSX
     countRuasUnicas, getRuasListPOA, countRuasUnicasPOA, getRotas, getLen,
   };
