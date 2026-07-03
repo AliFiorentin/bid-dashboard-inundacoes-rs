@@ -282,6 +282,32 @@ export default function MetodologiaPage() {
             ["Demais (45–99)",   "Serviços",           "43,3%",            "Comércio, transporte, TI, saúde privada, educação privada"],
           ]} />
 
+          <SubTitle>Cálculo do Labor Share</SubTitle>
+          <p>
+            O <em>labor share</em> (LS) mede a fração do Valor Adicionado Bruto (VAB) de um setor
+            que corresponde à remuneração do trabalho. É calculado diretamente da{" "}
+            <strong>Tabela 17 do Sistema de Contas Nacionais (IBGE SCN 2021)</strong>, que publica,
+            por atividade econômica, as Remunerações totais e o VAB a preços básicos:
+          </p>
+          <MathBlock exprs={[
+            { label: "Labor share setorial", tex: "LS_s = \\dfrac{\\text{Remunerações}_s}{\\text{VAB}_s}" },
+          ]} />
+          <p>
+            Como a RAIS fornece a folha salarial mensal por estabelecimento, mas não o VAB, o LS
+            é utilizado para <strong>inverter a relação</strong> e estimar o VAB a partir do dado
+            salarial disponível:
+          </p>
+          <MathBlock exprs={[
+            { label: "VAB estimado (est.)", tex: "\\widehat{\\text{VAB}}_i = \\dfrac{w_{i,\\text{mensal}} \\times 12}{LS_s}" },
+          ]} />
+          <p>
+            onde <Math tex={"w_{i,\\text{mensal}}"} /> é a remuneração média mensal do
+            estabelecimento <Math tex={"i"} /> (variável <em>vlr_remun_media_nom</em> da RAIS) e{" "}
+            <Math tex={"s"} /> é o setor correspondente à divisão CNAE do estabelecimento.
+            Os valores de LS utilizados são os da tabela acima, extraídos do SCN 2021
+            (dado público mais recente com abertura setorial completa).
+          </p>
+
           <SubTitle>Indicadores calculados</SubTitle>
           <DataTable rows={[
             ["Indicador",                  "Fórmula / Descrição"],
