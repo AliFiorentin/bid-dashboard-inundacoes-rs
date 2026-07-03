@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import katex from "katex";
+import { TrendingDown } from "lucide-react";
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 export interface CenarioDanos {
@@ -116,7 +117,10 @@ export function DanosClient({ dados }: { dados: DanosData }) {
           <p className="text-[11px] uppercase tracking-[0.18em] font-semibold opacity-60 mb-2">
             BID · GPEA · FURG
           </p>
-          <h1 className="text-4xl font-black leading-none mb-2 tracking-tight">Danos Operacionais</h1>
+          <h1 className="text-4xl font-black leading-none mb-2 tracking-tight flex items-center gap-3">
+            <TrendingDown size={36} strokeWidth={2.5} className="opacity-80 shrink-0" />
+            Danos Operacionais
+          </h1>
           <p className="text-base opacity-75 font-medium">
             Estimativa de Perdas Econômicas — Enchentes no Rio Grande do Sul
           </p>
