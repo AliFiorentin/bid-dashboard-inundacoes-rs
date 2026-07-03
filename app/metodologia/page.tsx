@@ -32,15 +32,6 @@ export default function MetodologiaPage() {
         {/* ── Contexto ────────────────────────────────────────────────────────── */}
         <div className="bg-white border border-[#b3cdd8] rounded-xl p-5 mb-8 shadow-sm">
           <p className="text-[11px] font-black uppercase tracking-wider text-[#3d7a94] mb-2">Contexto</p>
-          <p className="text-sm leading-relaxed text-slate-700">
-            As enchentes de maio de 2024 no Rio Grande do Sul constituíram o maior desastre
-            climático da história do estado, com mais de 400 municípios afetados, cerca de
-            580 mil pessoas desalojadas e danos estimados em R$ 88,9 bilhões (CEPAL, nov. 2024).
-            Este painel avalia os impactos socioeconômicos em quatro municípios selecionados —{" "}
-            <strong>Eldorado do Sul, Lajeado, Porto Alegre e Rio Grande</strong> — combinando
-            dados geoespaciais de manchas de inundação com microdados de emprego formal (RAIS),
-            educação (Censo Escolar), saúde (CNES/DataSUS) e uso do solo (MapBiomas/CONAB).
-          </p>
           <p className="text-sm leading-relaxed text-slate-700 mt-2">
             A metodologia distingue dois planos analíticos: (a) a{" "}
             <strong>exposição física</strong> — identificação dos estabelecimentos, escolas,
@@ -248,7 +239,7 @@ export default function MetodologiaPage() {
 
           <SubTitle>Dados base — RAIS 2023</SubTitle>
           <p>
-            A RAIS 2023 contém todos os vínculos empregatícios ativos em 31/12/2022 no
+            A RAIS 2023 contém todos os vínculos empregatícios ativos em 31/12/2023 no
             território nacional. Para este painel foram selecionados apenas estabelecimentos
             nos quatro municípios avaliados (filtragem por código IBGE de 6 dígitos).
             As variáveis extraídas por estabelecimento (CNPJ) são:
@@ -850,52 +841,33 @@ export default function MetodologiaPage() {
           ]} />
 
           <SubTitle>Método de cálculo</SubTitle>
-          <p>
-            O processamento é realizado pelo script{" "}
-            <code className="bg-[#f0f7fa] border border-[#b3cdd8] rounded px-1 text-[12px] font-mono">pipeline/09_populacao.py</code>{" "}
-            com <ExtLink href="https://rasterio.readthedocs.io">rasterio</ExtLink> e{" "}
-            <ExtLink href="https://geopandas.org">GeoPandas</ExtLink>:
-          </p>
           <ol className="list-decimal list-inside space-y-1.5 text-sm text-slate-700 mt-2">
             <li>
-              <strong>Limite municipal</strong> — baixado via IBGE API v3
-              (<code className="bg-[#f0f7fa] text-[11px] font-mono px-1 rounded">/api/v3/malhas/municipios/&#123;ibge7&#125;</code>)
-              e cacheado localmente em <code className="bg-[#f0f7fa] text-[11px] font-mono px-1 rounded">data/raw/ibge/</code>.
+              <strong>Limite municipal</strong> — polígono oficial obtido via API de malhas do
+              IBGE, utilizado para recortar o raster ao território de cada município.
             </li>
             <li>
-              <strong>Pop. total municipal</strong> — clip do raster pelo polígono IBGE com{" "}
-              <code className="bg-[#f0f7fa] text-[11px] font-mono px-1 rounded">rasterio.mask.mask()</code>;
-              soma de todos os pixels válidos (valor &gt; 0 e ≠ nodata).
+              <strong>População total municipal</strong> — recorte do raster pelo limite municipal;
+              soma de todos os pixels com valor positivo (pixels sem dado excluídos).
             </li>
             <li>
-              <strong>Pop. atingida por cenário</strong> — clip pelo polígono da mancha de
-              inundação correspondente; mesma soma. Pixels de nodata (−99999) excluídos.
+              <strong>População atingida por cenário</strong> — recorte pelo polígono da mancha de
+              inundação correspondente; mesma operação de soma. Apenas pixels dentro da mancha
+              são contabilizados.
             </li>
             <li>
-              <strong>Heatmap</strong> — array recortado pelo limite municipal convertido a PNG
-              RGBA com colormap <em>plasma</em> em escala logarítmica
-              (log₁₀(1 + pop), máximo em 300 hab/pixel). Pixels nulos ou zero recebem
-              alpha = 0 (transparente). O PNG é georreferenciado por quatro cantos em WGS 84
-              e servido como <code className="bg-[#f0f7fa] text-[11px] font-mono px-1 rounded">image source</code>{" "}
-              no MapLibre GL.
+              <strong>Heatmap</strong> — raster recortado pelo limite municipal convertido a imagem
+              colorida com paleta <em>plasma</em> em escala logarítmica, sobreposto ao mapa
+              interativo para visualização da densidade populacional.
             </li>
           </ol>
 
           <SubTitle>Fórmulas</SubTitle>
-          <div className="bg-[#f0f7fa] border border-[#b3cdd8] rounded-lg p-4 font-mono text-sm space-y-2">
-            <div>
-              <span className="text-[#055071] font-bold">Pop_total(M)</span>
-              {" = ∑ pixel(i,j)  ∀ (i,j) ∈ Limite_Municipal(M)"}
-            </div>
-            <div>
-              <span className="text-[#055071] font-bold">Pop_atingida(M, C)</span>
-              {" = ∑ pixel(i,j)  ∀ (i,j) ∈ Mancha(M, C)"}
-            </div>
-            <div>
-              <span className="text-[#055071] font-bold">% atingida</span>
-              {" = Pop_atingida / Pop_total × 100"}
-            </div>
-          </div>
+          <MathBlock exprs={[
+            { label: "Pop. total",    tex: "P_{\\text{total}}(M) = \\sum_{(i,j)\\,\\in\\,\\text{Município}(M)} \\text{pop}_{ij}" },
+            { label: "Pop. atingida", tex: "P_{\\text{atingida}}(M,C) = \\sum_{(i,j)\\,\\in\\,\\text{Mancha}(M,C)} \\text{pop}_{ij}" },
+            { label: "% exposta",     tex: "\\% = \\dfrac{P_{\\text{atingida}}}{P_{\\text{total}}} \\times 100" },
+          ]} />
 
           <SubTitle>Limitações</SubTitle>
           <ul className="list-disc list-inside space-y-1.5 text-sm text-slate-700">
@@ -914,18 +886,6 @@ export default function MetodologiaPage() {
               ter sido evacuada antes da inundação ou estar em pavimentos superiores.
             </li>
           </ul>
-
-          <SubTitle>Resultados</SubTitle>
-          <DataTable rows={[
-            ["Município",       "Pop. Total (WorldPop)",  "Cenário",                   "Pop. Atingida",  "% Exposta"],
-            ["Eldorado do Sul", "41.958",                 "Cenário ADA",               "29.406",         "70,1%"],
-            ["Lajeado",         "100.717",                "Cenário 27 m",              "5.124",          "5,1%"],
-            ["Lajeado",         "100.717",                "Cenário 30 m",              "7.453",          "7,4%"],
-            ["Porto Alegre",    "1.342.008",              "Cenário ADA",               "379.596",        "28,3%"],
-            ["Rio Grande",      "198.418",                "Cenário Maio 2024",         "23.058",         "11,6%"],
-            ["Rio Grande",      "198.418",                "Cenário Maio 2024 + 50%",   "80.124",         "40,4%"],
-            ["Rio Grande",      "198.418",                "Cenário Setembro 2023",     "7.844",          "4,0%"],
-          ]} />
 
           <SectionSources links={[
             ["WorldPop (2025) — Brazil Population Counts 100m 2024, constrained individual countries", "https://data.humdata.org/dataset/worldpop-population-counts-for-brazil"],
