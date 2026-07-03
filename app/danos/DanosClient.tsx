@@ -97,7 +97,7 @@ export function DanosClient({ dados }: { dados: DanosData }) {
     return { mun, cenNome: entry[0], cenVal: entry[1] };
   });
 
-  // Todos pares para o gráfico
+  // Todos pares para o gráfico comparativo
   const todosCenarios = Object.entries(dadosEscalados).flatMap(([mun, cens]) =>
     Object.entries(cens).map(([cen, v]) => ({ mun, cen, v }))
   );
@@ -108,7 +108,11 @@ export function DanosClient({ dados }: { dados: DanosData }) {
 
       {/* ── Header ──────────────────────────────────────────────────────────── */}
       <header className="bg-[#055071] text-white px-6 py-10 print:py-5">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-[1200px] mx-auto">
+          <div className="flex items-center gap-2 mb-5 print:hidden">
+            <a href="/" className="text-[10px] font-bold text-white/70 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">← Dashboard</a>
+            <a href="/metodologia" className="text-[10px] font-bold text-white/70 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">← Metodologia</a>
+          </div>
           <p className="text-[11px] uppercase tracking-[0.18em] font-semibold opacity-60 mb-2">
             BID · GPEA · FURG
           </p>
@@ -125,7 +129,7 @@ export function DanosClient({ dados }: { dados: DanosData }) {
       {/* ── Seletor de duração (sticky) ──────────────────────────────────────── */}
       <div className="sticky top-0 z-30 bg-white/90 border-b border-[#b3cdd8] shadow-sm print:hidden"
         style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
-        <div className="max-w-5xl mx-auto px-6 py-2.5 flex items-center gap-4 flex-wrap">
+        <div className="max-w-[1200px] mx-auto px-6 py-2.5 flex items-center gap-4 flex-wrap">
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94]">
               Duração da interrupção
@@ -156,30 +160,36 @@ export function DanosClient({ dados }: { dados: DanosData }) {
         </div>
       </div>
 
-      <main className="max-w-5xl mx-auto px-6 py-10 print:py-5">
+      <div className="max-w-[1200px] mx-auto px-6 py-10 print:py-5 flex gap-8 items-start print:block">
 
-        {/* ── Índice ──────────────────────────────────────────────────────────── */}
-        <nav className="bg-white border border-[#b3cdd8] rounded-xl p-5 mb-10 print:hidden shadow-sm">
-          <p className="text-[11px] font-black uppercase tracking-wider text-[#3d7a94] mb-3">Índice</p>
-          <ol className="grid grid-cols-2 gap-1.5">
-            {([
-              ["#resumo",      "1. Resumo Geral"],
-              ["#cenarios",    "2. Análise por Cenário"],
-              ["#sensib",      "3. Sensibilidade por Duração"],
-              ["#dala",        "4. Metodologia DaLA"],
-              ["#componentes", "5. Componentes do Cálculo"],
-              ["#parametros",  "6. Parâmetros Utilizados"],
-              ["#cnae84",      "7. Nota — Administração Pública"],
-              ["#fontes",      "8. Fontes e Referências"],
-            ] as [string, string][]).map(([href, label]) => (
-              <li key={href}>
-                <a href={href} className="text-sm text-[#055071] font-medium hover:underline underline-offset-4 transition-colors duration-150">
-                  {label}
-                </a>
-              </li>
-            ))}
-          </ol>
-        </nav>
+        {/* ── Sidebar (Índice fixo) ────────────────────────────────────────────── */}
+        <aside className="hidden lg:block w-52 shrink-0 print:hidden">
+          <div className="sticky top-[56px] flex flex-col gap-3">
+            <nav className="bg-white border border-[#b3cdd8] rounded-xl p-4 shadow-sm">
+              <p className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94] mb-2">Índice</p>
+              <ol className="flex flex-col gap-1">
+                {([
+                  ["#resumo",      "1. Resumo Geral"],
+                  ["#cenarios",    "2. Análise por Cenário"],
+                  ["#sensib",      "3. Sensibilidade por Duração"],
+                  ["#dala",        "4. Metodologia DaLA"],
+                  ["#componentes", "5. Componentes do Cálculo"],
+                  ["#parametros",  "6. Parâmetros Utilizados"],
+                  ["#cnae84",      "7. Nota — Admin. Pública"],
+                  ["#fontes",      "8. Fontes e Referências"],
+                ] as [string, string][]).map(([href, label]) => (
+                  <li key={href}>
+                    <a href={href} className="text-[11px] text-[#055071] font-medium hover:underline underline-offset-4 transition-colors duration-150 leading-snug block py-0.5">
+                      {label}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          </div>
+        </aside>
+
+        <main className="flex-1 min-w-0">
 
         {/* ══════════════════════════════════════════════════════════════════════
             SEÇÃO 1 — RESUMO GERAL
@@ -598,9 +608,10 @@ export function DanosClient({ dados }: { dados: DanosData }) {
           <p className="text-[11px] text-[#3d7a94]">
             Painel desenvolvido por GPEA/FURG em parceria com o BID — Banco Interamericano de Desenvolvimento.
           </p>
-          <p className="text-[11px] text-[#3d7a94] mt-0.5">Dados de referência: 2024.</p>
+          <p className="text-[11px] text-[#3d7a94] mt-0.5">© 2024 Alisson Tallys Geraldo Fiorentin · Dados de referência: 2024.</p>
         </footer>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

@@ -13,7 +13,11 @@ export default function MetodologiaPage() {
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <header className="bg-[#055071] text-white px-6 py-10 print:py-5">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-[1200px] mx-auto">
+          <div className="flex items-center gap-2 mb-5 print:hidden">
+            <a href="/" className="text-[10px] font-bold text-white/70 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">← Dashboard</a>
+            <a href="/danos" className="text-[10px] font-bold text-white/70 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">Danos Operacionais →</a>
+          </div>
           <p className="text-[11px] uppercase tracking-[0.18em] font-semibold opacity-60 mb-2">
             BID · GPEA · FURG
           </p>
@@ -27,7 +31,39 @@ export default function MetodologiaPage() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-6 py-10 print:py-5">
+      <div className="max-w-[1200px] mx-auto px-6 py-10 print:py-5 flex gap-8 items-start print:block">
+
+        {/* ── Sidebar (Índice fixo) ────────────────────────────────────────────── */}
+        <aside className="hidden lg:block w-52 shrink-0 print:hidden">
+          <div className="sticky top-6 flex flex-col gap-3">
+            <nav className="bg-white border border-[#b3cdd8] rounded-xl p-4 shadow-sm">
+              <p className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94] mb-2">Índice</p>
+              <ol className="flex flex-col gap-1">
+                {([
+                  ["#manchas",        "1. Manchas de Inundação"],
+                  ["#sobreposicao",   "2. Sobreposição Espacial"],
+                  ["#empresas",       "3. Empresas"],
+                  ["#agricultura",    "4. Agricultura"],
+                  ["#educacao",       "5. Educação"],
+                  ["#saude",          "6. Saúde"],
+                  ["#infraestrutura", "7. Infraestrutura"],
+                  ["#edificacoes",    "8. Edificações"],
+                  ["#danos",          "9. Danos Operacionais"],
+                  ["#populacao",      "10. População Exposta"],
+                  ["#fontes",         "11. Fontes e Referências"],
+                ] as [string, string][]).map(([href, label]) => (
+                  <li key={href}>
+                    <a href={href} className="text-[11px] text-[#055071] font-medium hover:underline underline-offset-4 transition-colors duration-150 leading-snug block py-0.5">
+                      {label}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          </div>
+        </aside>
+
+        <main className="flex-1 min-w-0 print:py-0">
 
         {/* ── Contexto ────────────────────────────────────────────────────────── */}
         <div className="bg-white border border-[#b3cdd8] rounded-xl p-5 mb-8 shadow-sm">
@@ -42,31 +78,6 @@ export default function MetodologiaPage() {
           </p>
         </div>
 
-        {/* ── Índice ─────────────────────────────────────────────────────────── */}
-        <nav className="bg-white border border-[#b3cdd8] rounded-xl p-5 mb-10 print:hidden shadow-sm">
-          <p className="text-[11px] font-black uppercase tracking-wider text-[#3d7a94] mb-3">Índice</p>
-          <ol className="grid grid-cols-2 gap-1.5">
-            {([
-              ["#manchas",        "1. Manchas de Inundação — Cenários"],
-              ["#sobreposicao",   "2. Sobreposição Espacial"],
-              ["#empresas",       "3. Empresas — Estabelecimentos Formais"],
-              ["#agricultura",    "4. Agricultura — Impacto por Cultura"],
-              ["#educacao",       "5. Educação — Estrutura Atingida"],
-              ["#saude",          "6. Saúde — Capacidade Instalada"],
-              ["#infraestrutura", "7. Infraestrutura Urbana"],
-              ["#edificacoes",    "8. Edificações — Google Open Buildings"],
-              ["#danos",          "9. Danos Operacionais — Metodologia DaLA"],
-              ["#populacao",      "10. População Exposta — WorldPop"],
-              ["#fontes",         "11. Fontes e Referências"],
-            ] as [string, string][]).map(([href, label]) => (
-              <li key={href}>
-                <a href={href} className="text-sm text-[#055071] font-medium hover:underline underline-offset-4 transition-colors duration-150">
-                  {label}
-                </a>
-              </li>
-            ))}
-          </ol>
-        </nav>
 
         {/* ══════════════════════════════════════════════════════════════════════
             1. MANCHAS
@@ -1012,11 +1023,12 @@ export default function MetodologiaPage() {
             Painel desenvolvido por GPEA/FURG em parceria com o BID — Banco Interamericano de Desenvolvimento.
           </p>
           <p className="text-[11px] text-[#3d7a94] mt-0.5">
-            Dados de referência: 2024.
+            © 2024 Alisson Tallys Geraldo Fiorentin · Dados de referência: 2024.
           </p>
         </footer>
 
-      </main>
+        </main>
+      </div>
     </div>
   );
 }
