@@ -130,25 +130,29 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
                 <div className="flex items-center gap-2 px-3 py-2">
                   <Users size={13} strokeWidth={2.5} className="text-purple-600 shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-baseline gap-2">
-                      <div>
-                        <span className="text-[9px] font-bold text-purple-500 uppercase tracking-wider">Pop. Total</span>
-                        <span className="ml-1.5 text-[13px] font-black text-purple-800">
-                          {(isVisaoGeral ? popGeralTotal : popMunData?.pop_total)?.toLocaleString("pt-BR")}
-                        </span>
-                        <span className="text-[9px] text-purple-400 ml-0.5">hab.</span>
+                    <div className="flex justify-between items-end gap-1">
+                      <div className="min-w-0">
+                        <div className="text-[9px] font-bold text-purple-500 uppercase tracking-wider leading-none mb-0.5">Pop. Total</div>
+                        <div className="flex items-baseline gap-0.5">
+                          <span className="text-[13px] font-black text-purple-800 tabular-nums">
+                            {(isVisaoGeral ? popGeralTotal : popMunData?.pop_total)?.toLocaleString("pt-BR")}
+                          </span>
+                          <span className="text-[9px] text-purple-400">hab.</span>
+                        </div>
                       </div>
                       {(isVisaoGeral ? popGeralAtingida != null : !!popCenData) && (
-                        <div className="text-right shrink-0">
-                          <span className="text-[9px] font-bold text-red-500 uppercase tracking-wider">
+                        <div className="text-right shrink-0 min-w-0">
+                          <div className="text-[9px] font-bold text-red-500 uppercase tracking-wider leading-none mb-0.5">
                             {isVisaoGeral ? "Atingida (piores)" : "Atingida"}
-                          </span>
-                          <span className="ml-1 text-[13px] font-black text-red-700">
-                            {(isVisaoGeral ? popGeralAtingida : popCenData?.pop_atingida)?.toLocaleString("pt-BR")}
-                          </span>
-                          <span className="text-[9px] text-red-400 ml-0.5">
-                            ({(isVisaoGeral ? popGeralPct : popCenData?.pct_atingida)?.toFixed(1)}%)
-                          </span>
+                          </div>
+                          <div className="flex items-baseline gap-0.5 justify-end">
+                            <span className="text-[13px] font-black text-red-700 tabular-nums">
+                              {(isVisaoGeral ? popGeralAtingida : popCenData?.pop_atingida)?.toLocaleString("pt-BR")}
+                            </span>
+                            <span className="text-[9px] text-red-400">
+                              ({(isVisaoGeral ? popGeralPct : popCenData?.pct_atingida)?.toFixed(1)}%)
+                            </span>
+                          </div>
                         </div>
                       )}
                     </div>
