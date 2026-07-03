@@ -80,12 +80,21 @@ export function DanosClient({ dados }: { dados: DanosData }) {
     ])
   );
 
-  // Pior cenário por município (com escala aplicada)
+  // Cenários selecionados por município para o agregado da Visão Geral
+  // (correspondente ao PIORES_CENARIOS do mapa — sem acentos para bater com as chaves do JSON)
+  const CENARIOS_VISAO_GERAL: Record<string, string> = {
+    "Eldorado do Sul": "Cenario ADA",
+    "Lajeado":         "Cenario 27m",
+    "Porto Alegre":    "Cenario ADA",
+    "Rio Grande":      "Cenario Maio 2024",
+  };
+
   const pioresCenarios = Object.entries(dadosEscalados).map(([mun, cens]) => {
-    const [cenNome, cenVal] = Object.entries(cens).reduce(
-      (acc, cur) => (cur[1].total > acc[1].total ? cur : acc)
-    );
-    return { mun, cenNome, cenVal };
+    const cenarioFixo = CENARIOS_VISAO_GERAL[mun];
+    const entry = cenarioFixo && cens[cenarioFixo]
+      ? [cenarioFixo, cens[cenarioFixo]] as [string, CenarioDanos]
+      : Object.entries(cens).reduce((acc, cur) => (cur[1].total > acc[1].total ? cur : acc));
+    return { mun, cenNome: entry[0], cenVal: entry[1] };
   });
 
   // Todos pares para o gráfico
