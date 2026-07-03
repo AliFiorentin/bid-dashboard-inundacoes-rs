@@ -31,7 +31,7 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
   return (
     <>
       {showFiltros && showPanel && (
-        <div className="print:hidden absolute top-[100px] right-4 flex flex-col gap-2 bg-white/80 backdrop-blur-md p-2.5 rounded-xl border border-slate-200/60 shadow-2xl z-10 w-40 max-h-[calc(100vh-130px)] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-thumb]:rounded-full">
+        <div className="print:hidden absolute top-[100px] right-4 flex flex-col gap-2 p-2.5 rounded-xl z-10 w-40 max-h-[calc(100vh-130px)] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-thumb]:rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}>
           <div className="flex justify-between items-center mb-0.5 border-b border-slate-200/60 pb-1.5">
             <span className="text-[9px] font-black text-slate-700 uppercase tracking-wider">Filtros de Mapa</span>
             <button onClick={() => setShowFiltros(false)} className="text-slate-400 hover:text-slate-600 font-black text-xs px-1">✖</button>
@@ -146,7 +146,8 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
       {!showFiltros && showPanel && (
         <button
           onClick={() => setShowFiltros(true)}
-          className="absolute top-[90px] right-4 bg-white/80 backdrop-blur-md border border-slate-200/60 text-slate-800 text-xs font-black shadow-2xl px-4 py-2 rounded-xl z-20 hover:bg-slate-50 transition-[background-color,transform] duration-150 active:scale-[0.97] flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-1"
+          className="absolute top-[90px] right-4 text-slate-800 text-xs font-black px-4 py-2 rounded-xl z-20 transition-[opacity,transform] duration-150 active:scale-[0.97] flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-1"
+          style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}
         >
           <SlidersHorizontal size={12} strokeWidth={2.5} />Mostrar Filtros
         </button>
