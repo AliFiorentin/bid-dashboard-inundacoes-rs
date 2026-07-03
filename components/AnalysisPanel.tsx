@@ -10,6 +10,7 @@ import { EducacaoTab } from "@/components/tabs/EducacaoTab";
 import { SaudeTab } from "@/components/tabs/SaudeTab";
 import { AgriculturaTab } from "@/components/AgriculturaTab";
 import { InfraTab } from "@/components/tabs/InfraTab";
+import { slugify } from "@/lib/geo-utils";
 import type { DashboardState } from "@/hooks/useDashboard";
 
 interface AnalysisPanelProps {
@@ -45,10 +46,13 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
 
   // Population KPI — resolved here to use inline in the panel
   const popMunData = !isVisaoGeral ? popData?.[municipio] : null;
-  const popCenData =
-    popMunData && cenario && cenario !== "(nenhum)"
-      ? popMunData.cenarios[cenario]
-      : null;
+  const popCenData = (() => {
+    if (!popMunData || !cenario || cenario === "(nenhum)") return null;
+    if (popMunData.cenarios[cenario]) return popMunData.cenarios[cenario];
+    const cenSlug = slugify(cenario);
+    const match = Object.entries(popMunData.cenarios).find(([k]) => slugify(k) === cenSlug);
+    return match ? match[1] : null;
+  })();
 
   return (
     <>
