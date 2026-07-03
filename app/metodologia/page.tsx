@@ -65,7 +65,8 @@ export default function MetodologiaPage() {
               ["#infraestrutura", "7. Infraestrutura Urbana"],
               ["#edificacoes",    "8. Edificações — Google Open Buildings"],
               ["#danos",          "9. Danos Operacionais — Metodologia DaLA"],
-              ["#fontes",         "10. Fontes e Referências"],
+              ["#populacao",      "10. População Exposta — WorldPop"],
+              ["#fontes",         "11. Fontes e Referências"],
             ] as [string, string][]).map(([href, label]) => (
               <li key={href}>
                 <a href={href} className="text-sm text-[#055071] font-medium hover:underline underline-offset-4 transition-colors duration-150">
@@ -822,9 +823,121 @@ export default function MetodologiaPage() {
         </Section>
 
         {/* ══════════════════════════════════════════════════════════════════════
-            10. FONTES E REFERÊNCIAS
+            10. POPULAÇÃO EXPOSTA
         ══════════════════════════════════════════════════════════════════════ */}
-        <Section id="fontes" num="10" title="Fontes e Referências">
+        <Section id="populacao" num="10" title="População Exposta — WorldPop 2024">
+          <p>
+            A camada de população exposta quantifica o número de habitantes residentes dentro
+            de cada mancha de inundação, cruzando as geometrias de flood extent com o raster
+            de população do{" "}
+            <ExtLink href="https://data.humdata.org/dataset/worldpop-population-counts-for-brazil">WorldPop</ExtLink>.
+            Esse dado complementa as estimativas de danos operacionais com a perspectiva humana
+            direta: <strong>quantas pessoas vivem na área afetada</strong>.
+          </p>
+
+          <SubTitle>Fonte dos dados</SubTitle>
+          <DataTable rows={[
+            ["Atributo",      "Valor"],
+            ["Produto",       "WorldPop Global Mosaic 2024 — Population Counts (Constrained)"],
+            ["Sigla do arquivo", "bra_pop_2024_CN_100m_R2025A_v1.tif"],
+            ["Tipo",          "Constrained (CN) — ajustado ao censo demográfico brasileiro"],
+            ["Resolução",     "100 m × 100 m por pixel (~1 ha)"],
+            ["CRS",           "WGS 84 geográfico (EPSG:4326)"],
+            ["Unidade",       "Número de habitantes por pixel"],
+            ["Cobertura",     "Brasil inteiro"],
+            ["Referência",    "Estimativa para 2024 (Revisão A, 2025)"],
+            ["Repositório",   "Humanitarian Data Exchange (HDX) — data.humdata.org"],
+          ]} />
+
+          <SubTitle>Método de cálculo</SubTitle>
+          <p>
+            O processamento é realizado pelo script{" "}
+            <code className="bg-[#f0f7fa] border border-[#b3cdd8] rounded px-1 text-[12px] font-mono">pipeline/09_populacao.py</code>{" "}
+            com <ExtLink href="https://rasterio.readthedocs.io">rasterio</ExtLink> e{" "}
+            <ExtLink href="https://geopandas.org">GeoPandas</ExtLink>:
+          </p>
+          <ol className="list-decimal list-inside space-y-1.5 text-sm text-slate-700 mt-2">
+            <li>
+              <strong>Limite municipal</strong> — baixado via IBGE API v3
+              (<code className="bg-[#f0f7fa] text-[11px] font-mono px-1 rounded">/api/v3/malhas/municipios/&#123;ibge7&#125;</code>)
+              e cacheado localmente em <code className="bg-[#f0f7fa] text-[11px] font-mono px-1 rounded">data/raw/ibge/</code>.
+            </li>
+            <li>
+              <strong>Pop. total municipal</strong> — clip do raster pelo polígono IBGE com{" "}
+              <code className="bg-[#f0f7fa] text-[11px] font-mono px-1 rounded">rasterio.mask.mask()</code>;
+              soma de todos os pixels válidos (valor &gt; 0 e ≠ nodata).
+            </li>
+            <li>
+              <strong>Pop. atingida por cenário</strong> — clip pelo polígono da mancha de
+              inundação correspondente; mesma soma. Pixels de nodata (−99999) excluídos.
+            </li>
+            <li>
+              <strong>Heatmap</strong> — array recortado pelo limite municipal convertido a PNG
+              RGBA com colormap <em>plasma</em> em escala logarítmica
+              (log₁₀(1 + pop), máximo em 300 hab/pixel). Pixels nulos ou zero recebem
+              alpha = 0 (transparente). O PNG é georreferenciado por quatro cantos em WGS 84
+              e servido como <code className="bg-[#f0f7fa] text-[11px] font-mono px-1 rounded">image source</code>{" "}
+              no MapLibre GL.
+            </li>
+          </ol>
+
+          <SubTitle>Fórmulas</SubTitle>
+          <div className="bg-[#f0f7fa] border border-[#b3cdd8] rounded-lg p-4 font-mono text-sm space-y-2">
+            <div>
+              <span className="text-[#055071] font-bold">Pop_total(M)</span>
+              {" = ∑ pixel(i,j)  ∀ (i,j) ∈ Limite_Municipal(M)"}
+            </div>
+            <div>
+              <span className="text-[#055071] font-bold">Pop_atingida(M, C)</span>
+              {" = ∑ pixel(i,j)  ∀ (i,j) ∈ Mancha(M, C)"}
+            </div>
+            <div>
+              <span className="text-[#055071] font-bold">% atingida</span>
+              {" = Pop_atingida / Pop_total × 100"}
+            </div>
+          </div>
+
+          <SubTitle>Limitações</SubTitle>
+          <ul className="list-disc list-inside space-y-1.5 text-sm text-slate-700">
+            <li>
+              Os modelos WorldPop são estimativas estatísticas baseadas em dados censitários de
+              2022 e covariáveis geoespaciais (construções, uso do solo, luminosidade noturna);
+              não capturam migrações pós-enchente nem desalojamentos.
+            </li>
+            <li>
+              A resolução de 100 m é adequada para análises municipais, mas pode superestimar
+              a população em áreas de uso misto (industrial/comercial) onde residentes não existem.
+            </li>
+            <li>
+              A população <em>exposta</em> (dentro da mancha) não equivale a população{" "}
+              <em>afetada</em> (que efetivamente sofreu impactos): parte das edificações pode
+              ter sido evacuada antes da inundação ou estar em pavimentos superiores.
+            </li>
+          </ul>
+
+          <SubTitle>Resultados</SubTitle>
+          <DataTable rows={[
+            ["Município",       "Pop. Total (WorldPop)",  "Cenário",                   "Pop. Atingida",  "% Exposta"],
+            ["Eldorado do Sul", "41.958",                 "Cenário ADA",               "29.406",         "70,1%"],
+            ["Lajeado",         "100.717",                "Cenário 27 m",              "5.124",          "5,1%"],
+            ["Lajeado",         "100.717",                "Cenário 30 m",              "7.453",          "7,4%"],
+            ["Porto Alegre",    "1.342.008",              "Cenário ADA",               "379.596",        "28,3%"],
+            ["Rio Grande",      "198.418",                "Cenário Maio 2024",         "23.058",         "11,6%"],
+            ["Rio Grande",      "198.418",                "Cenário Maio 2024 + 50%",   "80.124",         "40,4%"],
+            ["Rio Grande",      "198.418",                "Cenário Setembro 2023",     "7.844",          "4,0%"],
+          ]} />
+
+          <SectionSources links={[
+            ["WorldPop (2025) — Brazil Population Counts 100m 2024, constrained individual countries", "https://data.humdata.org/dataset/worldpop-population-counts-for-brazil"],
+            ["IBGE — Malhas Municipais (API v3)", "https://servicodados.ibge.gov.br/api/v3/malhas/municipios/"],
+            ["rasterio — Raster I/O in Python", "https://rasterio.readthedocs.io"],
+          ]} />
+        </Section>
+
+        {/* ══════════════════════════════════════════════════════════════════════
+            11. FONTES E REFERÊNCIAS
+        ══════════════════════════════════════════════════════════════════════ */}
+        <Section id="fontes" num="11" title="Fontes e Referências">
           <div className="space-y-4">
 
             <RefBlock title="Manchas de Inundação e Contexto">

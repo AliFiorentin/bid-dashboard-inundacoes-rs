@@ -38,7 +38,11 @@ export function DashboardMap({ dash }: Props) {
     atingidosAgriGeo,
     interactiveLayerIds,
     handleMapClick,
+    popData,
   } = dash;
+
+  const popMunData = !isVisaoGeral && !isTransitioning ? popData?.[renderMunicipio] : null;
+  const popImgUrl = popMunData ? `/dados_convertidos/${slugify(renderMunicipio)}/populacao.png` : null;
 
   const AGRI_FILL_COLOR = [
     "match", ["get", "cultura"],
@@ -78,6 +82,22 @@ export function DashboardMap({ dash }: Props) {
           >
             <MapPopup source={popupInfo.source} properties={popupInfo.properties} />
           </Popup>
+        )}
+
+        {/* 0. Raster de população — abaixo de tudo */}
+        {camadas.includes("População") && popImgUrl && popMunData && (
+          <Source
+            id="populacao-img"
+            type="image"
+            url={popImgUrl}
+            coordinates={popMunData.coordinates as [[number,number],[number,number],[number,number],[number,number]]}
+          >
+            <Layer
+              id="populacao-raster"
+              type="raster"
+              paint={{ "raster-opacity": 0.65, "raster-resampling": "nearest" }}
+            />
+          </Source>
         )}
 
         {/* 1. Manchas — primeiro (base da pilha) */}

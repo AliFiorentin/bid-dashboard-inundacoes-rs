@@ -29,6 +29,7 @@ export default function Dashboard() {
     manchaCenario, manchaRS,
     isVisaoGeral,
     renderEmp, renderEdu, renderSau,
+    popData,
   } = dash;
 
   return (
@@ -97,6 +98,15 @@ export default function Dashboard() {
             ))}
             {manchaCenario && !isVisaoGeral && showMancha && <LegendItem cor={COLORS.cenario} label={cenario} area />}
             {isVisaoGeral && manchaRS && showMancha && <LegendItem cor={COLORS.cenario} label="Enchente 2024 — RS" area />}
+            {camadas.includes("População") && !isVisaoGeral && popData?.[municipio] && (
+              <div className="flex items-center gap-2">
+                <div className="w-16 h-3 rounded-sm shrink-0" style={{ background: "linear-gradient(to right, #0d0887, #9c179e, #ed7953, #f0f921)" }} />
+                <div className="flex flex-col leading-none gap-0.5">
+                  <span className="text-[10px] text-slate-700 font-medium">Pop. (hab./pixel)</span>
+                  <span className="text-[8px] text-slate-400">baixo → alto</span>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

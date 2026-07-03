@@ -1,4 +1,11 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
+
+export interface PopulacaoMunData {
+  pop_total: number;
+  coordinates: [[number, number], [number, number], [number, number], [number, number]];
+  cenarios: Record<string, { pop_atingida: number; pct_atingida: number }>;
+}
+export type PopulacaoData = Record<string, PopulacaoMunData>;
 import type { FeatureCollection } from "geojson";
 import type { MapRef, MapLayerMouseEvent } from "react-map-gl/maplibre";
 import * as XLSX from "xlsx";
@@ -23,7 +30,7 @@ export function useDashboard() {
   const [cenario, setCenario] = useState<string>("(nenhum)");
   const [renderMunicipio, setRenderMunicipio] = useState<string>("Visão Geral RS");
 
-  const [camadas, setCamadas] = useState<string[]>(["Empresas", "Educação", "Saúde", "Agricultura"]);
+  const [camadas, setCamadas] = useState<string[]>(["Empresas", "Educação", "Saúde", "Agricultura", "População"]);
   const [infraAtivas, setInfraAtivas] = useState<string[]>([]);
 
   const [filtroSetor, setFiltroSetor] = useState<string>("(todos)");
@@ -54,6 +61,7 @@ export function useDashboard() {
   const [allMunAgriAtingidosStats, setAllMunAgriAtingidosStats] = useState<Record<string, Record<string, number>> | null>(null);
   const [manchaRS, setManchaRS] = useState<FeatureCollection | null>(null);
   const [danosData, setDanosData] = useState<import("@/components/tabs/DanosTab").DanosData | null>(null);
+  const [popData, setPopData] = useState<PopulacaoData | null>(null);
 
   const [cursor, setCursor] = useState<string>("grab");
   const [popupInfo, setPopupInfo] = useState<{ lngLat: [number, number], properties: Record<string, unknown>, source: string } | null>(null);
@@ -74,6 +82,13 @@ export function useDashboard() {
       // eslint-disable-next-line react-hooks/exhaustive-deps
       .then(d => d && setDanosData(d))
       .catch(() => {/* silently ignore if file not available */});
+  }, []);
+
+  useEffect(() => {
+    fetch("/dados_convertidos/populacao_atingida.json")
+      .then(r => r.ok ? r.json() : null)
+      .then(d => d && setPopData(d))
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -408,7 +423,7 @@ export function useDashboard() {
 
   const possuiInfra = INFRAESTRUTURA_CONFIG[municipio] && INFRAESTRUTURA_CONFIG[municipio].length > 0;
   const mostraImpacto = isVisaoGeral || isCenarioAtivo;
-  const temCamadaTabular = camadas.includes("Empresas") || camadas.includes("Educação") || camadas.includes("Saúde") || camadas.includes("Agricultura") || camadas.includes("Infraestrutura");
+  const temCamadaTabular = camadas.includes("Empresas") || camadas.includes("Educação") || camadas.includes("Saúde") || camadas.includes("Agricultura") || camadas.includes("Infraestrutura") || camadas.includes("População");
 
   const setoresChart = useMemo(() => {
     if (!baseEmpresas?.features) return [] as { setor: string; base: number; atg: number }[];
@@ -620,6 +635,7 @@ export function useDashboard() {
     handleMapClick,
     exportarExcel,
     danosData,
+    popData,
     // geo-utils re-exports needed in JSX
     countRuasUnicas, getRuasListPOA, countRuasUnicasPOA, getRotas, getLen,
   };

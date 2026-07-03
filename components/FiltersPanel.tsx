@@ -22,12 +22,15 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
     showMancha, setShowMancha,
     isVisaoGeral, isCenarioAtivo, temCamadaTabular,
     setoresUnicos, depsUnicas, tiposUnicos,
-    toggleInfra,
+    toggleInfra, toggleCamada,
   } = dash;
+
+  const temPopulacao = camadas.includes("População") && !isVisaoGeral;
+  const showPanel = temCamadaTabular && !isVisaoGeral;
 
   return (
     <>
-      {showFiltros && (temCamadaTabular) && !isVisaoGeral && (
+      {showFiltros && showPanel && (
         <div className="print:hidden absolute top-[100px] right-4 flex flex-col gap-2 bg-white/80 backdrop-blur-md p-2.5 rounded-xl border border-slate-200/60 shadow-2xl z-10 w-40 max-h-[calc(100vh-130px)] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-thumb]:rounded-full">
           <div className="flex justify-between items-center mb-0.5 border-b border-slate-200/60 pb-1.5">
             <span className="text-[9px] font-black text-slate-700 uppercase tracking-wider">Filtros de Mapa</span>
@@ -102,6 +105,7 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
               </DropdownMenu>
             </div>
           )}
+
           {isCenarioAtivo && !isVisaoGeral && (
             <div className="flex flex-col gap-1 w-full shrink-0">
               <label className="text-[9px] font-bold uppercase tracking-wider" style={{ color: COLORS.cenario }}>Mancha de Inundação</label>
@@ -118,10 +122,28 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
               </button>
             </div>
           )}
+
+          {/* Heatmap de População */}
+          {!isVisaoGeral && (
+            <div className="flex flex-col gap-1 w-full shrink-0">
+              <label className="text-[9px] font-bold text-purple-700 uppercase tracking-wider">Heatmap Pop.</label>
+              <button
+                onClick={() => toggleCamada("População")}
+                className="h-7 w-full rounded text-[10px] font-bold border transition-colors duration-150"
+                style={{
+                  backgroundColor: temPopulacao ? "#9333ea20" : "transparent",
+                  borderColor: temPopulacao ? "#9333ea" : "#cbd5e1",
+                  color: temPopulacao ? "#9333ea" : "#64748b",
+                }}
+              >
+                {temPopulacao ? "Visível" : "Oculto"}
+              </button>
+            </div>
+          )}
         </div>
       )}
 
-      {!showFiltros && (temCamadaTabular) && !isVisaoGeral && (
+      {!showFiltros && showPanel && (
         <button
           onClick={() => setShowFiltros(true)}
           className="absolute top-[90px] right-4 bg-white/80 backdrop-blur-md border border-slate-200/60 text-slate-800 text-xs font-black shadow-2xl px-4 py-2 rounded-xl z-20 hover:bg-slate-50 transition-[background-color,transform] duration-150 active:scale-[0.97] flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-1"

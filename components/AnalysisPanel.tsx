@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Download, Printer, EyeOff, PanelLeft, Building2, GraduationCap, HeartPulse, Sprout, Wrench } from "lucide-react";
+import { Download, Printer, EyeOff, PanelLeft, Building2, GraduationCap, HeartPulse, Sprout, Wrench, Users } from "lucide-react";
 import { Tabs } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { AGRI_BOUNDS } from "@/lib/constants";
@@ -40,7 +40,15 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
     baseInfra, atingidosInfra, toggleInfra,
     showListaLogradouros, setShowListaLogradouros,
     showListaEixos, setShowListaEixos,
+    popData,
   } = dash;
+
+  // Population KPI — resolved here to use inline in the panel
+  const popMunData = !isVisaoGeral ? popData?.[municipio] : null;
+  const popCenData =
+    popMunData && cenario && cenario !== "(nenhum)"
+      ? popMunData.cenarios[cenario]
+      : null;
 
   return (
     <>
@@ -66,7 +74,7 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
             </p>
           </div>
           <Tabs value={tabAtiva} className="w-full flex-1 flex flex-col overflow-hidden px-4 pt-3 print:overflow-visible print:h-auto">
-            <div className="flex flex-wrap gap-1.5 shrink-0 pb-3">
+            <div className="flex flex-wrap gap-1.5 shrink-0 pb-2">
               {([
                 { value: "empresas", label: "Empresas", icon: <Building2     size={11} strokeWidth={2.5} /> },
                 { value: "educacao", label: "Educação", icon: <GraduationCap size={11} strokeWidth={2.5} /> },
@@ -89,6 +97,47 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
                 </Button>
               ))}
             </div>
+
+            {/* KPI fixo de população — largura total, abaixo das abas */}
+            {popMunData && (
+              <div className="shrink-0 mb-2 rounded-lg border overflow-hidden"
+                style={{ borderColor: "#e9d5ff", background: "linear-gradient(135deg, #faf5ff 0%, #ede9fe 100%)" }}>
+                <div className="flex items-center gap-2 px-3 py-2">
+                  <Users size={13} strokeWidth={2.5} className="text-purple-600 shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-baseline gap-2">
+                      <div>
+                        <span className="text-[9px] font-bold text-purple-500 uppercase tracking-wider">Pop. Total</span>
+                        <span className="ml-1.5 text-[13px] font-black text-purple-800">
+                          {popMunData.pop_total.toLocaleString("pt-BR")}
+                        </span>
+                        <span className="text-[9px] text-purple-400 ml-0.5">hab.</span>
+                      </div>
+                      {popCenData && (
+                        <div className="text-right shrink-0">
+                          <span className="text-[9px] font-bold text-red-500 uppercase tracking-wider">Atingida</span>
+                          <span className="ml-1 text-[13px] font-black text-red-700">
+                            {popCenData.pop_atingida.toLocaleString("pt-BR")}
+                          </span>
+                          <span className="text-[9px] text-red-400 ml-0.5">({popCenData.pct_atingida.toFixed(1)}%)</span>
+                        </div>
+                      )}
+                    </div>
+                    {popCenData && (
+                      <div className="mt-1.5 h-1.5 bg-purple-100 rounded-full overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all duration-700"
+                          style={{
+                            width: `${Math.min(popCenData.pct_atingida, 100)}%`,
+                            background: "linear-gradient(to right, #9333ea, #dc2626)",
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
 
             <EmpresasTab dash={{ setoresChart, setoresEmpregadosChart, metricasEmp, mostraImpacto }} />
 
