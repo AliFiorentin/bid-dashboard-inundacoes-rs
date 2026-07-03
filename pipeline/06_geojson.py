@@ -310,9 +310,9 @@ def main():
     print("\n  Gerando mancha_rs_enchente_2024.geojson...")
     piores = {
         "eldorado_do_sul": "eldorado_do_sul___cenario_ada",
-        "lajeado": "lajeado___cenario_30m",
+        "lajeado": "lajeado___cenario_27m",
         "porto_alegre": "porto_alegre___cenario_ada",
-        "rio_grande": "rio_grande___cenario_maio_2024_50",
+        "rio_grande": "rio_grande___cenario_maio_2024",
     }
     features_rs = []
     for slug_m, cen_slug in piores.items():
