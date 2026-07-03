@@ -282,32 +282,6 @@ export default function MetodologiaPage() {
             ["Demais (45–99)",   "Serviços",           "43,3%",            "Comércio, transporte, TI, saúde privada, educação privada"],
           ]} />
 
-          <SubTitle>Cálculo do Labor Share</SubTitle>
-          <p>
-            O <em>labor share</em> (LS) mede a fração do Valor Adicionado Bruto (VAB) de um setor
-            que corresponde à remuneração do trabalho. É calculado diretamente da{" "}
-            <strong>Tabela 17 do Sistema de Contas Nacionais (IBGE SCN 2021)</strong>, que publica,
-            por atividade econômica, as Remunerações totais e o VAB a preços básicos:
-          </p>
-          <MathBlock exprs={[
-            { label: "Labor share setorial", tex: "LS_s = \\dfrac{\\text{Remunerações}_s}{\\text{VAB}_s}" },
-          ]} />
-          <p>
-            Como a RAIS fornece a folha salarial mensal por estabelecimento, mas não o VAB, o LS
-            é utilizado para <strong>inverter a relação</strong> e estimar o VAB a partir do dado
-            salarial disponível:
-          </p>
-          <MathBlock exprs={[
-            { label: "VAB estimado (est.)", tex: "\\widehat{\\text{VAB}}_i = \\dfrac{w_{i,\\text{mensal}} \\times 12}{LS_s}" },
-          ]} />
-          <p>
-            onde <Math tex={"w_{i,\\text{mensal}}"} /> é a remuneração média mensal do
-            estabelecimento <Math tex={"i"} /> (variável <em>vlr_remun_media_nom</em> da RAIS) e{" "}
-            <Math tex={"s"} /> é o setor correspondente à divisão CNAE do estabelecimento.
-            Os valores de LS utilizados são os da tabela acima, extraídos do SCN 2021
-            (dado público mais recente com abertura setorial completa).
-          </p>
-
           <SubTitle>Indicadores calculados</SubTitle>
           <DataTable rows={[
             ["Indicador",                  "Fórmula / Descrição"],
@@ -755,15 +729,21 @@ export default function MetodologiaPage() {
           <SubTitle>Componente 1 — Empresas: Perda de VAB</SubTitle>
           <p>
             A RAIS fornece a folha salarial mensal por estabelecimento, mas não o Valor
-            Adicionado Bruto (VAB). A inversão pelo <em>labor share</em> setorial é o método
-            padrão da contabilidade nacional quando apenas o dado salarial está disponível
-            (Karabarbounis &amp; Neiman, 2014; IBGE SCN):
+            Adicionado Bruto (VAB). O método utilizado é a <strong>inversão pelo labor share
+            setorial</strong> — abordagem padrão da contabilidade nacional quando apenas o
+            dado salarial está disponível (Karabarbounis &amp; Neiman, 2014; IBGE SCN).
+          </p>
+          <p>
+            O <em>labor share</em> (LS) mede a fração do VAB de um setor que corresponde à
+            remuneração do trabalho. Os valores são extraídos diretamente da{" "}
+            <strong>Tabela 17 do Sistema de Contas Nacionais (IBGE SCN 2021)</strong>, que
+            publica Remunerações totais e VAB a preços básicos por atividade econômica:
           </p>
           <MathBlock exprs={[
-            { label: "Labor share",       tex: "LS_s = \\dfrac{\\text{Remunerações}_s}{\\text{VAB}_s} \\quad \\text{(por setor } s \\text{)}" },
-            { label: "VAB anual (est.)",  tex: "\\widehat{\\text{VAB}}_i = \\dfrac{w_{i,\\text{anual}}}{LS_s}, \\quad w_{i,\\text{anual}} = w_{i,\\text{mensal}} \\times 12" },
-            { label: "Perda operacional", tex: "\\Delta_i = \\widehat{\\text{VAB}}_i \\times f" },
-            { label: "Total empresas",    tex: "L_{\\text{emp}} = \\sum_{i \\in \\text{atingidos}} \\Delta_i" },
+            { label: "Labor share setorial", tex: "LS_s = \\dfrac{\\text{Remunerações}_s}{\\text{VAB}_s} \\quad \\text{(fonte: IBGE SCN 2021 — Tab17)}" },
+            { label: "VAB anual (est.)",     tex: "\\widehat{\\text{VAB}}_i = \\dfrac{w_{i,\\text{mensal}} \\times 12}{LS_s}" },
+            { label: "Perda operacional",    tex: "\\Delta_i = \\widehat{\\text{VAB}}_i \\times f" },
+            { label: "Total empresas",       tex: "L_{\\text{emp}} = \\sum_{i \\in \\text{atingidos}} \\Delta_i" },
           ]} />
           <DataTable rows={[
             ["Setor (CNAE)",         "Labor share (LS)",  "Fonte (IBGE SCN 2021 — Tab17)"],
@@ -803,13 +783,23 @@ export default function MetodologiaPage() {
           <SubTitle>Componente 3 — Saúde: Perda de Produção SUS</SubTitle>
           <p>
             A perda de produção do SUS é estimada pela receita de procedimentos não realizada
-            durante a interrupção. A produção anual de cada unidade CNES é calculada a partir
-            dos dados de produção ambulatorial (SIA) e hospitalar (SIH) disponíveis no DataSUS,
-            com anualização por projeção dos 7 meses disponíveis:
+            durante a interrupção. A produção de cada unidade CNES é apurada a partir de dois
+            sistemas de informação do DataSUS:
+          </p>
+          <DataTable rows={[
+            ["Sistema", "Sigla", "Conteúdo", "Granularidade"],
+            ["Sistema de Informações Ambulatoriais", "SIA",  "Procedimentos ambulatoriais aprovados (consultas, exames, terapias) — valor em R$ por competência mensal e por CNES",      "Mensal por CNES"],
+            ["Sistema de Informações Hospitalares",  "SIH",  "Autorizações de Internação Hospitalar (AIH) aprovadas — valor total das AIH pagas por competência mensal e por CNES", "Mensal por CNES"],
+          ]} />
+          <p>
+            A produção disponível cobre <strong>7 meses</strong> (competências mais recentes
+            disponíveis no DataSUS no momento da extração). Para obter uma estimativa anual,
+            aplica-se uma projeção linear proporcional:
           </p>
           <MathBlock exprs={[
-            { label: "Produção anual CNES", tex: "P_k = \\bigl(P_{\\text{SIA},k} + P_{\\text{SIH},k}\\bigr) \\times \\dfrac{12}{7}" },
-            { label: "Perda saúde",        tex: "L_{\\text{sau}} = \\sum_{k \\in \\text{atingidos}} P_k \\times f" },
+            { label: "Produção mensal (CNES k)", tex: "P_{\\text{mensal},k} = \\dfrac{P_{\\text{SIA},k} + P_{\\text{SIH},k}}{7}" },
+            { label: "Produção anual",           tex: "P_k = P_{\\text{mensal},k} \\times 12" },
+            { label: "Perda saúde",              tex: "L_{\\text{sau}} = \\sum_{k \\in \\text{atingidos}} P_k \\times f" },
           ]} />
 
           <SubTitle>Componente 4 — Agricultura: Custo Direto de Produção</SubTitle>
