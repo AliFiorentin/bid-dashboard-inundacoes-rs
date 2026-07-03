@@ -11,6 +11,7 @@ import { SaudeTab } from "@/components/tabs/SaudeTab";
 import { AgriculturaTab } from "@/components/AgriculturaTab";
 import { InfraTab } from "@/components/tabs/InfraTab";
 import { slugify } from "@/lib/geo-utils";
+import { MUNICIPIOS, PIORES_CENARIOS } from "@/lib/constants";
 import type { DashboardState } from "@/hooks/useDashboard";
 
 interface AnalysisPanelProps {
@@ -44,15 +45,35 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
     popData,
   } = dash;
 
-  // Population KPI — resolved here to use inline in the panel
-  const popMunData = !isVisaoGeral ? popData?.[municipio] : null;
+  // Population KPI
+  const findCenData = (munData: NonNullable<typeof popData>[string], cen: string) => {
+    if (munData.cenarios[cen]) return munData.cenarios[cen];
+    const s = slugify(cen);
+    const match = Object.entries(munData.cenarios).find(([k]) => slugify(k) === s);
+    return match ? match[1] : null;
+  };
+
+  const popMunData = !isVisaoGeral && popData ? popData[municipio] ?? null : null;
   const popCenData = (() => {
     if (!popMunData || !cenario || cenario === "(nenhum)") return null;
-    if (popMunData.cenarios[cenario]) return popMunData.cenarios[cenario];
-    const cenSlug = slugify(cenario);
-    const match = Object.entries(popMunData.cenarios).find(([k]) => slugify(k) === cenSlug);
-    return match ? match[1] : null;
+    return findCenData(popMunData, cenario);
   })();
+
+  const popGeralTotal = isVisaoGeral && popData
+    ? MUNICIPIOS.reduce((acc, m) => acc + (popData[m]?.pop_total ?? 0), 0)
+    : null;
+  const popGeralAtingida = isVisaoGeral && popData
+    ? MUNICIPIOS.reduce((acc, m) => {
+        const d = popData[m];
+        if (!d) return acc;
+        const cen = PIORES_CENARIOS[m];
+        const cenData = cen ? findCenData(d, cen) : null;
+        return acc + (cenData?.pop_atingida ?? 0);
+      }, 0)
+    : null;
+  const popGeralPct = popGeralTotal && popGeralAtingida != null && popGeralTotal > 0
+    ? (popGeralAtingida / popGeralTotal) * 100
+    : null;
 
   return (
     <>
@@ -103,7 +124,7 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
             </div>
 
             {/* KPI fixo de população — largura total, abaixo das abas */}
-            {popMunData && (
+            {(popMunData || isVisaoGeral) && (popMunData || popGeralTotal != null) && (
               <div className="shrink-0 mb-2 rounded-lg border overflow-hidden"
                 style={{ borderColor: "#e9d5ff", background: "linear-gradient(135deg, #faf5ff 0%, #ede9fe 100%)" }}>
                 <div className="flex items-center gap-2 px-3 py-2">
@@ -113,26 +134,30 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
                       <div>
                         <span className="text-[9px] font-bold text-purple-500 uppercase tracking-wider">Pop. Total</span>
                         <span className="ml-1.5 text-[13px] font-black text-purple-800">
-                          {popMunData.pop_total.toLocaleString("pt-BR")}
+                          {(isVisaoGeral ? popGeralTotal : popMunData?.pop_total)?.toLocaleString("pt-BR")}
                         </span>
                         <span className="text-[9px] text-purple-400 ml-0.5">hab.</span>
                       </div>
-                      {popCenData && (
+                      {(isVisaoGeral ? popGeralAtingida != null : !!popCenData) && (
                         <div className="text-right shrink-0">
-                          <span className="text-[9px] font-bold text-red-500 uppercase tracking-wider">Atingida</span>
-                          <span className="ml-1 text-[13px] font-black text-red-700">
-                            {popCenData.pop_atingida.toLocaleString("pt-BR")}
+                          <span className="text-[9px] font-bold text-red-500 uppercase tracking-wider">
+                            {isVisaoGeral ? "Atingida (piores)" : "Atingida"}
                           </span>
-                          <span className="text-[9px] text-red-400 ml-0.5">({popCenData.pct_atingida.toFixed(1)}%)</span>
+                          <span className="ml-1 text-[13px] font-black text-red-700">
+                            {(isVisaoGeral ? popGeralAtingida : popCenData?.pop_atingida)?.toLocaleString("pt-BR")}
+                          </span>
+                          <span className="text-[9px] text-red-400 ml-0.5">
+                            ({(isVisaoGeral ? popGeralPct : popCenData?.pct_atingida)?.toFixed(1)}%)
+                          </span>
                         </div>
                       )}
                     </div>
-                    {popCenData && (
+                    {(isVisaoGeral ? popGeralPct != null : !!popCenData) && (
                       <div className="mt-1.5 h-1.5 bg-purple-100 rounded-full overflow-hidden">
                         <div
                           className="h-full rounded-full transition-all duration-700"
                           style={{
-                            width: `${Math.min(popCenData.pct_atingida, 100)}%`,
+                            width: `${Math.min(isVisaoGeral ? (popGeralPct ?? 0) : (popCenData?.pct_atingida ?? 0), 100)}%`,
                             background: "linear-gradient(to right, #9333ea, #dc2626)",
                           }}
                         />
