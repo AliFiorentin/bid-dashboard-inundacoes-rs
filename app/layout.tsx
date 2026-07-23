@@ -11,8 +11,8 @@ const fontMono = Geist_Mono({
 })
 
 export const metadata = {
-  title: "Dashboard CIEX",
-  description: "Análise de impacto",
+  title: "Avaliação de Impactos Socioeconômicos — BID",
+  description: "Painel de monitoramento dos impactos socioeconômicos das enchentes de 2024 no Rio Grande do Sul — projeto BID.",
 }
 
 export default function RootLayout({
