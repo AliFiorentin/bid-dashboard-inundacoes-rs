@@ -4,62 +4,22 @@
       <stop offset="0%" stop-color="#055071"/>
       <stop offset="100%" stop-color="#0a6e9a"/>
     </linearGradient>
-    <linearGradient id="waterFill" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.25"/>
-      <stop offset="100%" stop-color="#0369a1" stop-opacity="0.45"/>
-    </linearGradient>
     <linearGradient id="pinGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#fb923c"/>
-      <stop offset="100%" stop-color="#ea580c"/>
+      <stop offset="0%" stop-color="#f9a03c"/>
+      <stop offset="100%" stop-color="#e2761b"/>
     </linearGradient>
-    <clipPath id="iconClip">
-      <rect x="0" y="0" width="512" height="512" rx="110"/>
-    </clipPath>
   </defs>
 
   <!-- Fundo -->
-  <rect x="0" y="0" width="512" height="512" rx="110" fill="url(#bg)"/>
+  <rect x="0" y="0" width="512" height="512" rx="112" fill="url(#bg)"/>
 
-  <!-- Grade cartográfica sutil -->
-  <g clip-path="url(#iconClip)" opacity="0.10">
-    <line x1="0"   y1="85"  x2="512" y2="85"  stroke="white" stroke-width="1.5"/>
-    <line x1="0"   y1="170" x2="512" y2="170" stroke="white" stroke-width="1.5"/>
-    <line x1="0"   y1="255" x2="512" y2="255" stroke="white" stroke-width="1.5"/>
-    <line x1="0"   y1="340" x2="512" y2="340" stroke="white" stroke-width="1.5"/>
-    <line x1="0"   y1="425" x2="512" y2="425" stroke="white" stroke-width="1.5"/>
-    <line x1="85"  y1="0"   x2="85"  y2="512" stroke="white" stroke-width="1.5"/>
-    <line x1="170" y1="0"   x2="170" y2="512" stroke="white" stroke-width="1.5"/>
-    <line x1="255" y1="0"   x2="255" y2="512" stroke="white" stroke-width="1.5"/>
-    <line x1="340" y1="0"   x2="340" y2="512" stroke="white" stroke-width="1.5"/>
-    <line x1="425" y1="0"   x2="425" y2="512" stroke="white" stroke-width="1.5"/>
-  </g>
-
-  <!-- Silhueta de território abstrata -->
-  <g clip-path="url(#iconClip)" opacity="0.15">
-    <path d="M140,60 L200,100 L290,80 L380,110 L440,85 L480,140 L490,210 L460,250 L490,310 L470,370 L420,350 L370,380 L310,355 L260,385 L200,360 L150,380 L110,340 L90,280 L110,220 L80,160 Z" fill="white"/>
-  </g>
-
-  <!-- Área de água -->
-  <g clip-path="url(#iconClip)">
-    <path d="M0,340 Q64,310 128,340 Q192,370 256,340 Q320,310 384,340 Q448,370 512,340 L512,512 L0,512 Z" fill="url(#waterFill)"/>
-  </g>
-
-  <!-- Onda principal -->
-  <g clip-path="url(#iconClip)">
-    <path d="M16,322 Q80,288 144,322 Q208,356 272,322 Q336,288 400,322 Q448,348 496,330" fill="none" stroke="#38bdf8" stroke-width="18" stroke-linecap="round"/>
-  </g>
-
-  <!-- Onda secundária -->
-  <g clip-path="url(#iconClip)">
-    <path d="M16,372 Q80,342 144,372 Q208,402 272,372 Q336,342 400,372 Q448,395 496,380" fill="none" stroke="#7dd3fc" stroke-width="11" stroke-linecap="round" opacity="0.65"/>
-  </g>
+  <!-- Ondas concêntricas (impacto localizado) -->
+  <path d="M152,424 A104,52 0 0 0 360,424" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="16" stroke-linecap="round"/>
+  <path d="M112,440 A152,76 0 0 0 400,440" fill="none" stroke="#ffffff" stroke-opacity="0.32" stroke-width="14" stroke-linecap="round"/>
+  <path d="M80,454 A192,96 0 0 0 432,454" fill="none" stroke="#ffffff" stroke-opacity="0.18" stroke-width="12" stroke-linecap="round"/>
 
   <!-- Pin de localização -->
-  <g transform="translate(296, 220)">
-    <ellipse cx="0" cy="96" rx="22" ry="8" fill="#000" opacity="0.15"/>
-    <path d="M0,-78 C-38,-78 -58,-52 -58,-24 C-58,14 0,88 0,88 C0,88 58,14 58,-24 C58,-52 38,-78 0,-78 Z" fill="url(#pinGrad)"/>
-    <circle cx="0" cy="-26" r="28" fill="white" opacity="0.20"/>
-    <circle cx="0" cy="-26" r="16" fill="white" opacity="0.90"/>
-    <circle cx="0" cy="-26" r="8"  fill="#ea580c"/>
-  </g>
+  <path d="M256,132 C194,132 158,178 158,228 C158,298 256,396 256,396 C256,396 354,298 354,228 C354,178 318,132 256,132 Z" fill="url(#pinGrad)"/>
+  <circle cx="256" cy="226" r="42" fill="#ffffff"/>
+  <circle cx="256" cy="226" r="19" fill="#e2761b"/>
 </svg>
