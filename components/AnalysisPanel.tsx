@@ -78,7 +78,7 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
   return (
     <>
       {showPainelAnalise && (
-        <div className="hidden lg:flex absolute left-3 bottom-1.5 w-[340px] flex-col rounded-xl overflow-hidden z-20 print:flex print:static print:w-full print:shadow-none print:max-h-none print:h-auto print:overflow-visible print:border-slate-200" style={{ top: headerBottom, backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)", animation: "panelSlideIn 320ms var(--ease-drawer) both" }}>
+        <div className="hidden lg:flex absolute left-3 bottom-1.5 w-[400px] flex-col rounded-xl overflow-hidden z-20 print:flex print:static print:w-full print:shadow-none print:max-h-none print:h-auto print:overflow-visible print:border-slate-200" style={{ top: headerBottom, backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)", animation: "panelSlideIn 320ms var(--ease-drawer) both" }}>
           <div className="px-3 pt-3 pb-2 shrink-0 rounded-t-xl" style={{ background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)" }}>
             <h2 className="text-base font-black text-white tracking-tight flex items-center justify-between">
               Painel

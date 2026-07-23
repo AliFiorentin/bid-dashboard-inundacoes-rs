@@ -74,7 +74,7 @@ export default function Dashboard() {
       )}
 
       <div
-        className={`absolute bottom-4 rounded-xl z-10 print:hidden transition-[left] duration-300 overflow-hidden ${showPainelAnalise ? "left-[380px]" : "left-4"}`}
+        className={`absolute bottom-4 rounded-xl z-10 print:hidden transition-[left] duration-300 overflow-hidden ${showPainelAnalise ? "left-[440px]" : "left-4"}`}
         style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)", transitionTimingFunction: "var(--ease-out)" }}
       >
         <button
