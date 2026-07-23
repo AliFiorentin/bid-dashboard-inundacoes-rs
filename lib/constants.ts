@@ -105,11 +105,11 @@ export const INFRAESTRUTURA_CONFIG: Record<string, string[]> = {
 };
 
 export const MUNICIPIO_VIEW: Record<string, { center: [number, number]; zoom: number }> = {
-  "Visão Geral RS": { center: [-54.60, -30.45], zoom: 5.5 },
-  "Eldorado do Sul": { center: [-51.52, -30.01], zoom: 11.2 },
-  "Lajeado": { center: [-52.10, -29.45], zoom: 11.8 },
-  "Porto Alegre": { center: [-51.40, -30.08], zoom: 10 },
-  "Rio Grande": { center: [-52.23, -32.06], zoom: 12 },
+  "Visão Geral RS": { center: [-53.80, -30.45], zoom: 5.5 },
+  "Eldorado do Sul": { center: [-51.3643, -30.0160], zoom: 9.5 },
+  "Lajeado": { center: [-51.9679, -29.4425], zoom: 11.1 },
+  "Porto Alegre": { center: [-51.1795, -30.1010], zoom: 10 },
+  "Rio Grande": { center: [-52.1313, -32.0504], zoom: 11.4 },
 };
 
 // ── Agricultura ──────────────────────────────────────────────────────────────

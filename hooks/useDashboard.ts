@@ -93,11 +93,23 @@ export function useDashboard() {
 
   useEffect(() => {
     const view = MUNICIPIO_VIEW[municipio];
-    if (view && mapRef.current) {
+    const map = mapRef.current?.getMap();
+    if (view && map) {
       const isVg = municipio === "Visão Geral RS";
-      mapRef.current.getMap()?.flyTo({ center: view.center, zoom: view.zoom, duration: isVg ? 1500 : 3000, essential: true });
+      // O painel de análise (~412px) sobrepõe a esquerda do mapa. O padding faz o
+      // flyTo centralizar na área visível à direita do painel, não no centro da página.
+      const padLeft = showPainelAnalise ? 412 : 0;
+      map.flyTo({ center: view.center, zoom: view.zoom, padding: { left: padLeft, top: 0, right: 0, bottom: 0 }, duration: isVg ? 1500 : 3000, essential: true });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [municipio]);
+
+  // Reajusta o enquadramento (padding) quando o painel é mostrado/ocultado, sem re-voar.
+  useEffect(() => {
+    const map = mapRef.current?.getMap();
+    if (!map) return;
+    map.easeTo({ padding: { left: showPainelAnalise ? 412 : 0, top: 0, right: 0, bottom: 0 }, duration: 400 });
+  }, [showPainelAnalise]);
 
   useEffect(() => {
     const controller = new AbortController();
