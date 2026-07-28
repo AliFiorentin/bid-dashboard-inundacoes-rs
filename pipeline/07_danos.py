@@ -150,9 +150,13 @@ def _dala_params(periodo, dias_override):
     Educacao segue custo duplo: perda de servico (da dias) + reposicao obrigatoria (da dias)
     = 2*da, que coincide com dias_ef quando dr = 2*da (parametros CEPAL atuais).
     Empresas/saude usam curva DaLA: f = dias_ef / 365 (interrupcao 100% na fase aguda, 50% na recuperacao).
+
+    No modo plano (--dias N) usa-se da = N/2 para que o total educacional (2*da) tambem
+    corresponda a N dias efetivos, mantendo a mesma base de comparacao de empresas/saude
+    (f = N/365). Isso reproduz a relacao da curva DaLA, onde dr = 2*da implica da = dias_ef/2.
     """
     if dias_override is not None:
-        return dias_override / 365, dias_override, dias_override, f"{dias_override}d (plano)"
+        return dias_override / 365, dias_override / 2, dias_override, f"{dias_override}d (plano)"
     params = INTERRUPCAO_DALA.get(periodo, {"dias_agudo": 30, "dias_recuperacao": 60})
     da, dr = params["dias_agudo"], params["dias_recuperacao"]
     dias_ef = da + dr * 0.5
@@ -231,7 +235,10 @@ def calcular_operacional(dias=None):
                 "total":                     round(total, 2),
             }
 
-    out_path = DATA_PROCESSED / "danos_operacionais.json"
+    # O modo plano (--dias N) e' apenas sensibilidade: grava em arquivo proprio para
+    # nao sobrescrever o JSON canonico (curva DaLA) que alimenta o dashboard.
+    nome_arq = "danos_operacionais.json" if dias is None else f"danos_operacionais_sens_{dias}d.json"
+    out_path = DATA_PROCESSED / nome_arq
     DATA_PROCESSED.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(resultados, f, ensure_ascii=False, indent=2)
