@@ -20,6 +20,43 @@ import {
   getRotas, getLen, calcEmp, calcEdu, calcSau,
 } from "@/lib/geo-utils";
 
+const VISAO_GERAL_VIEW = {
+  longitude: MUNICIPIO_VIEW["Visão Geral RS"].center[0],
+  latitude: MUNICIPIO_VIEW["Visão Geral RS"].center[1],
+  zoom: MUNICIPIO_VIEW["Visão Geral RS"].zoom,
+};
+
+interface CameraPermalink {
+  longitude: number; latitude: number; zoom: number; pitch: number; bearing: number;
+}
+
+/**
+ * Lê a câmera do permalink (?lng&lat&z&p&b), gravada por handleMapMoveEnd.
+ * Retorna null quando a URL não traz câmera própria — aí quem manda é o
+ * MUNICIPIO_VIEW do município selecionado.
+ *
+ * Todo número passa por Number.isFinite: um parâmetro corrompido na URL não pode
+ * virar NaN e deixar o mapa em branco sem nenhum erro visível.
+ */
+function lerCameraDaURL(): CameraPermalink | null {
+  if (typeof window === "undefined") return null;
+  const p = new URLSearchParams(window.location.search);
+  const num = (v: string | null) => {
+    if (!v) return null;
+    const n = parseFloat(v);
+    return Number.isFinite(n) ? n : null;
+  };
+  const longitude = num(p.get('lng'));
+  const latitude = num(p.get('lat'));
+  const zoom = num(p.get('z'));
+  if (longitude === null || latitude === null || zoom === null) return null;
+  return {
+    longitude, latitude, zoom,
+    pitch: num(p.get('p')) ?? 0,
+    bearing: num(p.get('b')) ?? 0,
+  };
+}
+
 export function useDashboard() {
   const mapRef = useRef<MapRef>(null);
   const permalinkCenarioRef = useRef<string | null>(null);
@@ -30,7 +67,7 @@ export function useDashboard() {
   const [cenario, setCenario] = useState<string>("(nenhum)");
   const [renderMunicipio, setRenderMunicipio] = useState<string>("Visão Geral RS");
 
-  const [camadas, setCamadas] = useState<string[]>(["Empresas", "Educação", "Saúde", "Agricultura", "População"]);
+  const [camadas, setCamadas] = useState<string[]>(["Empresas", "Educação", "Saúde", "Agricultura"]);
   const [infraAtivas, setInfraAtivas] = useState<string[]>([]);
 
   const [filtroSetor, setFiltroSetor] = useState<string>("(todos)");
@@ -69,6 +106,20 @@ export function useDashboard() {
   const [tabAtiva, setTabAtiva] = useState<string>("empresas");
   const [showMancha, setShowMancha] = useState<boolean>(true);
   const [showLegenda, setShowLegenda] = useState<boolean>(false);
+  // Lido uma única vez, no mount. Quando existe, a câmera do link tem prioridade
+  // sobre o enquadramento padrão do município.
+  const [permalinkView] = useState<CameraPermalink | null>(lerCameraDaURL);
+
+  // Mora aqui, e não no DashboardMap, porque o efeito de troca de município
+  // liga/desliga o 3D junto com o reenquadramento.
+  //
+  // Nasce ligado quando o link compartilhado traz inclinação: sem isso o efeito
+  // de terreno do DashboardMap veria is3D=false e achataria a câmera recém
+  // restaurada, jogando fora justamente o enquadramento que o link carregava.
+  const [is3D, setIs3D] = useState<boolean>(() => (permalinkView?.pitch ?? 0) > 0);
+  const [showHeatmapEmpresas, setShowHeatmapEmpresas] = useState<boolean>(false);
+  const [showHeatmapSaude, setShowHeatmapSaude] = useState<boolean>(false);
+  const [showHeatmapEducacao, setShowHeatmapEducacao] = useState<boolean>(false);
   const [showListaEscolas, setShowListaEscolas] = useState(false);
   const [showListaHospitais, setShowListaHospitais] = useState(false);
   const [showListaUBS, setShowListaUBS] = useState(false);
@@ -91,15 +142,33 @@ export function useDashboard() {
       .catch(() => {});
   }, []);
 
+  const hasFlownInitial = useRef(false);
+
   useEffect(() => {
     const view = MUNICIPIO_VIEW[municipio];
     const map = mapRef.current?.getMap();
     if (view && map) {
+      // Na primeira passagem, se a URL trouxe câmera própria ela vence: o
+      // initialViewState já a aplicou e o is3D já nasceu coerente com ela, então
+      // reenquadrar aqui só destruiria o que o link carregava.
+      const primeiraVez = !hasFlownInitial.current;
+      hasFlownInitial.current = true;
+      if (primeiraVez && permalinkView) return;
+
       const isVg = municipio === "Visão Geral RS";
-      // O painel de análise (~412px) sobrepõe a esquerda do mapa. O padding faz o
-      // flyTo centralizar na área visível à direita do painel, não no centro da página.
       const padLeft = showPainelAnalise ? 412 : 0;
-      map.flyTo({ center: view.center, zoom: view.zoom, padding: { left: padLeft, top: 0, right: 0, bottom: 0 }, duration: isVg ? 1500 : 3000, essential: true });
+      map.flyTo({ 
+        center: view.center, 
+        zoom: view.zoom, 
+        pitch: view.pitch ?? (isVg ? 0 : 65),
+        bearing: view.bearing ?? (isVg ? 0 : -12),
+        padding: { left: padLeft, top: 0, right: 0, bottom: 0 }, 
+        duration: isVg ? 1500 : 3000, 
+        essential: true 
+      });
+      
+      // Auto-toggle 3D: Desliga na Visão Geral e liga no Município
+      setIs3D(!isVg);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [municipio]);
@@ -231,9 +300,13 @@ export function useDashboard() {
       const cenariosDisp = CENARIOS_CONFIG[municipio] || [];
       const desiredCenario = permalinkCenarioRef.current;
       permalinkCenarioRef.current = null;
-      const initialCenario = desiredCenario && cenariosDisp.includes(desiredCenario)
-        ? desiredCenario
-        : (cenariosDisp.length > 0 ? cenariosDisp[0] : "(nenhum)");
+      // A URL guarda o cenário em slug ("cenario_30m"), mas CENARIOS_CONFIG
+      // guarda o rótulo ("Cenário 30m") — comparar os dois direto nunca casa e
+      // faz todo permalink cair no primeiro cenário da lista. Em Lajeado e Rio
+      // Grande isso trocava o cenário do link em silêncio (e o efeito de URL
+      // abaixo ainda regravava o slug errado por cima). Casar por slug.
+      const initialCenario = cenariosDisp.find(c => slugify(c) === desiredCenario)
+        ?? (cenariosDisp.length > 0 ? cenariosDisp[0] : "(nenhum)");
       setCenario(initialCenario);
 
       setBaseEmpresas(emp); setBaseEducacao(edu); setBaseSaude(sau);
@@ -417,9 +490,10 @@ export function useDashboard() {
 
   // Update URL when municipio/cenario changes
   useEffect(() => {
-    const params = new URLSearchParams();
+    const params = new URLSearchParams(window.location.search);
     params.set('m', slugify(municipio));
     if (cenario !== "(nenhum)") params.set('c', slugify(cenario));
+    else params.delete('c');
     window.history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
   }, [municipio, cenario]);
 
@@ -606,6 +680,28 @@ export function useDashboard() {
     return () => ro.disconnect();
   }, []);
 
+  const [initialViewState] = useState(() => permalinkView ?? VISAO_GERAL_VIEW);
+
+  const handleMapMoveEnd = useCallback(() => {
+    const map = mapRef.current?.getMap();
+    if (!map) return;
+    const center = map.getCenter();
+    const zoom = map.getZoom();
+    const pitch = map.getPitch();
+    const bearing = map.getBearing();
+
+    const params = new URLSearchParams(window.location.search);
+    params.set('lng', center.lng.toFixed(5));
+    params.set('lat', center.lat.toFixed(5));
+    params.set('z', zoom.toFixed(2));
+    if (pitch > 0) params.set('p', pitch.toFixed(0));
+    else params.delete('p');
+    if (bearing !== 0) params.set('b', bearing.toFixed(1));
+    else params.delete('b');
+    
+    window.history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+  }, []);
+
   return {
     mapRef, headerRef, headerBottom,
     municipio, setMunicipio, renderMunicipio,
@@ -619,6 +715,7 @@ export function useDashboard() {
     showFiltros, setShowFiltros,
     showMancha, setShowMancha,
     showLegenda, setShowLegenda,
+    is3D, setIs3D,
     isLoading,
     baseEmpresas, baseEducacao, baseSaude, baseInfra,
     atingidosEmpresas, atingidosEducacao, atingidosSaude, atingidosInfra,
@@ -629,6 +726,9 @@ export function useDashboard() {
     cursor, setCursor,
     popupInfo, setPopupInfo,
     tabAtiva, setTabAtiva,
+    showHeatmapEmpresas, setShowHeatmapEmpresas,
+    showHeatmapSaude, setShowHeatmapSaude,
+    showHeatmapEducacao, setShowHeatmapEducacao,
     showListaEscolas, setShowListaEscolas,
     showListaHospitais, setShowListaHospitais,
     showListaUBS, setShowListaUBS,
@@ -650,6 +750,11 @@ export function useDashboard() {
     popData,
     // geo-utils re-exports needed in JSX
     countRuasUnicas, getRuasListPOA, countRuasUnicasPOA, getRotas, getLen,
+    handleMapMoveEnd,
+    initialViewState,
+    // O DashboardMap precisa saber disso para não reenquadrar uma câmera que
+    // veio pronta do link (ver ultimoModo3D lá).
+    cameraVeioDoLink: permalinkView !== null,
   };
 }
 

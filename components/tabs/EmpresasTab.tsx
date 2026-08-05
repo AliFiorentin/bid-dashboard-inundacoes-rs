@@ -1,9 +1,9 @@
-﻿import React, { useMemo } from "react";
+import React, { useMemo } from "react";
 import { PieChart, Pie, Label } from "recharts";
 import { TabsContent } from "@/components/ui/tabs";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { COLORS, DONUT_COLORS } from "@/lib/constants";
-import { compactoBr, inteiroBr, calcPct } from "@/lib/geo-utils";
+import { compactoBr, inteiroBr, calcPct, formatName } from "@/lib/geo-utils";
 import { KPIRow } from "@/components/KPIRow";
 import { ChartCenterLabel } from "@/components/ChartCenterLabel";
 import type { DashboardState } from "@/hooks/useDashboard";
@@ -26,9 +26,9 @@ export function EmpresasTab({ dash }: Props) {
     const data = setoresChart.map((item, i) => {
       const key = `s${i}`;
       const color = DONUT_COLORS[i % DONUT_COLORS.length];
-      cfg[key] = { label: item.setor, color };
+      cfg[key] = { label: formatName(item.setor), color };
       colorMap[item.setor] = color;
-      return { key, name: item.setor, value: item.base, atg: item.atg, fill: `var(--color-s${i})` };
+      return { key, name: formatName(item.setor), value: item.base, atg: item.atg, fill: `var(--color-s${i})` };
     });
     const t = data.reduce((s, d) => s + d.value, 0);
     const tAtg = data.reduce((s, d) => s + d.atg, 0);

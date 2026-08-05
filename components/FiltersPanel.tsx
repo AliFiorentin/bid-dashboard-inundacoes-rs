@@ -126,7 +126,7 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
           {/* Heatmap de População */}
           {!isVisaoGeral && (
             <div className="flex flex-col gap-1 w-full shrink-0">
-              <label className="text-[9px] font-bold text-purple-700 uppercase tracking-wider">Heatmap Pop.</label>
+              <label className="text-[9px] font-bold text-purple-700 uppercase tracking-wider">Heatmap População</label>
               <button
                 onClick={() => toggleCamada("População")}
                 className="h-7 w-full rounded text-[10px] font-bold border transition-colors duration-150"
@@ -137,6 +137,60 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
                 }}
               >
                 {temPopulacao ? "Visível" : "Oculto"}
+              </button>
+            </div>
+          )}
+
+          {/* Heatmap Empresas */}
+          {!isVisaoGeral && (
+            <div className="flex flex-col gap-1 w-full shrink-0">
+              <label className="text-[9px] font-bold text-blue-700 uppercase tracking-wider">Heatmap Empresas</label>
+              <button
+                onClick={() => dash.setShowHeatmapEmpresas(p => !p)}
+                className="h-7 w-full rounded text-[10px] font-bold border transition-colors duration-150"
+                style={{
+                  backgroundColor: dash.showHeatmapEmpresas ? "#1d4ed820" : "transparent",
+                  borderColor: dash.showHeatmapEmpresas ? "#1d4ed8" : "#cbd5e1",
+                  color: dash.showHeatmapEmpresas ? "#1d4ed8" : "#64748b",
+                }}
+              >
+                {dash.showHeatmapEmpresas ? "Visível" : "Oculto"}
+              </button>
+            </div>
+          )}
+
+          {/* Heatmap Saúde */}
+          {!isVisaoGeral && (
+            <div className="flex flex-col gap-1 w-full shrink-0">
+              <label className="text-[9px] font-bold text-red-700 uppercase tracking-wider">Heatmap Saúde</label>
+              <button
+                onClick={() => dash.setShowHeatmapSaude(p => !p)}
+                className="h-7 w-full rounded text-[10px] font-bold border transition-colors duration-150"
+                style={{
+                  backgroundColor: dash.showHeatmapSaude ? "#b91c1c20" : "transparent",
+                  borderColor: dash.showHeatmapSaude ? "#b91c1c" : "#cbd5e1",
+                  color: dash.showHeatmapSaude ? "#b91c1c" : "#64748b",
+                }}
+              >
+                {dash.showHeatmapSaude ? "Visível" : "Oculto"}
+              </button>
+            </div>
+          )}
+
+          {/* Heatmap Educação */}
+          {!isVisaoGeral && (
+            <div className="flex flex-col gap-1 w-full shrink-0">
+              <label className="text-[9px] font-bold text-green-700 uppercase tracking-wider">Heatmap Educação</label>
+              <button
+                onClick={() => dash.setShowHeatmapEducacao(p => !p)}
+                className="h-7 w-full rounded text-[10px] font-bold border transition-colors duration-150"
+                style={{
+                  backgroundColor: dash.showHeatmapEducacao ? "#15803d20" : "transparent",
+                  borderColor: dash.showHeatmapEducacao ? "#15803d" : "#cbd5e1",
+                  color: dash.showHeatmapEducacao ? "#15803d" : "#64748b",
+                }}
+              >
+                {dash.showHeatmapEducacao ? "Visível" : "Oculto"}
               </button>
             </div>
           )}

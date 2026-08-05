@@ -12,6 +12,23 @@ export const slugify = (str: string) =>
 export const scenarioSlug = (mun: string, cen: string) =>
   `${slugify(mun)}___${slugify(cen)}`;
 
+const ACRONYMS = new Set(["EE", "EMEF", "EMEI", "UBS", "UPA", "ESF", "USF", "CEO", "CAPS", "CER", "SAMU", "RS"]);
+
+export const formatName = (str: string | undefined | null) => {
+  if (!str) return 'Não Informado';
+  // Trata espaços e converte para minúsculas
+  const words = str.toLowerCase().trim().split(/\s+/);
+  return words.map(w => {
+    // Se for sigla (comparação sem acentos), retorna em maiúsculo
+    const cleanW = w.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+    if (ACRONYMS.has(cleanW)) return cleanW;
+    // Palavras pequenas (preposições) em minúsculo
+    if (["de", "da", "do", "das", "dos", "e", "em", "na", "no"].includes(w)) return w;
+    // Primeira letra maiúscula
+    return w.charAt(0).toUpperCase() + w.slice(1);
+  }).join(' ');
+};
+
 // ── Formatação ───────────────────────────────────────────────────────────────
 export const formatoBr = (num: number, casas = 0) =>
   num.toLocaleString("pt-BR", { minimumFractionDigits: casas, maximumFractionDigits: casas });

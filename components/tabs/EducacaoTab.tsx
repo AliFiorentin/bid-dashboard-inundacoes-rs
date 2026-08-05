@@ -1,12 +1,12 @@
-﻿import React from "react";
+import React from "react";
 import { PieChart, Pie, Label } from "recharts";
 import type { Feature } from "geojson";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, MapPin } from "lucide-react";
 import { TabsContent } from "@/components/ui/tabs";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import { COLORS, DONUT_COLORS, normalizeDep } from "@/lib/constants";
-import { compactoBr, inteiroBr, calcPct } from "@/lib/geo-utils";
+import { compactoBr, inteiroBr, calcPct, formatName } from "@/lib/geo-utils";
 import { KPIRow } from "@/components/KPIRow";
 import { ChartCenterLabel } from "@/components/ChartCenterLabel";
 import { cn } from "@/lib/utils";
@@ -112,7 +112,10 @@ export function EducacaoTab({ dash }: Props) {
                 <CollapsibleContent>
                   <div className="flex flex-col gap-0.5 max-h-52 overflow-y-auto p-1.5" style={PANEL_GLASS}>
                     {lista.map((nome: string, i: number) => (
-                      <span key={i} className="text-[10px] px-1.5 py-0.5 rounded text-muted-foreground" title={nome}>{nome}</span>
+                      <div key={i} className="flex gap-2 items-start py-0.5 border-b border-border/50 last:border-0 text-muted-foreground">
+                        <MapPin className="h-3 w-3 shrink-0 mt-0.5 text-blue-500" />
+                        <span className="text-[10px]">{formatName(nome)}</span>
+                      </div>
                     ))}
                   </div>
                 </CollapsibleContent>

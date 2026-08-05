@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { STAFF_COLS, normalizeDep } from "@/lib/constants";
-import { compactoBr } from "@/lib/geo-utils";
+import { compactoBr, formatName } from "@/lib/geo-utils";
 
 interface Props {
   source: string;
@@ -13,7 +13,7 @@ export function MapPopup({ source, properties: p }: Props) {
     return (
       <div className="flex flex-col gap-1.5 p-3 w-56 bg-white rounded-xl shadow-lg border border-slate-100">
         <strong className="text-blue-700 uppercase tracking-wider text-[10px] border-b border-slate-100 pb-1">🏢 Empresa</strong>
-        <span className="font-bold text-xs text-slate-800 leading-tight">{p.CNAE_2 as string || 'Sem Setor Informado'}</span>
+        <span className="font-bold text-xs text-slate-800 leading-tight">{formatName(p.CNAE_2 as string)}</span>
         <div className="grid grid-cols-2 gap-2 mt-1">
           <div className="bg-slate-50 p-1.5 rounded border border-slate-100">
             <span className="block text-[9px] text-slate-500 uppercase font-bold">Empregados</span>
@@ -32,7 +32,7 @@ export function MapPopup({ source, properties: p }: Props) {
     return (
       <div className="flex flex-col gap-1.5 p-3 w-56 bg-white rounded-xl shadow-lg border border-slate-100">
         <strong className="text-green-700 uppercase tracking-wider text-[10px] border-b border-slate-100 pb-1">🎓 Educação ({normalizeDep(String(p.tp_dependencia || '')) || 'N/A'})</strong>
-        <span className="font-bold text-xs text-slate-800 leading-tight">{p.no_entidade as string || 'Escola sem nome'}</span>
+        <span className="font-bold text-xs text-slate-800 leading-tight">{formatName(p.no_entidade as string)}</span>
         <div className="grid grid-cols-2 gap-2 mt-1">
           <div className="bg-slate-50 p-1.5 rounded border border-slate-100">
             <span className="block text-[9px] text-slate-500 uppercase font-bold">Professores</span>
@@ -54,7 +54,8 @@ export function MapPopup({ source, properties: p }: Props) {
     return (
       <div className="flex flex-col gap-1.5 p-3 w-56 bg-white rounded-xl shadow-lg border border-slate-100">
         <strong className="text-red-700 uppercase tracking-wider text-[10px] border-b border-slate-100 pb-1">🏥 Saúde ({p.co_tipo_estabelecimento as string || 'N/A'})</strong>
-        <span className="font-bold text-xs text-slate-800 leading-tight">{(p.no_fantasia as string) || (p.no_razao_social as string) || 'Unidade de Saúde'}</span>
+        <span className="font-bold text-xs text-slate-800 leading-tight">{formatName((p.no_fantasia as string) || (p.no_razao_social as string))}</span>
+
         <div className="grid grid-cols-2 gap-2 mt-1">
           <div className="bg-slate-50 p-1.5 rounded border border-slate-100">
             <span className="block text-[9px] text-slate-500 uppercase font-bold">Médicos</span>

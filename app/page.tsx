@@ -97,6 +97,11 @@ export default function Dashboard() {
               <LegendItem key={`infra-${nome}`} cor={INFRA_COLORS[nome] ?? COLORS.infra} label={nome} area={["Quadras","Terrenos"].includes(nome)} />
             ))}
             {manchaCenario && !isVisaoGeral && showMancha && <LegendItem cor={COLORS.cenario} label={cenario} area />}
+            {manchaCenario && !isVisaoGeral && showMancha && (
+              <span className="text-[8px] leading-tight text-slate-400 max-w-[180px]">
+                Extensão da área alagada. Não há dado de profundidade da água para este cenário.
+              </span>
+            )}
             {isVisaoGeral && manchaRS && showMancha && <LegendItem cor={COLORS.cenario} label="Enchente 2024 — RS" area />}
             {camadas.includes("População") && !isVisaoGeral && popData?.[municipio] && (
               <div className="flex items-center gap-2">
