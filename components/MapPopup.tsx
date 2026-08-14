@@ -3,6 +3,16 @@ import React from "react";
 import { STAFF_COLS, normalizeDep } from "@/lib/constants";
 import { compactoBr, formatName } from "@/lib/geo-utils";
 
+const INFRA_OSM_SLUGS = new Set([
+  "pontes",
+  "diques_muros",
+  "casas_de_bomba",
+  "saneamento",
+  "energia",
+  "torres_antenas",
+  "barragens_vertedouros",
+]);
+
 interface Props {
   source: string;
   properties: Record<string, unknown>;
@@ -175,6 +185,17 @@ export function MapPopup({ source, properties: p }: Props) {
           </>
         );
       }
+    } else if (INFRA_OSM_SLUGS.has(nomeLower)) {
+      // Pontes, Diques/Muros, Casas de Bomba, Saneamento, Energia, Torres/Antenas,
+      // Barragens/Vertedouros: vêm do OSM, não do cadastro municipal — mesma
+      // forma de propriedades para as 7 (nome/detalhe/osm_id).
+      content = (
+        <>
+          <div className="text-[10px] flex justify-between gap-2 border-b border-slate-50 pb-0.5"><span className="text-slate-500 uppercase font-bold">Nome:</span><span className="text-slate-800 font-medium text-right">{(p.nome as string) || "(sem nome no OSM)"}</span></div>
+          {p.detalhe ? <div className="text-[10px] flex justify-between gap-2 border-b border-slate-50 pb-0.5"><span className="text-slate-500 uppercase font-bold">Tipo:</span><span className="text-slate-800 font-medium text-right">{p.detalhe as string}</span></div> : null}
+          <div className="text-[9px] text-slate-400 italic pt-0.5">Fonte: OpenStreetMap</div>
+        </>
+      );
     }
 
     if (!content) return null;

@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef } from "react"
 import Map, {
   Source,
   Layer,
@@ -60,6 +60,8 @@ export function DashboardMap({ dash }: Props) {
     showHeatmapSaude,
     showHeatmapEducacao,
     cameraVeioDoLink,
+    mapReady,
+    setMapReady,
   } = dash
 
   const popMunData =
@@ -68,12 +70,13 @@ export function DashboardMap({ dash }: Props) {
     ? `/dados_convertidos/${slugify(renderMunicipio)}/populacao.png`
     : null
 
-  // mapRef é um objeto estável (sua identidade não muda quando .current é
+  // mapReady vem do hook (não é state local): o efeito de flyTo em
+  // useDashboard também precisa saber quando o mapa fica pronto pela primeira
+  // vez. mapRef é um objeto estável (sua identidade não muda quando .current é
   // preenchido), e o <Map> do @vis.gl/react-maplibre cria a instância de forma
   // assíncrona — então um efeito com deps [is3D, mapRef] pode rodar antes do
   // mapa existir, sair no "if (!map) return" e nunca mais re-executar sozinho.
   // onLoad nos avisa quando o mapa está pronto, forçando o efeito a rodar de novo.
-  const [mapReady, setMapReady] = useState(false)
 
   // Guarda o is3D da última vez que o efeito abaixo reposicionou a câmera. Sem
   // isso, qualquer re-execução do efeito (o mapReady virando true, por exemplo)
@@ -289,6 +292,7 @@ export function DashboardMap({ dash }: Props) {
           />
         </Source>
 
+
         {/* Terreno (DEM global Terrarium) — só ativa quando is3D=true via setTerrain */}
         <Source
           id="terrain-dem"
@@ -448,7 +452,14 @@ export function DashboardMap({ dash }: Props) {
                     filter={["==", ["geometry-type"], "Point"]}
                     paint={{
                       "circle-color": infraCor,
-                      "circle-radius": 4,
+                      // Diques/Muros e Casas de Bomba (EBAP) ganham raio maior:
+                      // foram o centro da falha de proteção em Porto Alegre 2024
+                      // (97% dos diques mapeados caem dentro da mancha do ADA).
+                      "circle-radius":
+                        nomeInfra === "Diques/Muros" ||
+                        nomeInfra === "Casas de Bomba"
+                          ? 6
+                          : 4,
                       "circle-stroke-color": "#fff",
                       "circle-stroke-width": 1,
                     }}

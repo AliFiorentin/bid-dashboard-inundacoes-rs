@@ -78,6 +78,15 @@ export const INFRA_COLORS: Record<string, string> = {
   Gás: "#7f8c8d",
   "Bocas de Lobo": "#16a085",
   Poste: "#f1c40f",
+
+  // Fonte OSM (não municipal) — ver INFRAESTRUTURA_CONFIG e o comentário lá.
+  Pontes: "#f59e0b",
+  "Diques/Muros": "#7c3aed",
+  "Casas de Bomba": "#dc2626",
+  Saneamento: "#0891b2",
+  Energia: "#eab308",
+  "Torres/Antenas": "#64748b",
+  "Barragens/Vertedouros": "#991b1b",
 }
 
 export const INFRA_TAMANHOS_MB: Record<string, number> = {
@@ -106,6 +115,53 @@ export const CENARIOS_CONFIG: Record<string, string[]> = {
   "Rio Grande": ["Cenário Maio 2024", "Cenário Maio 2024 + 50%"],
 }
 
+// Camadas extraídas do OpenStreetMap (não do cadastro municipal), agrupadas por
+// categoria de infraestrutura crítica para enchente: pontes/acessos, diques e
+// muros de contenção, casas de bomba (EBAP), saneamento (ETE/ETA/reservatórios,
+// majoritariamente Corsan), energia (subestações/geração), torres/antenas e
+// barragens/vertedouros. Cada município só lista o que de fato existe no OSM
+// na sua região — nenhuma categoria vazia.
+//
+// Sem altura/elevação na fonte (checado tag a tag: ~0% de cobertura de
+// `height`/`ele` em todas as categorias, nos 4 municípios) — por isso pontos 2D
+// sobre o terreno, não extrusões, mesmo raciocínio da mancha de inundação.
+export const INFRA_OSM: Record<string, string[]> = {
+  "Porto Alegre": [
+    "Pontes",
+    "Diques/Muros",
+    "Casas de Bomba",
+    "Saneamento",
+    "Energia",
+    "Torres/Antenas",
+    "Barragens/Vertedouros",
+  ],
+  "Eldorado do Sul": [
+    "Pontes",
+    "Casas de Bomba",
+    "Saneamento",
+    "Energia",
+    "Torres/Antenas",
+  ],
+  Lajeado: ["Pontes", "Saneamento", "Energia", "Torres/Antenas", "Barragens/Vertedouros"],
+  "Rio Grande": ["Pontes", "Saneamento", "Energia", "Torres/Antenas"],
+}
+
+// Achatado para checagem rápida "essa camada vem do OSM, não da prefeitura?" —
+// usado no rodapé de fonte do InfraTab e no popup do mapa.
+export const INFRA_OSM_NAMES = new Set(Object.values(INFRA_OSM).flat())
+
+// Só para EXIBIÇÃO — os nomes internos (chave em baseInfra/infraAtivas, slug
+// de arquivo, casos em GenericInfraSection/MapPopup) continuam "Eixos
+// Logradouros"/"Quarteirões". Renomear de verdade colidiria com os
+// "Logradouros"/"Quadras" de Rio Grande e Lajeado, que são camadas com
+// esquema de dados diferente (schema municipal distinto, mesmo nome de
+// exibição). `infraLabel` é a única função que deve tocar o texto na tela.
+const INFRA_LABEL_OVERRIDE: Record<string, string> = {
+  "Eixos Logradouros": "Logradouros",
+  Quarteirões: "Quadras",
+}
+export const infraLabel = (nome: string): string => INFRA_LABEL_OVERRIDE[nome] ?? nome
+
 export const INFRAESTRUTURA_CONFIG: Record<string, string[]> = {
   "Porto Alegre": [
     "Eixos Logradouros",
@@ -120,15 +176,14 @@ export const INFRAESTRUTURA_CONFIG: Record<string, string[]> = {
     "Bocas de Lobo",
     "Poste",
     "Edificações",
+    ...INFRA_OSM["Porto Alegre"],
   ],
   "Rio Grande": [
     "Logradouros",
     "Quadras",
     "Terrenos",
-    "Imóveis",
-    "Prédios Públicos",
-    "Segurança",
     "Edificações",
+    ...INFRA_OSM["Rio Grande"],
   ],
   Lajeado: [
     "Iluminação Pública",
@@ -136,8 +191,9 @@ export const INFRAESTRUTURA_CONFIG: Record<string, string[]> = {
     "Lotes",
     "Quadras",
     "Edificações",
+    ...INFRA_OSM.Lajeado,
   ],
-  "Eldorado do Sul": ["Edificações"],
+  "Eldorado do Sul": ["Edificações", ...INFRA_OSM["Eldorado do Sul"]],
 }
 
 export const MUNICIPIO_VIEW: Record<

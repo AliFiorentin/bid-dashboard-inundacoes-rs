@@ -1,5 +1,28 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 
+/** Métricas pré-calculadas de uma camada de infraestrutura. Espelha o que
+ *  GenericInfraSection/LogradourosSection calculariam em runtime — mas sem
+ *  precisar baixar a geometria (Edificações sozinha tem 139 MB em POA). */
+export interface InfraMetricas {
+  n: number;
+  area?: number;
+  rotas?: number;
+  km?: number;
+  ruas?: number;
+  drenagem?: number;
+  iluminacao?: number;
+  agua?: number;
+  lixo?: number;
+  esgotoPluvial?: number;
+  esgotoCloacal?: number;
+  fossa?: number;
+  condominio?: number;
+}
+export interface InfraStats {
+  base: Record<string, InfraMetricas>;
+  cenarios: Record<string, Record<string, InfraMetricas>>;
+}
+
 export interface PopulacaoMunData {
   pop_total: number;
   coordinates: [[number, number], [number, number], [number, number], [number, number]];
@@ -59,6 +82,13 @@ function lerCameraDaURL(): CameraPermalink | null {
 
 export function useDashboard() {
   const mapRef = useRef<MapRef>(null);
+  // Mora aqui (não como state local do DashboardMap) porque o efeito de
+  // flyTo abaixo precisa saber quando o mapa fica pronto pela primeira vez —
+  // não dá pra inferir isso checando `mapRef.current`, porque na carga
+  // inicial o efeito roda ANTES do <Map> montar, então esse teste silenciosamente
+  // não faz nada e só "conta como primeira vez" na primeira TROCA de
+  // município, não no load. Ver bug corrigido no efeito de flyTo.
+  const [mapReady, setMapReady] = useState(false);
   const permalinkCenarioRef = useRef<string | null>(null);
   const headerRef = useRef<HTMLElement>(null);
   const [headerBottom, setHeaderBottom] = useState(82);
@@ -82,6 +112,11 @@ export function useDashboard() {
   const [baseEducacao, setBaseEducacao] = useState<FeatureCollection | null>(null);
   const [baseSaude, setBaseSaude] = useState<FeatureCollection | null>(null);
   const [baseInfra, setBaseInfra] = useState<Record<string, FeatureCollection>>({});
+  // KPIs de TODAS as camadas de infraestrutura (municipais + OSM), pré-calculados (infra_stats.json,
+  // ~1 KB por município). É o que permite o painel mostrar contagem de Lotes,
+  // Edificações, Rede Esgoto etc. sem baixar as camadas — que somam 418 MB só
+  // em Porto Alegre. O mapa continua carregando geometria só sob demanda.
+  const [infraStats, setInfraStats] = useState<InfraStats | null>(null);
 
   const [atingidosEmpresas, setAtingidosEmpresas] = useState<FeatureCollection | null>(null);
   const [atingidosEducacao, setAtingidosEducacao] = useState<FeatureCollection | null>(null);
@@ -147,31 +182,47 @@ export function useDashboard() {
   useEffect(() => {
     const view = MUNICIPIO_VIEW[municipio];
     const map = mapRef.current?.getMap();
-    if (view && map) {
-      // Na primeira passagem, se a URL trouxe câmera própria ela vence: o
-      // initialViewState já a aplicou e o is3D já nasceu coerente com ela, então
-      // reenquadrar aqui só destruiria o que o link carregava.
+    if (!view || !map) return;
+
+    const voar = () => {
+      // Na primeira passagem (primeira vez que o mapa está de fato pronto),
+      // se a URL trouxe câmera própria ela vence: o initialViewState já a
+      // aplicou e o is3D já nasceu coerente com ela, então reenquadrar aqui
+      // só destruiria o que o link carregava.
       const primeiraVez = !hasFlownInitial.current;
       hasFlownInitial.current = true;
       if (primeiraVez && permalinkView) return;
 
       const isVg = municipio === "Visão Geral RS";
       const padLeft = showPainelAnalise ? 412 : 0;
-      map.flyTo({ 
-        center: view.center, 
-        zoom: view.zoom, 
+      map.flyTo({
+        center: view.center,
+        zoom: view.zoom,
         pitch: view.pitch ?? (isVg ? 0 : 65),
         bearing: view.bearing ?? (isVg ? 0 : -12),
-        padding: { left: padLeft, top: 0, right: 0, bottom: 0 }, 
-        duration: isVg ? 1500 : 3000, 
-        essential: true 
+        padding: { left: padLeft, top: 0, right: 0, bottom: 0 },
+        duration: isVg ? 1500 : 3000,
+        essential: true
       });
-      
+
       // Auto-toggle 3D: Desliga na Visão Geral e liga no Município
       setIs3D(!isVg);
+    };
+
+    // Mesmo padrão do efeito de terreno em DashboardMap.tsx: não confiar só no
+    // prop onLoad do react-map-gl (mapReady) para saber que o mapa está pronto
+    // — em alguns ambientes esse evento simplesmente não dispara de forma
+    // confiável, e depender só dele deixava o flyTo travado pra sempre, não
+    // só na primeira troca. isStyleLoaded()/once('load') é o sinal direto do
+    // próprio MapLibre, sem depender do ciclo de props do React.
+    if (map.isStyleLoaded()) {
+      voar();
+    } else {
+      map.once("load", voar);
+      return () => { map.off("load", voar); };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [municipio]);
+  }, [municipio, mapReady]);
 
   // Reajusta o enquadramento (padding) quando o painel é mostrado/ocultado, sem re-voar.
   useEffect(() => {
@@ -281,14 +332,24 @@ export function useDashboard() {
       setFiltroSetor("(todos)"); setFiltroDep("(todas)"); setFiltroTipo("(todas)");
       setBaseInfra({});
 
+      // Defaults deliberadamente enxutos: o painel mostra o KPI de TODAS as
+      // camadas sempre (via infraStats, pré-calculado — ver efeito abaixo),
+      // então marcar tudo pra carregar no mapa por padrão só pesaria (Porto
+      // Alegre sozinho tem 418 MB de geometria somando as camadas) sem
+      // adicionar informação que o painel já mostra. O resto é opcional.
       if (municipio === "Rio Grande") {
-        setInfraAtivas(["Logradouros", "Quadras", "Terrenos", "Edificações"]);
+        setInfraAtivas(["Logradouros", "Quadras", "Edificações"]);
         setCamadas(prev => prev.includes("Infraestrutura") ? prev : [...prev, "Infraestrutura"]);
       } else if (municipio === "Porto Alegre") {
-        setInfraAtivas(["Eixos Logradouros", "Lotes", "Quarteirões", "Edificações"]);
+        // Nomes internos (arquivo/slug) continuam "Eixos Logradouros" e
+        // "Quarteirões" — só o RÓTULO exibido virou "Logradouros"/"Quadras"
+        // (ver infraLabel em lib/constants.ts). Mudar o nome interno colidiria
+        // com os "Logradouros"/"Quadras" de Rio Grande e Lajeado, que são
+        // camadas com esquema de dados diferente.
+        setInfraAtivas(["Eixos Logradouros", "Quarteirões"]);
         setCamadas(prev => prev.includes("Infraestrutura") ? prev : [...prev, "Infraestrutura"]);
       } else if (municipio === "Lajeado") {
-        setInfraAtivas(["Logradouros", "Lotes", "Quadras", "Edificações"]);
+        setInfraAtivas(["Logradouros", "Quadras", "Edificações"]);
         setCamadas(prev => prev.includes("Infraestrutura") ? prev : [...prev, "Infraestrutura"]);
       } else if (municipio === "Eldorado do Sul") {
         setInfraAtivas(["Edificações"]);
@@ -413,6 +474,26 @@ export function useDashboard() {
     return () => controller.abort();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [municipio, infraAtivas]);
+
+  // KPIs pré-calculados de infraestrutura (ver infraStats acima).
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setInfraStats(null);
+    if (municipio === "Visão Geral RS") return;
+    // Sem o reset acima, trocar direto de um município pro outro (ex.: Porto
+    // Alegre → Lajeado) deixava infraStats com os números do município
+    // ANTERIOR até o fetch novo resolver — e como várias categorias têm o
+    // mesmo nome em municípios diferentes (Logradouros, Quadras, Edificações,
+    // Pontes, Saneamento, Energia, Torres/Antenas), os cards mostravam por um
+    // instante um KPI de aparência válida mas errado, em vez de "Carregando...".
+    const controller = new AbortController();
+    const { signal } = controller;
+    fetch(`/dados_convertidos/${slugify(municipio)}/infra_stats.json`, { signal })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (!signal.aborted) setInfraStats(d); })
+      .catch(e => { if ((e as Error).name !== 'AbortError') console.error(e); });
+    return () => controller.abort();
+  }, [municipio]);
 
   const toggleCamada = (camada: string) => { setCamadas(prev => prev.includes(camada) ? prev.filter(c => c !== camada) : [...prev, camada]); setPopupInfo(null); };
   const toggleInfra = (infra: string) => {
@@ -716,8 +797,9 @@ export function useDashboard() {
     showMancha, setShowMancha,
     showLegenda, setShowLegenda,
     is3D, setIs3D,
+    mapReady, setMapReady,
     isLoading,
-    baseEmpresas, baseEducacao, baseSaude, baseInfra,
+    baseEmpresas, baseEducacao, baseSaude, baseInfra, infraStats,
     atingidosEmpresas, atingidosEducacao, atingidosSaude, atingidosInfra,
     manchaCenario, manchaRS, limitePA,
     baseAgriStats, atingidosAgriStats, conabStats,

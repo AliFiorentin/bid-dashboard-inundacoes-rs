@@ -39,9 +39,8 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
     showListaAmbulat, setShowListaAmbulat,
     baseAgriStats, atingidosAgriStats, conabStats,
     allMunAgriStats, allMunAgriAtingidosStats,
-    baseInfra, atingidosInfra, toggleInfra,
+    atingidosInfra, toggleInfra, infraStats,
     showListaLogradouros, setShowListaLogradouros,
-    showListaEixos, setShowListaEixos,
     popData,
   } = dash;
 
@@ -193,8 +192,11 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
               />
             )}
 
-            {camadas.includes("Infraestrutura") && !isVisaoGeral && infraAtivas.length > 0 && (
-              <InfraTab dash={{ infraAtivas, toggleInfra, municipio, mostraImpacto, isCenarioAtivo, baseInfra, atingidosInfra, showListaLogradouros, setShowListaLogradouros, showListaEixos, setShowListaEixos }} />
+            {/* Sem "infraAtivas.length > 0": as categorias OSM têm KPI sempre
+                visível, mesmo com nenhuma camada marcada para o mapa — que é o
+                estado padrão. Exigir camada ativa esconderia justamente esses. */}
+            {camadas.includes("Infraestrutura") && !isVisaoGeral && (
+              <InfraTab dash={{ infraAtivas, toggleInfra, municipio, cenario, mostraImpacto, isCenarioAtivo, infraStats, atingidosInfra, showListaLogradouros, setShowListaLogradouros }} />
             )}
 
           </Tabs>
