@@ -6,6 +6,7 @@ import Image from "next/image";
 import {
   COLORS, INFRA_COLORS,
   AGRI_COLORS, AGRI_BOUNDS,
+  infraLabel,
 } from "@/lib/constants";
 import { DashboardMap } from "@/components/DashboardMap";
 import { LegendItem } from "@/components/LegendItem";
@@ -94,7 +95,7 @@ export default function Dashboard() {
               <LegendItem key={`agri-${tipo}`} cor={cor} label={tipo} area />
             ))}
             {camadas.includes("Infraestrutura") && infraAtivas.map(nome => (
-              <LegendItem key={`infra-${nome}`} cor={INFRA_COLORS[nome] ?? COLORS.infra} label={nome} area={["Quadras","Terrenos"].includes(nome)} />
+              <LegendItem key={`infra-${nome}`} cor={INFRA_COLORS[nome] ?? COLORS.infra} label={infraLabel(nome)} area={["Quadras","Terrenos","Quarteirões"].includes(nome)} />
             ))}
             {manchaCenario && !isVisaoGeral && showMancha && <LegendItem cor={COLORS.cenario} label={cenario} area />}
             {manchaCenario && !isVisaoGeral && showMancha && (
