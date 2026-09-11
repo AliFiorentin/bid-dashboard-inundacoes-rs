@@ -92,7 +92,17 @@ MUNICIPIOS = {
         "ibge7": 4314902,
         "ibge6": "431490",
         "slug": "porto_alegre",
-        "cenarios": ["Cenario ADA"],
+        "cenarios": [
+            "Cenario ADA",
+            "Climada RP10",
+            "Climada RP20",
+            "Climada RP50",
+            "Climada RP75",
+            "Climada RP100",
+            "Climada RP200",
+            "Climada RP500",
+            "Climada Evento 2024",
+        ],
     },
     "Rio Grande": {
         "ibge7": 4315602,
@@ -143,6 +153,19 @@ MANCHAS = {
     },
     "Porto Alegre": {
         "Cenario ADA": DATA_RAW / "manchas" / "porto_alegre" / "enchente_poa_intersects.shp",
+        # Manchas derivadas dos rasters de inundacao do CLIMADA (D:\Projetos\Climada,
+        # starter_pack_brazil/data/hazard) -- vetorizadas (profundidade/duracao > 0)
+        # via pipeline/vetorizar_climada.py em data/raw/manchas/porto_alegre/climada/.
+        # RP10..RP500: profundidade maxima por periodo de retorno (anos).
+        "Climada RP10":  DATA_RAW / "manchas" / "porto_alegre" / "climada" / "climada_rp10.shp",
+        "Climada RP20":  DATA_RAW / "manchas" / "porto_alegre" / "climada" / "climada_rp20.shp",
+        "Climada RP50":  DATA_RAW / "manchas" / "porto_alegre" / "climada" / "climada_rp50.shp",
+        "Climada RP75":  DATA_RAW / "manchas" / "porto_alegre" / "climada" / "climada_rp75.shp",
+        "Climada RP100": DATA_RAW / "manchas" / "porto_alegre" / "climada" / "climada_rp100.shp",
+        "Climada RP200": DATA_RAW / "manchas" / "porto_alegre" / "climada" / "climada_rp200.shp",
+        "Climada RP500": DATA_RAW / "manchas" / "porto_alegre" / "climada" / "climada_rp500.shp",
+        # Duracao do evento real de maio/2024 (raster de calibracao do Climada).
+        "Climada Evento 2024": DATA_RAW / "manchas" / "porto_alegre" / "climada" / "climada_evento_2024.shp",
     },
     "Rio Grande": {
         "Cenario Maio 2024": DATA_RAW / "manchas" / "rio_grande" / "CEN_MAI2024.shp",
@@ -227,6 +250,14 @@ CENARIO_PERIODO = {
     "lajeado___cenario_30m": "maio_2024",
     "eldorado_do_sul___cenario_ada": "maio_2024",
     "porto_alegre___cenario_ada": "maio_2024",
+    "porto_alegre___climada_rp10": "maio_2024",
+    "porto_alegre___climada_rp20": "maio_2024",
+    "porto_alegre___climada_rp50": "maio_2024",
+    "porto_alegre___climada_rp75": "maio_2024",
+    "porto_alegre___climada_rp100": "maio_2024",
+    "porto_alegre___climada_rp200": "maio_2024",
+    "porto_alegre___climada_rp500": "maio_2024",
+    "porto_alegre___climada_evento_2024": "maio_2024",
     "rio_grande___cenario_maio_2024": "maio_2024",
     "rio_grande___cenario_maio_2024_50": "maio_2024",
     "rio_grande___cenario_setembro_2023": "setembro_2023",

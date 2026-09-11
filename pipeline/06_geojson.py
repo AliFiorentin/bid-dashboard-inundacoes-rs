@@ -236,9 +236,15 @@ def make_atingidos(nome: str, cfg: dict, slug: str, limite_geom=None) -> None:
 # ---------------------------------------------------------------------------
 
 def make_limite(nome: str, slug: str, ibge7: int, simplify_tol: float = 0.0008):
-    """Gera limite_BASE.geojson usando geobr. Retorna a geometria Shapely (WGS84) para uso no clip da mancha."""
-    import geobr
+    """Gera limite_BASE.geojson usando geobr. Retorna a geometria Shapely (WGS84) para uso no clip da mancha.
+
+    Se geobr nao estiver disponivel (ambiente sem o pacote), cai de volta para o
+    limite_BASE.geojson ja commitado no Dashboard -- evita que a mancha exibida fique
+    sem recorte municipal (sem esse clip, shapefiles de mancha que cobrem varios
+    municipios, como o ADA de Porto Alegre, vazam para fora do municipio no mapa).
+    """
     try:
+        import geobr
         gdf = geobr.read_municipality(code_muni=ibge7, year=2022)
         gdf = gdf.to_crs(epsg=4326)
         gdf["geometry"] = gdf.geometry.simplify(simplify_tol, preserve_topology=True)
@@ -249,8 +255,14 @@ def make_limite(nome: str, slug: str, ibge7: int, simplify_tol: float = 0.0008):
         print(f"    limite_BASE.geojson: {len(gj['features'])} feature(s)")
         return gdf.geometry.union_all()
     except Exception as e:
-        print(f"    AVISO: limite_BASE.geojson não gerado: {e}")
-        return None
+        print(f"    AVISO: geobr indisponivel ({e}), usando limite_BASE.geojson existente")
+        import geopandas as gpd
+        existing = DASH_DATA / slug / "limite_BASE.geojson"
+        gj = load_geojson(existing)
+        if not gj or not gj.get("features"):
+            print("    AVISO: limite_BASE.geojson existente nao encontrado -- mancha sem recorte municipal")
+            return None
+        return gpd.GeoDataFrame.from_features(gj["features"], crs="EPSG:4326").geometry.union_all()
 
 
 # ---------------------------------------------------------------------------
