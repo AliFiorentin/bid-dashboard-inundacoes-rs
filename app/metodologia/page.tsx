@@ -102,6 +102,8 @@ export default function MetodologiaPage() {
             ["Lajeado",         "Cenário 27 m",             "Maio 2024 — cota 27 m",         "Cota de 27 m no Rio Taquari",             "LabModel"],
             ["Lajeado",         "Cenário 30 m",             "Maio 2024 — cota 30 m",         "Cota de 30 m no Rio Taquari",             "LabModel"],
             ["Porto Alegre",    "Cenário ADA",              "Maio 2024",                     "Área Diretamente Afetada — extensão máxima registrada", "MUP / Gov. RS"],
+            ["Porto Alegre",    "Climada RP10…RP500",       "Períodos de retorno de 10 a 500 anos", "Profundidade máxima de inundação por período de retorno — vetorizado (profundidade > 0) a partir do raster de risco", "CLIMADA"],
+            ["Porto Alegre",    "Climada Evento 2024",      "Maio 2024",                     "Duração da inundação (dias) do evento real, usado na calibração do modelo — vetorizado (duração > 0)", "CLIMADA"],
             ["Rio Grande",      "Cenário Maio 2024",        "Maio 2024",                     "Extensão modelada para o evento de maio", "CIEX/FURG"],
             ["Rio Grande",      "Cenário Maio 2024 + 50%",  "Maio 2024 — extensão ampliada", "Extensão hipotética com 50% de área adicional — análise de sensibilidade", "CIEX/FURG"],
             ["Rio Grande",      "Cenário Setembro 2023",    "Setembro 2023",                 "Evento de menor magnitude — setembro 2023", "CIEX/FURG"],
@@ -126,6 +128,15 @@ export default function MetodologiaPage() {
               geradas pelo LabModel por modelagem hidráulica 2D, correspondendo a diferentes
               níveis de extravasamento do Rio Taquari sobre a área urbana.
             </li>
+            <li>
+              <strong>Cenários CLIMADA (Porto Alegre)</strong> — mancha de risco hidrológico do
+              exercício de adaptação climática CLIMADA/UNU-EHS para o BID (independente da mancha
+              ADA do MUP). RP10 a RP500 são rasters de profundidade máxima de água (m) para cada
+              período de retorno sintético; Evento 2024 é o raster de duração da inundação (dias)
+              usado na calibração do modelo, referente ao evento real de maio/2024. Cada raster foi
+              vetorizado (pixels com valor {'>'} 0, dissolvidos em polígono) e passa pelo mesmo
+              pipeline de sobreposição espacial dos demais cenários (Seção 2).
+            </li>
           </ul>
 
           <SubTitle>Sistema de Referência de Coordenadas (CRS)</SubTitle>
@@ -141,11 +152,13 @@ export default function MetodologiaPage() {
             ["Fonte",        "Período",                    "Municípios",                        "Método de mapeamento"],
             ["MUP / Gov. RS","Maio 2024",                  "Eldorado do Sul · Porto Alegre",    "Fusão de imagens SAR + registros de campo + nível hidrométrico"],
             ["LabModel",     "Maio 2024",                  "Lajeado — cotas 27 m e 30 m",       "Modelagem hidráulica 2D (HEC-RAS)"],
+            ["CLIMADA",      "RP10…RP500 · Maio 2024",     "Porto Alegre",                      "Modelagem de risco hidrológico (exercício de adaptação BID/UNU-EHS)"],
             ["CIEX/FURG",    "Maio 2024 · Setembro 2023",  "Rio Grande",                        "Modelagem hidrológica e hidráulica costeira"],
           ]} />
           <SectionSources links={[
             ["MUP — Mapa Único do Plano Rio Grande (Gov. RS)", "https://mup.rs.gov.br/"],
             ["CIEX/FURG — Centro Interinstitucional de Observação e Previsão de Eventos Extremos", "https://ciex.furg.br"],
+            ["CLIMADA — plataforma de modelagem de risco climático (ETH Zürich)", "https://climada-python.readthedocs.io/"],
             ["CEPAL (2024) — Avaliação dos Efeitos e Impactos das Inundações no RS", "https://www.cepal.org/pt-br/publicacoes/81035-avaliacao-efeitos-impactos-inundacoes-rio-grande-sul-novembro-2024"],
           ]} />
         </Section>
