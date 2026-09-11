@@ -26,6 +26,7 @@ import geopandas as gpd
 import rasterio
 from rasterio.features import shapes
 from shapely.geometry import shape
+from shapely.ops import unary_union
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from config import DATA_RAW
@@ -46,8 +47,19 @@ RASTERS = {
 
 THRESHOLD = 0.0  # profundidade (m) ou duracao (dias) > 0
 
+# Fechamento morfologico (buffer +r depois -r) para fins CARTOGRAFICOS: os rasters do
+# CLIMADA tem resolucao de quadra urbana (30-90m) e o evento real (maio/2024) e
+# especialmente irregular -- muitos pixels secos isolados (quadra/lote nao alagado) no
+# meio da area alagada, que sem esse fechamento aparecem como centenas de buraquinhos
+# na mancha (visualmente ruido, nao erro -- e detalhe hidrologico real a nivel de
+# pixel). O fechamento preenche gaps/buracos menores que o raio e funde fragmentos
+# proximos, ficando com a mesma leitura "area de inundacao" das demais manchas do
+# pipeline (todas poligonos continuos, sem furos). Nao aplicado como abertura (nao
+# remove specks isolados de agua) para nao subestimar a extensao alagada.
+CLOSE_RADIUS_DEG = 0.0008  # ~80-90m nesta latitude
 
-def vectorize(tif_path: Path, threshold: float, out_shp: Path) -> int:
+
+def vectorize(tif_path: Path, threshold: float, out_shp: Path, close_radius: float = CLOSE_RADIUS_DEG) -> int:
     with rasterio.open(tif_path) as src:
         band = src.read(1)
         nodata = src.nodata
@@ -70,8 +82,12 @@ def vectorize(tif_path: Path, threshold: float, out_shp: Path) -> int:
         if val == 1
     ]
 
-    gdf = gpd.GeoDataFrame({"depth_src": [tif_path.stem] * len(geoms)}, geometry=geoms, crs=crs)
-    gdf = gdf.dissolve().explode(index_parts=False).reset_index(drop=True)
+    union = unary_union(geoms)
+    if close_radius > 0:
+        union = union.buffer(close_radius).buffer(-close_radius)
+
+    parts = list(union.geoms) if hasattr(union, "geoms") else [union]
+    gdf = gpd.GeoDataFrame({"depth_src": [tif_path.stem] * len(parts)}, geometry=parts, crs=crs)
 
     out_shp.parent.mkdir(parents=True, exist_ok=True)
     gdf.to_file(out_shp)
