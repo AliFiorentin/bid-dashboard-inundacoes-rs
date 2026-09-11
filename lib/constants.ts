@@ -102,17 +102,7 @@ export const MUNICIPIOS = [
 export const CENARIOS_CONFIG: Record<string, string[]> = {
   "Eldorado do Sul": ["Cenário ADA"],
   Lajeado: ["Cenário 27m", "Cenário 30m"],
-  "Porto Alegre": [
-    "Cenário ADA",
-    "Climada RP10",
-    "Climada RP20",
-    "Climada RP50",
-    "Climada RP75",
-    "Climada RP100",
-    "Climada RP200",
-    "Climada RP500",
-    "Climada Evento 2024",
-  ],
+  "Porto Alegre": ["Cenário ADA", "Climada Evento 2024"],
   "Rio Grande": ["Cenário Maio 2024", "Cenário Maio 2024 + 50%"],
 }
 
@@ -206,13 +196,6 @@ export const CENARIO_PERIODO: Record<string, string> = {
   lajeado___cenario_30m: "maio_2024",
   eldorado_do_sul___cenario_ada: "maio_2024",
   porto_alegre___cenario_ada: "maio_2024",
-  porto_alegre___climada_rp10: "maio_2024",
-  porto_alegre___climada_rp20: "maio_2024",
-  porto_alegre___climada_rp50: "maio_2024",
-  porto_alegre___climada_rp75: "maio_2024",
-  porto_alegre___climada_rp100: "maio_2024",
-  porto_alegre___climada_rp200: "maio_2024",
-  porto_alegre___climada_rp500: "maio_2024",
   porto_alegre___climada_evento_2024: "maio_2024",
   rio_grande___cenario_maio_2024: "maio_2024",
   rio_grande___cenario_maio_2024_50: "maio_2024",

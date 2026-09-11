@@ -39,7 +39,7 @@ O painel integra dados das enchentes de 2024 que afetaram mais de 400 município
 |-----------------|-------------------------------------------------|----------------------------|
 | Eldorado do Sul | Cenário ADA                                     | Enchentes de maio de 2024  |
 | Lajeado         | Cenário 27m · Cenário 30m                       | Enchentes de maio de 2024  |
-| Porto Alegre    | Cenário ADA · Climada RP10 · RP20 · RP50 · RP75 · RP100 · RP200 · RP500 · Climada Evento 2024 | Enchentes de maio de 2024 · períodos de retorno sintéticos (CLIMADA) |
+| Porto Alegre    | Cenário ADA · Climada Evento 2024               | Enchentes de maio de 2024  |
 | Rio Grande      | Cenário Maio 2024 · Cenário Maio 2024 +50% · Cenário Setembro 2023 | Tormenta de maio de 2024 · Setembro de 2023 |
 
 A **Visão Geral RS** exibe os 4 municípios simultaneamente com o pior cenário de cada um aplicado e a mancha de inundação estadual de referência.
@@ -53,7 +53,7 @@ A **Visão Geral RS** exibe os 4 municípios simultaneamente com o pior cenário
 As manchas de inundação (polígonos vetoriais) provêm de estudos hidrológicos específicos por município:
 
 - **Porto Alegre e Eldorado do Sul:** Área Diretamente Afetada (ADA) — MUP / Mapa Único do Plano Rio Grande (Gov. RS), maio/2024.
-- **Porto Alegre (CLIMADA):** rasters de risco hidrológico do exercício de adaptação climática CLIMADA/UNU-EHS (BID) — profundidade máxima de água por período de retorno (RP10 a RP500) e duração do evento real de maio/2024 (calibração), vetorizados (pixels > 0) via `pipeline/vetorizar_climada.py`.
+- **Porto Alegre (Climada Evento 2024):** raster de duração (dias) do evento real de maio/2024 usado na calibração do exercício de adaptação climática CLIMADA/UNU-EHS (BID), vetorizado (pixels > 0) via `pipeline/vetorizar_climada.py`. O mesmo script também vetoriza os rasters de profundidade por período de retorno sintético (RP10 a RP500) do exercício CLIMADA — mantidos em `data/raw/manchas/porto_alegre/climada/` para uso futuro num cálculo de risco próprio (profundidade × função de dano), mas ainda não expostos como cenário no painel.
 - **Lajeado:** Simulação hidráulica do rio Taquari para cotas de 27 m e 30 m (LabModel).
 - **Rio Grande:** Modelagem hidrológica e hidráulica (CIEX/FURG) — cenários de maio/2024 e setembro/2023.
 

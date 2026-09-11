@@ -102,8 +102,7 @@ export default function MetodologiaPage() {
             ["Lajeado",         "Cenário 27 m",             "Maio 2024 — cota 27 m",         "Cota de 27 m no Rio Taquari",             "LabModel"],
             ["Lajeado",         "Cenário 30 m",             "Maio 2024 — cota 30 m",         "Cota de 30 m no Rio Taquari",             "LabModel"],
             ["Porto Alegre",    "Cenário ADA",              "Maio 2024",                     "Área Diretamente Afetada — extensão máxima registrada", "MUP / Gov. RS"],
-            ["Porto Alegre",    "Climada RP10…RP500",       "Períodos de retorno de 10 a 500 anos", "Profundidade máxima de inundação por período de retorno — vetorizado (profundidade > 0) a partir do raster de risco", "CLIMADA"],
-            ["Porto Alegre",    "Climada Evento 2024",      "Maio 2024",                     "Duração da inundação (dias) do evento real, usado na calibração do modelo — vetorizado (duração > 0)", "CLIMADA"],
+            ["Porto Alegre",    "Climada Evento 2024",      "Maio 2024",                     "Duração da inundação (dias) do evento real, usado na calibração do modelo CLIMADA — vetorizado (duração > 0)", "CLIMADA"],
             ["Rio Grande",      "Cenário Maio 2024",        "Maio 2024",                     "Extensão modelada para o evento de maio", "CIEX/FURG"],
             ["Rio Grande",      "Cenário Maio 2024 + 50%",  "Maio 2024 — extensão ampliada", "Extensão hipotética com 50% de área adicional — análise de sensibilidade", "CIEX/FURG"],
             ["Rio Grande",      "Cenário Setembro 2023",    "Setembro 2023",                 "Evento de menor magnitude — setembro 2023", "CIEX/FURG"],
@@ -129,13 +128,17 @@ export default function MetodologiaPage() {
               níveis de extravasamento do Rio Taquari sobre a área urbana.
             </li>
             <li>
-              <strong>Cenários CLIMADA (Porto Alegre)</strong> — mancha de risco hidrológico do
+              <strong>Climada Evento 2024 (Porto Alegre)</strong> — mancha de risco hidrológico do
               exercício de adaptação climática CLIMADA/UNU-EHS para o BID (independente da mancha
-              ADA do MUP). RP10 a RP500 são rasters de profundidade máxima de água (m) para cada
-              período de retorno sintético; Evento 2024 é o raster de duração da inundação (dias)
-              usado na calibração do modelo, referente ao evento real de maio/2024. Cada raster foi
-              vetorizado (pixels com valor {'>'} 0, dissolvidos em polígono) e passa pelo mesmo
-              pipeline de sobreposição espacial dos demais cenários (Seção 2).
+              ADA do MUP), a partir do raster de duração da inundação (dias) do evento real de
+              maio/2024 usado na calibração do modelo. Vetorizado (pixels com duração {'>'} 0,
+              suavizado por fechamento morfológico para remover ruído em escala de quadra) e
+              passa pelo mesmo pipeline de sobreposição espacial dos demais cenários (Seção 2). O
+              exercício CLIMADA também modela profundidade máxima de água por período de retorno
+              sintético (RP10 a RP500, de 10 a 500 anos) — esses rasters ainda não entram como
+              cenário aqui porque representam uma métrica de risco diferente (profundidade × função
+              de dano × valor de reposição do ativo), não um polígono "atingido sim/não" como os
+              demais cenários.
             </li>
           </ul>
 
@@ -152,7 +155,7 @@ export default function MetodologiaPage() {
             ["Fonte",        "Período",                    "Municípios",                        "Método de mapeamento"],
             ["MUP / Gov. RS","Maio 2024",                  "Eldorado do Sul · Porto Alegre",    "Fusão de imagens SAR + registros de campo + nível hidrométrico"],
             ["LabModel",     "Maio 2024",                  "Lajeado — cotas 27 m e 30 m",       "Modelagem hidráulica 2D (HEC-RAS)"],
-            ["CLIMADA",      "RP10…RP500 · Maio 2024",     "Porto Alegre",                      "Modelagem de risco hidrológico (exercício de adaptação BID/UNU-EHS)"],
+            ["CLIMADA",      "Maio 2024",                  "Porto Alegre",                      "Modelagem de risco hidrológico (exercício de adaptação BID/UNU-EHS)"],
             ["CIEX/FURG",    "Maio 2024 · Setembro 2023",  "Rio Grande",                        "Modelagem hidrológica e hidráulica costeira"],
           ]} />
           <SectionSources links={[
