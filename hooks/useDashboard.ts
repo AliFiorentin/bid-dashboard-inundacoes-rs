@@ -229,14 +229,31 @@ export function useDashboard() {
   // uma coleção paralela com todo o BASE (~40 mil pontos em Empresas), fazendo
   // parecer que pontos "aparecem do nada" ao ligar o toggle -- ver
   // pipeline/climada_risco_prototipo.py, gerar_indice_dano_pontos.
-  const mergeDanoFisico = useCallback((fc: FeatureCollection | null, indice: DanoFisicoIndice | null, idField: string): FeatureCollection | null => {
+  // rp: além de mesclar TODAS as propriedades por RP do índice (usadas no
+  // popup), copia as do RP atualmente selecionado para chaves FIXAS
+  // (..._atual) -- assim clusterProperties/paint na camada do mapa referenciam
+  // um nome de propriedade constante, e trocar de RP vira só um `setData()`
+  // (o mesmo Source/GeoJSONSource do MapLibre é reaproveitado). Antes disso a
+  // troca de RP forçava remontar a Source inteira (key dinâmica, necessária
+  // porque clusterProperties não é reativo a uma troca de propriedade dentro
+  // da mesma source) -- destruir/recriar a source enquanto o MapLibre ainda
+  // processava a anterior (cluster em worker) causava um crash interno do
+  // MapLibre ("Cannot read properties of null (reading 'signal')", abort de
+  // uma requisição/worker já finalizado).
+  const mergeDanoFisico = useCallback((fc: FeatureCollection | null, indice: DanoFisicoIndice | null, idField: string, rp: string): FeatureCollection | null => {
     if (!fc || !indice || !Array.isArray(fc.features)) return null;
     return {
       ...fc,
       features: fc.features.map((f) => {
         const chave = String((f.properties as Record<string, unknown> | null)?.[idField] ?? "");
         const extra = indice[chave];
-        return extra ? { ...f, properties: { ...f.properties, ...extra } } : f;
+        if (!extra) return f;
+        const atual = {
+          dano_fisico_pct_atual: extra[`dano_fisico_pct_${rp}`] ?? 0,
+          dano_fisico_brl_atual: extra[`dano_fisico_brl_${rp}`] ?? 0,
+          profundidade_m_atual: extra[`profundidade_m_${rp}`] ?? 0,
+        };
+        return { ...f, properties: { ...f.properties, ...extra, ...atual } };
       }),
     };
   }, []);
@@ -625,16 +642,16 @@ export function useDashboard() {
   // e agrupada em cluster (abaixo, DashboardMap.tsx) para não poluir o mapa.
   const mostraDanoFisicoAtivo = showDanoFisico && renderMunicipio === "Porto Alegre";
   const danoFisicoEmpresas = useMemo(
-    () => (mostraDanoFisicoAtivo ? mergeDanoFisico(baseEmpresas, danoFisicoIndiceEmpresas, "id") : null),
-    [mostraDanoFisicoAtivo, baseEmpresas, danoFisicoIndiceEmpresas, mergeDanoFisico]
+    () => (mostraDanoFisicoAtivo ? mergeDanoFisico(baseEmpresas, danoFisicoIndiceEmpresas, "id", rpDanoFisico) : null),
+    [mostraDanoFisicoAtivo, baseEmpresas, danoFisicoIndiceEmpresas, rpDanoFisico, mergeDanoFisico]
   );
   const danoFisicoEducacao = useMemo(
-    () => (mostraDanoFisicoAtivo ? mergeDanoFisico(baseEducacao, danoFisicoIndiceEducacao, "co_entidade") : null),
-    [mostraDanoFisicoAtivo, baseEducacao, danoFisicoIndiceEducacao, mergeDanoFisico]
+    () => (mostraDanoFisicoAtivo ? mergeDanoFisico(baseEducacao, danoFisicoIndiceEducacao, "co_entidade", rpDanoFisico) : null),
+    [mostraDanoFisicoAtivo, baseEducacao, danoFisicoIndiceEducacao, rpDanoFisico, mergeDanoFisico]
   );
   const danoFisicoSaude = useMemo(
-    () => (mostraDanoFisicoAtivo ? mergeDanoFisico(baseSaude, danoFisicoIndiceSaude, "co_cnes") : null),
-    [mostraDanoFisicoAtivo, baseSaude, danoFisicoIndiceSaude, mergeDanoFisico]
+    () => (mostraDanoFisicoAtivo ? mergeDanoFisico(baseSaude, danoFisicoIndiceSaude, "co_cnes", rpDanoFisico) : null),
+    [mostraDanoFisicoAtivo, baseSaude, danoFisicoIndiceSaude, rpDanoFisico, mergeDanoFisico]
   );
 
   const metricasEmp = useMemo(() => ({ base: calcEmp(baseEmpresas), impacto: calcEmp(atingidosEmpresas) }), [baseEmpresas, atingidosEmpresas]);

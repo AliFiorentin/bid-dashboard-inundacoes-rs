@@ -19,9 +19,12 @@ const DANO_FISICO_SETOR_LABEL: Record<string, string> = {
 
 export function MapPopup({ source, properties: p, rp = "RP200" }: Props) {
   if (source.startsWith("dano-fisico-")) {
-    const dano = Number(p[`dano_fisico_brl_${rp}`] ?? 0);
-    const pct = Number(p[`dano_fisico_pct_${rp}`] ?? 0);
-    const prof = Number(p[`profundidade_m_${rp}`] ?? 0);
+    // Campos fixos (..._atual, já no RP selecionado -- ver mergeDanoFisico em
+    // useDashboard.ts) em vez de montar a chave por RP aqui: mantém a leitura
+    // do popup em sincronia com o que a própria camada do mapa está desenhando.
+    const dano = Number(p.dano_fisico_brl_atual ?? 0);
+    const pct = Number(p.dano_fisico_pct_atual ?? 0);
+    const prof = Number(p.profundidade_m_atual ?? 0);
     const valor = Number(p.valor_reposicao_brl ?? 0);
     return (
       <div className="flex flex-col gap-1.5 p-3 w-56 bg-white rounded-xl shadow-lg border border-slate-100">

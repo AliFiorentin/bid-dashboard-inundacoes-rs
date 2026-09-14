@@ -887,12 +887,16 @@ export function DashboardMap({ dash }: Props) {
             (precisamos do valor por ponto individual, não de uma contagem
             agregada). */}
         {mostraDanoFisico && camadas.includes("Empresas") && danoFisicoEmpresas?.features && (
-          // key força o react-map-gl a recriar a Source (e o indice de cluster do
-          // MapLibre) quando o RP muda -- clusterProperties nao e' reativo a uma
-          // troca de propriedade dentro da MESMA source (o nome da propriedade
-          // agregada, dano_fisico_pct_<RP>, muda com o RP selecionado).
+          // Sem key dinâmica: dano_fisico_pct_atual é copiado (em useDashboard.ts,
+          // mergeDanoFisico) do RP selecionado para um nome de propriedade FIXO,
+          // então clusterProperties não precisa mudar quando o RP muda -- só o
+          // `data` muda (setData(), que o MapLibre atualiza na mesma source). Uma
+          // key dinâmica aqui força destruir/recriar a source inteira a cada troca
+          // de RP; se isso acontecer enquanto o MapLibre ainda processa a anterior
+          // (cluster em worker), o próprio MapLibre quebra internamente
+          // ("Cannot read properties of null (reading 'signal')", abort de uma
+          // requisição/worker já finalizado) -- já visto em produção.
           <Source
-            key={`dano-fisico-empresas-${rpDanoFisico}`}
             id="dano-fisico-empresas"
             type="geojson"
             data={danoFisicoEmpresas}
@@ -900,7 +904,7 @@ export function DashboardMap({ dash }: Props) {
             clusterMaxZoom={18}
             clusterRadius={60}
             clusterProperties={{
-              soma_dano: ["+", ["get", `dano_fisico_pct_${rpDanoFisico}`]],
+              soma_dano: ["+", ["get", "dano_fisico_pct_atual"]],
             }}
           >
             <Layer
@@ -932,7 +936,7 @@ export function DashboardMap({ dash }: Props) {
               paint={{
                 "circle-color": [
                   "interpolate", ["linear"],
-                  ["coalesce", ["get", `dano_fisico_pct_${rpDanoFisico}`], 0],
+                  ["coalesce", ["get", "dano_fisico_pct_atual"], 0],
                   ...DANO_FISICO_COLOR_STOPS,
                 ],
                 "circle-radius": 5,
@@ -944,7 +948,6 @@ export function DashboardMap({ dash }: Props) {
         )}
         {mostraDanoFisico && camadas.includes("Educação") && danoFisicoEducacao?.features && (
           <Source
-            key={`dano-fisico-educacao-${rpDanoFisico}`}
             id="dano-fisico-educacao"
             type="geojson"
             data={danoFisicoEducacao}
@@ -952,7 +955,7 @@ export function DashboardMap({ dash }: Props) {
             clusterMaxZoom={18}
             clusterRadius={60}
             clusterProperties={{
-              soma_dano: ["+", ["get", `dano_fisico_pct_${rpDanoFisico}`]],
+              soma_dano: ["+", ["get", "dano_fisico_pct_atual"]],
             }}
           >
             <Layer
@@ -984,7 +987,7 @@ export function DashboardMap({ dash }: Props) {
               paint={{
                 "circle-color": [
                   "interpolate", ["linear"],
-                  ["coalesce", ["get", `dano_fisico_pct_${rpDanoFisico}`], 0],
+                  ["coalesce", ["get", "dano_fisico_pct_atual"], 0],
                   ...DANO_FISICO_COLOR_STOPS,
                 ],
                 "circle-radius": 5,
@@ -996,7 +999,6 @@ export function DashboardMap({ dash }: Props) {
         )}
         {mostraDanoFisico && camadas.includes("Saúde") && danoFisicoSaude?.features && (
           <Source
-            key={`dano-fisico-saude-${rpDanoFisico}`}
             id="dano-fisico-saude"
             type="geojson"
             data={danoFisicoSaude}
@@ -1004,7 +1006,7 @@ export function DashboardMap({ dash }: Props) {
             clusterMaxZoom={18}
             clusterRadius={60}
             clusterProperties={{
-              soma_dano: ["+", ["get", `dano_fisico_pct_${rpDanoFisico}`]],
+              soma_dano: ["+", ["get", "dano_fisico_pct_atual"]],
             }}
           >
             <Layer
@@ -1036,7 +1038,7 @@ export function DashboardMap({ dash }: Props) {
               paint={{
                 "circle-color": [
                   "interpolate", ["linear"],
-                  ["coalesce", ["get", `dano_fisico_pct_${rpDanoFisico}`], 0],
+                  ["coalesce", ["get", "dano_fisico_pct_atual"], 0],
                   ...DANO_FISICO_COLOR_STOPS,
                 ],
                 "circle-radius": 4,
