@@ -35,7 +35,7 @@ import pandas as pd
 
 from config import (
     MUNICIPIOS, DATA_BASES, DASH_DATA, MANCHAS, MAPBIOMAS_ANOS,
-    CENARIO_PERIODO, PERIODO_ANO, STAFF_BUCKETS,
+    CENARIO_PERIODO, PERIODO_ANO, STAFF_BUCKETS, MANCHA_RS_ADA,
 )
 from common import (
     df_to_geojson, save_geojson, load_geojson,
@@ -45,6 +45,20 @@ from common import (
 
 
 SETORES_PONTOS = ["empresas", "educacao", "saude"]
+
+
+def _round_geojson_coords(node, nd: int):
+    """Arredonda coordenadas de um GeoJSON recursivamente (reduz tamanho do arquivo).
+
+    Usado so na mancha RS (estadual, so exibicao) -- a precisao de ~11m (4 casas
+    decimais) e irrelevante em zoom de visao geral, mas os ~17 digitos do float
+    original inflam bastante o arquivo (poligono com muitos aneis/buracos).
+    """
+    if isinstance(node, list):
+        if node and isinstance(node[0], (int, float)):
+            return [round(x, nd) for x in node]
+        return [_round_geojson_coords(x, nd) for x in node]
+    return node
 
 
 # ---------------------------------------------------------------------------
@@ -319,26 +333,23 @@ def main():
         make_atingidos(nome, cfg, slug, limite_geom)
 
     # --- mancha RS (Visão Geral) ---
+    # Mancha unica do ADA estadual, so para exibicao na Visao Geral -- os calculos de
+    # dano por municipio (make_atingidos acima) continuam usando a mancha propria de
+    # cada municipio (MANCHAS), nao esta.
     print("\n  Gerando mancha_rs_enchente_2024.geojson...")
-    piores = {
-        "eldorado_do_sul": "eldorado_do_sul___cenario_ada",
-        "lajeado": "lajeado___cenario_27m",
-        "porto_alegre": "porto_alegre___cenario_ada",
-        "rio_grande": "rio_grande___cenario_maio_2024",
-    }
-    features_rs = []
-    for slug_m, cen_slug in piores.items():
-        mancha_path = DASH_DATA / slug_m / "cenarios" / f"{cen_slug}.geojson"
-        gj = load_geojson(mancha_path)
-        if gj:
-            features_rs.extend(gj["features"])
-    if features_rs:
-        mancha_rs = {"type": "FeatureCollection", "features": features_rs}
+    # Tolerancia bem mais grosseira que o default (municipal) -- essa mancha cobre o
+    # estado inteiro so para contexto visual na Visao Geral, no zoom de um municipio
+    # so ela nunca aparece (isVisaoGeral). Arredondamento de coordenadas reduz o
+    # arquivo ~5x sem perda visivel nesse zoom.
+    mancha_rs = mancha_to_geojson(MANCHA_RS_ADA, simplify_tolerance=0.005)
+    if mancha_rs:
+        for feat in mancha_rs["features"]:
+            feat["geometry"]["coordinates"] = _round_geojson_coords(feat["geometry"]["coordinates"], 4)
         out_rs = DASH_DATA / "mancha_rs_enchente_2024.geojson"
         save_geojson(mancha_rs, out_rs)
-        print(f"    mancha_rs_enchente_2024.geojson: {len(features_rs)} features")
+        print(f"    mancha_rs_enchente_2024.geojson: gerado de {MANCHA_RS_ADA.name}")
     else:
-        print("    AVISO: nenhuma mancha encontrada para Visão Geral RS")
+        print(f"    AVISO: mancha nao encontrada em {MANCHA_RS_ADA}")
 
     print("\nConcluido.")
 

@@ -177,6 +177,11 @@ MANCHAS = {
     },
 }
 
+# Mancha unica do RS inteiro (ADA estadual), usada so para exibicao na "Visao Geral RS"
+# do Dashboard -- os calculos de dano por municipio continuam usando MANCHAS acima
+# (mancha propria de cada municipio), nao esta.
+MANCHA_RS_ADA = Path(r"D:\ShapeFiles\Rio_Grande_do_Sul\Enchente_2024_ADA\ada_enchente.shp")
+
 # Tabela de-para CO_TIPO_ESTABELECIMENTO (0-25)
 TIPO_ESTAB_DEPARA = {
     0: "Outros", 1: "Unidade Básica de Saúde", 2: "Central de Gestao em Saude",
