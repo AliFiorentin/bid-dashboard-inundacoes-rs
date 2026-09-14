@@ -5,6 +5,10 @@
       "Cenario ADA": {
         "area_atingida_km2": 152.29,
         "pct_atingida": 29.9
+      },
+      "ADA Estadual": {
+        "area_atingida_km2": 152.75,
+        "pct_atingida": 30.0
       }
     }
   },
@@ -18,6 +22,10 @@
       "Cenario 30m": {
         "area_atingida_km2": 14.13,
         "pct_atingida": 15.5
+      },
+      "ADA Estadual": {
+        "area_atingida_km2": 20.34,
+        "pct_atingida": 22.3
       }
     }
   },
@@ -31,6 +39,10 @@
       "Climada Evento 2024": {
         "area_atingida_km2": 148.27,
         "pct_atingida": 30.0
+      },
+      "ADA Estadual": {
+        "area_atingida_km2": 111.94,
+        "pct_atingida": 22.6
       }
     }
   },
@@ -48,6 +60,19 @@
       "Cenario Setembro 2023": {
         "area_atingida_km2": 4.89,
         "pct_atingida": 0.2
+      },
+      "ADA Estadual": {
+        "area_atingida_km2": 796.26,
+        "pct_atingida": 29.7
+      }
+    }
+  },
+  "Visão Geral RS": {
+    "area_km2": 3777.33,
+    "cenarios": {
+      "ADA Estadual": {
+        "area_atingida_km2": 1081.29,
+        "pct_atingida": 28.6
       }
     }
   }

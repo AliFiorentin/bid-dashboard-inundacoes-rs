@@ -304,3 +304,12 @@ export const PIORES_CENARIOS: Record<string, string> = {
   "Porto Alegre": "Cenário ADA",
   "Rio Grande": "Cenário Maio 2024",
 }
+
+// Área Atingida na Visão Geral RS usa a mancha estadual única (ADA
+// Estadual, evento de maio/2024 para todo o RS) em vez de somar o pior
+// cenário de cada município (que podem ser eventos diferentes entre si) --
+// ver pipeline/11_area_atingida.py, que grava essa mesma entrada dentro de
+// cada município (para o detalhamento bater com o agregado) e também como
+// entrada própria "Visão Geral RS" em area_atingida.json.
+export const AREA_VISAO_GERAL_LABEL = "Visão Geral RS"
+export const AREA_VISAO_GERAL_CENARIO = "ADA Estadual"

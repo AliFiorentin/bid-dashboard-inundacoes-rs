@@ -1,6 +1,6 @@
 import React from "react";
 import { TabsContent } from "@/components/ui/tabs";
-import { C, INFRA_COLORS, INFRAESTRUTURA_CONFIG, INFRA_GRUPOS_VISAO_GERAL, MUNICIPIOS, PIORES_CENARIOS } from "@/lib/constants";
+import { C, INFRA_COLORS, INFRAESTRUTURA_CONFIG, INFRA_GRUPOS_VISAO_GERAL, MUNICIPIOS, AREA_VISAO_GERAL_LABEL, AREA_VISAO_GERAL_CENARIO } from "@/lib/constants";
 import { compactoBr, calcPct, findCenarioData } from "@/lib/geo-utils";
 import { KPICard } from "@/components/KPICard";
 import { LogradourosSection } from "@/components/tabs/infra/LogradourosSection";
@@ -82,37 +82,35 @@ export function InfraTab({ dash }: Props) {
       );
     }
 
-    // Área territorial x área atingida (pior cenário) por município -- não é
-    // um "tipo de infra" como os grupos acima, mas mora aqui (e não no
-    // Resumo) porque é a mesma lógica de "por município lado a lado" já usada
-    // nesta aba.
-    const areaTerrTotal = MUNICIPIOS.reduce((s, mun) => s + (areaData?.[mun]?.area_km2 ?? 0), 0);
-    const areaAtgTotal = MUNICIPIOS.reduce((s, mun) => {
-      const d = areaData?.[mun];
-      if (!d) return s;
-      const cenData = findCenarioData(d.cenarios, PIORES_CENARIOS[mun]);
-      return s + (cenData?.area_atingida_km2 ?? 0);
-    }, 0);
+    // Área territorial x área atingida pelo cenário da própria Visão Geral
+    // (mancha estadual única "ADA Estadual", ver pipeline/11_area_atingida.py)
+    // por município -- não é um "tipo de infra" como os grupos acima, mas
+    // mora aqui (e não no Resumo) porque é a mesma lógica de "por município
+    // lado a lado" já usada nesta aba. Usa a entrada agregada pronta para o
+    // total (bate exatamente com a soma do detalhamento por município).
+    const areaVisaoGeral = areaData?.[AREA_VISAO_GERAL_LABEL];
+    const areaTerrTotal = areaVisaoGeral?.area_km2 ?? 0;
+    const areaAtgTotal = findCenarioData(areaVisaoGeral?.cenarios ?? {}, AREA_VISAO_GERAL_CENARIO)?.area_atingida_km2 ?? 0;
 
     return (
       <TabsContent value="infra" className="flex-1 overflow-y-auto mt-4 pr-2 pb-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-thumb]:rounded-full">
         <div className="flex flex-col gap-2 pb-2">
-          {areaData && (
+          {areaVisaoGeral && (
             <KPICard
               titulo="Área Atingida"
               cor={COR_AREA}
               principal={{
                 valor: `${compactoBr(areaAtgTotal, 1)} km²`,
-                sub: "Atingida (piores cenários)",
+                sub: "Atingida (ADA Estadual)",
                 delta: `de ${compactoBr(areaTerrTotal, 1)} km² (${calcPct(areaAtgTotal, areaTerrTotal)})`,
               }}
             >
               <div className="border-t px-3 py-2.5 flex flex-col gap-1.5" style={{ borderColor: "rgba(5,80,113,0.15)" }}>
                 <span className="text-[9px] font-bold uppercase tracking-wide text-muted-foreground">Por Município</span>
                 {MUNICIPIOS.map(mun => {
-                  const d = areaData[mun];
+                  const d = areaData?.[mun];
                   if (!d) return null;
-                  const cenData = findCenarioData(d.cenarios, PIORES_CENARIOS[mun]);
+                  const cenData = findCenarioData(d.cenarios, AREA_VISAO_GERAL_CENARIO);
                   const atg = cenData?.area_atingida_km2 ?? 0;
                   const pctMun = d.area_km2 > 0 ? (atg / d.area_km2 * 100) : 0;
                   return (

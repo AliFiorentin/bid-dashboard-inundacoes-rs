@@ -1,8 +1,8 @@
 import type React from "react";
-import { Users, Building2, GraduationCap, BookOpen, HeartPulse, Stethoscope, Wrench, DollarSign, Sprout, Map } from "lucide-react";
+import { Users, Building2, GraduationCap, HeartPulse, Stethoscope, Wrench, DollarSign, Sprout, Map } from "lucide-react";
 import { TabsContent } from "@/components/ui/tabs";
 import { DonutChart } from "@/components/ui/donut-chart";
-import { COLORS, MUNICIPIOS, PIORES_CENARIOS, CENARIO_PERIODO, IMPACTO_AGRICOLA, PANEL_CARD_BG, C } from "@/lib/constants";
+import { COLORS, MUNICIPIOS, PIORES_CENARIOS, CENARIO_PERIODO, IMPACTO_AGRICOLA, PANEL_CARD_BG, C, AREA_VISAO_GERAL_LABEL, AREA_VISAO_GERAL_CENARIO } from "@/lib/constants";
 import { compactoBr, scenarioSlug, findCenarioData } from "@/lib/geo-utils";
 import type { DashboardState } from "@/hooks/useDashboard";
 
@@ -154,16 +154,14 @@ export function ResumoTab({ dash }: Props) {
     : (atingidosInfra["Edificações"]?.features?.length ?? 0);
 
   // ── Área Atingida: território do município x extensão da mancha ────────────
+  // Na Visão Geral usa o próprio cenário do RS (mancha estadual única "ADA
+  // Estadual", ver pipeline/11_area_atingida.py) em vez de somar o pior
+  // cenário de cada município -- eventos diferentes entre si.
   const areaBase = isVisaoGeral
-    ? MUNICIPIOS.reduce((s, mun) => s + (areaData?.[mun]?.area_km2 ?? 0), 0)
+    ? (areaData?.[AREA_VISAO_GERAL_LABEL]?.area_km2 ?? 0)
     : (areaData?.[municipio]?.area_km2 ?? 0);
   const areaAtg = isVisaoGeral
-    ? MUNICIPIOS.reduce((s, mun) => {
-        const d = areaData?.[mun];
-        if (!d) return s;
-        const cenData = findCenarioData(d.cenarios, PIORES_CENARIOS[mun]);
-        return s + (cenData?.area_atingida_km2 ?? 0);
-      }, 0)
+    ? (findCenarioData(areaData?.[AREA_VISAO_GERAL_LABEL]?.cenarios ?? {}, AREA_VISAO_GERAL_CENARIO)?.area_atingida_km2 ?? 0)
     : (isCenarioAtivo ? findCenarioData(areaData?.[municipio]?.cenarios ?? {}, cenario)?.area_atingida_km2 ?? 0 : 0);
 
   // ── Saúde: unidades (todos os tipos) + profissionais ────────────────────────
@@ -193,19 +191,21 @@ export function ResumoTab({ dash }: Props) {
           mostraImpacto={mostraImpacto}
         />
         <MiniStatCard
+          icon={<DollarSign strokeWidth={2.5} className="w-[45%] h-[45%]" />}
+          titulo="Massa Salarial"
+          cor={COLORS.empresas}
+          atingido={metricasEmp.impacto.massa}
+          base={metricasEmp.base.massa}
+          mostraImpacto={mostraImpacto}
+          prefixo="R$ "
+          casas={1}
+        />
+        <MiniStatCard
           icon={<GraduationCap strokeWidth={2.5} className="w-[45%] h-[45%]" />}
           titulo="Escolas"
           cor={COLORS.educacao}
           atingido={metricasEdu.impacto.escolas}
           base={metricasEdu.base.escolas}
-          mostraImpacto={mostraImpacto}
-        />
-        <MiniStatCard
-          icon={<BookOpen strokeWidth={2.5} className="w-[45%] h-[45%]" />}
-          titulo="Profissionais Educação"
-          cor={COLORS.educacao}
-          atingido={metricasEdu.impacto.prof}
-          base={metricasEdu.base.prof}
           mostraImpacto={mostraImpacto}
         />
         <MiniStatCard
@@ -231,16 +231,6 @@ export function ResumoTab({ dash }: Props) {
           atingido={edifAtg}
           base={edifBase}
           mostraImpacto={mostraImpacto}
-        />
-        <MiniStatCard
-          icon={<DollarSign strokeWidth={2.5} className="w-[45%] h-[45%]" />}
-          titulo="Massa Salarial"
-          cor={COLORS.empresas}
-          atingido={metricasEmp.impacto.massa}
-          base={metricasEmp.base.massa}
-          mostraImpacto={mostraImpacto}
-          prefixo="R$ "
-          casas={1}
         />
         <MiniStatCard
           icon={<Map strokeWidth={2.5} className="w-[45%] h-[45%]" />}
