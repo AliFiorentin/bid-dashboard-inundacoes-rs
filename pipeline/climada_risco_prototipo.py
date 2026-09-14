@@ -552,6 +552,14 @@ def porte_por_ponto(setor: str, gj: dict) -> np.ndarray:
     return np.maximum(np.array(vals, dtype=np.float64), 1.0)
 
 
+# Campo de identificacao estavel de cada setor -- usado para casar os pontos
+# deste script com os MESMOS pontos ja exibidos pelo Dashboard (BASE ou
+# ATINGIDOS, dependendo do cenario ativo), em vez de publicar uma coleta
+# separada de geometrias. Confirmado unico em todos os pontos do BASE de Porto
+# Alegre (id: 39808/39808 unicos; co_entidade: 938/938; co_cnes: 7022/7022).
+ID_FIELD = {"empresas": "id", "educacao": "co_entidade", "saude": "co_cnes"}
+
+
 def classificar_empresas_industria(gj: dict) -> np.ndarray:
     """Mascara booleana (1 por ponto de 'empresas'): True para estabelecimentos
     industriais, que usam custo de construcao (GI) e curva de dano (JRC industry)
@@ -586,7 +594,7 @@ def calcular_dano_fisico(setor: str, gj: dict, tif_path: Path, valor_por_ponto: 
     fora do loop de RPs em vez de refazer a cada chamada. Para 'empresas', is_industria
     seleciona a curva MDD industrial nos pontos industriais (ver classificar_empresas_industria).
     Retorna (resumo agregado, profundidade por ponto, dano fisico por ponto) -- os dois
-    arrays servem para exportar o GeoJSON por ponto (mapa), sem reamostrar o raster."""
+    arrays servem para exportar o indice por ponto (mapa), sem reamostrar o raster."""
     depths = sample_depth(gj, tif_path)
 
     if setor == "empresas" and is_industria is not None and is_industria.any():
@@ -626,15 +634,28 @@ def calcular_dano_fisico(setor: str, gj: dict, tif_path: Path, valor_por_ponto: 
     return resumo, depths, dano_por_ponto
 
 
-def gerar_geojson_pontos(setor: str, gj: dict, valor_por_ponto: np.ndarray, por_rp: dict) -> dict:
-    """GeoJSON por ponto para o mapa (camada 'Dano Fisico (CLIMADA)'): mesma geometria do
-    BASE do setor, com o dano fisico e a profundidade de cada RP calculado como
-    propriedades (o front-end troca de RP so trocando de propriedade, sem recarregar
-    arquivo). por_rp: {rp: (depths, dano_por_ponto)} na mesma ordem de features de gj.
-    Arquivo separado do *_BASE.geojson (nao mutamos a saida do pipeline 06_geojson.py --
-    ver docstring do modulo)."""
-    features = []
+def gerar_indice_dano_pontos(setor: str, gj: dict, valor_por_ponto: np.ndarray, por_rp: dict) -> dict:
+    """Indice {id_do_ponto: {propriedades por RP}} para a camada de mapa 'Dano
+    Fisico (CLIMADA)' -- SEM geometria: o front-end casa este indice, pelo campo
+    ID_FIELD[setor], com os MESMOS pontos que ja estao sendo exibidos no mapa
+    (BASE ou ATINGIDOS, dependendo do cenario/filtro ativos no momento), soh
+    acrescentando as propriedades de dano/profundidade a eles.
+
+    Antes este script publicava um GeoJSON paralelo com a geometria dos ~40 mil
+    pontos de 'empresas' (BASE inteiro, sempre, independente do cenario) -- ao
+    ligar a camada, isso fazia aparecerem milhares de pontos que nao estavam la
+    (todo o resto da cidade fora da mancha do cenario ativo), nao so' os pontos
+    ja visiveis recoloridos. Indice (sem geometria) evita esse descompasso por
+    construcao: o mapa nunca desenha um ponto que o resto do painel nao esteja
+    ja desenhando.
+
+    por_rp: {rp: (depths, dano_por_ponto)} na mesma ordem de features de gj."""
+    id_field = ID_FIELD[setor]
+    indice: dict = {}
     for i, feat in enumerate(gj["features"]):
+        chave = feat["properties"].get(id_field)
+        if chave is None:
+            continue
         props = {"valor_reposicao_brl": round(float(valor_por_ponto[i]), 2)}
         for rp, (depths, dano_por_ponto) in por_rp.items():
             props[f"profundidade_m_{rp}"] = round(float(depths[i]), 3)
@@ -642,12 +663,8 @@ def gerar_geojson_pontos(setor: str, gj: dict, valor_por_ponto: np.ndarray, por_
             props[f"dano_fisico_pct_{rp}"] = (
                 round(100 * dano_por_ponto[i] / valor_por_ponto[i], 2) if valor_por_ponto[i] else 0.0
             )
-        features.append({
-            "type": "Feature",
-            "geometry": feat["geometry"],
-            "properties": props,
-        })
-    return {"type": "FeatureCollection", "features": features}
+        indice[str(chave)] = props
+    return indice
 
 
 def _eai_trapezio(rps_presentes: list, freqs: list, losses_por_setor: dict) -> dict:
@@ -836,16 +853,18 @@ def main():
               f"(crescimento R$ {t['parcela_crescimento_brl']:,.0f} + clima R$ {t['parcela_clima_brl']:,.0f}, "
               f"{t['pct_climatico']:.0f}% climatico)")
 
-    # GeoJSON por ponto (mapa) -- so escreve setores/RPs efetivamente calculados nesta rodada.
+    # Indice por ponto (mapa) -- so escreve setores/RPs efetivamente calculados
+    # nesta rodada. Sem geometria (ver gerar_indice_dano_pontos): o front-end
+    # casa por ID_FIELD com os pontos ja renderizados (BASE ou ATINGIDOS).
     MAPA_DIR = DASH_DATA / "porto_alegre"
     for setor, por_rp in pontos_por_rp.items():
         if not por_rp:
             continue
-        gj_pontos = gerar_geojson_pontos(setor, setores_gj[setor], valores_por_ponto[setor], por_rp)
-        out_geojson = MAPA_DIR / f"{setor}_dano_fisico_climada.geojson"
-        with open(out_geojson, "w", encoding="utf-8") as f:
-            json.dump(gj_pontos, f, ensure_ascii=False)
-        print(f"  Salvo: {out_geojson} ({len(gj_pontos['features'])} pontos, {len(por_rp)} RPs)")
+        indice = gerar_indice_dano_pontos(setor, setores_gj[setor], valores_por_ponto[setor], por_rp)
+        out_json = MAPA_DIR / f"{setor}_dano_fisico_indice.json"
+        with open(out_json, "w", encoding="utf-8") as f:
+            json.dump(indice, f, ensure_ascii=False)
+        print(f"  Salvo: {out_json} ({len(indice)} pontos, {len(por_rp)} RPs)")
 
     out_path = OUT_DIR / "climada_dano_fisico_prototipo.json"
     OUT_DIR.mkdir(parents=True, exist_ok=True)
