@@ -300,6 +300,19 @@ export const STAFF_LABELS: Record<string, string> = {
   staff_transporte_urgencia: "Transporte",
 }
 
+// Rótulo de EXIBIÇÃO de um cenário, quando difere da chave interna usada para
+// estado/slug de arquivo (scenarioSlug -- ver lib/geo-utils.ts) e para casar
+// com os dados já publicados (CENARIOS_CONFIG, PIORES_CENARIOS,
+// CENARIO_PERIODO, danos_operacionais.json etc. continuam usando a chave
+// interna sem alteração). Use cenarioLabel(cen) em todo texto visível ao
+// usuário; nunca troque a chave interna só para "renomear" um cenário --
+// quebraria o casamento com os arquivos *_ATINGIDOS_<slug>.geojson já
+// publicados pelo pipeline.
+export const CENARIO_DISPLAY_LABEL: Record<string, string> = {
+  "Climada Evento 2024": "Climada - UNU/EHS",
+}
+export const cenarioLabel = (cen: string): string => CENARIO_DISPLAY_LABEL[cen] ?? cen
+
 export const PIORES_CENARIOS: Record<string, string> = {
   "Eldorado do Sul": "Cenário ADA",
   Lajeado: "Cenário 27m",

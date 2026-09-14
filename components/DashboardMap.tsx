@@ -436,7 +436,7 @@ export function DashboardMap({ dash }: Props) {
               id="duracao-climada-raster"
               beforeId="anchor-mancha"
               type="raster"
-              paint={{ "raster-opacity": 0.85, "raster-resampling": "nearest" }}
+              paint={{ "raster-opacity": 0.85, "raster-resampling": "linear" }}
             />
           </Source>
         )}
@@ -897,8 +897,8 @@ export function DashboardMap({ dash }: Props) {
             type="geojson"
             data={danoFisicoEmpresas}
             cluster={true}
-            clusterMaxZoom={14}
-            clusterRadius={40}
+            clusterMaxZoom={18}
+            clusterRadius={60}
             clusterProperties={{
               soma_dano: ["+", ["get", `dano_fisico_pct_${rpDanoFisico}`]],
             }}
@@ -949,8 +949,8 @@ export function DashboardMap({ dash }: Props) {
             type="geojson"
             data={danoFisicoEducacao}
             cluster={true}
-            clusterMaxZoom={14}
-            clusterRadius={40}
+            clusterMaxZoom={18}
+            clusterRadius={60}
             clusterProperties={{
               soma_dano: ["+", ["get", `dano_fisico_pct_${rpDanoFisico}`]],
             }}
@@ -1001,8 +1001,8 @@ export function DashboardMap({ dash }: Props) {
             type="geojson"
             data={danoFisicoSaude}
             cluster={true}
-            clusterMaxZoom={14}
-            clusterRadius={40}
+            clusterMaxZoom={18}
+            clusterRadius={60}
             clusterProperties={{
               soma_dano: ["+", ["get", `dano_fisico_pct_${rpDanoFisico}`]],
             }}

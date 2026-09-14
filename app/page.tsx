@@ -6,7 +6,7 @@ import Image from "next/image";
 import {
   COLORS, INFRA_COLORS,
   AGRI_COLORS, AGRI_BOUNDS,
-  MANCHA_DURACAO_CENARIO, MANCHA_DURACAO_GRADIENT_CSS,
+  MANCHA_DURACAO_CENARIO, MANCHA_DURACAO_GRADIENT_CSS, cenarioLabel,
 } from "@/lib/constants";
 import { DashboardMap } from "@/components/DashboardMap";
 import { LegendItem } from "@/components/LegendItem";
@@ -157,7 +157,7 @@ export default function Dashboard() {
               ) : (
                 manchaCenario && !isVisaoGeral && showMancha && (
                   <>
-                    <LegendItem cor={COLORS.cenario} label={cenario} area />
+                    <LegendItem cor={COLORS.cenario} label={cenarioLabel(cenario)} area />
                     <span className="text-[8px] leading-tight text-slate-400 max-w-[180px]">
                       Extensão da área alagada. Não há dado de profundidade da água para este cenário.
                     </span>

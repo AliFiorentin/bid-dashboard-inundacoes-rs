@@ -5,6 +5,7 @@ import Link from "next/link";
 import katex from "katex";
 import { TrendingDown, FlaskConical } from "lucide-react";
 import { HeaderLogos } from "@/components/HeaderLogos";
+import { cenarioLabel } from "@/lib/constants";
 
 // ─── Tipos — Danos Operacionais (DaLA) ─────────────────────────────────────────
 export interface CenarioDanos {
@@ -245,10 +246,10 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
               Danos & Risco de Inundação
             </h1>
             <p className="text-base opacity-75 font-medium">
-              Perdas Econômicas e Dano Físico Estimado — Enchentes no Rio Grande do Sul
+              Perdas Econômicas e Dano Físico Estimado: Enchentes no Rio Grande do Sul
             </p>
             <p className="text-[11px] opacity-50 mt-3 font-mono">
-              Metodologia DaLA (CEPAL/BID) — Maio 2024 e Setembro 2023 · Protótipo CLIMADA/CCDR — Porto Alegre
+              Metodologia DaLA (CEPAL/BID), Maio 2024 e Setembro 2023 · Protótipo CLIMADA/CCDR, Porto Alegre
             </p>
           </div>
           <HeaderLogos />
@@ -401,7 +402,7 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
                 <div className="px-4 py-3" style={{ backgroundColor: MUN_COLORS[mun] ?? "#055071" }}>
                   <p className="text-[10px] font-black uppercase tracking-wider text-white/70 mb-0.5">{mun}</p>
                   <p className="text-2xl font-black text-white leading-none">{fmtBRL(cenVal.total)}</p>
-                  <p className="text-[9px] text-white/60 font-mono mt-1">{cenNome} · {dias} dias ef.</p>
+                  <p className="text-[9px] text-white/60 font-mono mt-1">{cenarioLabel(cenNome)} · {dias} dias ef.</p>
                 </div>
                 <div className="px-4 pt-3 pb-1">
                   <CompositionBar v={cenVal} />
@@ -417,7 +418,7 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
           </div>
 
           {/* Gráfico de barras total por cenário */}
-          <SubTitle>Total de Perdas por Cenário — {dias} dias ef.</SubTitle>
+          <SubTitle>Total de Perdas por Cenário ({dias} dias ef.)</SubTitle>
           <p>Comparação de todos os cenários avaliados (em R$ milhões).</p>
           <div className="bg-white border border-[#b3cdd8] rounded-xl p-5 shadow-sm mt-3">
             <TotaisBarChart todosCenarios={todosCenarios} maxTotal={maxTotalDala} />
@@ -432,18 +433,18 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
           </div>
 
           <Note type="warning">
-            A soma dos piores cenários <strong>não é um agregado único</strong> — cada município
+            A soma dos piores cenários <strong>não é um agregado único</strong>: cada município
             pode ter cenários com extensões distintas. Os valores representam impactos independentes.
           </Note>
           {dadosClimada && (
             <Note type="info">
-              Esta seção mede <strong>perda de fluxo</strong> (DaLA — produção/serviço não
+              Esta seção mede <strong>perda de fluxo</strong> (DaLA: produção/serviço não
               realizado). Para <strong>destruição de patrimônio</strong> (estoque) em Porto
               Alegre, ver a aba{" "}
               <button onClick={() => setAba("climada")} className="underline underline-offset-2 font-bold">
                 Dano Físico (Protótipo)
               </button>{" "}
-              acima — são métricas complementares, não somáveis.
+              acima. São métricas complementares, não somáveis.
             </Note>
           )}
         </Section>
@@ -468,7 +469,7 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
                 {Object.entries(cens).map(([cen, v]) => (
                   <div key={cen} className="bg-white border border-[#b3cdd8] rounded-xl overflow-hidden shadow-sm">
                     <div className="px-4 py-2.5 bg-[#f0f7fa] border-b border-[#b3cdd8] flex items-baseline justify-between">
-                      <p className="text-[11px] font-black text-[#055071] uppercase tracking-wide">{cen}</p>
+                      <p className="text-[11px] font-black text-[#055071] uppercase tracking-wide">{cenarioLabel(cen)}</p>
                       <p className="text-[9px] text-slate-400 font-mono">{dias} dias ef. · f = {v.f_interrup.toFixed(4)}</p>
                     </div>
                     <div className="px-4 pt-3 pb-4">
@@ -515,13 +516,13 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
           <p>
             Comparação do total estimado para <strong>30, 45 e 60 dias efetivos</strong>.
             Perdas agrícolas refletem custo de produção no estágio da cultura no momento
-            do evento — independem da duração.
+            do evento. Independem da duração.
           </p>
 
           {/* Gráfico agrupado */}
           <div className="bg-white border border-[#b3cdd8] rounded-xl p-5 shadow-sm mt-3">
             <p className="text-[11px] font-black uppercase tracking-wider text-[#3d7a94] mb-4">
-              Total por duração — cenário principal de cada município
+              Total por duração (cenário principal de cada município)
             </p>
             <SensibChart dados={dados} diasSelecionado={dias} />
           </div>
@@ -533,7 +534,7 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
             );
             return (
               <div key={mun} className="mt-6">
-                <SubTitle>{mun} — {cenNome}</SubTitle>
+                <SubTitle>{mun} · {cenarioLabel(cenNome)}</SubTitle>
                 <DataTable rows={[
                   ["Duração", "Empresas (VAB)", "Educação", "Saúde (SUS)", "Agricultura", "Total"],
                   ...DIAS_OPCOES.map((d) => {
@@ -582,11 +583,11 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
           <SubTitle>Administração Pública (CNAE 84)</SubTitle>
           <p>
             Os estabelecimentos com CNAE 84 (<em>Administração Pública, Defesa e Seguridade Social</em>)
-            são <strong>incluídos</strong> na estimativa — a interrupção de serviços governamentais
+            são <strong>incluídos</strong> na estimativa: a interrupção de serviços governamentais
             representa perdas reais para a sociedade, conforme a metodologia DaLA (CEPAL, 2024).
           </p>
           <DataTable rows={[
-            ["Indicador — Porto Alegre / ADA", "Valor"],
+            ["Indicador (Porto Alegre / ADA)", "Valor"],
             ["Estabelecimentos CNAE 84",      "51"],
             ["Participação na massa salarial", "45,3%  (R$ 559,7 mi/mês)"],
             ["Contribuição ao total (60 dias)","≈ R$ 625 mi de R$ 4,5 bi"],
@@ -609,14 +610,14 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
               <li>
                 <strong>1. Domicílio fiscal fora do município atingido.</strong>{" "}
                 Em Lajeado, o shortfall ICMS maio/2024 foi de apenas R$ 8 mil, enquanto nosso VAB estimado
-                implica R$ 1,74 mi de queda de ICMS — razão de 206×. Grandes empregadoras como Tramontina
+                implica R$ 1,74 mi de queda de ICMS (razão de 206×). Grandes empregadoras como Tramontina
                 recolhem ICMS na sede em Carlos Barbosa (RS), não em Lajeado, tornando o ICMS municipal
                 completamente dissociado da atividade econômica local.
               </li>
               <li>
                 <strong>2. Cobertura setorial parcial.</strong>{" "}
                 O ICMS incide sobre circulação de mercadorias e alguns serviços de comunicação e transporte.
-                Serviços em geral — que representam a maior parcela do VAB nas cidades maiores —
+                Serviços em geral, que representam a maior parcela do VAB nas cidades maiores,
                 recolhem ISS ao município, não ICMS ao Estado. Em Porto Alegre, o ICMS capturou apenas
                 R$ 136,8 mi de shortfall frente a R$ 388 mi implicados pelo nosso VAB estimado (razão 2,84×),
                 refletindo que bancos, consultorias e tecnologia estão fora do escopo do ICMS.
@@ -625,7 +626,7 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
                 <strong>3. Timing divergente e efeitos de compensação.</strong>{" "}
                 Em Rio Grande, o ICMS de maio/2024 apresentou alta de +43,8% em relação ao baseline,
                 enquanto o evento de cheia afetou principalmente abril/2024 (−41,4%). O movimento positivo
-                em maio reflete provavelmente a refinaria e o porto — atividades não atingidas — gerando
+                em maio reflete provavelmente a refinaria e o porto (atividades não atingidas), gerando
                 ICMS normalmente, além de demanda emergencial de combustíveis. O ICMS municipal, por ser
                 agregado, não permite isolar a parcela gerada por estabelecimentos dentro da mancha de inundação.
               </li>
@@ -634,8 +635,8 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
               O método RAIS + <em>labor share</em> resolve as três limitações: opera no nível do
               estabelecimento (CNPJ), aplica o teste ponto-em-polígono para isolar apenas firmas dentro
               da mancha, e cobre todos os setores formais independentemente do tributo recolhido.
-              O ICMS permanece útil apenas como sinal de validação de ordem de grandeza —
-              consistente com Eldorado do Sul (razão 1,12×) —, não como metodologia de estimação.
+              O ICMS permanece útil apenas como sinal de validação de ordem de grandeza
+              (consistente com Eldorado do Sul, razão 1,12×), não como metodologia de estimação.
             </p>
           </div>
         </Section>
@@ -670,7 +671,7 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
             (probabilidade = 1/RP); um <strong>RP500</strong> é mais raro e mais severo (0,2% ao
             ano), mas quando ocorre, alaga mais fundo e atinge mais área. São cenários{" "}
             <em>sintéticos</em> do modelo de risco do CLIMADA, diferentes do Cenário ADA e do
-            Climada Evento 2024 do mapa principal, que representam a extensão de um evento real
+            Climada - UNU/EHS do mapa principal, que representam a extensão de um evento real
             observado (maio/2024).
           </Note>
 
@@ -785,7 +786,7 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
               As seções anteriores mostram o risco de <strong>hoje</strong> (2025). Esta projeção
               estima como esse risco muda até 2050, decomposto em dois motores independentes: o{" "}
               <strong>crescimento econômico</strong> (mais patrimônio exposto, mesma lâmina d&apos;água)
-              e a <strong>mudança climática</strong> (eventos ficam mais frequentes — a lâmina d&apos;água
+              e a <strong>mudança climática</strong> (eventos ficam mais frequentes: a lâmina d&apos;água
               de hoje passa a ocorrer com frequência maior). Replica a decomposição que o próprio
               exercício CLIMADA destaca como resultado central (ver{" "}
               <a href="/metodologia#dano-fisico" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Metodologia</a>).
@@ -848,7 +849,7 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
                     Como não há raster de profundidade futuro (o exercício original também não tem),
                     a lâmina d&apos;água de cada RP é mantida igual: o efeito de crescimento escala o
                     valor de reposição (mesma profundidade, patrimônio maior), e o efeito climático
-                    só troca a frequência associada a essa mesma lâmina — não é uma simulação de
+                    só troca a frequência associada a essa mesma lâmina. Não é uma simulação de
                     chuvas mais intensas em 2050, só de eventos historicamente raros se tornando mais
                     comuns. Ver <a href="/metodologia#dano-fisico" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Metodologia</a> para o remapeamento RP completo.
                   </Note>
@@ -916,7 +917,7 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
             metodologia CLIMADA/CCDR (destruição de estoque) em cima dos nossos próprios dados
             (RAIS/Censo Escolar/CNES). Não substituem os Danos Operacionais (DaLA) da aba principal,
             e carregam premissas explícitas que precisam de validação antes de qualquer
-            uso além de exploração metodológica — ver{" "}
+            uso além de exploração metodológica: ver{" "}
             <a href="/metodologia#dano-fisico" target="_blank" rel="noopener noreferrer"
               className="underline underline-offset-2 font-bold">
               metodologia completa ↗
@@ -971,15 +972,15 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
               ponderada por ano (o dado de origem não discrimina série), e a lotação do Ensino
               Médio também é usada para Profissional e EJA por falta de norma específica
               encontrada; Educação Especial usa a lotação do Fundamental pelo mesmo motivo.
-              Além disso, a fórmula assume que toda turma está cheia no teto legal — escolas
+              Além disso, a fórmula assume que toda turma está cheia no teto legal. Escolas
               reais costumam operar com turmas menores que esse teto, o que também tende a
               subestimar o número real de salas.
             </li>
             <li>
               <strong>Estabelecimentos industriais</strong> (CNAE 05-39, {dadosClimada.premissas.n_empresas_industria} de{" "}
               {dadosClimada.premissas.n_empresas_total.toLocaleString("pt-BR")} empresas de Porto Alegre) usam custo
-              de construção e curva de dano próprios (categoria industrial); o restante — comércio,
-              serviços, agropecuária e administração pública — segue todo sob o mesmo tratamento
+              de construção e curva de dano próprios (categoria industrial); o restante (comércio,
+              serviços, agropecuária e administração pública) segue todo sob o mesmo tratamento
               comercial genérico, mesmo cobrindo setores heterogêneos entre si.
             </li>
             <li>
@@ -1011,7 +1012,7 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
 
         <footer className="mt-12 pt-6 border-t border-[#b3cdd8] text-center print:mt-4">
           <p className="text-[11px] text-[#3d7a94]">
-            Painel desenvolvido por GPEA/FURG em parceria com o BID — Banco Interamericano de Desenvolvimento.
+            Painel desenvolvido por GPEA/FURG em parceria com o BID (Banco Interamericano de Desenvolvimento).
           </p>
           <p className="text-[11px] text-[#3d7a94] mt-0.5">© 2024 Alisson Tallys Geraldo Fiorentin · Dados de referência: 2024.</p>
         </footer>

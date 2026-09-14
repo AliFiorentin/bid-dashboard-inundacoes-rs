@@ -89,9 +89,9 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           <p className="text-[11px] font-black uppercase tracking-wider text-[#3d7a94] mb-2">Contexto</p>
           <p className="text-sm leading-relaxed text-slate-700 mt-2">
             A metodologia distingue dois planos analíticos: (a) a{" "}
-            <strong>exposição física</strong> — identificação dos estabelecimentos, escolas,
-            unidades de saúde e áreas agrícolas dentro da mancha de inundação — e (b) as{" "}
-            <strong>perdas econômicas operacionais</strong> — estimativa do fluxo de produção e
+            <strong>exposição física</strong>, identificação dos estabelecimentos, escolas,
+            unidades de saúde e áreas agrícolas dentro da mancha de inundação; e (b) as{" "}
+            <strong>perdas econômicas operacionais</strong>, estimativa do fluxo de produção e
             serviços não realizado durante o período de interrupção, seguindo a abordagem
             DaLA (CEPAL/BID).
           </p>
@@ -101,7 +101,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
         {/* ══════════════════════════════════════════════════════════════════════
             1. MANCHAS
         ══════════════════════════════════════════════════════════════════════ */}
-        <Section id="manchas" num="1" title="Manchas de Inundação — Definição dos Cenários">
+        <Section id="manchas" num="1" title="Manchas de Inundação: Definição dos Cenários">
           <p>
             As manchas de inundação são <strong>polígonos vetoriais que delimitam a extensão
             geográfica máxima de cada evento</strong>. Cada município possui um ou mais cenários,
@@ -112,46 +112,46 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
 
           <DataTable rows={[
             ["Município",       "Cenário",                  "Referência temporal",           "Descrição",                               "Fonte"],
-            ["Eldorado do Sul", "Cenário ADA",              "Maio 2024",                     "Área Diretamente Afetada — extensão máxima registrada", "MUP / Gov. RS"],
-            ["Lajeado",         "Cenário 27 m",             "Maio 2024 — cota 27 m",         "Cota de 27 m no Rio Taquari",             "LabModel"],
-            ["Lajeado",         "Cenário 30 m",             "Maio 2024 — cota 30 m",         "Cota de 30 m no Rio Taquari",             "LabModel"],
-            ["Porto Alegre",    "Cenário ADA",              "Maio 2024",                     "Área Diretamente Afetada — extensão máxima registrada", "MUP / Gov. RS"],
-            ["Porto Alegre",    "Climada Evento 2024",      "Maio 2024",                     "Duração da inundação (dias) do evento real, usado na calibração do modelo CLIMADA — vetorizado (duração > 0)", "CLIMADA"],
+            ["Eldorado do Sul", "Cenário ADA",              "Maio 2024",                     "Área Diretamente Afetada (extensão máxima registrada)", "MUP / Gov. RS"],
+            ["Lajeado",         "Cenário 27 m",             "Maio 2024, cota 27 m",          "Cota de 27 m no Rio Taquari",             "LabModel"],
+            ["Lajeado",         "Cenário 30 m",             "Maio 2024, cota 30 m",          "Cota de 30 m no Rio Taquari",             "LabModel"],
+            ["Porto Alegre",    "Cenário ADA",              "Maio 2024",                     "Área Diretamente Afetada (extensão máxima registrada)", "MUP / Gov. RS"],
+            ["Porto Alegre",    "Climada - UNU/EHS",        "Maio 2024",                     "Duração da inundação (dias) do evento real, usado na calibração do modelo CLIMADA (vetorizado, duração > 0)", "CLIMADA"],
             ["Rio Grande",      "Cenário Maio 2024",        "Maio 2024",                     "Extensão modelada para o evento de maio", "CIEX/FURG"],
-            ["Rio Grande",      "Cenário Maio 2024 + 50%",  "Maio 2024 — extensão ampliada", "Extensão hipotética com 50% de área adicional — análise de sensibilidade", "CIEX/FURG"],
-            ["Rio Grande",      "Cenário Setembro 2023",    "Setembro 2023",                 "Evento de menor magnitude — setembro 2023", "CIEX/FURG"],
+            ["Rio Grande",      "Cenário Maio 2024 + 50%",  "Maio 2024, extensão ampliada",  "Extensão hipotética com 50% de área adicional (análise de sensibilidade)", "CIEX/FURG"],
+            ["Rio Grande",      "Cenário Setembro 2023",    "Setembro 2023",                 "Evento de menor magnitude (setembro 2023)", "CIEX/FURG"],
           ]} />
 
           <SubTitle>Definições-chave</SubTitle>
           <ul className="list-disc list-inside space-y-1.5 text-sm text-slate-700">
             <li>
-              <strong>ADA (Área Diretamente Afetada)</strong> — extensão máxima da mancha
+              <strong>ADA (Área Diretamente Afetada)</strong>: extensão máxima da mancha
               registrada durante o evento de maio de 2024, derivada do Mapa Único do Plano Rio
               Grande (MUP), que integrou imagens de satélite, dados de nível dos rios e
               registros de campo em tempo real.
             </li>
             <li>
-              <strong>Cenário Maio 2024 + 50%</strong> — extensão hipotética obtida expandindo
+              <strong>Cenário Maio 2024 + 50%</strong>: extensão hipotética obtida expandindo
               geometricamente a mancha do evento de maio em 50% da área. Utilizado para análise
               de sensibilidade em Rio Grande, onde a urbanização costeira torna a extensão da
               inundação especialmente relevante para planejamento de risco.
             </li>
             <li>
-              <strong>Cotas do Rio Taquari (Lajeado)</strong> — as manchas de 27 m e 30 m foram
+              <strong>Cotas do Rio Taquari (Lajeado)</strong>: as manchas de 27 m e 30 m foram
               geradas pelo LabModel por modelagem hidráulica 2D, correspondendo a diferentes
               níveis de extravasamento do Rio Taquari sobre a área urbana.
             </li>
             <li>
-              <strong>Climada Evento 2024 (Porto Alegre)</strong> — mancha de risco hidrológico do
+              <strong>Climada - UNU/EHS (Porto Alegre)</strong>: mancha de risco hidrológico do
               exercício de adaptação climática CLIMADA/UNU-EHS para o BID (independente da mancha
               ADA do MUP), a partir do raster de duração da inundação (dias) do evento real de
               maio/2024 usado na calibração do modelo. Vetorizado (pixels com duração {'>'} 0,
               suavizado por fechamento morfológico para remover ruído em escala de quadra) e
               passa pelo mesmo pipeline de sobreposição espacial dos demais cenários (Seção 2). O
               exercício CLIMADA também modela profundidade máxima de água por período de retorno
-              sintético (RP10 a RP500, de 10 a 500 anos) — esses rasters ainda não entram como
+              sintético (RP10 a RP500, de 10 a 500 anos); esses rasters ainda não entram como
               cenário aqui porque representam uma métrica de risco diferente (profundidade × função
-              de dano × valor de reposição do ativo), não um polígono "atingido sim/não" como os
+              de dano × valor de reposição do ativo), não um polígono &ldquo;atingido sim/não&rdquo; como os
               demais cenários.
             </li>
           </ul>
@@ -168,22 +168,22 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           <DataTable rows={[
             ["Fonte",        "Período",                    "Municípios",                        "Método de mapeamento"],
             ["MUP / Gov. RS","Maio 2024",                  "Eldorado do Sul · Porto Alegre",    "Fusão de imagens SAR + registros de campo + nível hidrométrico"],
-            ["LabModel",     "Maio 2024",                  "Lajeado — cotas 27 m e 30 m",       "Modelagem hidráulica 2D (HEC-RAS)"],
+            ["LabModel",     "Maio 2024",                  "Lajeado (cotas 27 m e 30 m)",       "Modelagem hidráulica 2D (HEC-RAS)"],
             ["CLIMADA",      "Maio 2024",                  "Porto Alegre",                      "Modelagem de risco hidrológico (exercício de adaptação BID/UNU-EHS)"],
             ["CIEX/FURG",    "Maio 2024 · Setembro 2023",  "Rio Grande",                        "Modelagem hidrológica e hidráulica costeira"],
           ]} />
           <SectionSources links={[
-            ["MUP — Mapa Único do Plano Rio Grande (Gov. RS)", "https://mup.rs.gov.br/"],
-            ["CIEX/FURG — Centro Interinstitucional de Observação e Previsão de Eventos Extremos", "https://ciex.furg.br"],
-            ["CLIMADA — plataforma de modelagem de risco climático (ETH Zürich)", "https://climada-python.readthedocs.io/"],
-            ["CEPAL (2024) — Avaliação dos Efeitos e Impactos das Inundações no RS", "https://www.cepal.org/pt-br/publicacoes/81035-avaliacao-efeitos-impactos-inundacoes-rio-grande-sul-novembro-2024"],
+            ["MUP: Mapa Único do Plano Rio Grande (Gov. RS)", "https://mup.rs.gov.br/"],
+            ["CIEX/FURG: Centro Interinstitucional de Observação e Previsão de Eventos Extremos", "https://ciex.furg.br"],
+            ["CLIMADA: plataforma de modelagem de risco climático (ETH Zürich)", "https://climada-python.readthedocs.io/"],
+            ["CEPAL (2024): Avaliação dos Efeitos e Impactos das Inundações no RS", "https://www.cepal.org/pt-br/publicacoes/81035-avaliacao-efeitos-impactos-inundacoes-rio-grande-sul-novembro-2024"],
           ]} />
         </Section>
 
         {/* ══════════════════════════════════════════════════════════════════════
             2. SOBREPOSIÇÃO ESPACIAL
         ══════════════════════════════════════════════════════════════════════ */}
-        <Section id="sobreposicao" num="2" title="Sobreposição Espacial — Cálculo dos Atingidos">
+        <Section id="sobreposicao" num="2" title="Sobreposição Espacial: Cálculo dos Atingidos">
           <p>
             A identificação dos elementos atingidos é feita por{" "}
             <strong>sobreposição espacial (spatial overlay)</strong> entre cada camada de feições
@@ -191,7 +191,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             o processamento é realizado offline com{" "}
             <ExtLink href="https://geopandas.org">GeoPandas</ExtLink> e{" "}
             <ExtLink href="https://shapely.readthedocs.io">Shapely</ExtLink>, em Python.
-            O painel web carrega apenas os arquivos pré-computados — não realiza interseção
+            O painel web carrega apenas os arquivos pré-computados; não realiza interseção
             em tempo real.
           </p>
 
@@ -203,7 +203,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             ["Linha",    "Logradouros · Eixos · Rede de Esgoto", "intersects + intersection()", "Comprimento de interseção em km (EPSG:32722)"],
           ]} />
 
-          <GeoCard title="Pontos — Empresas · Escolas · Unidades de Saúde" operation='geopandas.sjoin(predicate="within")'>
+          <GeoCard title="Pontos: Empresas · Escolas · Unidades de Saúde" operation='geopandas.sjoin(predicate="within")'>
             <p className="text-sm text-[#3d7a94] mb-2">
               Um ponto <em>p</em> com coordenadas <Math tex={"(\\lambda, \\phi)"} /> é classificado
               como atingido se e somente se está geometricamente contido no interior ou fronteira
@@ -218,7 +218,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             </p>
           </GeoCard>
 
-          <GeoCard title="Polígonos — Lotes · Quadras · Agricultura · Edificações" operation='sjoin(predicate="intersects") → intersection() → área em EPSG:32722'>
+          <GeoCard title="Polígonos: Lotes · Quadras · Agricultura · Edificações" operation='sjoin(predicate="intersects") → intersection() → área em EPSG:32722'>
             <p className="text-sm text-[#3d7a94] mb-2">
               Um polígono <em>F</em> é atingido se sua interseção com a mancha é não-vazia.
               A área atingida é calculada reprojetando para UTM Zone 22S (EPSG:32722):
@@ -230,7 +230,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             ]} />
           </GeoCard>
 
-          <GeoCard title="Linhas — Logradouros · Eixos · Rede de Esgoto" operation='sjoin(predicate="intersects") → intersection() → comprimento em EPSG:32722'>
+          <GeoCard title="Linhas: Logradouros · Eixos · Rede de Esgoto" operation='sjoin(predicate="intersects") → intersection() → comprimento em EPSG:32722'>
             <p className="text-sm text-[#3d7a94] mb-2">
               Um segmento <em>L</em> é atingido se intersecta a mancha. O comprimento atingido
               é o trecho da linha dentro do polígono:
@@ -242,7 +242,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             ]} />
           </GeoCard>
 
-          <SubTitle>Notação formal — indicadores agregados</SubTitle>
+          <SubTitle>Notação formal: indicadores agregados</SubTitle>
           <p>
             Para um conjunto de <Math tex={"N_t"} /> feições e uma mancha <Math tex={"M_j"} />
             do cenário <em>j</em>:
@@ -264,26 +264,26 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           <SectionSources links={[
             ["GeoPandas Documentation", "https://geopandas.org/en/stable/docs.html"],
             ["Shapely Documentation", "https://shapely.readthedocs.io"],
-            ["IBGE — Malha Municipal RS", "https://www.ibge.gov.br/geociencias/organizacao-do-territorio/malhas-territoriais.html"],
+            ["IBGE: Malha Municipal RS", "https://www.ibge.gov.br/geociencias/organizacao-do-territorio/malhas-territoriais.html"],
           ]} />
         </Section>
 
         {/* ══════════════════════════════════════════════════════════════════════
             3. EMPRESAS
         ══════════════════════════════════════════════════════════════════════ */}
-        <Section id="empresas" num="3" title="Empresas — Estabelecimentos Formais Atingidos">
+        <Section id="empresas" num="3" title="Empresas: Estabelecimentos Formais Atingidos">
           <p>
             O painel quantifica a <strong>exposição física dos estabelecimentos do setor formal</strong>{" "}
             dentro de cada mancha de inundação, com base na{" "}
             <ExtLink href="https://www.gov.br/trabalho-e-emprego/pt-br/assuntos/estatisticas-trabalho/rais">
-              RAIS — Relação Anual de Informações Sociais (MTE)
+              RAIS: Relação Anual de Informações Sociais (MTE)
             </ExtLink>,
             ano-base 2023. Cada estabelecimento é georreferenciado a partir do endereço
             constante na própria RAIS, geocodificado via instância local do Nominatim
             (OpenStreetMap).
           </p>
 
-          <SubTitle>Dados base — RAIS 2023</SubTitle>
+          <SubTitle>Dados base: RAIS 2023</SubTitle>
           <p>
             A RAIS 2023 contém todos os vínculos empregatícios ativos em 31/12/2023 no
             território nacional. Para este painel foram selecionados apenas estabelecimentos
@@ -309,8 +309,8 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             (lat ∈ [−34°, −27°], lon ∈ [−58°, −49°]) e armazenadas em cache para uso posterior.
           </p>
           <Note type="info">
-            Estabelecimentos sem endereço geocodificável — endereços incompletos, caixas postais
-            ou rurais sem numeração — são excluídos do mapeamento mas contabilizados separadamente
+            Estabelecimentos sem endereço geocodificável (endereços incompletos, caixas postais
+            ou rurais sem numeração) são excluídos do mapeamento mas contabilizados separadamente
             no relatório de cobertura de geocodificação.
           </Note>
 
@@ -331,7 +331,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           <SubTitle>Indicadores calculados</SubTitle>
           <DataTable rows={[
             ["Indicador",                  "Fórmula / Descrição"],
-            ["Estabelecimentos atingidos", <span key="e">Contagem <Math tex={"N_a = \\sum \\chi_i"} /> — pontos dentro da mancha</span>],
+            ["Estabelecimentos atingidos", <span key="e">Contagem <Math tex={"N_a = \\sum \\chi_i"} /> (pontos dentro da mancha)</span>],
             ["Empregados expostos",        <span key="emp"><Math tex={"Q_{\\text{emp}} = \\sum_{i} \\text{qtd\\_vinculos}_i \\cdot \\chi_i"} /></span>],
             ["Massa salarial exposta",     <span key="ms"><Math tex={"W = \\sum_{i} w_i \\cdot \\chi_i"} /> (R$/mês, soma das remunerações médias)</span>],
             ["Salário médio",              <span key="sm"><Math tex={"\\bar{w} = W / Q_{\\text{emp}}"} /></span>],
@@ -339,8 +339,8 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           ]} />
 
           <Note type="info">
-            Para estimativas causais de perdas no mercado de trabalho formal — comparando
-            municípios atingidos com controles similares antes e após o evento — ver Teixeira et al.
+            Para estimativas causais de perdas no mercado de trabalho formal (comparando
+            municípios atingidos com controles similares antes e após o evento), ver Teixeira et al.
             (2025), que aplica o método Diferenças em Diferenças sobre microdados RAIS mensais.
             Os indicadores deste painel medem a <em>exposição estática</em> (snap-shot de 2023),
             não o efeito causal.
@@ -349,29 +349,29 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           <SubTitle>Origem dos dados</SubTitle>
           <DataTable rows={[
             ["Fonte",                      "Referência temporal", "Variáveis utilizadas"],
-            ["RAIS — MTE",                 "Ano-base 2023",       "Vínculos ativos, endereços, CNAE, remuneração"],
+            ["RAIS (MTE)",                 "Ano-base 2023",       "Vínculos ativos, endereços, CNAE, remuneração"],
             ["OpenStreetMap / Nominatim",  "—",                   "Geocodificação de endereços (instância local)"],
           ]} />
           <SectionSources links={[
-            ["RAIS — Microdados MTE", "https://www.gov.br/trabalho-e-emprego/pt-br/assuntos/estatisticas-trabalho/rais"],
-            ["Nominatim — OpenStreetMap Geocoder", "https://nominatim.org"],
+            ["RAIS: Microdados MTE", "https://www.gov.br/trabalho-e-emprego/pt-br/assuntos/estatisticas-trabalho/rais"],
+            ["Nominatim: OpenStreetMap Geocoder", "https://nominatim.org"],
           ]} />
         </Section>
 
         {/* ══════════════════════════════════════════════════════════════════════
             4. AGRICULTURA
         ══════════════════════════════════════════════════════════════════════ */}
-        <Section id="agricultura" num="4" title="Agricultura — Impacto por Cultura e Período">
+        <Section id="agricultura" num="4" title="Agricultura: Impacto por Cultura e Período">
           <p>
             A estimativa de perdas agrícolas combina o <strong>mapeamento de uso do solo</strong>{" "}
             (MapBiomas) com dados de <strong>área cultivada georeferenciada</strong> (CONAB)
             e <strong>coeficientes de impacto direto</strong> (R$/ha) calibrados ao estágio
             fenológico de cada cultura no momento do evento. O resultado representa o custo
-            direto de produção perdido — insumos, sementes, corretivos e trabalho — sem
+            direto de produção perdido (insumos, sementes, corretivos e trabalho), sem
             considerar renda futura, preços de mercado ou perdas de solo de longo prazo.
           </p>
 
-          <SubTitle>Mapeamento de uso do solo — MapBiomas Coleção 10</SubTitle>
+          <SubTitle>Mapeamento de uso do solo: MapBiomas Coleção 10</SubTitle>
           <p>
             O{" "}
             <ExtLink href="https://brasil.mapbiomas.org/colecoes-mapbiomas-1/">
@@ -412,19 +412,19 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             shapefiles CONAB não cobrem o município.
           </p>
 
-          <SubTitle>Coeficientes de impacto — calendário agrícola do RS</SubTitle>
+          <SubTitle>Coeficientes de impacto: calendário agrícola do RS</SubTitle>
           <p>
             Os coeficientes (R$/ha) refletem o estágio fenológico no momento do evento
             e representam o custo direto de produção incorrido até aquele ponto da safra:
           </p>
           <DataTable rows={[
             ["Cultura",                     "Período",    "Status fenológico",                "Coef. (R$/ha)", "Componentes estimados"],
-            ["Soja",                        "Maio 2024",  "Colhida — fev–abr/2024",           "R$ 1.100",      "Insumos para próxima safra já aplicados + compactação de solo"],
-            ["Arroz",                       "Maio 2024",  "Colhido — fev–abr/2024",           "R$ 1.100",      "Infraestrutura de irrigação danificada + compactação"],
-            ["Outras Lavouras Temporárias", "Maio 2024",  "Plantio inicial — mai–jun/2024",   "R$ 1.400",      "Sementes, fertilizantes base, preparo do solo"],
-            ["Soja",                        "Set. 2023",  "Pré-plantio",                      "R$ 250",        "Solo em preparo — impacto mínimo, insumos não aplicados"],
-            ["Arroz",                       "Set. 2023",  "Pré-plantio",                      "R$ 250",        "Solo em preparo — impacto mínimo"],
-            ["Outras Lavouras Temporárias", "Set. 2023",  "Colheita — set–out/2023",          "R$ 2.800",      "Perda quase total de trigo/aveia em ponto de colheita"],
+            ["Soja",                        "Maio 2024",  "Colhida (fev–abr/2024)",           "R$ 1.100",      "Insumos para próxima safra já aplicados + compactação de solo"],
+            ["Arroz",                       "Maio 2024",  "Colhido (fev–abr/2024)",           "R$ 1.100",      "Infraestrutura de irrigação danificada + compactação"],
+            ["Outras Lavouras Temporárias", "Maio 2024",  "Plantio inicial (mai–jun/2024)",   "R$ 1.400",      "Sementes, fertilizantes base, preparo do solo"],
+            ["Soja",                        "Set. 2023",  "Pré-plantio",                      "R$ 250",        "Solo em preparo, impacto mínimo, insumos não aplicados"],
+            ["Arroz",                       "Set. 2023",  "Pré-plantio",                      "R$ 250",        "Solo em preparo, impacto mínimo"],
+            ["Outras Lavouras Temporárias", "Set. 2023",  "Colheita (set–out/2023)",          "R$ 2.800",      "Perda quase total de trigo/aveia em ponto de colheita"],
           ]} />
           <MathBlock exprs={[
             { label: "Perda total [R$]", tex: "L_{\\text{agr}} = \\sum_{c \\in \\text{culturas}} A_c\\,[\\text{ha}] \\times \\text{Coef}_c\\,[\\text{R}\\$/\\text{ha}]" },
@@ -438,21 +438,21 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           <SubTitle>Origem dos dados</SubTitle>
           <DataTable rows={[
             ["Fonte",                      "Referência temporal", "Variáveis"],
-            ["MapBiomas — Coleção 10",     "2023 e 2024",         "Raster 30 m; classes 39 (Soja), 40 (Arroz), 41 (Outras)"],
-            ["CONAB — Mapeamento Agrícola","Safra 2023/24",       "Shapefiles georeferenciados, campo AREA_HA"],
-            ["CONAB — Preços Mínimos",     "2024",                "Base para calibração dos coeficientes R$/ha"],
+            ["MapBiomas (Coleção 10)",     "2023 e 2024",         "Raster 30 m; classes 39 (Soja), 40 (Arroz), 41 (Outras)"],
+            ["CONAB (Mapeamento Agrícola)","Safra 2023/24",       "Shapefiles georeferenciados, campo AREA_HA"],
+            ["CONAB (Preços Mínimos)",     "2024",                "Base para calibração dos coeficientes R$/ha"],
           ]} />
           <SectionSources links={[
-            ["MapBiomas — Coleção 10", "https://brasil.mapbiomas.org/colecoes-mapbiomas-1/"],
-            ["CONAB — Mapeamento Agrícola", "https://www.conab.gov.br/info-agro/safras/mapeamento-agricola"],
-            ["CONAB — Preços Mínimos 2024", "https://www.conab.gov.br/politica-agricola/precos-minimos"],
+            ["MapBiomas: Coleção 10", "https://brasil.mapbiomas.org/colecoes-mapbiomas-1/"],
+            ["CONAB: Mapeamento Agrícola", "https://www.conab.gov.br/info-agro/safras/mapeamento-agricola"],
+            ["CONAB: Preços Mínimos 2024", "https://www.conab.gov.br/politica-agricola/precos-minimos"],
           ]} />
         </Section>
 
         {/* ══════════════════════════════════════════════════════════════════════
             5. EDUCAÇÃO
         ══════════════════════════════════════════════════════════════════════ */}
-        <Section id="educacao" num="5" title="Educação — Estrutura Atingida">
+        <Section id="educacao" num="5" title="Educação: Estrutura Atingida">
           <p>
             O painel mapeia a <strong>infraestrutura educacional da educação básica</strong>{" "}
             dentro das manchas de inundação, com base no{" "}
@@ -478,9 +478,9 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           <SubTitle>Dependência administrativa</SubTitle>
           <DataTable rows={[
             ["Código", "Dependência",  "Mantenedora"],
-            ["1",      "Federal",      "União — IFs, colégios de aplicação e militares"],
-            ["2",      "Estadual",     "Governo do estado — escolas estaduais de EF e EM"],
-            ["3",      "Municipal",    "Prefeituras — principalmente pré-escola e EF inicial"],
+            ["1",      "Federal",      "União (IFs, colégios de aplicação e militares)"],
+            ["2",      "Estadual",     "Governo do estado (escolas estaduais de EF e EM)"],
+            ["3",      "Municipal",    "Prefeituras (principalmente pré-escola e EF inicial)"],
             ["4",      "Privada",      "Entidades privadas com ou sem fins lucrativos"],
           ]} />
 
@@ -496,31 +496,31 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             estimados nesta seção. A estimativa do custo de <strong>reposição dos dias letivos</strong>{" "}
             perdidos (via FUNDEB/VAAT-MIN) é calculada na{" "}
             <a href="#danos" className="text-[#055071] font-semibold hover:underline underline-offset-4">
-              Seção 9 — Danos Operacionais
+              Seção 9: Danos Operacionais
             </a>.
           </Note>
 
           <SubTitle>Origem dos dados</SubTitle>
           <DataTable rows={[
             ["Fonte",                     "Referência temporal", "Variáveis"],
-            ["INEP — Censo Escolar",      "2024",               "Estabelecimentos, matrículas, turmas, docentes, coordenadas"],
+            ["INEP (Censo Escolar)",      "2024",               "Estabelecimentos, matrículas, turmas, docentes, coordenadas"],
             ["OpenStreetMap / Nominatim", "—",                  "Geocodificação de escolas sem coordenada na base INEP"],
           ]} />
           <SectionSources links={[
-            ["INEP — Censo Escolar", "https://www.gov.br/inep/pt-br/areas-de-atuacao/pesquisas-estatisticas-e-indicadores/censo-escolar"],
-            ["INEP — Microdados Censo Escolar 2024", "https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-escolar"],
+            ["INEP: Censo Escolar", "https://www.gov.br/inep/pt-br/areas-de-atuacao/pesquisas-estatisticas-e-indicadores/censo-escolar"],
+            ["INEP: Microdados Censo Escolar 2024", "https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-escolar"],
           ]} />
         </Section>
 
         {/* ══════════════════════════════════════════════════════════════════════
             6. SAÚDE
         ══════════════════════════════════════════════════════════════════════ */}
-        <Section id="saude" num="6" title="Saúde — Capacidade Instalada Atingida">
+        <Section id="saude" num="6" title="Saúde: Capacidade Instalada Atingida">
           <p>
             O painel quantifica a <strong>capacidade instalada do sistema de saúde</strong>{" "}
             dentro das manchas de inundação, com base no{" "}
             <ExtLink href="https://cnes.datasus.gov.br">
-              CNES — Cadastro Nacional de Estabelecimentos de Saúde (DataSUS)
+              CNES: Cadastro Nacional de Estabelecimentos de Saúde (DataSUS)
             </ExtLink>,
             referência de abril/2024. O CNES registra todos os estabelecimentos de saúde do
             SUS e do setor privado, com localização georreferenciada por latitude/longitude
@@ -533,7 +533,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             ["Hospital Geral",                 "Atendimento de internação geral, urgência e emergência"],
             ["Hospital Especializado",         "Internação para especialidade específica (cardio, onco, psiquiatria, etc.)"],
             ["Pronto-Socorro",                 "Atendimento de urgência/emergência sem internação"],
-            ["UBS — Unidade Básica de Saúde",  "Atenção primária, prevenção e acompanhamento de crônicas"],
+            ["UBS (Unidade Básica de Saúde)",  "Atenção primária, prevenção e acompanhamento de crônicas"],
             ["Ambulatório",                    "Consultas e procedimentos especializados sem internação"],
             ["CAPS",                           "Centro de Atenção Psicossocial"],
             ["Clínica Especializada",          "Serviços especializados (hemodiálise, radioterapia, etc.)"],
@@ -572,20 +572,20 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             A estimativa da <strong>perda de produção SUS</strong> (valor não realizado de
             procedimentos ambulatoriais e internações durante a interrupção) está na{" "}
             <a href="#danos" className="text-[#055071] font-semibold hover:underline underline-offset-4">
-              Seção 9 — Danos Operacionais
+              Seção 9: Danos Operacionais
             </a>.
           </Note>
 
           <SubTitle>Origem dos dados</SubTitle>
           <DataTable rows={[
             ["Fonte",                "Referência temporal", "Variáveis"],
-            ["CNES — DataSUS",       "Abril/2024",          "co_cnes, tipo de unidade, lat/lon, vínculos por CBO"],
-            ["SIA/SIH — DataSUS",    "Jan–Jul/2024",        "Produção ambulatorial (SIA) e hospitalar (SIH) por CNES"],
+            ["CNES (DataSUS)",       "Abril/2024",          "co_cnes, tipo de unidade, lat/lon, vínculos por CBO"],
+            ["SIA/SIH (DataSUS)",    "Jan–Jul/2024",        "Produção ambulatorial (SIA) e hospitalar (SIH) por CNES"],
           ]} />
           <SectionSources links={[
-            ["CNES — DataSUS", "https://cnes.datasus.gov.br"],
-            ["DataSUS — Produção Hospitalar SIH/SUS", "https://datasus.saude.gov.br/acesso-a-informacao/producao-hospitalar-sih-sus"],
-            ["DataSUS — Produção Ambulatorial SIA/SUS", "https://datasus.saude.gov.br/acesso-a-informacao/producao-ambulatorial-sia-sus"],
+            ["CNES: DataSUS", "https://cnes.datasus.gov.br"],
+            ["DataSUS: Produção Hospitalar SIH/SUS", "https://datasus.saude.gov.br/acesso-a-informacao/producao-hospitalar-sih-sus"],
+            ["DataSUS: Produção Ambulatorial SIA/SUS", "https://datasus.saude.gov.br/acesso-a-informacao/producao-ambulatorial-sia-sus"],
           ]} />
         </Section>
 
@@ -621,10 +621,10 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
 
           <SubTitle>Métricas calculadas</SubTitle>
           <ul className="list-disc list-inside space-y-1.5 text-sm">
-            <li><strong>Contagem atingida</strong> — número de elementos com interseção com a mancha (<Math tex={"N_a = \\sum \\chi_i"} />).</li>
-            <li><strong>Comprimento (km)</strong> — trecho de linhas dentro da mancha, calculado em EPSG:32722 e convertido para km.</li>
-            <li><strong>Área (ha)</strong> — interseção geométrica de polígonos com a mancha, em EPSG:32722, convertida para hectares.</li>
-            <li><strong>Percentual atingido</strong> — razão entre o total atingido e o total da camada dentro do município.</li>
+            <li><strong>Contagem atingida</strong>: número de elementos com interseção com a mancha (<Math tex={"N_a = \\sum \\chi_i"} />).</li>
+            <li><strong>Comprimento (km)</strong>: trecho de linhas dentro da mancha, calculado em EPSG:32722 e convertido para km.</li>
+            <li><strong>Área (ha)</strong>: interseção geométrica de polígonos com a mancha, em EPSG:32722, convertida para hectares.</li>
+            <li><strong>Percentual atingido</strong>: razão entre o total atingido e o total da camada dentro do município.</li>
           </ul>
 
           <Note type="info">
@@ -636,10 +636,10 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           <SubTitle>Origem dos dados</SubTitle>
           <DataTable rows={[
             ["Fonte",                         "Tipo",        "Municípios"],
-            ["Prefeitura de Porto Alegre / EPTC", "Aberto", "Porto Alegre — logradouros, lotes, terminais, rede esgoto"],
-            ["Prefeitura de Rio Grande",       "Fornecido",  "Rio Grande — logradouros, quadras, terrenos, imóveis"],
-            ["Prefeitura de Lajeado",          "Fornecido",  "Lajeado — iluminação, logradouros, lotes, quadras"],
-            ["Google Open Buildings",          "Aberto",     "Todos os municípios — edificações"],
+            ["Prefeitura de Porto Alegre / EPTC", "Aberto", "Porto Alegre: logradouros, lotes, terminais, rede esgoto"],
+            ["Prefeitura de Rio Grande",       "Fornecido",  "Rio Grande: logradouros, quadras, terrenos, imóveis"],
+            ["Prefeitura de Lajeado",          "Fornecido",  "Lajeado: iluminação, logradouros, lotes, quadras"],
+            ["Google Open Buildings",          "Aberto",     "Todos os municípios: edificações"],
           ]} />
           <SectionSources links={[
             ["POA Dados Abertos", "https://dadosabertos.poa.br"],
@@ -650,7 +650,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
         {/* ══════════════════════════════════════════════════════════════════════
             8. EDIFICAÇÕES
         ══════════════════════════════════════════════════════════════════════ */}
-        <Section id="edificacoes" num="8" title="Edificações — Google Open Buildings">
+        <Section id="edificacoes" num="8" title="Edificações: Google Open Buildings">
           <p>
             A camada de edificações exibe <strong>polígonos de footprint de construções</strong>{" "}
             detectados por visão computacional a partir de imagens de satélite de alta resolução,
@@ -672,7 +672,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           <DataTable rows={[
             ["Município",       "Edificações BASE", "Confiança mínima", "Justificativa do limiar"],
             ["Porto Alegre",    "494.590",           "0,80",             "Reduz volume de ~998 mil para ~494 mil; área densa exige maior precisão"],
-            ["Rio Grande",      "220.655",           "0,65",             "Limiar padrão — área mista urbana/rural"],
+            ["Rio Grande",      "220.655",           "0,65",             "Limiar padrão (área mista urbana/rural)"],
             ["Eldorado do Sul", "142.554",           "0,65",             "Limiar padrão"],
             ["Lajeado",         "84.925",            "0,65",             "Limiar padrão"],
           ]} />
@@ -688,8 +688,8 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
 
           <SubTitle>Cálculo dos atingidos</SubTitle>
           <GeoCard
-            title="Polígonos — Edificações"
-            operation="geopandas.sjoin(predicate=intersects) — pré-computado offline"
+            title="Polígonos: Edificações"
+            operation="geopandas.sjoin(predicate=intersects), pré-computado offline"
           >
             <p className="text-sm text-[#3d7a94] mb-2">
               Uma edificação <em>F</em> é classificada como atingida se seu polígono intersecta
@@ -709,23 +709,23 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           ]} />
 
           <Note type="warning">
-            Os footprints são detectados por modelo de visão computacional — podem incluir
+            Os footprints são detectados por modelo de visão computacional; podem incluir
             estruturas provisórias, galpões, coberturas e feições não-residenciais.
             O limiar de confiança de 0,65 exclui a maioria dos falsos positivos, mas não
             todos. Recomenda-se interpretar as contagens como <em>estimativas de ordem de
             grandeza</em>, não como inventário cadastral preciso.
           </Note>
           <SectionSources links={[
-            ["Google Open Buildings — Research Page", "https://sites.research.google/open-buildings/"],
-            ["Google Open Buildings — Dataset (Earth Engine)", "https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_Research_open-buildings_v3_polygons"],
-            ["Sirko et al. (2021) — Continent-Scale Building Detection from High Resolution Satellite Imagery", "https://arxiv.org/abs/2107.12283"],
+            ["Google Open Buildings: Research Page", "https://sites.research.google/open-buildings/"],
+            ["Google Open Buildings: Dataset (Earth Engine)", "https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_Research_open-buildings_v3_polygons"],
+            ["Sirko et al. (2021): Continent-Scale Building Detection from High Resolution Satellite Imagery", "https://arxiv.org/abs/2107.12283"],
           ]} />
         </Section>
 
         {/* ══════════════════════════════════════════════════════════════════════
             9. DANOS OPERACIONAIS — DaLA
         ══════════════════════════════════════════════════════════════════════ */}
-        <Section id="danos" num="9" title="Danos Operacionais — Metodologia DaLA">
+        <Section id="danos" num="9" title="Danos Operacionais: Metodologia DaLA">
           <p>
             A estimativa de perdas econômicas segue a metodologia{" "}
             <strong>DaLA (Damage and Loss Assessment)</strong>, desenvolvida pela CEPAL em
@@ -738,11 +738,11 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             ["Perdas",    "Fluxo de produção ou serviço não realizado durante a interrupção", "VAB não gerado, aulas não ministradas, consultas não realizadas"],
           ]} />
           <p>
-            Este painel estima as <strong>perdas operacionais</strong> — o fluxo econômico que
+            Este painel estima as <strong>perdas operacionais</strong>: o fluxo econômico que
             deixou de ocorrer. Os danos físicos (estoque) têm uma estimativa à parte, via
-            protótipo CLIMADA — ver{" "}
+            protótipo CLIMADA; ver{" "}
             <a href="#dano-fisico" className="text-[#055071] font-semibold hover:underline underline-offset-4">
-              Seção 10 — Dano Físico
+              Seção 10: Dano Físico
             </a>.
           </p>
 
@@ -762,23 +762,23 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           ]} />
           <DataTable rows={[
             ["Período",       "Fase aguda (dₐ)", "Recuperação (dᵣ)", "Dias ef.", "f",      "Base"],
-            ["Maio 2024",     "30 dias",         "60 dias",          "60 dias",  "0,1644", "DaLA RS — CEPAL, nov. 2024"],
-            ["Setembro 2023", "15 dias",         "30 dias",          "30 dias",  "0,0822", "DaLA RS — CEPAL, nov. 2024"],
+            ["Maio 2024",     "30 dias",         "60 dias",          "60 dias",  "0,1644", "DaLA RS (CEPAL, nov. 2024)"],
+            ["Setembro 2023", "15 dias",         "30 dias",          "30 dias",  "0,0822", "DaLA RS (CEPAL, nov. 2024)"],
           ]} />
           <Note type="info">
             A análise de sensibilidade do painel permite testar d<sub>ef</sub> = 30, 45 ou 60
-            dias para todos os cenários — ver{" "}
+            dias para todos os cenários: ver{" "}
             <a href="/danos" target="_blank" rel="noopener noreferrer"
               className="text-[#055071] font-semibold hover:underline underline-offset-4">
               página de Danos Operacionais ↗
             </a>.
           </Note>
 
-          <SubTitle>Componente 1 — Empresas: Perda de VAB</SubTitle>
+          <SubTitle>Componente 1 · Empresas: Perda de VAB</SubTitle>
           <p>
             A RAIS fornece a folha salarial mensal por estabelecimento, mas não o Valor
             Adicionado Bruto (VAB). O método utilizado é a <strong>inversão pelo labor share
-            setorial</strong> — abordagem padrão da contabilidade nacional quando apenas o
+            setorial</strong>: abordagem padrão da contabilidade nacional quando apenas o
             dado salarial está disponível (Karabarbounis &amp; Neiman, 2014; IBGE SCN).
           </p>
           <p>
@@ -788,21 +788,21 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             publica Remunerações totais e VAB a preços básicos por atividade econômica:
           </p>
           <MathBlock exprs={[
-            { label: "Labor share setorial", tex: "LS_s = \\dfrac{\\text{Remunerações}_s}{\\text{VAB}_s} \\quad \\text{(fonte: IBGE SCN 2021 — Tab17)}" },
+            { label: "Labor share setorial", tex: "LS_s = \\dfrac{\\text{Remunerações}_s}{\\text{VAB}_s} \\quad \\text{(fonte: IBGE SCN 2021, Tab17)}" },
             { label: "VAB anual (est.)",     tex: "\\widehat{\\text{VAB}}_i = \\dfrac{w_{i,\\text{mensal}} \\times 12}{LS_s}" },
             { label: "Perda operacional",    tex: "\\Delta_i = \\widehat{\\text{VAB}}_i \\times f" },
             { label: "Total empresas",       tex: "L_{\\text{emp}} = \\sum_{i \\in \\text{atingidos}} \\Delta_i" },
           ]} />
           <DataTable rows={[
-            ["Setor (CNAE)",         "Labor share (LS)",  "Fonte (IBGE SCN 2021 — Tab17)"],
-            ["Agropecuária (01–03)", "17,6%",             "SCN 2021 — Tabela 17, linha Agropecuária"],
-            ["Indústria (05–39)",    "33,8%",             "SCN 2021 — Tabela 17, linha Indústria"],
-            ["Construção (41–43)",   "43,3%",             "SCN 2021 — Tabela 17, linha Construção"],
-            ["Adm. Pública (84)",    "88,3%",             "SCN 2021 — Tab17 (VAB ≈ custo salarial na Adm. Pública)"],
-            ["Serviços (demais)",    "43,3%",             "SCN 2021 — Tabela 17, linha Serviços"],
+            ["Setor (CNAE)",         "Labor share (LS)",  "Fonte (IBGE SCN 2021, Tab17)"],
+            ["Agropecuária (01–03)", "17,6%",             "SCN 2021, Tabela 17, linha Agropecuária"],
+            ["Indústria (05–39)",    "33,8%",             "SCN 2021, Tabela 17, linha Indústria"],
+            ["Construção (41–43)",   "43,3%",             "SCN 2021, Tabela 17, linha Construção"],
+            ["Adm. Pública (84)",    "88,3%",             "SCN 2021, Tab17 (VAB ≈ custo salarial na Adm. Pública)"],
+            ["Serviços (demais)",    "43,3%",             "SCN 2021, Tabela 17, linha Serviços"],
           ]} />
           <Note type="info">
-            Estabelecimentos CNAE 84 (Administração Pública) são incluídos no cálculo — ver a
+            Estabelecimentos CNAE 84 (Administração Pública) são incluídos no cálculo; ver a
             nota e as limitações sobre esse ponto na{" "}
             <a href="/danos#notas" target="_blank" rel="noopener noreferrer"
               className="text-[#055071] font-semibold hover:underline underline-offset-4">
@@ -810,11 +810,11 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             </a>.
           </Note>
 
-          <SubTitle>Componente 2 — Educação: Custo de Reposição FUNDEB</SubTitle>
+          <SubTitle>Componente 2 · Educação: Custo de Reposição FUNDEB</SubTitle>
           <p>
             A Lei de Diretrizes e Bases (LDB, Art. 24, I) exige mínimo de 200 dias letivos
             por ano. Dias interrompidos por calamidade geram obrigação legal de reposição.
-            O custo é estimado pelo Valor Anual por Aluno Total Mínimo (VAAT-MIN) do FUNDEB —
+            O custo é estimado pelo Valor Anual por Aluno Total Mínimo (VAAT-MIN) do FUNDEB:
             dois componentes distintos, ambos com o mesmo custo unitário FUNDEB/aluno/dia:
           </p>
           <MathBlock exprs={[
@@ -825,18 +825,18 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           ]} />
           <p className="text-[12px] text-slate-500 mt-1">
             Usa <em>d</em><sub>a</sub> (dias de fechamento real), não <em>d</em><sub>ef</sub>,
-            porque escolas são obrigadas a compensar 100% dos dias perdidos — não há recuperação
+            porque escolas são obrigadas a compensar 100% dos dias perdidos; não há recuperação
             parcial como em firmas.
           </p>
           <DataTable rows={[
             ["Parâmetro",      "Valor",       "Fonte"],
             ["VAAT-MIN 2024",  "R$ 8.481,21", "Portaria Interministerial MEC/MF nº 9, 28/08/2024"],
             ["Dias letivos",   "200/ano",     "LDB, Art. 24, I"],
-            ["dₐ — Maio 2024", "30 dias",     "DaLA RS — CEPAL, 2024"],
-            ["dₐ — Set. 2023", "15 dias",     "DaLA RS — CEPAL, 2024"],
+            ["dₐ (Maio 2024)", "30 dias",     "DaLA RS (CEPAL, 2024)"],
+            ["dₐ (Set. 2023)", "15 dias",     "DaLA RS (CEPAL, 2024)"],
           ]} />
 
-          <SubTitle>Componente 3 — Saúde: Perda de Produção SUS</SubTitle>
+          <SubTitle>Componente 3 · Saúde: Perda de Produção SUS</SubTitle>
           <p>
             A perda de produção do SUS é estimada pela receita de procedimentos não realizada
             durante a interrupção. A produção de cada unidade CNES é apurada a partir de dois
@@ -844,8 +844,8 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           </p>
           <DataTable rows={[
             ["Sistema", "Sigla", "Conteúdo", "Granularidade"],
-            ["Sistema de Informações Ambulatoriais", "SIA",  "Procedimentos ambulatoriais aprovados (consultas, exames, terapias) — valor em R$ por competência mensal e por CNES",      "Mensal por CNES"],
-            ["Sistema de Informações Hospitalares",  "SIH",  "Autorizações de Internação Hospitalar (AIH) aprovadas — valor total das AIH pagas por competência mensal e por CNES", "Mensal por CNES"],
+            ["Sistema de Informações Ambulatoriais", "SIA",  "Procedimentos ambulatoriais aprovados (consultas, exames, terapias): valor em R$ por competência mensal e por CNES",      "Mensal por CNES"],
+            ["Sistema de Informações Hospitalares",  "SIH",  "Autorizações de Internação Hospitalar (AIH) aprovadas: valor total das AIH pagas por competência mensal e por CNES", "Mensal por CNES"],
           ]} />
           <p>
             A produção disponível cobre <strong>7 meses</strong> (competências mais recentes
@@ -858,27 +858,27 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             { label: "Perda saúde",              tex: "L_{\\text{sau}} = \\sum_{k \\in \\text{atingidos}} P_k \\times f" },
           ]} />
 
-          <SubTitle>Componente 4 — Agricultura: Custo Direto de Produção</SubTitle>
+          <SubTitle>Componente 4 · Agricultura: Custo Direto de Produção</SubTitle>
           <MathBlock exprs={[
             { label: "Perda agrícola", tex: "L_{\\text{agr}} = \\sum_{c \\in \\text{culturas}} A_c\\,[\\text{ha}] \\times \\text{Coef}_c\\,[\\text{R}\\$/\\text{ha}]" },
           ]} />
           <p>
-            Custo fixo por área — independente de <em>f</em> (não é um fluxo contínuo,
+            Custo fixo por área, independente de <em>f</em> (não é um fluxo contínuo,
             mas um custo incorrido no momento do evento).
           </p>
           <DataTable rows={[
             ["Cultura",                     "Período",    "Status",                      "Coef. (R$/ha)"],
-            ["Soja",                        "Maio 2024",  "Colhida — fev–abr/2024",      "R$ 1.100"],
-            ["Arroz",                       "Maio 2024",  "Colhido — fev–abr/2024",      "R$ 1.100"],
-            ["Outras Lavouras Temporárias", "Maio 2024",  "Plantio inicial — mai/2024",  "R$ 1.400"],
+            ["Soja",                        "Maio 2024",  "Colhida (fev–abr/2024)",      "R$ 1.100"],
+            ["Arroz",                       "Maio 2024",  "Colhido (fev–abr/2024)",      "R$ 1.100"],
+            ["Outras Lavouras Temporárias", "Maio 2024",  "Plantio inicial (mai/2024)",  "R$ 1.400"],
             ["Soja",                        "Set. 2023",  "Pré-plantio",                 "R$ 250"],
             ["Arroz",                       "Set. 2023",  "Pré-plantio",                 "R$ 250"],
-            ["Outras Lavouras Temporárias", "Set. 2023",  "Colheita — set–out/2023",     "R$ 2.800"],
+            ["Outras Lavouras Temporárias", "Set. 2023",  "Colheita (set–out/2023)",     "R$ 2.800"],
           ]} />
           <p>
             Ver a delimitação espacial das áreas agrícolas na{" "}
             <a href="#agricultura" className="text-[#055071] font-semibold hover:underline underline-offset-4">
-              Seção 4 — Agricultura
+              Seção 4: Agricultura
             </a>.
           </p>
 
@@ -892,29 +892,29 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             ["Parâmetro",                   "Valor",          "Fonte"],
             ["VAAT-MIN FUNDEB 2024",        "R$ 8.481,21",    "Portaria Interministerial MEC/MF nº 9/2024"],
             ["Dias letivos/ano",            "200",            "LDB Art. 24, I"],
-            ["Labor share — Agropecuária",  "17,6%",          "IBGE SCN 2021 — Tab17"],
-            ["Labor share — Indústria",     "33,8%",          "IBGE SCN 2021 — Tab17"],
-            ["Labor share — Adm. Pública",  "88,3%",          "IBGE SCN 2021 — Tab17"],
-            ["Labor share — Serviços",      "43,3%",          "IBGE SCN 2021 — Tab17"],
-            ["Fase aguda — Maio 2024",      "30 dias",        "DaLA RS — CEPAL, 2024"],
-            ["Recuperação — Maio 2024",     "60 dias",        "DaLA RS — CEPAL, 2024"],
-            ["Fase aguda — Set. 2023",      "15 dias",        "DaLA RS — CEPAL, 2024"],
-            ["Recuperação — Set. 2023",     "30 dias",        "DaLA RS — CEPAL, 2024"],
+            ["Labor share (Agropecuária)",  "17,6%",          "IBGE SCN 2021, Tab17"],
+            ["Labor share (Indústria)",     "33,8%",          "IBGE SCN 2021, Tab17"],
+            ["Labor share (Adm. Pública)",  "88,3%",          "IBGE SCN 2021, Tab17"],
+            ["Labor share (Serviços)",      "43,3%",          "IBGE SCN 2021, Tab17"],
+            ["Fase aguda (Maio 2024)",      "30 dias",        "DaLA RS (CEPAL, 2024)"],
+            ["Recuperação (Maio 2024)",     "60 dias",        "DaLA RS (CEPAL, 2024)"],
+            ["Fase aguda (Set. 2023)",      "15 dias",        "DaLA RS (CEPAL, 2024)"],
+            ["Recuperação (Set. 2023)",     "30 dias",        "DaLA RS (CEPAL, 2024)"],
             ["Meses SIA/SIH disponíveis",   "7 (jan–jul/24)", "DataSUS"],
           ]} />
 
           <SectionSources links={[
-            ["CEPAL (2024) — Avaliação dos Efeitos e Impactos das Inundações no Rio Grande do Sul", "https://www.cepal.org/pt-br/publicacoes/81035-avaliacao-efeitos-impactos-inundacoes-rio-grande-sul-novembro-2024"],
-            ["PDNA Vol. A Guidelines — GFDRR/UNDP/BM, 2013", "https://www.gfdrr.org/sites/default/files/2017-09/PDNA-Volume-A.pdf"],
-            ["IBGE — SCN 2021, Tabela 17 (Tab17.xls)", "https://ftp.ibge.gov.br/Contas_Nacionais/Sistema_de_Contas_Nacionais/2021/tabelas_xls/sinoticas/"],
-            ["Karabarbounis & Neiman (2014, QJE) — The Global Decline of the Labor Share", "https://doi.org/10.1093/qje/qjt032"],
-            ["LDB — Lei nº 9.394/1996, Art. 24", "https://www.planalto.gov.br/ccivil_03/leis/l9394.htm"],
-            ["Portaria Interministerial MEC/MF nº 9, 28/08/2024 — VAAT-MIN FUNDEB 2024", "https://www.fnde.gov.br"],
-            ["CONAB — Preços Mínimos 2024", "https://www.conab.gov.br/politica-agricola/precos-minimos"],
-            ["MapBiomas — Coleção 10", "https://brasil.mapbiomas.org/colecoes-mapbiomas-1/"],
-            ["FNDE — FUNDEB 2024", "https://www.fnde.gov.br"],
-            ["DataSUS — Produção Hospitalar SIH/SUS", "https://datasus.saude.gov.br/acesso-a-informacao/producao-hospitalar-sih-sus"],
-            ["DataSUS — Produção Ambulatorial SIA/SUS", "https://datasus.saude.gov.br/acesso-a-informacao/producao-ambulatorial-sia-sus"],
+            ["CEPAL (2024): Avaliação dos Efeitos e Impactos das Inundações no Rio Grande do Sul", "https://www.cepal.org/pt-br/publicacoes/81035-avaliacao-efeitos-impactos-inundacoes-rio-grande-sul-novembro-2024"],
+            ["PDNA Vol. A Guidelines (GFDRR/UNDP/BM, 2013)", "https://www.gfdrr.org/sites/default/files/2017-09/PDNA-Volume-A.pdf"],
+            ["IBGE: SCN 2021, Tabela 17 (Tab17.xls)", "https://ftp.ibge.gov.br/Contas_Nacionais/Sistema_de_Contas_Nacionais/2021/tabelas_xls/sinoticas/"],
+            ["Karabarbounis & Neiman (2014, QJE): The Global Decline of the Labor Share", "https://doi.org/10.1093/qje/qjt032"],
+            ["LDB: Lei nº 9.394/1996, Art. 24", "https://www.planalto.gov.br/ccivil_03/leis/l9394.htm"],
+            ["Portaria Interministerial MEC/MF nº 9, 28/08/2024 (VAAT-MIN FUNDEB 2024)", "https://www.fnde.gov.br"],
+            ["CONAB: Preços Mínimos 2024", "https://www.conab.gov.br/politica-agricola/precos-minimos"],
+            ["MapBiomas: Coleção 10", "https://brasil.mapbiomas.org/colecoes-mapbiomas-1/"],
+            ["FNDE: FUNDEB 2024", "https://www.fnde.gov.br"],
+            ["DataSUS: Produção Hospitalar SIH/SUS", "https://datasus.saude.gov.br/acesso-a-informacao/producao-hospitalar-sih-sus"],
+            ["DataSUS: Produção Ambulatorial SIA/SUS", "https://datasus.saude.gov.br/acesso-a-informacao/producao-ambulatorial-sia-sus"],
           ]} />
         </Section>
 
@@ -922,7 +922,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             10. DANO FÍSICO — CLIMADA (PROTÓTIPO)
         ══════════════════════════════════════════════════════════════════════ */}
         {dadosClimada && (
-        <Section id="dano-fisico" num="10" title="Dano Físico — Metodologia CLIMADA (Protótipo)">
+        <Section id="dano-fisico" num="10" title="Dano Físico: Metodologia CLIMADA (Protótipo)">
           <Note type="info">
             <strong>Protótipo exploratório</strong>, não uma métrica oficial do painel. Mede{" "}
             <strong>destruição de patrimônio</strong> (estoque: prédio + equipamento), diferente
@@ -930,7 +930,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             por período de retorno e limitações completas na{" "}
             <a href="/danos?aba=climada" target="_blank" rel="noopener noreferrer"
               className="font-semibold hover:underline underline-offset-4">
-              página de Danos — aba Dano Físico ↗
+              página de Danos, aba Dano Físico ↗
             </a>.
           </Note>
 
@@ -1003,7 +1003,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             Nas Empresas, os pontos com CNAE industrial ({dadosClimada.premissas.n_empresas_industria} de{" "}
             {dadosClimada.premissas.n_empresas_total.toLocaleString("pt-BR")} estabelecimentos) usam{" "}
             <Math tex="c_{\text{ind}}" /> e <Math tex="k_{\text{ind}}" /> em vez de{" "}
-            <Math tex="c_{\text{com}}" /> e <Math tex="k_{\text{com}}" /> — o resto (comércio,
+            <Math tex="c_{\text{com}}" /> e <Math tex="k_{\text{com}}" />; o resto (comércio,
             serviços, agropecuária e administração pública) segue com o tratamento comercial abaixo.
           </p>
           <DataTable rows={[
@@ -1045,7 +1045,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             circulação) que a escola precisa além das salas de aula, e esse espaço escala com o{" "}
             <em>tamanho da escola</em>, não com o aluno isolado. A saída: estimar quantas{" "}
             <strong>salas de aula</strong> a matrícula implica, e converter salas em área pela
-            mesma proporção do projeto padrão FNDE — assim o espaço de apoio fica embutido
+            mesma proporção do projeto padrão FNDE: assim o espaço de apoio fica embutido
             proporcionalmente, sem precisar saber quantos funcionários a escola tem.
           </p>
           <MathBlock exprs={[
@@ -1069,7 +1069,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           <p className="text-[12px] text-slate-500">
             Área construída do projeto padrão FNDE (6 salas): {dadosClimada.premissas.area_escola_padrao_m2.toLocaleString("pt-BR")} m².
             Cobre salas de aula, bloco administrativo, cozinha, banheiros, circulação e pátio
-            coberto (área construída total do prédio, não só as 6 salas) — não inclui quadra
+            coberto (área construída total do prédio, não só as 6 salas); não inclui quadra
             coberta nem área externa descoberta.
           </p>
           <SectionSources links={[
@@ -1099,7 +1099,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
 
           <Note type="warning">
             Premissas explícitas que precisam de validação antes de qualquer uso além de
-            exploração metodológica — ver a lista completa de{" "}
+            exploração metodológica: ver a lista completa de{" "}
             <a href="/danos?aba=climada#c-limitacoes" target="_blank" rel="noopener noreferrer"
               className="font-semibold hover:underline underline-offset-4">
               Limitações na página de Danos ↗
@@ -1121,7 +1121,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
         {/* ══════════════════════════════════════════════════════════════════════
             11. POPULAÇÃO EXPOSTA
         ══════════════════════════════════════════════════════════════════════ */}
-        <Section id="populacao" num="11" title="População Exposta — WorldPop 2024">
+        <Section id="populacao" num="11" title="População Exposta: WorldPop 2024">
           <p>
             A camada de população exposta quantifica o número de habitantes residentes dentro
             de cada mancha de inundação, cruzando as geometrias de flood extent com o raster
@@ -1134,34 +1134,34 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           <SubTitle>Fonte dos dados</SubTitle>
           <DataTable rows={[
             ["Atributo",      "Valor"],
-            ["Produto",       "WorldPop Global Mosaic 2024 — Population Counts (Constrained)"],
+            ["Produto",       "WorldPop Global Mosaic 2024: Population Counts (Constrained)"],
             ["Sigla do arquivo", "bra_pop_2024_CN_100m_R2025A_v1.tif"],
-            ["Tipo",          "Constrained (CN) — ajustado ao censo demográfico brasileiro"],
+            ["Tipo",          "Constrained (CN), ajustado ao censo demográfico brasileiro"],
             ["Resolução",     "100 m × 100 m por pixel (~1 ha)"],
             ["CRS",           "WGS 84 geográfico (EPSG:4326)"],
             ["Unidade",       "Número de habitantes por pixel"],
             ["Cobertura",     "Brasil inteiro"],
             ["Referência",    "Estimativa para 2024 (Revisão A, 2025)"],
-            ["Repositório",   "Humanitarian Data Exchange (HDX) — data.humdata.org"],
+            ["Repositório",   "Humanitarian Data Exchange (HDX), data.humdata.org"],
           ]} />
 
           <SubTitle>Método de cálculo</SubTitle>
           <ol className="list-decimal list-inside space-y-1.5 text-sm text-slate-700 mt-2">
             <li>
-              <strong>Limite municipal</strong> — polígono oficial obtido via API de malhas do
+              <strong>Limite municipal</strong>: polígono oficial obtido via API de malhas do
               IBGE, utilizado para recortar o raster ao território de cada município.
             </li>
             <li>
-              <strong>População total municipal</strong> — recorte do raster pelo limite municipal;
+              <strong>População total municipal</strong>: recorte do raster pelo limite municipal;
               soma de todos os pixels com valor positivo (pixels sem dado excluídos).
             </li>
             <li>
-              <strong>População atingida por cenário</strong> — recorte pelo polígono da mancha de
+              <strong>População atingida por cenário</strong>: recorte pelo polígono da mancha de
               inundação correspondente; mesma operação de soma. Apenas pixels dentro da mancha
               são contabilizados.
             </li>
             <li>
-              <strong>Heatmap</strong> — raster recortado pelo limite municipal convertido a imagem
+              <strong>Heatmap</strong>: raster recortado pelo limite municipal convertido a imagem
               colorida com paleta <em>plasma</em> em escala logarítmica, sobreposto ao mapa
               interativo para visualização da densidade populacional.
             </li>
@@ -1193,9 +1193,9 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           </ul>
 
           <SectionSources links={[
-            ["WorldPop (2025) — Brazil Population Counts 100m 2024, constrained individual countries", "https://data.humdata.org/dataset/worldpop-population-counts-for-brazil"],
-            ["IBGE — Malhas Municipais (API v3)", "https://servicodados.ibge.gov.br/api/v3/malhas/municipios/"],
-            ["rasterio — Raster I/O in Python", "https://rasterio.readthedocs.io"],
+            ["WorldPop (2025): Brazil Population Counts 100m 2024, constrained individual countries", "https://data.humdata.org/dataset/worldpop-population-counts-for-brazil"],
+            ["IBGE: Malhas Municipais (API v3)", "https://servicodados.ibge.gov.br/api/v3/malhas/municipios/"],
+            ["rasterio: Raster I/O in Python", "https://rasterio.readthedocs.io"],
           ]} />
         </Section>
 
@@ -1207,35 +1207,35 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
 
             <RefBlock title="Manchas de Inundação e Contexto">
               <RefItem href="https://mup.rs.gov.br/"
-                label="MUP — Mapa Único do Plano Rio Grande (Gov. RS)"
+                label="MUP: Mapa Único do Plano Rio Grande (Gov. RS)"
                 desc="Plataforma geoespacial oficial do RS com delimitação das áreas inundadas em 2024. Fonte das manchas ADA de Eldorado do Sul e Porto Alegre." />
               <RefItem href="https://ciex.furg.br"
-                label="CIEX/FURG — Centro Interinstitucional de Observação e Previsão de Eventos Extremos"
-                desc="Modelagem hidrológica e hidráulica costeira para Rio Grande — manchas de Maio 2024, Maio 2024 + 50% e Setembro 2023." />
+                label="CIEX/FURG: Centro Interinstitucional de Observação e Previsão de Eventos Extremos"
+                desc="Modelagem hidrológica e hidráulica costeira para Rio Grande: manchas de Maio 2024, Maio 2024 + 50% e Setembro 2023." />
               <RefItem href="https://www.cepal.org/pt-br/publicacoes/81035-avaliacao-efeitos-impactos-inundacoes-rio-grande-sul-novembro-2024"
-                label="CEPAL (nov/2024) — Avaliação dos Efeitos e Impactos das Inundações no Rio Grande do Sul"
+                label="CEPAL (nov/2024): Avaliação dos Efeitos e Impactos das Inundações no Rio Grande do Sul"
                 desc="Avaliação oficial DaLA das enchentes RS 2024: R$ 88,9 bi em danos e perdas. Referência metodológica para a curva de recuperação linear e parâmetros de interrupção." />
               <RefItem href="https://www.ibge.gov.br/geociencias/organizacao-do-territorio/malhas-territoriais.html"
-                label="IBGE — Malha Municipal RS"
+                label="IBGE: Malha Municipal RS"
                 desc="Limites territoriais municipais em SIRGAS 2000 (EPSG:4674), usados para delimitação geográfica e filtragem por município." />
             </RefBlock>
 
             <RefBlock title="Dados Socioeconômicos">
               <RefItem href="https://www.gov.br/trabalho-e-emprego/pt-br/assuntos/estatisticas-trabalho/rais"
-                label="RAIS — Relação Anual de Informações Sociais (MTE, 2023)"
+                label="RAIS: Relação Anual de Informações Sociais (MTE, 2023)"
                 desc="Microdados de vínculos ativos, estabelecimentos, CNAE, remuneração e endereços. Base para mapeamento de empresas atingidas e estimativa de VAB." />
               <RefItem href="https://www.gov.br/inep/pt-br/areas-de-atuacao/pesquisas-estatisticas-e-indicadores/censo-escolar"
-                label="INEP — Censo Escolar 2024"
+                label="INEP: Censo Escolar 2024"
                 desc="Levantamento completo de estabelecimentos de educação básica, matrículas, turmas e docentes. Base para mapeamento de escolas atingidas e custo de reposição FUNDEB." />
               <RefItem href="https://cnes.datasus.gov.br"
-                label="CNES — Cadastro Nacional de Estabelecimentos de Saúde (DataSUS, abr/2024)"
+                label="CNES: Cadastro Nacional de Estabelecimentos de Saúde (DataSUS, abr/2024)"
                 desc="Registro de todos os estabelecimentos de saúde com localização georeferenciada, vínculos profissionais por CBO e tipo de unidade." />
               <RefItem href="https://datasus.saude.gov.br/acesso-a-informacao/producao-hospitalar-sih-sus"
-                label="SIH/SUS — Produção Hospitalar (DataSUS, jan–jul/2024)"
-                desc="Autorização de Internação Hospitalar (AIH) por estabelecimento CNES — base para estimativa da perda de produção hospitalar durante a interrupção." />
+                label="SIH/SUS: Produção Hospitalar (DataSUS, jan–jul/2024)"
+                desc="Autorização de Internação Hospitalar (AIH) por estabelecimento CNES: base para estimativa da perda de produção hospitalar durante a interrupção." />
               <RefItem href="https://datasus.saude.gov.br/acesso-a-informacao/producao-ambulatorial-sia-sus"
-                label="SIA/SUS — Produção Ambulatorial (DataSUS, jan–jul/2024)"
-                desc="Boletim de Produção Ambulatorial (BPA) por estabelecimento CNES — base para estimativa da perda de produção ambulatorial durante a interrupção." />
+                label="SIA/SUS: Produção Ambulatorial (DataSUS, jan–jul/2024)"
+                desc="Boletim de Produção Ambulatorial (BPA) por estabelecimento CNES: base para estimativa da perda de produção ambulatorial durante a interrupção." />
               <RefItem href="https://nominatim.org"
                 label="OpenStreetMap / Nominatim"
                 desc="Geocodificador de endereços baseado em dados OSM, instância local. Usado para estabelecimentos RAIS e escolas sem coordenadas próprias." />
@@ -1243,13 +1243,13 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
 
             <RefBlock title="Dados Agrícolas">
               <RefItem href="https://brasil.mapbiomas.org/colecoes-mapbiomas-1/"
-                label="MapBiomas — Coleção 10"
+                label="MapBiomas: Coleção 10"
                 desc="Mapeamento anual de uso e cobertura do solo no Brasil em raster de 30 m. Anos 2023 e 2024 utilizados conforme o período do cenário. Classes: Soja (39), Arroz (40), Outras Lavouras Temporárias (41)." />
               <RefItem href="https://www.conab.gov.br/info-agro/safras/mapeamento-agricola"
-                label="CONAB — Mapeamento Agrícola (safra 2023/24)"
+                label="CONAB: Mapeamento Agrícola (safra 2023/24)"
                 desc="Shapefiles georeferenciados de área cultivada de soja e arroz com campo AREA_HA declarado pelo produtor. Tem prioridade sobre MapBiomas quando disponível." />
               <RefItem href="https://www.conab.gov.br/politica-agricola/precos-minimos"
-                label="CONAB — Preços Mínimos 2024"
+                label="CONAB: Preços Mínimos 2024"
                 desc="Base para calibração dos coeficientes R$/ha de impacto direto por cultura e estágio fenológico." />
             </RefBlock>
 
@@ -1258,25 +1258,25 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
                 label="Google Open Buildings (Google Research, 2023)"
                 desc="Dataset de footprints de edificações detectados por visão computacional a partir de imagens de satélite de alta resolução. Cobre o RS com 7,4 milhões de feições." />
               <RefItem href="https://arxiv.org/abs/2107.12283"
-                label="Sirko et al. (2021) — Continent-Scale Building Detection from High Resolution Satellite Imagery"
+                label="Sirko et al. (2021): Continent-Scale Building Detection from High Resolution Satellite Imagery"
                 desc="Artigo científico descrevendo o modelo de detecção, as métricas de confiança e a metodologia de avaliação do dataset Google Open Buildings. arXiv:2107.12283." />
             </RefBlock>
 
             <RefBlock title="Metodologia DaLA e Referências Econômicas">
               <RefItem href="https://www.gfdrr.org/sites/default/files/2017-09/PDNA-Volume-A.pdf"
-                label="PDNA Vol. A Guidelines — GFDRR/UNDP/BM, 2013"
+                label="PDNA Vol. A Guidelines (GFDRR/UNDP/BM, 2013)"
                 desc="Guia metodológico para avaliação de pós-desastre: danos ao estoque e perdas de fluxo. Define que perdas = mudanças nos fluxos econômicos durante e após o desastre." />
               <RefItem href="https://ftp.ibge.gov.br/Contas_Nacionais/Sistema_de_Contas_Nacionais/2021/tabelas_xls/sinoticas/"
-                label="IBGE — SCN 2021, Tabela 17 (Tab17.xls)"
-                desc="Sistema de Contas Nacionais 2021 — única fonte pública IBGE com Remunerações por atividade econômica. Base dos labor shares setoriais usados na inversão VAB = w_anual / LS." />
+                label="IBGE: SCN 2021, Tabela 17 (Tab17.xls)"
+                desc="Sistema de Contas Nacionais 2021, única fonte pública IBGE com Remunerações por atividade econômica. Base dos labor shares setoriais usados na inversão VAB = w_anual / LS." />
               <RefItem href="https://doi.org/10.1093/qje/qjt032"
-                label="Karabarbounis & Neiman (2014, QJE) — The Global Decline of the Labor Share"
+                label="Karabarbounis & Neiman (2014, QJE): The Global Decline of the Labor Share"
                 desc="Referência canônica para o labor share como métrica de distribuição funcional da renda. Valida VAB = Remunerações / LS como identidade contábil padrão em análises macroeconômicas." />
               <RefItem href="https://www.fnde.gov.br"
                 label="Portaria Interministerial MEC/MF nº 9, 28/08/2024"
-                desc="Define o VAAT-MIN FUNDEB 2024 = R$ 8.481,21 — parâmetro do custo de reposição dos dias letivos interrompidos." />
+                desc="Define o VAAT-MIN FUNDEB 2024 = R$ 8.481,21, parâmetro do custo de reposição dos dias letivos interrompidos." />
               <RefItem href="https://www.planalto.gov.br/ccivil_03/leis/l9394.htm"
-                label="Lei nº 9.394/1996 (LDB) — Art. 24, I"
+                label="Lei nº 9.394/1996 (LDB), Art. 24, I"
                 desc="Estabelece o mínimo de 200 dias letivos por ano e a obrigatoriedade de reposição dos dias perdidos por calamidade pública." />
             </RefBlock>
 
@@ -1298,7 +1298,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
         {/* ── Rodapé ──────────────────────────────────────────────────────────── */}
         <footer className="mt-12 pt-6 border-t border-[#b3cdd8] text-center print:mt-4">
           <p className="text-[11px] text-[#3d7a94]">
-            Painel desenvolvido por GPEA/FURG em parceria com o BID — Banco Interamericano de Desenvolvimento.
+            Painel desenvolvido por GPEA/FURG em parceria com o BID (Banco Interamericano de Desenvolvimento).
           </p>
           <p className="text-[11px] text-[#3d7a94] mt-0.5">
             © 2024 Alisson Tallys Geraldo Fiorentin · Dados de referência: 2024.
