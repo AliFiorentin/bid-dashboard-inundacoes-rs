@@ -69,13 +69,19 @@ export default function Dashboard() {
       <DashboardMap dash={dash} />
 
       {isLoading && (
-        <div className="absolute inset-0 z-50 pointer-events-none flex items-end justify-center pb-6">
-          <div className="bg-white/90 backdrop-blur-md border border-slate-200/60 rounded-full px-4 py-2 flex items-center gap-2 shadow-lg">
-            <svg className="animate-spin h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24">
+        <div
+          className="absolute inset-0 z-50 pointer-events-none flex items-center justify-center print:hidden"
+          style={{ backdropFilter: "blur(8px) saturate(120%)", WebkitBackdropFilter: "blur(8px) saturate(120%)", backgroundColor: "rgba(255,255,255,0.2)" }}
+        >
+          <div
+            className="flex flex-col items-center gap-3 rounded-2xl px-9 py-7"
+            style={{ backgroundColor: "rgba(255,255,255,0.9)", border: "0.5px solid rgba(255,255,255,0.7)", boxShadow: "0 24px 60px rgba(0,0,0,0.25), 0 4px 16px rgba(0,0,0,0.1)" }}
+          >
+            <svg className="animate-spin h-9 w-9" fill="none" viewBox="0 0 24 24" style={{ color: "#055071" }}>
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
-            <span className="text-xs font-bold text-slate-700">Carregando dados...</span>
+            <span className="text-sm font-black tracking-wide" style={{ color: "#055071" }}>Carregando dados...</span>
           </div>
         </div>
       )}
