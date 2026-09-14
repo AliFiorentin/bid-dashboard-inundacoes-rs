@@ -7,6 +7,12 @@ export interface PopulacaoMunData {
 }
 export type PopulacaoData = Record<string, PopulacaoMunData>;
 
+export interface AreaAtingidaMunData {
+  area_km2: number;
+  cenarios: Record<string, { area_atingida_km2: number; pct_atingida: number }>;
+}
+export type AreaAtingidaData = Record<string, AreaAtingidaMunData>;
+
 export interface InfraStatsEntry {
   count_base: number;
   count_atingido: number;
@@ -113,6 +119,7 @@ export function useDashboard() {
   const [manchaRS, setManchaRS] = useState<FeatureCollection | null>(null);
   const [danosData, setDanosData] = useState<import("@/components/tabs/DanosTab").DanosData | null>(null);
   const [popData, setPopData] = useState<PopulacaoData | null>(null);
+  const [areaData, setAreaData] = useState<AreaAtingidaData | null>(null);
 
   const [cursor, setCursor] = useState<string>("grab");
   const [popupInfo, setPopupInfo] = useState<{ lngLat: [number, number], properties: Record<string, unknown>, source: string } | null>(null);
@@ -153,6 +160,13 @@ export function useDashboard() {
     fetch("/dados_convertidos/populacao_atingida.json")
       .then(r => r.ok ? r.json() : null)
       .then(d => d && setPopData(d))
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    fetch("/dados_convertidos/area_atingida.json")
+      .then(r => r.ok ? r.json() : null)
+      .then(d => d && setAreaData(d))
       .catch(() => {});
   }, []);
 
@@ -847,6 +861,7 @@ export function useDashboard() {
     exportarExcel,
     danosData,
     popData,
+    areaData,
     // geo-utils re-exports needed in JSX
     countRuasUnicas, getRuasListPOA, countRuasUnicasPOA, getRotas, getLen,
     handleMapMoveEnd,

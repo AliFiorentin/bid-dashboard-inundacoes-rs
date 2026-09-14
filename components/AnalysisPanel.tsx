@@ -11,7 +11,7 @@ import { EducacaoTab } from "@/components/tabs/EducacaoTab";
 import { SaudeTab } from "@/components/tabs/SaudeTab";
 import { AgriculturaTab } from "@/components/AgriculturaTab";
 import { InfraTab } from "@/components/tabs/InfraTab";
-import { slugify } from "@/lib/geo-utils";
+import { findCenarioData } from "@/lib/geo-utils";
 import { MUNICIPIOS, PIORES_CENARIOS } from "@/lib/constants";
 import type { DashboardState } from "@/hooks/useDashboard";
 
@@ -45,20 +45,14 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
     showListaLogradouros, setShowListaLogradouros,
     showListaEixos, setShowListaEixos,
     popData,
+    areaData,
   } = dash;
 
   // Population KPI
-  const findCenData = (munData: NonNullable<typeof popData>[string], cen: string) => {
-    if (munData.cenarios[cen]) return munData.cenarios[cen];
-    const s = slugify(cen);
-    const match = Object.entries(munData.cenarios).find(([k]) => slugify(k) === s);
-    return match ? match[1] : null;
-  };
-
   const popMunData = !isVisaoGeral && popData ? popData[municipio] ?? null : null;
   const popCenData = (() => {
     if (!popMunData || !cenario || cenario === "(nenhum)") return null;
-    return findCenData(popMunData, cenario);
+    return findCenarioData(popMunData.cenarios, cenario);
   })();
 
   const popGeralTotal = isVisaoGeral && popData
@@ -69,7 +63,7 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
         const d = popData[m];
         if (!d) return acc;
         const cen = PIORES_CENARIOS[m];
-        const cenData = cen ? findCenData(d, cen) : null;
+        const cenData = cen ? findCenarioData(d.cenarios, cen) : null;
         return acc + (cenData?.pop_atingida ?? 0);
       }, 0)
     : null;
@@ -172,7 +166,7 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
               </div>
             )}
 
-            <ResumoTab dash={{ municipio, cenario, mostraImpacto, isVisaoGeral, isCenarioAtivo, metricasEmp, metricasEdu, metricasSau, baseAgriStats, atingidosAgriStats, conabStats, allMunAgriStats, allMunAgriAtingidosStats, baseInfra, atingidosInfra, allMunInfraStats }} />
+            <ResumoTab dash={{ municipio, cenario, mostraImpacto, isVisaoGeral, isCenarioAtivo, metricasEmp, metricasEdu, metricasSau, baseAgriStats, atingidosAgriStats, conabStats, allMunAgriStats, allMunAgriAtingidosStats, baseInfra, atingidosInfra, allMunInfraStats, areaData }} />
 
             <EmpresasTab dash={{ setoresChart, setoresEmpregadosChart, metricasEmp, mostraImpacto }} />
 
@@ -196,7 +190,7 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
             )}
 
             {(isVisaoGeral || (INFRAESTRUTURA_CONFIG[municipio]?.length ?? 0) > 0) && (
-              <InfraTab dash={{ municipio, isVisaoGeral, mostraImpacto, isCenarioAtivo, baseInfra, atingidosInfra, allMunInfraStats, showListaLogradouros, setShowListaLogradouros, showListaEixos, setShowListaEixos }} />
+              <InfraTab dash={{ municipio, cenario, isVisaoGeral, mostraImpacto, isCenarioAtivo, baseInfra, atingidosInfra, allMunInfraStats, showListaLogradouros, setShowListaLogradouros, showListaEixos, setShowListaEixos, areaData }} />
             )}
 
           </Tabs>

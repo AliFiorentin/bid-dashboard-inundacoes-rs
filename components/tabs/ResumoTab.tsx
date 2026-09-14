@@ -1,13 +1,14 @@
 import type React from "react";
-import { Users, Building2, GraduationCap, BookOpen, HeartPulse, Stethoscope, Wrench, DollarSign, Sprout } from "lucide-react";
+import { Users, Building2, GraduationCap, BookOpen, HeartPulse, Stethoscope, Wrench, DollarSign, Sprout, Map } from "lucide-react";
 import { TabsContent } from "@/components/ui/tabs";
 import { DonutChart } from "@/components/ui/donut-chart";
 import { COLORS, MUNICIPIOS, PIORES_CENARIOS, CENARIO_PERIODO, IMPACTO_AGRICOLA, PANEL_CARD_BG, C } from "@/lib/constants";
-import { compactoBr, scenarioSlug } from "@/lib/geo-utils";
+import { compactoBr, scenarioSlug, findCenarioData } from "@/lib/geo-utils";
 import type { DashboardState } from "@/hooks/useDashboard";
 
 const PANEL_HDR = { background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)" } as const;
 const COR_AGRICULTURA = "#6B8E23";
+const COR_AREA = "#0891b2";
 const COR_TRILHA = "#e2e8f0";
 
 // Escala fluida com a altura da tela (vh) -- em telas baixas (notebook 14")
@@ -41,6 +42,7 @@ interface Props {
     | "baseInfra"
     | "atingidosInfra"
     | "allMunInfraStats"
+    | "areaData"
   >;
 }
 
@@ -102,6 +104,7 @@ export function ResumoTab({ dash }: Props) {
     baseAgriStats, atingidosAgriStats, conabStats,
     allMunAgriStats, allMunAgriAtingidosStats,
     baseInfra, atingidosInfra, allMunInfraStats,
+    areaData,
   } = dash;
 
   const somaValores = (rec: Record<string, number> | undefined) =>
@@ -149,6 +152,19 @@ export function ResumoTab({ dash }: Props) {
   const edifAtg = isVisaoGeral
     ? MUNICIPIOS.reduce((s, mun) => s + (allMunInfraStats?.[mun]?.["Edificações"]?.count_atingido ?? 0), 0)
     : (atingidosInfra["Edificações"]?.features?.length ?? 0);
+
+  // ── Área Atingida: território do município x extensão da mancha ────────────
+  const areaBase = isVisaoGeral
+    ? MUNICIPIOS.reduce((s, mun) => s + (areaData?.[mun]?.area_km2 ?? 0), 0)
+    : (areaData?.[municipio]?.area_km2 ?? 0);
+  const areaAtg = isVisaoGeral
+    ? MUNICIPIOS.reduce((s, mun) => {
+        const d = areaData?.[mun];
+        if (!d) return s;
+        const cenData = findCenarioData(d.cenarios, PIORES_CENARIOS[mun]);
+        return s + (cenData?.area_atingida_km2 ?? 0);
+      }, 0)
+    : (isCenarioAtivo ? findCenarioData(areaData?.[municipio]?.cenarios ?? {}, cenario)?.area_atingida_km2 ?? 0 : 0);
 
   // ── Saúde: unidades (todos os tipos) + profissionais ────────────────────────
   const staffTotal = (rec: Record<string, number>) => Object.values(rec).reduce((s, v) => s + v, 0);
@@ -224,6 +240,16 @@ export function ResumoTab({ dash }: Props) {
           base={metricasEmp.base.massa}
           mostraImpacto={mostraImpacto}
           prefixo="R$ "
+          casas={1}
+        />
+        <MiniStatCard
+          icon={<Map strokeWidth={2.5} className="w-[45%] h-[45%]" />}
+          titulo="Área Atingida"
+          cor={COR_AREA}
+          atingido={areaAtg}
+          base={areaBase}
+          mostraImpacto={mostraImpacto}
+          sufixo=" km²"
           casas={1}
         />
       </div>

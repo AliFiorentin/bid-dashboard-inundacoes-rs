@@ -12,6 +12,17 @@ export const slugify = (str: string) =>
 export const scenarioSlug = (mun: string, cen: string) =>
   `${slugify(mun)}___${slugify(cen)}`;
 
+// Alguns JSONs pre-calculados no pipeline (ex.: populacao_atingida.json,
+// area_atingida.json) guardam o rotulo do cenario sem acento ("Cenario ADA"),
+// vindo direto de config.py, enquanto o frontend usa o rotulo acentuado
+// ("Cenário ADA") em CENARIOS_CONFIG/PIORES_CENARIOS -- casa os dois pelo slug.
+export const findCenarioData = <T,>(cenarios: Record<string, T>, cen: string): T | null => {
+  if (cenarios[cen]) return cenarios[cen];
+  const s = slugify(cen);
+  const match = Object.entries(cenarios).find(([k]) => slugify(k) === s);
+  return match ? match[1] : null;
+};
+
 const ACRONYMS = new Set(["EE", "EMEF", "EMEI", "UBS", "UPA", "ESF", "USF", "CEO", "CAPS", "CER", "SAMU", "RS"]);
 
 export const formatName = (str: string | undefined | null) => {

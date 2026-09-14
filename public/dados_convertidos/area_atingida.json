@@ -1,0 +1,54 @@
+{
+  "Eldorado do Sul": {
+    "area_km2": 509.41,
+    "cenarios": {
+      "Cenario ADA": {
+        "area_atingida_km2": 152.29,
+        "pct_atingida": 29.9
+      }
+    }
+  },
+  "Lajeado": {
+    "area_km2": 91.02,
+    "cenarios": {
+      "Cenario 27m": {
+        "area_atingida_km2": 11.7,
+        "pct_atingida": 12.9
+      },
+      "Cenario 30m": {
+        "area_atingida_km2": 14.13,
+        "pct_atingida": 15.5
+      }
+    }
+  },
+  "Porto Alegre": {
+    "area_km2": 494.74,
+    "cenarios": {
+      "Cenario ADA": {
+        "area_atingida_km2": 111.94,
+        "pct_atingida": 22.6
+      },
+      "Climada Evento 2024": {
+        "area_atingida_km2": 148.27,
+        "pct_atingida": 30.0
+      }
+    }
+  },
+  "Rio Grande": {
+    "area_km2": 2682.16,
+    "cenarios": {
+      "Cenario Maio 2024": {
+        "area_atingida_km2": 8.24,
+        "pct_atingida": 0.3
+      },
+      "Cenario Maio 2024 + 50%": {
+        "area_atingida_km2": 59.66,
+        "pct_atingida": 2.2
+      },
+      "Cenario Setembro 2023": {
+        "area_atingida_km2": 4.89,
+        "pct_atingida": 0.2
+      }
+    }
+  }
+}
