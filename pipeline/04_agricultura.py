@@ -21,9 +21,10 @@ import numpy as np
 import pandas as pd
 import rasterio
 import requests
-from rasterio.features import shapes as rasterio_shapes
+from rasterio.features import shapes as rasterio_shapes, sieve as rasterio_sieve
 from rasterio.mask import mask as rasterio_mask
 from shapely.geometry import shape as shapely_shape
+from shapely.ops import unary_union
 
 from config import (
     DATA_BASES,
@@ -80,6 +81,17 @@ def get_municipio_geom(ibge7: int) -> gpd.GeoDataFrame:
 # ---------------------------------------------------------------------------
 # Processamento raster
 # ---------------------------------------------------------------------------
+
+# Despeckle antes de vetorizar (ver rasterio.features.sieve): remove/funde grupos
+# de pixels conectados menores que este limiar (mesmo criterio pra "ilhas" de uma
+# classe cercadas por outra e pra "buracos" de outra classe cercados por uma area
+# maior -- os dois sao o mesmo tipo de ruido de classificacao pixel-a-pixel do
+# MapBiomas). Auditoria em Porto Alegre encontrou 56% dos poligonos com area
+# menor que ~1,4 pixel (fragmentos de 1 pixel isolado) e 48 buracos internos em
+# 10 poligonos, todos de 1-2 pixels -- 4 pixels (~0,36 ha) elimina esse ruido sem
+# descartar manchas agricolas pequenas mas reais.
+SIEVE_MIN_PIXELS = 4
+
 
 def compute_pixel_area_ha(transform, shape):
     """Calcula area de um pixel em hectares usando a latitude central da janela recortada."""
@@ -139,31 +151,68 @@ def process_municipio(tiff_path: Path, nome: str, cfg: dict, ano: int) -> tuple:
 
     # --- GeoJSON (vetorizacao) ---
     mask_agri = np.isin(data, list(class_ids))
-    data_filtered = np.where(mask_agri, data, 0).astype(np.int16)
+
+    # Remapeia classe MapBiomas bruta -> codigo de CULTURA consolidada (ex.: Arroz
+    # = classes 20 e 40 -- ver MAPBIOMAS_CLASSES) ANTES de vetorizar, para que
+    # pixels vizinhos da mesma cultura (mas classe bruta diferente) virem uma unica
+    # regiao continua, em vez de dois poligonos separados que so' compartilham o
+    # rotulo de exibicao (a causa da maior parte dos "cortes" entre vizinhos
+    # observados antes desta correcao -- ver pipeline/docs, auditoria de poligonos
+    # de agricultura).
+    culturas_unicas = sorted(set(MAPBIOMAS_CLASSES.values()))
+    cultura_por_codigo = dict(enumerate(culturas_unicas, start=1))
+    codigo_por_cultura = {c: k for k, c in cultura_por_codigo.items()}
+    data_cultura = np.zeros_like(data, dtype=np.int16)
+    for class_id, cultura in MAPBIOMAS_CLASSES.items():
+        data_cultura[data == class_id] = codigo_por_cultura[cultura]
 
     features = []
     if mask_agri.any():
-        for geom_dict, value in rasterio_shapes(data_filtered, transform=out_transform):
-            if value == 0:
+        # Despeckle (ver SIEVE_MIN_PIXELS): remove ruido de 1-2 pixels antes de
+        # vetorizar -- tanto fragmentos soltos quanto buracos internos.
+        data_cultura = rasterio_sieve(data_cultura, size=SIEVE_MIN_PIXELS, connectivity=8)
+
+        # Vetoriza direto por codigo de cultura (mask exclui o fundo/codigo 0) e
+        # agrupa os fragmentos por cultura -- cada fragmento ainda sai como um
+        # poligono por pixel-conectado do rasterio.features.shapes, sem tocar a
+        # borda compartilhada com o vizinho da MESMA cultura.
+        fragmentos_por_cultura: dict[str, list] = {}
+        for geom_dict, value in rasterio_shapes(data_cultura, mask=(data_cultura != 0), transform=out_transform):
+            codigo = int(value)
+            if codigo == 0:
                 continue
-            cultura = MAPBIOMAS_CLASSES.get(int(value), "Outros")
             poly = shapely_shape(geom_dict)
-            poly = poly.simplify(tolerance=0.0005, preserve_topology=True)
+            if not poly.is_valid:
+                poly = poly.buffer(0)
             if poly.is_empty:
                 continue
-            features.append({
-                "type": "Feature",
-                "geometry": poly.__geo_interface__,
-                "properties": {
-                    "cultura": cultura,
-                    "classe_id": int(value),
-                },
-            })
+            fragmentos_por_cultura.setdefault(cultura_por_codigo[codigo], []).append(poly)
+
+        # Dissolve (une) os fragmentos de cada cultura ANTES de simplificar --
+        # simplificar cada fragmento isoladamente (como antes) quebra a borda
+        # compartilhada entre vizinhos, deixando gaps/overlaps de sub-pixel que
+        # aparecem como falhas/serrilhado entre poligonos adjacentes da mesma
+        # cultura. Unir primeiro elimina essas bordas internas -- so' sobra o
+        # contorno externo real da mancha agricola, simplificado uma unica vez.
+        for cultura, polys in fragmentos_por_cultura.items():
+            merged = unary_union(polys)
+            merged = merged.simplify(tolerance=0.0005, preserve_topology=True)
+            if merged.is_empty:
+                continue
+            geoms_finais = list(merged.geoms) if merged.geom_type == "MultiPolygon" else [merged]
+            for g in geoms_finais:
+                if g.is_empty:
+                    continue
+                features.append({
+                    "type": "Feature",
+                    "geometry": g.__geo_interface__,
+                    "properties": {"cultura": cultura},
+                })
 
     geojson = {"type": "FeatureCollection", "features": features}
     print(f"    GeoJSON: {len(features):,} features")
 
-    del data, data_filtered, mask_agri, out_image
+    del data, data_cultura, mask_agri, out_image
     gc.collect()
 
     return pd.DataFrame(stats_rows), geojson
