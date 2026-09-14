@@ -197,7 +197,7 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
   const CENARIOS_VISAO_GERAL: Record<string, string> = {
     "Eldorado do Sul": "Cenario ADA",
     "Lajeado":         "Cenario 27m",
-    "Porto Alegre":    "Cenario ADA",
+    "Porto Alegre":    "Climada Evento 2024",
     "Rio Grande":      "Cenario Maio 2024",
   };
 

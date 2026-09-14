@@ -19,6 +19,12 @@ export interface InfraStatsEntry {
   area_m2_base?: number;
   area_m2_atingido?: number;
 }
+
+export interface ManchaDuracaoClimada {
+  coordinates: [[number, number], [number, number], [number, number], [number, number]];
+  duracao_max_dias: number;
+  duracao_media_dias: number;
+}
 import type { FeatureCollection } from "geojson";
 import type { MapRef, MapLayerMouseEvent } from "react-map-gl/maplibre";
 import * as XLSX from "xlsx";
@@ -119,6 +125,7 @@ export function useDashboard() {
   const [manchaRS, setManchaRS] = useState<FeatureCollection | null>(null);
   const [popData, setPopData] = useState<PopulacaoData | null>(null);
   const [areaData, setAreaData] = useState<AreaAtingidaData | null>(null);
+  const [manchaDuracaoClimada, setManchaDuracaoClimada] = useState<ManchaDuracaoClimada | null>(null);
 
   const [cursor, setCursor] = useState<string>("grab");
   const [popupInfo, setPopupInfo] = useState<{ lngLat: [number, number], properties: Record<string, unknown>, source: string } | null>(null);
@@ -163,6 +170,15 @@ export function useDashboard() {
     fetch("/dados_convertidos/area_atingida.json")
       .then(r => r.ok ? r.json() : null)
       .then(d => d && setAreaData(d))
+      .catch(() => {});
+  }, []);
+
+  // Metadados (coordenadas + min/max) do PNG de duração do "Climada Evento
+  // 2024" -- arquivo pequeno, carregado uma vez no mount como popData/areaData.
+  useEffect(() => {
+    fetch("/dados_convertidos/porto_alegre/mancha_duracao_climada_evento_2024.json")
+      .then(r => r.ok ? r.json() : null)
+      .then(d => d && setManchaDuracaoClimada(d))
       .catch(() => {});
   }, []);
 
@@ -879,6 +895,7 @@ export function useDashboard() {
     showDanoFisico, setShowDanoFisico,
     rpDanoFisico, setRpDanoFisico,
     danoFisicoEmpresas, danoFisicoEducacao, danoFisicoSaude,
+    manchaDuracaoClimada,
     showListaEscolas, setShowListaEscolas,
     showListaHospitais, setShowListaHospitais,
     showListaUBS, setShowListaUBS,

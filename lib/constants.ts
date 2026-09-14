@@ -117,7 +117,9 @@ export const MUNICIPIOS = [
 export const CENARIOS_CONFIG: Record<string, string[]> = {
   "Eldorado do Sul": ["Cenário ADA"],
   Lajeado: ["Cenário 27m", "Cenário 30m"],
-  "Porto Alegre": ["Cenário ADA", "Climada Evento 2024"],
+  // "Climada Evento 2024" primeiro -- vira o cenário padrão de Porto Alegre
+  // (cenariosDisp[0] em useDashboard.ts, quando não há permalink específico).
+  "Porto Alegre": ["Climada Evento 2024", "Cenário ADA"],
   "Rio Grande": ["Cenário Maio 2024", "Cenário Maio 2024 + 50%"],
 }
 
@@ -301,7 +303,7 @@ export const STAFF_LABELS: Record<string, string> = {
 export const PIORES_CENARIOS: Record<string, string> = {
   "Eldorado do Sul": "Cenário ADA",
   Lajeado: "Cenário 27m",
-  "Porto Alegre": "Cenário ADA",
+  "Porto Alegre": "Climada Evento 2024",
   "Rio Grande": "Cenário Maio 2024",
 }
 
@@ -333,3 +335,14 @@ export const DANO_FISICO_COLOR_STOPS: (string | number)[] = [
   80, "#dc2626",
   100, "#7f1d1d",
 ]
+
+// ── Mancha por Duração (CLIMADA, evento real maio/2024) ─────────────────────
+// Só existe para o cenário "Climada Evento 2024" em Porto Alegre -- é o único
+// dado por pixel disponível para esse evento observado (o CLIMADA só tem
+// profundidade para os cenários sintéticos RP10..RP500, usados na camada Dano
+// Físico acima; ver pipeline/gerar_mancha_duracao_climada.py). Paleta azul
+// (Blues), deliberadamente distinta das demais (plasma da população,
+// vermelho/laranja dos heatmaps e do Dano Físico).
+export const MANCHA_DURACAO_CENARIO = "Climada Evento 2024"
+export const MANCHA_DURACAO_GRADIENT_CSS =
+  "linear-gradient(to right, #f7fbff, #c6dbef, #6baed6, #2171b5, #08306b)"

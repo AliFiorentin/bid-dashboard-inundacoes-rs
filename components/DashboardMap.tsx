@@ -15,6 +15,7 @@ import {
   AGRI_BOUNDS,
   AGRI_COLORS,
   DANO_FISICO_COLOR_STOPS,
+  MANCHA_DURACAO_CENARIO,
 } from "@/lib/constants"
 import { slugify } from "@/lib/geo-utils"
 import { MapPopup } from "@/components/MapPopup"
@@ -70,6 +71,7 @@ export function DashboardMap({ dash }: Props) {
     danoFisicoEmpresas,
     danoFisicoEducacao,
     danoFisicoSaude,
+    manchaDuracaoClimada,
     cameraVeioDoLink,
   } = dash
 
@@ -78,6 +80,16 @@ export function DashboardMap({ dash }: Props) {
   // estimado no RP selecionado -- ver lib/constants.ts (DANO_FISICO_MUNICIPIO:
   // só Porto Alegre tem o raster de profundidade que esse cálculo exige).
   const mostraDanoFisico = showDanoFisico && renderMunicipio === "Porto Alegre" && !isTransitioning
+
+  // Cenário "Climada Evento 2024" (evento real de maio/2024): a mancha ganha
+  // uma textura de duração de alagamento (dias) por cima do polígono de
+  // extensão -- único dado por pixel que existe para esse evento (ver
+  // lib/constants.ts, MANCHA_DURACAO_CENARIO e pipeline/gerar_mancha_duracao_climada.py).
+  const mostraDuracaoClimada =
+    renderMunicipio === "Porto Alegre" && cenario === MANCHA_DURACAO_CENARIO && !isTransitioning
+  const duracaoImgUrl = manchaDuracaoClimada
+    ? "/dados_convertidos/porto_alegre/mancha_duracao_climada_evento_2024.png"
+    : null
 
   const popMunData =
     !isVisaoGeral && !isTransitioning ? popData?.[renderMunicipio] : null
@@ -391,8 +403,11 @@ export function DashboardMap({ dash }: Props) {
               beforeId="anchor-mancha"
               type="fill"
               paint={{
+                // Com a textura de duração por cima (mostraDuracaoClimada), o
+                // preenchimento fica quase invisível -- só a linha de contorno
+                // abaixo segue marcando a extensão da mancha com nitidez.
                 "fill-color": COLORS.cenario,
-                "fill-opacity": is3D ? 0.45 : 0.25,
+                "fill-opacity": mostraDuracaoClimada ? 0.05 : (is3D ? 0.45 : 0.25),
               }}
             />
             <Layer
@@ -404,6 +419,24 @@ export function DashboardMap({ dash }: Props) {
                 "line-width": 2,
                 "line-opacity": 0.8,
               }}
+            />
+          </Source>
+        )}
+
+        {/* Textura de duração de alagamento (dias) -- só "Climada Evento
+            2024" em Porto Alegre, por cima do contorno acima. */}
+        {mostraDuracaoClimada && showMancha && duracaoImgUrl && manchaDuracaoClimada && (
+          <Source
+            id="duracao-climada-img"
+            type="image"
+            url={duracaoImgUrl}
+            coordinates={manchaDuracaoClimada.coordinates}
+          >
+            <Layer
+              id="duracao-climada-raster"
+              beforeId="anchor-mancha"
+              type="raster"
+              paint={{ "raster-opacity": 0.85, "raster-resampling": "nearest" }}
             />
           </Source>
         )}
