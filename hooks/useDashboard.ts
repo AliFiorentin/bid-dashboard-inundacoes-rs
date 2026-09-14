@@ -117,7 +117,6 @@ export function useDashboard() {
   const [allMunAgriAtingidosStats, setAllMunAgriAtingidosStats] = useState<Record<string, Record<string, number>> | null>(null);
   const [allMunInfraStats, setAllMunInfraStats] = useState<Record<string, Record<string, InfraStatsEntry>> | null>(null);
   const [manchaRS, setManchaRS] = useState<FeatureCollection | null>(null);
-  const [danosData, setDanosData] = useState<import("@/components/tabs/DanosTab").DanosData | null>(null);
   const [popData, setPopData] = useState<PopulacaoData | null>(null);
   const [areaData, setAreaData] = useState<AreaAtingidaData | null>(null);
 
@@ -141,20 +140,17 @@ export function useDashboard() {
   const [showHeatmapEmpresas, setShowHeatmapEmpresas] = useState<boolean>(false);
   const [showHeatmapSaude, setShowHeatmapSaude] = useState<boolean>(false);
   const [showHeatmapEducacao, setShowHeatmapEducacao] = useState<boolean>(false);
+  const [showDanoFisico, setShowDanoFisico] = useState<boolean>(false);
+  const [rpDanoFisico, setRpDanoFisico] = useState<string>("RP200");
+  const [danoFisicoEmpresas, setDanoFisicoEmpresas] = useState<FeatureCollection | null>(null);
+  const [danoFisicoEducacao, setDanoFisicoEducacao] = useState<FeatureCollection | null>(null);
+  const [danoFisicoSaude, setDanoFisicoSaude] = useState<FeatureCollection | null>(null);
   const [showListaEscolas, setShowListaEscolas] = useState(false);
   const [showListaHospitais, setShowListaHospitais] = useState(false);
   const [showListaUBS, setShowListaUBS] = useState(false);
   const [showListaAmbulat, setShowListaAmbulat] = useState(false);
   const [showListaLogradouros, setShowListaLogradouros] = useState(false);
   const [showListaEixos, setShowListaEixos] = useState(false);
-
-  useEffect(() => {
-    fetch("/dados_convertidos/danos_operacionais.json")
-      .then(r => r.ok ? r.json() : null)
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      .then(d => d && setDanosData(d))
-      .catch(() => {/* silently ignore if file not available */});
-  }, []);
 
   useEffect(() => {
     fetch("/dados_convertidos/populacao_atingida.json")
@@ -169,6 +165,38 @@ export function useDashboard() {
       .then(d => d && setAreaData(d))
       .catch(() => {});
   }, []);
+
+  // Camada "Dano Físico (CLIMADA)" -- so' existe para Porto Alegre (ver
+  // lib/constants.ts, DANO_FISICO_MUNICIPIO). Carregada sob demanda (so'
+  // quando o toggle e' ligado) porque os 3 arquivos somados ja' tem um volume
+  // razoavel (saude sozinho tem ~7 mil pontos x 7 RPs de propriedades).
+  useEffect(() => {
+    if (!showDanoFisico || municipio !== "Porto Alegre") return;
+    if (danoFisicoEmpresas || danoFisicoEducacao || danoFisicoSaude) return; // ja carregado nesta sessao
+
+    const controller = new AbortController();
+    const { signal } = controller;
+    Promise.all([
+      fetch("/dados_convertidos/porto_alegre/empresas_dano_fisico_climada.geojson", { signal }).then(r => r.ok ? r.json() : null),
+      fetch("/dados_convertidos/porto_alegre/educacao_dano_fisico_climada.geojson", { signal }).then(r => r.ok ? r.json() : null),
+      fetch("/dados_convertidos/porto_alegre/saude_dano_fisico_climada.geojson", { signal }).then(r => r.ok ? r.json() : null),
+    ]).then(([emp, edu, sau]) => {
+      if (signal.aborted) return;
+      setDanoFisicoEmpresas(emp); setDanoFisicoEducacao(edu); setDanoFisicoSaude(sau);
+    }).catch(e => { if ((e as Error).name !== 'AbortError') console.error(e); });
+
+    return () => controller.abort();
+  }, [showDanoFisico, municipio, danoFisicoEmpresas, danoFisicoEducacao, danoFisicoSaude]);
+
+  // Desliga a camada e libera os dados ao sair de Porto Alegre -- nos outros
+  // municipios ela nao tem sentido (sem raster de profundidade) nem dado pra
+  // mostrar.
+  useEffect(() => {
+    if (municipio === "Porto Alegre") return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setShowDanoFisico(false);
+    setDanoFisicoEmpresas(null); setDanoFisicoEducacao(null); setDanoFisicoSaude(null);
+  }, [municipio]);
 
   const hasFlownInitial = useRef(false);
   // O <Map> do react-map-gl cria a instância maplibre de forma assíncrona: o
@@ -718,9 +746,15 @@ export function useDashboard() {
 
   const interactiveLayerIds = useMemo(() => {
     const ids: string[] = [];
-    if (camadas.includes("Empresas") && renderEmp?.features) ids.push("empresas-cluster", "empresas-point");
-    if (camadas.includes("Educação") && renderEdu?.features) ids.push("educacao-cluster", "educacao-point");
-    if (camadas.includes("Saúde") && renderSau?.features) ids.push("saude-cluster", "saude-point");
+    const mostraDanoFisico = showDanoFisico && renderMunicipio === "Porto Alegre";
+    if (camadas.includes("Empresas") && renderEmp?.features && !mostraDanoFisico) ids.push("empresas-cluster", "empresas-point");
+    if (camadas.includes("Educação") && renderEdu?.features && !mostraDanoFisico) ids.push("educacao-cluster", "educacao-point");
+    if (camadas.includes("Saúde") && renderSau?.features && !mostraDanoFisico) ids.push("saude-cluster", "saude-point");
+    if (mostraDanoFisico) {
+      if (camadas.includes("Empresas") && danoFisicoEmpresas?.features) ids.push("dano-fisico-empresas-point");
+      if (camadas.includes("Educação") && danoFisicoEducacao?.features) ids.push("dano-fisico-educacao-point");
+      if (camadas.includes("Saúde") && danoFisicoSaude?.features) ids.push("dano-fisico-saude-point");
+    }
     if (camadas.includes("Infraestrutura") && !isVisaoGeral) {
       infraAtivas.forEach(nomeInfra => {
         const dataGeo = isCenarioAtivo ? atingidosInfra[nomeInfra] : baseInfra[nomeInfra];
@@ -731,7 +765,7 @@ export function useDashboard() {
       });
     }
     return ids;
-  }, [camadas, renderEmp, renderEdu, renderSau, baseInfra, atingidosInfra, infraAtivas, isVisaoGeral, isCenarioAtivo]);
+  }, [camadas, renderEmp, renderEdu, renderSau, baseInfra, atingidosInfra, infraAtivas, isVisaoGeral, isCenarioAtivo, showDanoFisico, renderMunicipio, danoFisicoEmpresas, danoFisicoEducacao, danoFisicoSaude]);
 
   const handleMapClick = (event: MapLayerMouseEvent) => {
     const feature = event.features && event.features[0];
@@ -842,6 +876,9 @@ export function useDashboard() {
     showHeatmapEmpresas, setShowHeatmapEmpresas,
     showHeatmapSaude, setShowHeatmapSaude,
     showHeatmapEducacao, setShowHeatmapEducacao,
+    showDanoFisico, setShowDanoFisico,
+    rpDanoFisico, setRpDanoFisico,
+    danoFisicoEmpresas, danoFisicoEducacao, danoFisicoSaude,
     showListaEscolas, setShowListaEscolas,
     showListaHospitais, setShowListaHospitais,
     showListaUBS, setShowListaUBS,
@@ -859,7 +896,6 @@ export function useDashboard() {
     toggleCamada, toggleInfra, toggleMenuInfra,
     handleMapClick,
     exportarExcel,
-    danosData,
     popData,
     areaData,
     // geo-utils re-exports needed in JSX

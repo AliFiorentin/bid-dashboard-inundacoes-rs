@@ -14,6 +14,7 @@ import {
   INFRA_COLORS,
   AGRI_BOUNDS,
   AGRI_COLORS,
+  DANO_FISICO_COLOR_STOPS,
 } from "@/lib/constants"
 import { slugify } from "@/lib/geo-utils"
 import { MapPopup } from "@/components/MapPopup"
@@ -64,8 +65,19 @@ export function DashboardMap({ dash }: Props) {
     showHeatmapEmpresas,
     showHeatmapSaude,
     showHeatmapEducacao,
+    showDanoFisico,
+    rpDanoFisico,
+    danoFisicoEmpresas,
+    danoFisicoEducacao,
+    danoFisicoSaude,
     cameraVeioDoLink,
   } = dash
+
+  // Ligada, a camada "Dano Físico (CLIMADA)" substitui os pontos padrão de
+  // Empresas/Educação/Saúde (cor fixa) pelos mesmos pontos coloridos por dano
+  // estimado no RP selecionado -- ver lib/constants.ts (DANO_FISICO_MUNICIPIO:
+  // só Porto Alegre tem o raster de profundidade que esse cálculo exige).
+  const mostraDanoFisico = showDanoFisico && renderMunicipio === "Porto Alegre" && !isTransitioning
 
   const popMunData =
     !isVisaoGeral && !isTransitioning ? popData?.[renderMunicipio] : null
@@ -285,6 +297,7 @@ export function DashboardMap({ dash }: Props) {
             <MapPopup
               source={popupInfo.source}
               properties={popupInfo.properties}
+              rp={rpDanoFisico}
             />
           </Popup>
         )}
@@ -664,7 +677,7 @@ export function DashboardMap({ dash }: Props) {
           </Source>
         )}
 
-        {camadas.includes("Empresas") && renderEmp?.features && (
+        {camadas.includes("Empresas") && renderEmp?.features && !mostraDanoFisico && (
           <Source
             id="empresas"
             type="geojson"
@@ -721,7 +734,7 @@ export function DashboardMap({ dash }: Props) {
           </Source>
         )}
 
-        {camadas.includes("Educação") && renderEdu?.features && (
+        {camadas.includes("Educação") && renderEdu?.features && !mostraDanoFisico && (
           <Source
             id="educacao"
             type="geojson"
@@ -778,7 +791,7 @@ export function DashboardMap({ dash }: Props) {
           </Source>
         )}
 
-        {camadas.includes("Saúde") && renderSau?.features && (
+        {camadas.includes("Saúde") && renderSau?.features && !mostraDanoFisico && (
           <Source
             id="saude"
             type="geojson"
@@ -830,6 +843,66 @@ export function DashboardMap({ dash }: Props) {
                 "circle-stroke-width": 1.5,
                 "circle-stroke-color": "#fff",
                 "circle-translate": isVisaoGeral ? [12, 8] : [0, 0],
+              }}
+            />
+          </Source>
+        )}
+
+        {/* Dano Físico (CLIMADA, protótipo) -- substitui os 3 pontos acima quando
+            ligada (ver mostraDanoFisico): mesma geometria, cor por dano estimado
+            (%) no RP selecionado em vez de cor fixa por setor. Sem clustering
+            (precisamos do valor por ponto individual, não de uma contagem
+            agregada). */}
+        {mostraDanoFisico && camadas.includes("Empresas") && danoFisicoEmpresas?.features && (
+          <Source id="dano-fisico-empresas" type="geojson" data={danoFisicoEmpresas}>
+            <Layer
+              id="dano-fisico-empresas-point"
+              type="circle"
+              paint={{
+                "circle-color": [
+                  "interpolate", ["linear"],
+                  ["coalesce", ["get", `dano_fisico_pct_${rpDanoFisico}`], 0],
+                  ...DANO_FISICO_COLOR_STOPS,
+                ],
+                "circle-radius": 5,
+                "circle-stroke-width": 1.5,
+                "circle-stroke-color": COLORS.empresas,
+              }}
+            />
+          </Source>
+        )}
+        {mostraDanoFisico && camadas.includes("Educação") && danoFisicoEducacao?.features && (
+          <Source id="dano-fisico-educacao" type="geojson" data={danoFisicoEducacao}>
+            <Layer
+              id="dano-fisico-educacao-point"
+              type="circle"
+              paint={{
+                "circle-color": [
+                  "interpolate", ["linear"],
+                  ["coalesce", ["get", `dano_fisico_pct_${rpDanoFisico}`], 0],
+                  ...DANO_FISICO_COLOR_STOPS,
+                ],
+                "circle-radius": 5,
+                "circle-stroke-width": 1.5,
+                "circle-stroke-color": COLORS.educacao,
+              }}
+            />
+          </Source>
+        )}
+        {mostraDanoFisico && camadas.includes("Saúde") && danoFisicoSaude?.features && (
+          <Source id="dano-fisico-saude" type="geojson" data={danoFisicoSaude}>
+            <Layer
+              id="dano-fisico-saude-point"
+              type="circle"
+              paint={{
+                "circle-color": [
+                  "interpolate", ["linear"],
+                  ["coalesce", ["get", `dano_fisico_pct_${rpDanoFisico}`], 0],
+                  ...DANO_FISICO_COLOR_STOPS,
+                ],
+                "circle-radius": 4,
+                "circle-stroke-width": 1.5,
+                "circle-stroke-color": COLORS.saude,
               }}
             />
           </Source>

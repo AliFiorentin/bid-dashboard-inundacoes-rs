@@ -429,5 +429,88 @@
       "RP200",
       "RP500"
     ]
+  },
+  "projecao_2050": {
+    "premissas": {
+      "crescimento_anual": 0.02,
+      "anos_projecao": 25,
+      "fator_crescimento": 1.6406,
+      "crescimento_fonte": "report_brazil_adaptation_exercise_pt.tex (exercicio CLIMADA original): \"mesma taxa de crescimento economico de 2% ao ano\" para os 3 ativos, 2025-2050",
+      "rp_remapeamento_fonte": "D:\\Projetos\\Climada\\climada-brazil-adaptation\\data\\hazard\\porto_alegre_rp_mapping_2025_2050.csv (tabela oficial do exercicio CLIMADA)",
+      "rp_remapeamento": {
+        "RP10": {
+          "freq_hist": 0.1,
+          "freq_2050": 0.2,
+          "rp_futuro_equivalente": 5
+        },
+        "RP20": {
+          "freq_hist": 0.05,
+          "freq_2050": 0.1,
+          "rp_futuro_equivalente": 10
+        },
+        "RP50": {
+          "freq_hist": 0.02,
+          "freq_2050": 0.05,
+          "rp_futuro_equivalente": 20
+        },
+        "RP100": {
+          "freq_hist": 0.01,
+          "freq_2050": 0.02,
+          "rp_futuro_equivalente": 50
+        },
+        "RP200": {
+          "freq_hist": 0.005,
+          "freq_2050": 0.01,
+          "rp_futuro_equivalente": 100
+        },
+        "RP500": {
+          "freq_hist": 0.002,
+          "freq_2050": 0.005,
+          "rp_futuro_equivalente": 200
+        }
+      },
+      "rps_usados": [
+        "RP10",
+        "RP20",
+        "RP50",
+        "RP100",
+        "RP200",
+        "RP500"
+      ]
+    },
+    "por_setor": {
+      "empresas": {
+        "risco_2025_brl": 206737979.68,
+        "risco_2050_brl": 432505183.76,
+        "aumento_total_brl": 225767204.08,
+        "parcela_crescimento_brl": 132437589.06,
+        "parcela_clima_brl": 93329615.02,
+        "pct_climatico": 41.3
+      },
+      "educacao": {
+        "risco_2025_brl": 17038632.06,
+        "risco_2050_brl": 37405150.02,
+        "aumento_total_brl": 20366517.96,
+        "parcela_crescimento_brl": 10915049.84,
+        "parcela_clima_brl": 9451468.12,
+        "pct_climatico": 46.4
+      },
+      "saude": {
+        "risco_2025_brl": 5334289.73,
+        "risco_2050_brl": 10763535.7,
+        "aumento_total_brl": 5429245.97,
+        "parcela_crescimento_brl": 3417177.98,
+        "parcela_clima_brl": 2012067.99,
+        "pct_climatico": 37.1
+      }
+    },
+    "total": {
+      "risco_2025_brl": 229110901.47,
+      "risco_2050_brl": 480673869.48,
+      "aumento_total_brl": 251562968.01,
+      "parcela_crescimento_brl": 146769816.88,
+      "parcela_clima_brl": 104793151.13,
+      "pct_climatico": 41.7
+    }
   }
 }

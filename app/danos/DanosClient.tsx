@@ -48,7 +48,29 @@ export interface EaiAnualEsperado {
   total: number;
   rps_usados: string[];
 }
+export interface ProjecaoSetor {
+  risco_2025_brl: number;
+  risco_2050_brl: number;
+  aumento_total_brl: number;
+  parcela_crescimento_brl: number;
+  parcela_clima_brl: number;
+  pct_climatico: number;
+}
+export interface Projecao2050 {
+  premissas: {
+    crescimento_anual: number;
+    anos_projecao: number;
+    fator_crescimento: number;
+    crescimento_fonte: string;
+    rp_remapeamento_fonte: string;
+    rp_remapeamento: Record<string, { freq_hist: number; freq_2050: number; rp_futuro_equivalente: number }>;
+    rps_usados: string[];
+  };
+  por_setor: Record<string, ProjecaoSetor>;
+  total: ProjecaoSetor;
+}
 export interface ClimadaData {
+  projecao_2050?: Projecao2050 | null;
   premissas: {
     poa_calibration_factor: number;
     cub_comercial_rs: number;
@@ -347,8 +369,9 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
                 ] : [
                   ["#c-resumo",       "1. Resumo"],
                   ["#c-eai",          "2. Risco Anual Esperado"],
-                  ["#c-comparativo",  "3. Comparativo por RP"],
-                  ["#c-limitacoes",   "4. Limitações"],
+                  ["#c-projecao",     "3. Projeção 2025→2050"],
+                  ["#c-comparativo",  "4. Comparativo por RP"],
+                  ["#c-limitacoes",   "5. Limitações"],
                 ] as [string, string][]).map(([href, label]) => (
                   <li key={href}>
                     <a href={href} className="text-[11px] text-[#055071] font-medium hover:underline underline-offset-4 transition-colors duration-150 leading-snug block py-0.5">
@@ -754,9 +777,91 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
         )}
 
         {/* ══════════════════════════════════════════════════════════════════
-            SEÇÃO 3 — COMPARATIVO POR RP
+            SEÇÃO 3 — PROJEÇÃO 2025→2050 (crescimento x clima)
         ══════════════════════════════════════════════════════════════════ */}
-        <Section id="c-comparativo" num="3" title="Comparativo por Período de Retorno">
+        {dadosClimada.projecao_2050 && (
+          <Section id="c-projecao" num="3" title="Projeção 2025→2050">
+            <p>
+              As seções anteriores mostram o risco de <strong>hoje</strong> (2025). Esta projeção
+              estima como esse risco muda até 2050, decomposto em dois motores independentes: o{" "}
+              <strong>crescimento econômico</strong> (mais patrimônio exposto, mesma lâmina d&apos;água)
+              e a <strong>mudança climática</strong> (eventos ficam mais frequentes — a lâmina d&apos;água
+              de hoje passa a ocorrer com frequência maior). Replica a decomposição que o próprio
+              exercício CLIMADA destaca como resultado central (ver{" "}
+              <a href="/metodologia#dano-fisico" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Metodologia</a>).
+            </p>
+
+            {(() => {
+              const t = dadosClimada.projecao_2050!.total;
+              const premissas = dadosClimada.projecao_2050!.premissas;
+              return (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-5">
+                    <div className="bg-white border border-[#b3cdd8] rounded-xl overflow-hidden shadow-sm">
+                      <div className="px-4 py-3" style={{ backgroundColor: "#055071" }}>
+                        <p className="text-[10px] font-black uppercase tracking-wider text-white/70 mb-0.5">Risco anual esperado</p>
+                        <p className="text-2xl font-black text-white leading-none">
+                          {fmtBRL(t.risco_2025_brl)} <span className="text-sm opacity-60">→</span> {fmtBRL(t.risco_2050_brl)}
+                        </p>
+                        <p className="text-[9px] text-white/60 font-mono mt-1">2025 → 2050 · {premissas.rps_usados.length} RPs com remapeamento oficial</p>
+                      </div>
+                      <div className="px-4 py-4 grid grid-cols-1 gap-y-1.5">
+                        <KpiRow label="Aumento total" value={`${fmtBRL(t.aumento_total_brl)}/ano`} sub="2025→2050" color="#055071" />
+                        <KpiRow label="Por crescimento econômico" value={`${fmtBRL(t.parcela_crescimento_brl)}/ano`} sub={`${(100 - t.pct_climatico).toFixed(0)}% do aumento`} color="#2563eb" />
+                        <KpiRow label="Por mudança climática" value={`${fmtBRL(t.parcela_clima_brl)}/ano`} sub={`${t.pct_climatico.toFixed(0)}% do aumento`} color="#dc2626" />
+                      </div>
+                    </div>
+
+                    <div className="bg-white border border-[#b3cdd8] rounded-xl p-4 shadow-sm">
+                      <p className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94] mb-2">Premissas</p>
+                      <div className="flex flex-col gap-1.5 text-[11px]">
+                        <div className="flex justify-between border-t border-slate-100 pt-1 first:border-t-0 first:pt-0">
+                          <span className="text-slate-500">Crescimento econômico</span>
+                          <span className="font-bold text-slate-700">{(premissas.crescimento_anual * 100).toFixed(0)}%/ano · {premissas.anos_projecao} anos (×{premissas.fator_crescimento.toFixed(2)})</span>
+                        </div>
+                        <div className="flex justify-between border-t border-slate-100 pt-1">
+                          <span className="text-slate-500">RPs usados</span>
+                          <span className="font-bold text-slate-700">{premissas.rps_usados.join(", ")}</span>
+                        </div>
+                      </div>
+                      <p className="text-[10px] text-slate-400 mt-2 leading-relaxed">{premissas.crescimento_fonte}</p>
+                    </div>
+                  </div>
+
+                  <SubTitle>Decomposição por setor</SubTitle>
+                  <DataTable rows={[
+                    ["Setor", "Risco 2025", "Risco 2050", "Crescimento", "Clima", "% climático"],
+                    ...climadaSetores.map((s) => {
+                      const ps = dadosClimada.projecao_2050!.por_setor[s];
+                      return [
+                        SETOR_LABEL[s],
+                        fmtBRL(ps.risco_2025_brl),
+                        fmtBRL(ps.risco_2050_brl),
+                        fmtBRL(ps.parcela_crescimento_brl),
+                        fmtBRL(ps.parcela_clima_brl),
+                        `${ps.pct_climatico.toFixed(0)}%`,
+                      ];
+                    }),
+                  ]} />
+
+                  <Note type="info">
+                    Como não há raster de profundidade futuro (o exercício original também não tem),
+                    a lâmina d&apos;água de cada RP é mantida igual: o efeito de crescimento escala o
+                    valor de reposição (mesma profundidade, patrimônio maior), e o efeito climático
+                    só troca a frequência associada a essa mesma lâmina — não é uma simulação de
+                    chuvas mais intensas em 2050, só de eventos historicamente raros se tornando mais
+                    comuns. Ver <a href="/metodologia#dano-fisico" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Metodologia</a> para o remapeamento RP completo.
+                  </Note>
+                </>
+              );
+            })()}
+          </Section>
+        )}
+
+        {/* ══════════════════════════════════════════════════════════════════
+            SEÇÃO 4 — COMPARATIVO POR RP
+        ══════════════════════════════════════════════════════════════════ */}
+        <Section id="c-comparativo" num="4" title="Comparativo por Período de Retorno">
           <p>
             Quanto maior o período de retorno (RP), mais rara e mais severa a inundação modelada,
             e maior a área/profundidade atingida. O gráfico mostra o dano físico total (3 setores)
@@ -805,7 +910,7 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
             foi movida para /metodologia#dano-fisico; aqui ficam as limitações
             específicas destes resultados, como pedido)
         ══════════════════════════════════════════════════════════════════ */}
-        <Section id="c-limitacoes" num="4" title="Limitações">
+        <Section id="c-limitacoes" num="5" title="Limitações">
           <Note type="warning">
             Estes números são um <strong>protótipo</strong> para explorar a viabilidade de aplicar a
             metodologia CLIMADA/CCDR (destruição de estoque) em cima dos nossos próprios dados

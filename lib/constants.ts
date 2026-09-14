@@ -313,3 +313,23 @@ export const PIORES_CENARIOS: Record<string, string> = {
 // entrada própria "Visão Geral RS" em area_atingida.json.
 export const AREA_VISAO_GERAL_LABEL = "Visão Geral RS"
 export const AREA_VISAO_GERAL_CENARIO = "ADA Estadual"
+
+// ── Dano Físico (CLIMADA, protótipo) — camada de mapa ───────────────────────
+// Só existe para Porto Alegre: é o único município com raster de profundidade
+// (ver pipeline/climada_risco_prototipo.py) -- os outros 3 só têm polígono de
+// extensão da mancha (atingido sim/não), sem lâmina d'água por ponto.
+export const DANO_FISICO_MUNICIPIO = "Porto Alegre"
+export const DANO_FISICO_RPS = ["RP10", "RP20", "RP50", "RP75", "RP100", "RP200", "RP500"] as const
+export const DANO_FISICO_SETORES = ["empresas", "educacao", "saude"] as const
+
+// Rampa de cor por "% do valor de reposição destruído" (0-100), usada no
+// circle-color (interpolate) da camada -- do cinza (sem dano) ao vermelho
+// escuro (destruição quase total), mesma leitura de calor das demais camadas.
+export const DANO_FISICO_COLOR_STOPS: (string | number)[] = [
+  0, "#cbd5e1",
+  5, "#93c5fd",
+  20, "#fbbf24",
+  50, "#f97316",
+  80, "#dc2626",
+  100, "#7f1d1d",
+]

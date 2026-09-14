@@ -30,6 +30,7 @@ export default function Dashboard() {
     isVisaoGeral,
     renderEmp, renderEdu, renderSau,
     popData,
+    showDanoFisico, rpDanoFisico, renderMunicipio,
   } = dash;
 
   return (
@@ -110,9 +111,26 @@ export default function Dashboard() {
           </button>
           {showLegenda && (
             <div className="flex flex-col gap-1.5 px-2.5 py-2.5">
-              {camadas.includes("Empresas") && renderEmp?.features && <LegendItem cor={COLORS.empresas} label="Empresas" />}
-              {camadas.includes("Educação") && renderEdu?.features && <LegendItem cor={COLORS.educacao} label="Educação" />}
-              {camadas.includes("Saúde") && renderSau?.features && <LegendItem cor={COLORS.saude} label="Saúde" />}
+              {showDanoFisico && renderMunicipio === "Porto Alegre" ? (
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <div className="w-16 h-3 rounded-sm shrink-0" style={{ background: "linear-gradient(to right, #cbd5e1, #93c5fd, #fbbf24, #f97316, #dc2626, #7f1d1d)" }} />
+                    <div className="flex flex-col leading-none gap-0.5">
+                      <span className="text-[10px] text-slate-700 font-medium">Dano Físico (CLIMADA) · {rpDanoFisico}</span>
+                      <span className="text-[8px] text-slate-400">0% → 100% do valor de reposição</span>
+                    </div>
+                  </div>
+                  <span className="text-[8px] leading-tight text-slate-400 max-w-[180px]">
+                    Protótipo exploratório — ver página de Danos para detalhes e limitações.
+                  </span>
+                </div>
+              ) : (
+                <>
+                  {camadas.includes("Empresas") && renderEmp?.features && <LegendItem cor={COLORS.empresas} label="Empresas" />}
+                  {camadas.includes("Educação") && renderEdu?.features && <LegendItem cor={COLORS.educacao} label="Educação" />}
+                  {camadas.includes("Saúde") && renderSau?.features && <LegendItem cor={COLORS.saude} label="Saúde" />}
+                </>
+              )}
               {camadas.includes("Agricultura") && !isVisaoGeral && AGRI_BOUNDS[municipio] && Object.entries(AGRI_COLORS).map(([tipo, cor]) => (
                 <LegendItem key={`agri-${tipo}`} cor={cor} label={tipo} area />
               ))}
