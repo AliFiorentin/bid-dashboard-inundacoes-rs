@@ -1,3 +1,5 @@
+import { PANEL_CARD_BG } from "@/lib/constants";
+
 interface KPIRowProps {
   titulo: string;
   valor: string | number;
@@ -25,11 +27,11 @@ export function KPIRow({ titulo, valor, sub, delta, cor }: KPIRowProps) {
           {titulo}
         </span>
       </div>
-      <div className="flex items-center justify-between gap-3 px-3 py-2.5">
+      <div className="flex items-center justify-between gap-3 px-3 py-2.5" style={{ backgroundColor: PANEL_CARD_BG }}>
         <div className="flex flex-col min-w-0">
-          <span className="text-[10px] leading-none text-muted-foreground">{sub}</span>
+          <span className="text-[11px] font-bold leading-none" style={{ color: "#0a4a63" }}>{sub}</span>
           {delta && (
-            <span className="mt-1 text-[9px] font-medium text-muted-foreground">{delta}</span>
+            <span className="mt-1 text-[10px] font-semibold leading-none" style={{ color: "#3d6478" }}>{delta}</span>
           )}
         </div>
         <span className="text-2xl font-black shrink-0 leading-none" style={{ color: "#022536" }}>

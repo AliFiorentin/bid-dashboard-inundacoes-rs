@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { readFileSync } from "fs";
 import { join } from "path";
 import { DanosClient } from "./DanosClient";
-import type { DanosData } from "./DanosClient";
+import type { DanosData, ClimadaData } from "./DanosClient";
 
 export const metadata: Metadata = {
-  title: "Danos Operacionais — Avaliação de Impactos Socioeconômicos RS",
-  description: "Estimativa de perdas econômicas operacionais causadas pelas enchentes no Rio Grande do Sul — metodologia DaLA/CEPAL.",
+  title: "Danos & Risco — Avaliação de Impactos Socioeconômicos RS",
+  description: "Estimativa de perdas econômicas operacionais (DaLA/CEPAL) e protótipo de dano físico estimado (CLIMADA) causados pelas enchentes no Rio Grande do Sul.",
 };
 
 export default function DanosPage() {
@@ -16,5 +16,11 @@ export default function DanosPage() {
     dados = JSON.parse(readFileSync(p, "utf8"));
   } catch { /* graceful degradation */ }
 
-  return <DanosClient dados={dados} />;
+  let dadosClimada: ClimadaData | null = null;
+  try {
+    const p = join(process.cwd(), "public", "dados_convertidos", "climada_dano_fisico_prototipo.json");
+    dadosClimada = JSON.parse(readFileSync(p, "utf8"));
+  } catch { /* graceful degradation */ }
+
+  return <DanosClient dados={dados} dadosClimada={dadosClimada} />;
 }

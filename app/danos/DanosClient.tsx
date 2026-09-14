@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import katex from "katex";
-import { TrendingDown } from "lucide-react";
+import { TrendingDown, FlaskConical } from "lucide-react";
+import { HeaderLogos } from "@/components/HeaderLogos";
 
-// ─── Tipos ────────────────────────────────────────────────────────────────────
+// ─── Tipos — Danos Operacionais (DaLA) ─────────────────────────────────────────
 export interface CenarioDanos {
   dias_agudo: number;
   dias_efetivos: number;
@@ -18,7 +19,68 @@ export interface CenarioDanos {
 }
 export type DanosData = Record<string, Record<string, CenarioDanos>>;
 
-// ─── Constantes visuais ───────────────────────────────────────────────────────
+// ─── Tipos — CLIMADA (protótipo) ───────────────────────────────────────────────
+export interface SetorResultado {
+  setor: string;
+  n_total: number;
+  n_atingidos_profundidade_gt_0: number;
+  profundidade_media_atingidos_m: number;
+  profundidade_max_m: number;
+  valor_unitario_brl: number;
+  exposicao_total_brl: number;
+  dano_fisico_total_brl: number;
+  dano_fisico_pct_exposicao: number;
+  fonte_curva: string;
+  porte_campo: string;
+}
+export interface CurvaInfo {
+  depth: number[];
+  mdd: number[];
+  porte_campo: string;
+  fonte: string;
+  reposicao_fonte: string;
+}
+export interface EaiAnualEsperado {
+  empresas: number;
+  educacao: number;
+  saude: number;
+  total: number;
+  rps_usados: string[];
+}
+export interface ClimadaData {
+  premissas: {
+    poa_calibration_factor: number;
+    cub_comercial_rs: number;
+    cub_institucional_rs: number;
+    cub_industrial_rs: number;
+    cub_fonte: string;
+    cnae_industria_fonte: string;
+    n_empresas_industria: number;
+    n_empresas_total: number;
+    area_m2_por_pessoa: number;
+    area_m2_por_pessoa_fonte: string;
+    area_escola_padrao_m2: number;
+    area_escola_padrao_fonte: string;
+    valor_escola_padrao_brl: number;
+    area_por_sala_m2: number;
+    area_por_sala_fonte: string;
+    turnos_padrao: number;
+    lotacao_infantil: number;
+    lotacao_fundamental: number;
+    lotacao_medio: number;
+    lotacao_fonte: string;
+    conteudo_fonte: string;
+    multiplicador_empresas: number;
+    multiplicador_empresas_industria: number;
+    multiplicador_saude: number;
+    multiplicador_educacao: number;
+    curvas: Record<string, CurvaInfo>;
+  };
+  resultados_por_rp: Record<string, Record<string, SetorResultado>>;
+  eai_anual_esperado: EaiAnualEsperado | null;
+}
+
+// ─── Constantes visuais — Danos Operacionais ───────────────────────────────────
 const MUN_COLORS: Record<string, string> = {
   "Eldorado do Sul": "#055071",
   "Lajeado":         "#2da8cc",
@@ -34,7 +96,20 @@ const COMP_COLORS = {
 const DIAS_OPCOES = [30, 45, 60] as const;
 type DiasOpcao = (typeof DIAS_OPCOES)[number];
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Constantes visuais — CLIMADA ───────────────────────────────────────────────
+const SETOR_LABEL: Record<string, string> = { empresas: "Empresas", educacao: "Educação", saude: "Saúde" };
+const SETOR_COLORS: Record<string, string> = { empresas: "#055071", educacao: "#2da8cc", saude: "#e35d4b" };
+const RP_ORDER = ["RP10", "RP20", "RP50", "RP75", "RP100", "RP200", "RP500"];
+const RP_ANOS: Record<string, string> = {
+  RP10: "10 anos", RP20: "20 anos", RP50: "50 anos", RP75: "75 anos",
+  RP100: "100 anos", RP200: "200 anos", RP500: "500 anos",
+};
+const RP_PROBABILIDADE: Record<string, string> = {
+  RP10: "10%", RP20: "5%", RP50: "2%", RP75: "1,3%",
+  RP100: "1%", RP200: "0,5%", RP500: "0,2%",
+};
+
+// ─── Helpers ────────────────────────────────────────────────────────────────────
 function fmtBRL(v: number): string {
   if (v >= 1e9) return `R$ ${(v / 1e9).toFixed(2).replace(".", ",")} bi`;
   if (v >= 1e6) return `R$ ${(v / 1e6).toFixed(1).replace(".", ",")} mi`;
@@ -67,11 +142,26 @@ function scaleTo(v: CenarioDanos, dias: number): CenarioDanos {
   };
 }
 
-// ─── Componente principal ─────────────────────────────────────────────────────
-export function DanosClient({ dados }: { dados: DanosData }) {
-  const [dias, setDias] = useState<DiasOpcao>(30);
+function eaiValor(eai: EaiAnualEsperado, setor: string): number {
+  if (setor === "empresas") return eai.empresas;
+  if (setor === "educacao") return eai.educacao;
+  if (setor === "saude") return eai.saude;
+  return 0;
+}
 
-  // Dados escalados para a duração selecionada
+// ─── Componente principal ───────────────────────────────────────────────────────
+export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosClimada: ClimadaData | null }) {
+  const [aba, setAba] = useState<"dala" | "climada">("dala");
+  const [dias, setDias] = useState<DiasOpcao>(30);
+  const [rp, setRp] = useState("RP200");
+
+  // Deep-link opcional: /danos?aba=climada abre direto na aba CLIMADA (ex.: botão do header do mapa).
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("aba") === "climada" && dadosClimada) setAba("climada");
+  }, [dadosClimada]);
+
+  // ── Dados escalados (Danos Operacionais) para a duração selecionada ──
   const dadosEscalados: DanosData = Object.fromEntries(
     Object.entries(dados).map(([mun, cens]) => [
       mun,
@@ -81,8 +171,6 @@ export function DanosClient({ dados }: { dados: DanosData }) {
     ])
   );
 
-  // Cenários selecionados por município para o agregado da Visão Geral
-  // (correspondente ao PIORES_CENARIOS do mapa — sem acentos para bater com as chaves do JSON)
   const CENARIOS_VISAO_GERAL: Record<string, string> = {
     "Eldorado do Sul": "Cenario ADA",
     "Lajeado":         "Cenario 27m",
@@ -98,89 +186,168 @@ export function DanosClient({ dados }: { dados: DanosData }) {
     return { mun, cenNome: entry[0], cenVal: entry[1] };
   });
 
-  // Todos pares para o gráfico comparativo
   const todosCenarios = Object.entries(dadosEscalados).flatMap(([mun, cens]) =>
     Object.entries(cens).map(([cen, v]) => ({ mun, cen, v }))
   );
-  const maxTotal = Math.max(...todosCenarios.map((c) => c.v.total));
+  const maxTotalDala = Math.max(...todosCenarios.map((c) => c.v.total));
+
+  // ── Dados CLIMADA para o RP selecionado ──
+  const climadaSetores = ["empresas", "educacao", "saude"];
+  const rpsDisponiveis = dadosClimada ? RP_ORDER.filter((r) => dadosClimada.resultados_por_rp[r]) : [];
+  const rpAtivo = dadosClimada && dadosClimada.resultados_por_rp[rp] ? rp : rpsDisponiveis[0];
+  const atualClimada = rpAtivo ? dadosClimada?.resultados_por_rp[rpAtivo] : undefined;
+  const totalAtualClimada = atualClimada ? climadaSetores.reduce((s, k) => s + atualClimada[k].dano_fisico_total_brl, 0) : 0;
+  const exposicaoAtualClimada = atualClimada ? climadaSetores.reduce((s, k) => s + atualClimada[k].exposicao_total_brl, 0) : 0;
+  const maxTotalClimada = dadosClimada && rpsDisponiveis.length
+    ? Math.max(...rpsDisponiveis.map((r) => climadaSetores.reduce((s, k) => s + dadosClimada.resultados_por_rp[r][k].dano_fisico_total_brl, 0)))
+    : 0;
+  const eai = dadosClimada?.eai_anual_esperado ?? null;
 
   return (
     <div className="min-h-screen bg-[#f0f7fa] text-slate-800 font-sans">
 
       {/* ── Header ──────────────────────────────────────────────────────────── */}
       <header className="bg-[#055071] text-white px-6 py-10 print:py-5">
-        <div className="max-w-[1200px] mx-auto">
-          <div className="flex items-center gap-2 mb-5 print:hidden">
-            <a href="/" className="text-[10px] font-bold text-white/70 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">← Dashboard</a>
-            <a href="/metodologia" className="text-[10px] font-bold text-white/70 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">← Metodologia</a>
+        <div className="max-w-[1200px] mx-auto flex items-start justify-between gap-6">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 mb-5 print:hidden">
+              <a href="/" className="text-[10px] font-bold text-white/70 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">← Dashboard</a>
+              <a href="/metodologia" className="text-[10px] font-bold text-white/70 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">← Metodologia</a>
+            </div>
+            <p className="text-[11px] uppercase tracking-[0.18em] font-semibold opacity-60 mb-2">
+              BID · GPEA · FURG
+            </p>
+            <h1 className="text-4xl font-black leading-none mb-2 tracking-tight flex items-center gap-3">
+              <TrendingDown size={36} strokeWidth={2.5} className="opacity-80 shrink-0" />
+              Danos & Risco de Inundação
+            </h1>
+            <p className="text-base opacity-75 font-medium">
+              Perdas Econômicas e Dano Físico Estimado — Enchentes no Rio Grande do Sul
+            </p>
+            <p className="text-[11px] opacity-50 mt-3 font-mono">
+              Metodologia DaLA (CEPAL/BID) — Maio 2024 e Setembro 2023 · Protótipo CLIMADA/CCDR — Porto Alegre
+            </p>
           </div>
-          <p className="text-[11px] uppercase tracking-[0.18em] font-semibold opacity-60 mb-2">
-            BID · GPEA · FURG
-          </p>
-          <h1 className="text-4xl font-black leading-none mb-2 tracking-tight flex items-center gap-3">
-            <TrendingDown size={36} strokeWidth={2.5} className="opacity-80 shrink-0" />
-            Danos Operacionais
-          </h1>
-          <p className="text-base opacity-75 font-medium">
-            Estimativa de Perdas Econômicas — Enchentes no Rio Grande do Sul
-          </p>
-          <p className="text-[11px] opacity-50 mt-3 font-mono">
-            Metodologia DaLA (CEPAL/BID) · Maio 2024 e Setembro 2023
-          </p>
+          <HeaderLogos />
         </div>
       </header>
 
-      {/* ── Seletor de duração (sticky) ──────────────────────────────────────── */}
+      {/* ── Abas + seletor de contexto (sticky) ───────────────────────────────── */}
       <div className="sticky top-0 z-30 bg-white/90 border-b border-[#b3cdd8] shadow-sm print:hidden"
         style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
         <div className="max-w-[1200px] mx-auto px-6 py-2.5 flex items-center gap-4 flex-wrap">
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94]">
-              Duração da interrupção
-            </span>
-            <span className="text-[9px] text-slate-400">(dias efetivos)</span>
-          </div>
-          <div className="flex gap-1.5">
-            {DIAS_OPCOES.map((d) => (
+          <div className="flex gap-2">
+            <button
+              onClick={() => setAba("dala")}
+              className={`px-5 py-2.5 rounded-xl text-[13px] font-black border-2 transition-all duration-150 flex items-center gap-2 ${
+                aba === "dala"
+                  ? "bg-[#055071] text-white border-[#055071] shadow-md scale-[1.02]"
+                  : "bg-white text-slate-500 border-slate-200 hover:border-[#055071] hover:text-[#055071]"
+              }`}
+            >
+              <TrendingDown size={16} strokeWidth={2.5} />
+              Danos Operacionais
+            </button>
+            {dadosClimada && (
               <button
-                key={d}
-                onClick={() => setDias(d)}
-                className={`px-3 py-1 rounded-full text-[11px] font-black border transition-all duration-150 ${
-                  dias === d
-                    ? "bg-[#055071] text-white border-[#055071] shadow-sm"
-                    : "bg-white text-slate-500 border-slate-200 hover:border-[#055071] hover:text-[#055071]"
+                onClick={() => setAba("climada")}
+                className={`px-5 py-2.5 rounded-xl text-[13px] font-black border-2 transition-all duration-150 flex items-center gap-2 ${
+                  aba === "climada"
+                    ? "bg-amber-500 text-white border-amber-500 shadow-md scale-[1.02]"
+                    : "bg-white text-amber-700 border-amber-200 hover:border-amber-400"
                 }`}
               >
-                {d} dias
+                <FlaskConical size={16} strokeWidth={2.5} />
+                Dano Físico (Protótipo)
               </button>
-            ))}
+            )}
           </div>
-          <div className="ml-auto flex items-center gap-1.5">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#4d9e3a] animate-pulse" />
-            <span className="text-[10px] text-slate-500 font-medium">
-              f = {(dias / 365).toFixed(4)} · Todos os resultados atualizados
-            </span>
-          </div>
+
+          <div className="w-px self-stretch bg-slate-200 hidden sm:block" />
+
+          {aba === "dala" ? (
+            <>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94]">
+                  Duração da interrupção
+                </span>
+                <span className="text-[9px] text-slate-400">(dias efetivos)</span>
+              </div>
+              <div className="flex gap-1.5">
+                {DIAS_OPCOES.map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => setDias(d)}
+                    className={`px-3 py-1 rounded-full text-[11px] font-black border transition-all duration-150 ${
+                      dias === d
+                        ? "bg-[#055071] text-white border-[#055071] shadow-sm"
+                        : "bg-white text-slate-500 border-slate-200 hover:border-[#055071] hover:text-[#055071]"
+                    }`}
+                  >
+                    {d} dias
+                  </button>
+                ))}
+              </div>
+              <div className="ml-auto flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#4d9e3a] animate-pulse" />
+                <span className="text-[10px] text-slate-500 font-medium">
+                  f = {(dias / 365).toFixed(4)} · Todos os resultados atualizados
+                </span>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94]">
+                  Período de retorno
+                </span>
+                <span className="text-[9px] text-slate-400">(cenário sintético CLIMADA)</span>
+              </div>
+              <div className="flex gap-1.5 flex-wrap">
+                {rpsDisponiveis.map((r) => (
+                  <button
+                    key={r}
+                    onClick={() => setRp(r)}
+                    className={`px-3 py-1 rounded-full text-[11px] font-black border transition-all duration-150 ${
+                      rpAtivo === r
+                        ? "bg-amber-500 text-white border-amber-500 shadow-sm"
+                        : "bg-white text-slate-500 border-slate-200 hover:border-amber-400 hover:text-amber-700"
+                    }`}
+                    title={`Período de retorno de ${RP_ANOS[r]}, ${RP_PROBABILIDADE[r]} de chance/ano de ocorrer`}
+                  >
+                    {r}
+                  </button>
+                ))}
+              </div>
+              <div className="ml-auto flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                <span className="text-[10px] text-slate-500 font-medium">
+                  RP200 é a âncora de calibração usada pelo CLIMADA
+                </span>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
       <div className="max-w-[1200px] mx-auto px-6 py-10 print:py-5 flex gap-8 items-start print:block">
 
-        {/* ── Sidebar (Índice fixo) ────────────────────────────────────────────── */}
+        {/* ── Sidebar (Índice fixo, muda conforme a aba) ───────────────────────── */}
         <aside className="hidden lg:block w-52 shrink-0 print:hidden">
           <div className="sticky top-[56px] flex flex-col gap-3">
             <nav className="bg-white border border-[#b3cdd8] rounded-xl p-4 shadow-sm">
               <p className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94] mb-2">Índice</p>
               <ol className="flex flex-col gap-1">
-                {([
+                {(aba === "dala" ? [
                   ["#resumo",      "1. Resumo Geral"],
                   ["#cenarios",    "2. Análise por Cenário"],
                   ["#sensib",      "3. Sensibilidade por Duração"],
-                  ["#dala",        "4. Metodologia DaLA"],
-                  ["#componentes", "5. Componentes do Cálculo"],
-                  ["#parametros",  "6. Parâmetros Utilizados"],
-                  ["#cnae84",      "7. Nota — Admin. Pública"],
-                  ["#fontes",      "8. Fontes e Referências"],
+                  ["#notas",       "4. Notas e Ressalvas"],
+                ] : [
+                  ["#c-resumo",       "1. Resumo"],
+                  ["#c-eai",          "2. Risco Anual Esperado"],
+                  ["#c-comparativo",  "3. Comparativo por RP"],
+                  ["#c-limitacoes",   "4. Limitações"],
                 ] as [string, string][]).map(([href, label]) => (
                   <li key={href}>
                     <a href={href} className="text-[11px] text-[#055071] font-medium hover:underline underline-offset-4 transition-colors duration-150 leading-snug block py-0.5">
@@ -195,6 +362,8 @@ export function DanosClient({ dados }: { dados: DanosData }) {
 
         <main className="flex-1 min-w-0">
 
+        {aba === "dala" ? (
+        <>
         {/* ══════════════════════════════════════════════════════════════════════
             SEÇÃO 1 — RESUMO GERAL
         ══════════════════════════════════════════════════════════════════════ */}
@@ -227,7 +396,7 @@ export function DanosClient({ dados }: { dados: DanosData }) {
           <SubTitle>Total de Perdas por Cenário — {dias} dias ef.</SubTitle>
           <p>Comparação de todos os cenários avaliados (em R$ milhões).</p>
           <div className="bg-white border border-[#b3cdd8] rounded-xl p-5 shadow-sm mt-3">
-            <TotaisBarChart todosCenarios={todosCenarios} maxTotal={maxTotal} />
+            <TotaisBarChart todosCenarios={todosCenarios} maxTotal={maxTotalDala} />
             <div className="flex gap-4 flex-wrap mt-4 justify-center">
               {Object.entries(MUN_COLORS).map(([mun, cor]) => (
                 <div key={mun} className="flex items-center gap-1.5">
@@ -242,6 +411,17 @@ export function DanosClient({ dados }: { dados: DanosData }) {
             A soma dos piores cenários <strong>não é um agregado único</strong> — cada município
             pode ter cenários com extensões distintas. Os valores representam impactos independentes.
           </Note>
+          {dadosClimada && (
+            <Note type="info">
+              Esta seção mede <strong>perda de fluxo</strong> (DaLA — produção/serviço não
+              realizado). Para <strong>destruição de patrimônio</strong> (estoque) em Porto
+              Alegre, ver a aba{" "}
+              <button onClick={() => setAba("climada")} className="underline underline-offset-2 font-bold">
+                Dano Físico (Protótipo)
+              </button>{" "}
+              acima — são métricas complementares, não somáveis.
+            </Note>
+          )}
         </Section>
 
         {/* ══════════════════════════════════════════════════════════════════════
@@ -360,65 +540,41 @@ export function DanosClient({ dados }: { dados: DanosData }) {
         </Section>
 
         {/* ══════════════════════════════════════════════════════════════════════
-            SEÇÃO 4 — METODOLOGIA
+            SEÇÃO 4 — NOTAS E RESSALVAS
+            (a metodologia completa — curva DaLA, componentes, parâmetros e
+            fontes — foi movida para /metodologia#danos; aqui ficam só as
+            ressalvas de interpretação específicas destes resultados)
         ══════════════════════════════════════════════════════════════════════ */}
-        <Section id="dala" num="4" title="Metodologia DaLA — Curva de Recuperação Linear">
+        <Section id="notas" num="4" title="Notas e Ressalvas">
+          <Note type="info">
+            A metodologia completa (curva de recuperação DaLA, fórmulas por componente,
+            parâmetros e fontes) está na{" "}
+            <a href="/metodologia#danos" target="_blank" rel="noopener noreferrer"
+              className="font-semibold hover:underline underline-offset-4">
+              página de Metodologia ↗
+            </a>. Esta seção reúne apenas as ressalvas de interpretação dos números acima.
+          </Note>
+
+          <SubTitle>Administração Pública (CNAE 84)</SubTitle>
           <p>
-            A avaliação segue a metodologia{" "}
-            <strong>DaLA (Damage and Loss Assessment)</strong> da CEPAL/BID, que distingue
-            <em> danos</em> (destruição de ativos físicos) de <em>perdas</em>{" "}
-            (fluxo de produção não realizado durante o período de interrupção e recuperação).
+            Os estabelecimentos com CNAE 84 (<em>Administração Pública, Defesa e Seguridade Social</em>)
+            são <strong>incluídos</strong> na estimativa — a interrupção de serviços governamentais
+            representa perdas reais para a sociedade, conforme a metodologia DaLA (CEPAL, 2024).
           </p>
-          <SubTitle>Curva de Recuperação Linear</SubTitle>
-          <p>
-            Durante a fase aguda (d<sub>a</sub> dias) a produção cessa; na recuperação
-            (d<sub>r</sub> dias) retorna gradualmente a 50% em média. O fator de
-            interrupção efetivo é:
-          </p>
-          <MathBlock exprs={[
-            { label: "Dias efetivos", tex: "d_{\\text{ef}} = d_a + \\dfrac{d_r}{2}" },
-            { label: "Fator de interrupção", tex: "f = \\dfrac{d_{\\text{ef}}}{365}" },
-          ]} />
           <DataTable rows={[
-            ["Período",       "Fase aguda (dₐ)", "Recuperação (dᵣ)", "Dias ef.", "f",      "Referência"],
-            ["Maio 2024",     "30 dias",         "60 dias",          "60 dias",  "0,1644", "DaLA RS — CEPAL, 2024"],
-            ["Setembro 2023", "15 dias",         "30 dias",          "30 dias",  "0,0822", "DaLA RS — CEPAL, 2024"],
+            ["Indicador — Porto Alegre / ADA", "Valor"],
+            ["Estabelecimentos CNAE 84",      "51"],
+            ["Participação na massa salarial", "45,3%  (R$ 559,7 mi/mês)"],
+            ["Contribuição ao total (60 dias)","≈ R$ 625 mi de R$ 4,5 bi"],
           ]} />
-          <SectionSources links={[
-            ["CEPAL (2024) — Avaliação dos Efeitos e Impactos das Inundações no Rio Grande do Sul", "https://www.cepal.org/pt-br/publicacoes/81035-avaliacao-efeitos-impactos-inundacoes-rio-grande-sul-novembro-2024"],
-            ["PDNA Guidelines Vol. A — GFDRR/UNDP/BM, 2013", "https://www.gfdrr.org/sites/default/files/2017-09/PDNA-Volume-A.pdf"],
-          ]} />
-        </Section>
+          <Note type="warning">
+            O labor share de Adm. Pública (88,3%) é elevado, pois o VAB deste setor é
+            predominantemente composto por remunerações. Leitores que desejam excluir o setor
+            público devem subtrair a contribuição do CNAE 84 dos valores apresentados.
+          </Note>
 
-        {/* ══════════════════════════════════════════════════════════════════════
-            SEÇÃO 5 — COMPONENTES
-        ══════════════════════════════════════════════════════════════════════ */}
-        <Section id="componentes" num="5" title="Componentes do Cálculo">
-
-          <SubTitle>5.1 — Empresas: Perda de VAB</SubTitle>
-          <p>
-            Os dados de folha salarial da RAIS 2023 fornecem a massa salarial mensal por
-            estabelecimento. A inversão pelo <em>labor share</em> é o método padrão da
-            contabilidade nacional quando apenas o dado salarial está disponível:
-          </p>
-          <MathBlock exprs={[
-            { label: "VAB anual (est.)", tex: "\\widehat{\\text{VAB}}_i = \\dfrac{w_{i,\\text{anual}}}{LS_s}" },
-            { label: "Perda total", tex: "\\text{EmpresasVAB} = \\sum_{i \\in \\text{atingidos}} \\widehat{\\text{VAB}}_i \\times f" },
-          ]} />
-          <DataTable rows={[
-            ["Setor (CNAE)",         "Labor share (LS)", "Fonte"],
-            ["Agropecuária (01–03)", "17,6%",            "IBGE SCN 2021 — Tab17"],
-            ["Indústria (05–39)",    "33,8%",            "IBGE SCN 2021 — Tab17"],
-            ["Adm. Pública (84)",    "88,3%",            "IBGE SCN 2021 — Tab17"],
-            ["Serviços e demais",    "43,3%",            "IBGE SCN 2021 — Tab17"],
-          ]} />
-          <SectionSources links={[
-            ["IBGE — SCN 2021, Tabela 17", "https://ftp.ibge.gov.br/Contas_Nacionais/Sistema_de_Contas_Nacionais/2021/tabelas_xls/sinoticas/"],
-            ["Karabarbounis & Neiman (2014, QJE) — The Global Decline of the Labor Share", "https://doi.org/10.1093/qje/qjt032"],
-          ]} />
-
+          <SubTitle>Por que não usar ICMS como alternativa?</SubTitle>
           <div className="rounded-lg border border-amber-200 bg-amber-50/60 px-4 py-3 mt-1 mb-2 text-[11px] leading-relaxed text-amber-900 space-y-1.5">
-            <p className="font-bold text-[12px]">Nota — Por que não usar ICMS como alternativa?</p>
             <p>
               A arrecadação de ICMS municipal (SEFAZ-RS) foi avaliada como possível proxy de VAB perdido,
               seguindo abordagem similar à adotada pela CEPAL (2024) em nível estadual via série ARIMA.
@@ -458,155 +614,294 @@ export function DanosClient({ dados }: { dados: DanosData }) {
               consistente com Eldorado do Sul (razão 1,12×) —, não como metodologia de estimação.
             </p>
           </div>
-
-          <SubTitle>5.2 — Educação: Perdas + Custo de Reposição (DaLA)</SubTitle>
-          <p>
-            Dois componentes DaLA distintos, ambos com o mesmo custo unitário FUNDEB/aluno/dia:
-          </p>
-          <MathBlock exprs={[
-            { label: "Custo/aluno/dia", tex: "c = \\dfrac{\\text{VAAT-MIN}}{D_{\\text{letivos}}}" },
-            { label: "Perdas (serv. não prestado)", tex: "P_{\\text{edu}} = c \\times N_{\\text{alunos}} \\times d_a" },
-            { label: "Custo adicional (reposição)", tex: "C_{\\text{adic}} = c \\times N_{\\text{alunos}} \\times d_a" },
-            { label: "Total educação", tex: "\\text{Educação} = P_{\\text{edu}} + C_{\\text{adic}} = 2\\,c\\,N\\,d_a" },
-          ]} />
-          <p className="text-[12px] text-slate-500 mt-1">
-            A fase de recuperação usa <em>d</em><sub>a</sub> (dias de fechamento real), não <em>d</em><sub>ef</sub>,
-            porque escolas são obrigadas a compensar 100% dos dias perdidos —
-            não há recuperação parcial como em firmas.
-          </p>
-          <DataTable rows={[
-            ["Parâmetro",     "Valor",       "Fonte"],
-            ["VAAT-MIN 2024", "R$ 8.481,21", "Portaria Interministerial MEC/MF nº 9, 28/08/2024"],
-            ["Dias letivos",  "200",         "LDB Art. 24, I"],
-            ["dₐ — Maio 2024", "30 dias",   "DaLA RS — CEPAL, 2024"],
-            ["dₐ — Set. 2023", "15 dias",   "DaLA RS — CEPAL, 2024"],
-          ]} />
-          <SectionSources links={[
-            ["FNDE — FUNDEB 2024", "https://www.fnde.gov.br"],
-            ["LDB — Lei nº 9.394/1996, Art. 24", "https://www.planalto.gov.br/ccivil_03/leis/l9394.htm"],
-            ["Parecer CNE/CP nº 11/2024 — Flexibilização calendário escolar RS", "https://www.gov.br/mec/pt-br/assuntos/conselho-nacional-de-educacao"],
-          ]} />
-
-          <SubTitle>5.3 — Saúde: Perda de Produção SUS</SubTitle>
-          <MathBlock exprs={[
-            { label: "Produção anual CNES", tex: "P_k = \\bigl(P_{\\text{SIA},k} + P_{\\text{SIH},k}\\bigr) \\times \\dfrac{12}{7}" },
-            { label: "Perda saúde", tex: "\\text{Saúde} = \\sum_{k \\in \\text{atingidos}} P_k \\times f" },
-          ]} />
-          <SectionSources links={[
-            ["DataSUS — Produção Hospitalar SIH/SUS", "https://datasus.saude.gov.br/acesso-a-informacao/producao-hospitalar-sih-sus"],
-            ["DataSUS — Produção Ambulatorial SIA/SUS", "https://datasus.saude.gov.br/acesso-a-informacao/producao-ambulatorial-sia-sus"],
-          ]} />
-
-          <SubTitle>5.4 — Agricultura: Custo Direto de Produção</SubTitle>
-          <MathBlock exprs={[
-            { tex: "\\text{Agricultura} = \\sum_i \\text{Área}_i\\,[\\text{ha}] \\times \\text{Coef}_i\\,[\\text{R}\\$/\\text{ha}]" },
-          ]} />
-          <DataTable rows={[
-            ["Cultura",                     "Período",    "Status",                      "Coef. (R$/ha)"],
-            ["Soja",                        "Maio 2024",  "Colhida — fev–abr/2024",      "R$ 1.100"],
-            ["Arroz",                       "Maio 2024",  "Colhido — fev–abr/2024",      "R$ 1.100"],
-            ["Outras Lavouras Temporárias", "Maio 2024",  "Plantio inicial — mai/2024",  "R$ 1.400"],
-            ["Soja",                        "Set. 2023",  "Pré-plantio",                 "R$ 250"],
-            ["Arroz",                       "Set. 2023",  "Pré-plantio",                 "R$ 250"],
-            ["Outras Lavouras Temporárias", "Set. 2023",  "Colheita — set–out/2023",     "R$ 2.800"],
-          ]} />
-          <SectionSources links={[
-            ["CONAB — Preços Mínimos 2024", "https://www.conab.gov.br/politica-agricola/precos-minimos"],
-            ["MapBiomas — Coleção 10", "https://brasil.mapbiomas.org/colecoes-mapbiomas-1/"],
-          ]} />
         </Section>
-
-        {/* ══════════════════════════════════════════════════════════════════════
-            SEÇÃO 6 — PARÂMETROS
-        ══════════════════════════════════════════════════════════════════════ */}
-        <Section id="parametros" num="6" title="Parâmetros Utilizados">
-          <DataTable rows={[
-            ["Parâmetro",                   "Valor",         "Fonte"],
-            ["VAAT-MIN FUNDEB 2024",        "R$ 8.481,21",  "Portaria Interministerial MEC/MF nº 9/2024"],
-            ["Dias letivos/ano",            "200",           "LDB Art. 24, I"],
-            ["Labor share — Agropecuária",  "17,6%",         "IBGE SCN 2021 — Tab17"],
-            ["Labor share — Indústria",     "33,8%",         "IBGE SCN 2021 — Tab17"],
-            ["Labor share — Adm. Pública",  "88,3%",         "IBGE SCN 2021 — Tab17"],
-            ["Labor share — Serviços",      "43,3%",         "IBGE SCN 2021 — Tab17"],
-            ["Fase aguda — Maio 2024",      "30 dias",       "DaLA RS — CEPAL, 2024"],
-            ["Recuperação — Maio 2024",     "60 dias",       "DaLA RS — CEPAL, 2024"],
-            ["Fase aguda — Set. 2023",      "15 dias",       "DaLA RS — CEPAL, 2024"],
-            ["Recuperação — Set. 2023",     "30 dias",       "DaLA RS — CEPAL, 2024"],
-            ["Meses SIA/SIH disponíveis",   "7 (jan–jul/24)","DataSUS"],
-          ]} />
-        </Section>
-
-        {/* ══════════════════════════════════════════════════════════════════════
-            SEÇÃO 7 — CNAE 84
-        ══════════════════════════════════════════════════════════════════════ */}
-        <Section id="cnae84" num="7" title="Nota — Administração Pública (CNAE 84)">
-          <p>
-            Os estabelecimentos com CNAE 84 (<em>Administração Pública, Defesa e Seguridade Social</em>)
-            são <strong>incluídos</strong> na estimativa — a interrupção de serviços governamentais
-            representa perdas reais para a sociedade, conforme a metodologia DaLA (CEPAL, 2024).
-          </p>
-          <SubTitle>Impacto quantitativo — Porto Alegre / Cenário ADA</SubTitle>
-          <DataTable rows={[
-            ["Indicador",                     "Valor"],
-            ["Estabelecimentos CNAE 84",      "51"],
-            ["Participação na massa salarial", "45,3%  (R$ 559,7 mi/mês)"],
-            ["Contribuição ao total (60 dias)","≈ R$ 625 mi de R$ 4,5 bi"],
-          ]} />
+        </>
+        ) : dadosClimada && atualClimada && rpAtivo ? (
+        <>
+        {/* ══════════════════════════════════════════════════════════════════
+            SEÇÃO 1 — RESUMO (CLIMADA)
+        ══════════════════════════════════════════════════════════════════ */}
+        <Section id="c-resumo" num="1" title="Resumo">
           <Note type="warning">
-            O labor share de Adm. Pública (88,3%) é elevado, pois o VAB deste setor é
-            predominantemente composto por remunerações. Leitores que desejam excluir o setor
-            público devem subtrair a contribuição do CNAE 84 dos valores apresentados.
+            <strong>Protótipo exploratório</strong>, não uma métrica oficial do painel. Mede{" "}
+            <strong>destruição de patrimônio</strong> (estoque: prédio + equipamento), diferente
+            da aba <button onClick={() => setAba("dala")} className="underline underline-offset-2 font-bold">Danos Operacionais</button>{" "}
+            (fluxo: produção/serviço não realizado, metodologia DaLA). Os dois números não devem
+            ser somados. Ver <a href="#c-limitacoes" className="underline underline-offset-2">Limitações</a>{" "}
+            antes de usar qualquer valor abaixo para tomada de decisão.
           </Note>
+          <Note type="info">
+            Disponível <strong>só para Porto Alegre</strong>: o cálculo depende de profundidade da
+            água por ponto (não apenas se o ponto foi atingido), e só Porto Alegre tem raster de
+            profundidade (produzido pelo exercício CLIMADA). Eldorado do Sul, Lajeado e Rio Grande
+            têm somente polígonos de extensão da mancha (atingido sim/não, sem profundidade), que
+            não permitem esse cálculo.
+          </Note>
+
+          <Note type="info">
+            <strong>O que é um Período de Retorno (RP)?</strong> É a magnitude estatística de um
+            evento raro, expressa pelo intervalo médio (em anos) entre ocorrências dessa magnitude
+            ou maior (não é uma previsão de &ldquo;acontece exatamente a cada N anos&rdquo;). Um evento{" "}
+            <strong>RP100</strong> tem <strong>1% de chance</strong> de ocorrer em um ano qualquer
+            (probabilidade = 1/RP); um <strong>RP500</strong> é mais raro e mais severo (0,2% ao
+            ano), mas quando ocorre, alaga mais fundo e atinge mais área. São cenários{" "}
+            <em>sintéticos</em> do modelo de risco do CLIMADA, diferentes do Cenário ADA e do
+            Climada Evento 2024 do mapa principal, que representam a extensão de um evento real
+            observado (maio/2024).
+          </Note>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-5">
+            <div className="bg-white border border-[#b3cdd8] rounded-xl overflow-hidden shadow-sm">
+              <div className="px-4 py-3" style={{ backgroundColor: "#055071" }}>
+                <p className="text-[10px] font-black uppercase tracking-wider text-white/70 mb-0.5">Porto Alegre · {rpAtivo}</p>
+                <p className="text-2xl font-black text-white leading-none">{fmtBRL(totalAtualClimada)}</p>
+                <p className="text-[9px] text-white/60 font-mono mt-1">
+                  dano físico estimado (3 setores) · {RP_PROBABILIDADE[rpAtivo]} de chance/ano de ocorrer
+                </p>
+              </div>
+              <div className="px-4 pt-3 pb-1">
+                <CompositionBarClimada atual={atualClimada} setores={climadaSetores} />
+              </div>
+              <div className="px-4 pb-4 pt-2 grid grid-cols-1 gap-y-1">
+                {climadaSetores.map((s) => (
+                  <KpiRow
+                    key={s}
+                    label={SETOR_LABEL[s]}
+                    value={fmtBRL(atualClimada[s].dano_fisico_total_brl)}
+                    sub={`${atualClimada[s].dano_fisico_pct_exposicao.toFixed(1)}% da exposição`}
+                    color={SETOR_COLORS[s]}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-white border border-[#b3cdd8] rounded-xl p-4 shadow-sm">
+              <p className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94] mb-2">Exposição total (patrimônio no raio de risco)</p>
+              <p className="text-2xl font-black text-slate-800 leading-none mb-3">{fmtBRL(exposicaoAtualClimada)}</p>
+              {climadaSetores.map((s) => (
+                <div key={s} className="flex items-center justify-between text-[11px] py-1 border-t border-slate-100 first:border-t-0">
+                  <span className="text-slate-500">{SETOR_LABEL[s]}: {atualClimada[s].n_atingidos_profundidade_gt_0}/{atualClimada[s].n_total} pontos atingidos</span>
+                  <span className="font-bold text-slate-700">prof. média {atualClimada[s].profundidade_media_atingidos_m.toFixed(2)}m</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <SubTitle>Como interpretar os resultados</SubTitle>
+          <p>
+            <strong>Exposição total</strong> é o valor de reposição de tudo que existe dentro do
+            raio de risco (todos os pontos do setor, atingidos ou não pelo RP selecionado): o
+            &ldquo;patrimônio em jogo&rdquo;. <strong>Dano físico</strong> é a fração desse patrimônio que o
+            modelo estima destruída, ponto a ponto, pela profundidade de água em cada um (curvas da{" "}
+            <a href="/metodologia#dano-fisico" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">metodologia ↗</a>). A razão entre
+            os dois (<strong>% da exposição</strong>) é a <em>taxa de perda</em>, que cresce com o
+            RP porque eventos mais raros alagam mais fundo e atingem mais pontos, empurrando mais
+            deles para a parte alta (mais destrutiva) da curva de dano.
+          </p>
         </Section>
 
-        {/* ══════════════════════════════════════════════════════════════════════
-            SEÇÃO 8 — FONTES
-        ══════════════════════════════════════════════════════════════════════ */}
-        <Section id="fontes" num="8" title="Fontes e Referências">
-          <div className="space-y-4">
-            <RefBlock title="Metodologia DaLA">
-              <RefItem href="https://www.cepal.org/pt-br/publicacoes/81035-avaliacao-efeitos-impactos-inundacoes-rio-grande-sul-novembro-2024"
-                label="CEPAL (nov/2024) — Avaliação dos Efeitos e Impactos das Inundações no Rio Grande do Sul"
-                desc="Avaliação DaLA de R$ 88,9 bi nas enchentes RS 2024 — metodologia de referência para a curva linear de recuperação." />
-              <RefItem href="https://www.gfdrr.org/sites/default/files/2017-09/PDNA-Volume-A.pdf"
-                label="PDNA Vol. A Guidelines — GFDRR/UNDP/BM, 2013"
-                desc="Perdas = mudanças nos fluxos econômicos durante e após o desastre, estimadas pelo declínio no valor dos fluxos de produção." />
-            </RefBlock>
-            <RefBlock title="Dados Socioeconômicos">
-              <RefItem href="https://www.gov.br/trabalho-e-emprego/pt-br/assuntos/estatisticas-trabalho/rais"
-                label="RAIS — MTE, 2023"
-                desc="Microdados de estabelecimentos, vínculos ativos e massa salarial — base da estimativa de VAB." />
-              <RefItem href="https://www.gov.br/inep/pt-br/areas-de-atuacao/pesquisas-estatisticas-e-indicadores/censo-escolar"
-                label="INEP — Censo Escolar, 2024"
-                desc="Matrículas ativas nas escolas atingidas — base do custo de reposição FUNDEB." />
-              <RefItem href="https://cnes.datasus.gov.br"
-                label="CNES — DataSUS, abr/2024"
-                desc="Estabelecimentos de saúde — chave de ligação com a produção SUS." />
-              <RefItem href="https://datasus.saude.gov.br"
-                label="SIA/SIH — DataSUS, jan–jul/2024"
-                desc="Produção ambulatorial e hospitalar por estabelecimento — base da perda de produção SUS." />
-            </RefBlock>
-            <RefBlock title="Parâmetros Setoriais">
-              <RefItem href="https://ftp.ibge.gov.br/Contas_Nacionais/Sistema_de_Contas_Nacionais/2021/tabelas_xls/sinoticas/"
-                label="IBGE — SCN 2021, Tabela 17"
-                desc="Única fonte pública com Remunerações por atividade econômica — base dos labor shares setoriais." />
-              <RefItem href="https://www.fnde.gov.br"
-                label="Portaria Interministerial MEC/MF nº 9, 28/08/2024"
-                desc="Define VAAT-MIN 2024 = R$ 8.481,21 — parâmetro do custo de reposição educacional." />
-              <RefItem href="https://doi.org/10.1093/qje/qjt032"
-                label="Karabarbounis & Neiman (2014, QJE) — The Global Decline of the Labor Share"
-                desc="Referência canônica para o labor share como métrica de distribuição funcional da renda." />
-            </RefBlock>
-            <RefBlock title="Dados Agrícolas">
-              <RefItem href="https://brasil.mapbiomas.org/colecoes-mapbiomas-1/"
-                label="MapBiomas — Coleção 10"
-                desc="Mapeamento de uso do solo (raster 30 m) — origem das áreas cultivadas por cultura." />
-              <RefItem href="https://www.conab.gov.br/politica-agricola/precos-minimos"
-                label="CONAB — Preços Mínimos 2024"
-                desc="Base para os coeficientes R$/ha de impacto agrícola por cultura e período." />
-            </RefBlock>
+        {/* ══════════════════════════════════════════════════════════════════
+            SEÇÃO 2 — RISCO ANUAL ESPERADO (EAI)
+        ══════════════════════════════════════════════════════════════════ */}
+        {eai && (
+          <Section id="c-eai" num="2" title="Risco Anual Esperado (EAI)">
+            <p>
+              As seções anteriores mostram o dano de <em>um evento</em> de cada RP. O EAI
+              (<em>Expected/Average Annual Impact</em>, impacto médio anual) resume tudo isso
+              num único número: quanto se espera perder, <strong>em média por ano</strong>,
+              somando eventos frequentes e pequenos com eventos raros e grandes, ponderados
+              pela probabilidade de cada um. É o mesmo tipo de resultado que o CLIMADA usa
+              como indicador principal de risco.
+            </p>
+            <div className="bg-white border border-[#b3cdd8] rounded-xl overflow-hidden shadow-sm mt-3">
+              <div className="px-4 py-3" style={{ backgroundColor: "#055071" }}>
+                <p className="text-[10px] font-black uppercase tracking-wider text-white/70 mb-0.5">Porto Alegre · todos os setores</p>
+                <p className="text-2xl font-black text-white leading-none">{fmtBRL(eai.total)} / ano</p>
+                <p className="text-[9px] text-white/60 font-mono mt-1">
+                  risco anual esperado, integrado sobre {eai.rps_usados.length} período(s) de retorno ({eai.rps_usados[0]}..{eai.rps_usados[eai.rps_usados.length - 1]})
+                </p>
+              </div>
+              <div className="px-4 py-4 grid grid-cols-1 gap-y-1.5">
+                {climadaSetores.map((s) => {
+                  const valor = eaiValor(eai, s);
+                  return (
+                    <KpiRow
+                      key={s}
+                      label={SETOR_LABEL[s]}
+                      value={`${fmtBRL(valor)} / ano`}
+                      sub={`${((valor / eai.total) * 100).toFixed(0)}% do total`}
+                      color={SETOR_COLORS[s]}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+            <p className="text-[13px]">
+              Regra do trapézio sobre a curva frequência de excedência × perda, com
+              extrapolação linear a zero acima de RP10 e platô constante abaixo de RP500:
+            </p>
+            <MathBlock exprs={[
+              { label: "Frequência de excedência", tex: "f_i = \\dfrac{1}{RP_i}" },
+              { label: "EAI (aproximado)", tex: "\\text{EAI} \\approx \\sum_i \\dfrac{(f_i - f_{i+1})(L_i + L_{i+1})}{2}" },
+            ]} />
+            <p className="text-[11px] text-slate-500">
+              Aproximação do impacto médio anual que o CLIMADA calcula sobre o conjunto
+              completo de eventos do modelo, não sobre pontos de RP interpolados: tratar como
+              ordem de grandeza. Ver <a href="/metodologia#dano-fisico" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Metodologia</a>.
+            </p>
+          </Section>
+        )}
+
+        {/* ══════════════════════════════════════════════════════════════════
+            SEÇÃO 3 — COMPARATIVO POR RP
+        ══════════════════════════════════════════════════════════════════ */}
+        <Section id="c-comparativo" num="3" title="Comparativo por Período de Retorno">
+          <p>
+            Quanto maior o período de retorno (RP), mais rara e mais severa a inundação modelada,
+            e maior a área/profundidade atingida. O gráfico mostra o dano físico total (3 setores)
+            para cada RP disponível.
+          </p>
+          <div className="bg-white border border-[#b3cdd8] rounded-xl p-5 shadow-sm mt-3">
+            <p className="text-[10px] text-slate-400 font-medium mb-2">
+              Cada barra soma o dano físico dos 3 setores para aquele RP, dividida por cor
+              (proporcional). O número no topo é o total; a barra com contorno âmbar é o RP
+              selecionado acima.
+            </p>
+            <RpBarChart rpsDisponiveis={rpsDisponiveis} resultados={dadosClimada.resultados_por_rp} setores={climadaSetores} maxTotal={maxTotalClimada} rpAtivo={rpAtivo} />
+            <div className="flex gap-4 flex-wrap mt-4 justify-center">
+              {climadaSetores.map((s) => (
+                <div key={s} className="flex items-center gap-1.5">
+                  <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: SETOR_COLORS[s] }} />
+                  <span className="text-[10px] text-slate-500 font-medium">{SETOR_LABEL[s]}</span>
+                </div>
+              ))}
+            </div>
           </div>
+
+          <SubTitle>Tabela completa</SubTitle>
+          <DataTable rows={[
+            ["RP", "Empresas", "Educação", "Saúde", "Total", "Exposição total"],
+            ...rpsDisponiveis.map((r) => {
+              const d = dadosClimada.resultados_por_rp[r];
+              const total = climadaSetores.reduce((s, k) => s + d[k].dano_fisico_total_brl, 0);
+              const exp = climadaSetores.reduce((s, k) => s + d[k].exposicao_total_brl, 0);
+              return [
+                <strong key="rp">{r}</strong>,
+                fmtBRL(d.empresas.dano_fisico_total_brl),
+                fmtBRL(d.educacao.dano_fisico_total_brl),
+                fmtBRL(d.saude.dano_fisico_total_brl),
+                <strong key="tot">{fmtBRL(total)}</strong>,
+                fmtBRL(exp),
+              ];
+            }),
+          ]} />
         </Section>
+
+
+        {/* ══════════════════════════════════════════════════════════════════
+            SEÇÃO 4 — LIMITAÇÕES
+            (a metodologia completa — fórmulas, curvas, premissas e fontes —
+            foi movida para /metodologia#dano-fisico; aqui ficam as limitações
+            específicas destes resultados, como pedido)
+        ══════════════════════════════════════════════════════════════════ */}
+        <Section id="c-limitacoes" num="4" title="Limitações">
+          <Note type="warning">
+            Estes números são um <strong>protótipo</strong> para explorar a viabilidade de aplicar a
+            metodologia CLIMADA/CCDR (destruição de estoque) em cima dos nossos próprios dados
+            (RAIS/Censo Escolar/CNES). Não substituem os Danos Operacionais (DaLA) da aba principal,
+            e carregam premissas explícitas que precisam de validação antes de qualquer
+            uso além de exploração metodológica — ver{" "}
+            <a href="/metodologia#dano-fisico" target="_blank" rel="noopener noreferrer"
+              className="underline underline-offset-2 font-bold">
+              metodologia completa ↗
+            </a>:
+          </Note>
+          <ul className="list-disc list-inside space-y-2 text-sm text-slate-700 mt-3">
+            <li>
+              <strong>A curva de Saúde foi criada a partir dos dados brutos do CLIMADA</strong>{" "}
+              (a base JRC, Huizinga et al. 2017, que o CLIMADA usa), não é uma saída real do
+              modelo: o CLIMADA não modela saúde (só Schools, Residential e Companies), e a
+              própria base JRC não tem categoria de saúde/hospital entre suas 6 categorias
+              (Residential, Commercial, Industry, Transport, Infrastructure, Agriculture). A curva
+              aqui é a média ponto a ponto das curvas cruas JRC de Commerce e Industry, recalibrada
+              pelo mesmo fator empírico de Empresas. Tratar como ilustrativa, não calibrada.
+            </li>
+            <li>
+              <strong>9 m²/pessoa é um padrão de ocupação de escritório</strong> (administração
+              pública federal, ver <a href="/metodologia#dano-fisico" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Metodologia</a>),
+              não a área real de cada estabelecimento (esse dado não existe no RAIS/CNES). Tende a
+              subestimar indústrias e galpões (que ocupam mais m²/pessoa que escritório) e pode não
+              refletir comércio de rua ou varejo pequeno. O uso do número de vínculos como proxy de
+              porte também assume valor proporcional a funcionários, o que subestima
+              estabelecimentos capital-intensivos com pouca gente (posto de combustível, galpão
+              automatizado) e pode superestimar os intensivos em mão de obra com pouco patrimônio
+              físico.
+            </li>
+            <li>
+              <strong>O CUB não tem categoria &ldquo;escolar&rdquo; nem &ldquo;saúde&rdquo;.</strong> PP 4-N (Prédio
+              Popular) é a aproximação mais próxima de prédio público/institucional simples
+              disponível no Sinduscon-RS, não uma categoria feita para isso.
+            </li>
+            <li>
+              <strong>Os multiplicadores de conteúdo/equipamento</strong> (ver{" "}
+              <a href="/metodologia#dano-fisico" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Metodologia</a>)
+              usam as categorias JRC mais próximas disponíveis (Commercial, Industrial,
+              Residential), não uma medição brasileira de conteúdo por tipo de estabelecimento,
+              que não existe publicamente.
+            </li>
+            <li>
+              <strong>A área por sala</strong> vem de um único projeto padrão (FNDE, 6 salas)
+              aplicado a todas as escolas, sem captar diferenças de padrão construtivo (por
+              exemplo, escola técnica versus infantil). Já inclui administração, cozinha e pátio
+              coberto, mas não inclui quadra coberta (escolas com ginásio coberto ficam
+              subestimadas) nem área externa aberta e descoberta.
+            </li>
+            <li>
+              <strong>Dois turnos é assumido para todas as etapas</strong>, inclusive Médio/EJA
+              (que às vezes funcionam num turno único, período integral ou noturno): escolas
+              que fogem desse padrão terão o número de salas <em>subestimado</em> (a fórmula
+              divide a matrícula por 2 turnos mesmo quando a escola roda só 1, calculando menos
+              salas do que ela realmente tem). A lotação do Ensino Fundamental é uma média
+              ponderada por ano (o dado de origem não discrimina série), e a lotação do Ensino
+              Médio também é usada para Profissional e EJA por falta de norma específica
+              encontrada; Educação Especial usa a lotação do Fundamental pelo mesmo motivo.
+              Além disso, a fórmula assume que toda turma está cheia no teto legal — escolas
+              reais costumam operar com turmas menores que esse teto, o que também tende a
+              subestimar o número real de salas.
+            </li>
+            <li>
+              <strong>Estabelecimentos industriais</strong> (CNAE 05-39, {dadosClimada.premissas.n_empresas_industria} de{" "}
+              {dadosClimada.premissas.n_empresas_total.toLocaleString("pt-BR")} empresas de Porto Alegre) usam custo
+              de construção e curva de dano próprios (categoria industrial); o restante — comércio,
+              serviços, agropecuária e administração pública — segue todo sob o mesmo tratamento
+              comercial genérico, mesmo cobrindo setores heterogêneos entre si.
+            </li>
+            <li>
+              <strong>Todo porte tem piso mínimo de 1</strong> (nenhum ponto fica com valor zero).
+              Isso afeta menos de 0,1% dos pontos de Empresas e Educação, mas 3,4% dos pontos de
+              Saúde (236 de 7.022, sem leitos nem profissionais registrados) recebem um valor de
+              reposição mínimo mesmo sem nenhum dado de porte, inflando levemente a exposição
+              total do setor.
+            </li>
+            <li>
+              <strong>As curvas de Empresas e Saúde têm um teto de ~36% de dano físico</strong>,
+              mesmo em profundidades extremas: a recalibração para Porto Alegre (ver{" "}
+              <a href="/metodologia#dano-fisico" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Metodologia</a>)
+              multiplica a curva JRC bruta inteira pelo fator empírico de 0,36, o que comprime
+              também o teto da curva (a curva de Educação, que não passou por essa recalibração,
+              chega a 100%). Em uma inundação muito mais severa que o evento de referência de 2024,
+              isso pode subestimar o dano de pontos atingidos por lâminas d&apos;água extremas nesses
+              dois setores.
+            </li>
+            <li>
+              <strong>Amostragem de profundidade por vizinho mais próximo</strong> (raster ~90 m/pixel):
+              pode super ou subestimar a profundidade real em pontos próximos de bordas de quadra.
+            </li>
+          </ul>
+        </Section>
+
+        </>
+        ) : null}
 
         <footer className="mt-12 pt-6 border-t border-[#b3cdd8] text-center print:mt-4">
           <p className="text-[11px] text-[#3d7a94]">
@@ -620,7 +915,7 @@ export function DanosClient({ dados }: { dados: DanosData }) {
   );
 }
 
-// ─── Gráficos SVG ─────────────────────────────────────────────────────────────
+// ─── Gráficos SVG — Danos Operacionais ──────────────────────────────────────────
 
 function CompositionBar({ v }: { v: CenarioDanos }) {
   const comps = [
@@ -790,7 +1085,78 @@ function SensibChart({
   );
 }
 
-// ─── Componentes UI ───────────────────────────────────────────────────────────
+// ─── Gráficos SVG — CLIMADA ──────────────────────────────────────────────────────
+
+function CompositionBarClimada({ atual, setores }: { atual: Record<string, SetorResultado>; setores: string[] }) {
+  const total = setores.reduce((s, k) => s + atual[k].dano_fisico_total_brl, 0) || 1;
+  return (
+    <div className="flex h-2 rounded-full overflow-hidden bg-slate-100">
+      {setores.map((s) => (
+        <div key={s} style={{ width: `${(atual[s].dano_fisico_total_brl / total) * 100}%`, backgroundColor: SETOR_COLORS[s] }} />
+      ))}
+    </div>
+  );
+}
+
+function RpBarChart({ rpsDisponiveis, resultados, setores, maxTotal, rpAtivo }: {
+  rpsDisponiveis: string[];
+  resultados: Record<string, Record<string, SetorResultado>>;
+  setores: string[];
+  maxTotal: number;
+  rpAtivo: string;
+}) {
+  const barW = 56;
+  const gap = 14;
+  const chartH = 150;
+  const pL = 46;
+  const pB = 24;
+  const W = pL + rpsDisponiveis.length * (barW + gap) - gap + 10;
+
+  return (
+    <svg viewBox={`0 0 ${W} ${chartH + pB}`} className="w-full overflow-visible">
+      {[0, 0.25, 0.5, 0.75, 1].map((p, i) => {
+        const val = p * maxTotal;
+        const y = chartH - p * chartH + 4;
+        return (
+          <g key={i}>
+            <line x1={pL - 4} y1={y} x2={W} y2={y} stroke="#e2eef3" strokeWidth={i === 0 ? 1.5 : 0.75} />
+            <text x={pL - 8} y={y + 3} textAnchor="end" fontSize="8" fill="#9ca3af">
+              {val >= 1e9 ? `${(val / 1e9).toFixed(1)}bi` : val >= 1e6 ? `${(val / 1e6).toFixed(0)}mi` : "0"}
+            </text>
+          </g>
+        );
+      })}
+      {rpsDisponiveis.map((r, i) => {
+        const d = resultados[r];
+        const x = pL + i * (barW + gap);
+        let yTop = chartH + 4;
+        const segs = setores.map((s) => {
+          const h = Math.max((d[s].dano_fisico_total_brl / maxTotal) * chartH, d[s].dano_fisico_total_brl > 0 ? 1 : 0);
+          yTop -= h;
+          return { s, y: yTop, h };
+        });
+        const total = setores.reduce((sum, k) => sum + d[k].dano_fisico_total_brl, 0);
+        return (
+          <g key={r} opacity={r === rpAtivo ? 1 : 0.55}>
+            {segs.map(({ s, y, h }) => (
+              <rect key={s} x={x} y={y} width={barW} height={h} fill={SETOR_COLORS[s]} />
+            ))}
+            <rect x={x} y={chartH - Math.max((total / maxTotal) * chartH, 1) + 4} width={barW} height={Math.max((total / maxTotal) * chartH, 1)}
+              fill="none" stroke={r === rpAtivo ? "#d97706" : "none"} strokeWidth="2" rx="2" />
+            <text x={x + barW / 2} y={yTop - 5} textAnchor="middle" fontSize="8" fill="#374151" fontWeight="bold">
+              {total >= 1e9 ? `${(total / 1e9).toFixed(1)}bi` : `${(total / 1e6).toFixed(0)}mi`}
+            </text>
+            <text x={x + barW / 2} y={chartH + 18} textAnchor="middle" fontSize="9" fill={r === rpAtivo ? "#d97706" : "#9ca3af"} fontWeight="bold">
+              {r}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+// ─── Componentes UI compartilhados ────────────────────────────────────────────
 
 function DiasBadge({ dias }: { dias: number }) {
   return (
@@ -899,49 +1265,3 @@ function Note({ type, children }: { type: "warning" | "info"; children: React.Re
   );
 }
 
-function SectionSources({ links }: { links: [string, string][] }) {
-  return (
-    <div className="mt-4 pt-3 border-t border-[#b3cdd8]">
-      <p className="text-[10px] font-bold uppercase tracking-wider text-[#3d7a94] mb-1.5">Fontes</p>
-      <ul className="space-y-0.5">
-        {links.map(([label, href]) => (
-          <li key={label}>
-            {href ? (
-              <a href={href} target="_blank" rel="noopener noreferrer"
-                className="text-[11px] text-[#055071] hover:underline underline-offset-4 transition-colors duration-150">
-                ↗ {label}
-              </a>
-            ) : (
-              <span className="text-[11px] text-[#3d7a94]">— {label}</span>
-            )}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-function RefBlock({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="bg-white border border-[#b3cdd8] rounded-xl p-4 shadow-sm">
-      <p className="text-[11px] font-black uppercase tracking-wider text-[#3d7a94] mb-3">{title}</p>
-      <div className="space-y-3">{children}</div>
-    </div>
-  );
-}
-
-function RefItem({ href, label, desc }: { href: string; label: string; desc: string }) {
-  return (
-    <div>
-      {href ? (
-        <a href={href} target="_blank" rel="noopener noreferrer"
-          className="text-sm font-semibold text-[#055071] hover:underline underline-offset-4 transition-colors duration-150">
-          {label} ↗
-        </a>
-      ) : (
-        <span className="text-sm font-semibold text-slate-700">{label}</span>
-      )}
-      <p className="text-[11px] text-[#3d7a94] mt-0.5 leading-relaxed">{desc}</p>
-    </div>
-  );
-}

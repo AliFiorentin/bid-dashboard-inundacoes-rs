@@ -1,6 +1,8 @@
 import React from "react";
 import { TabsContent } from "@/components/ui/tabs";
-import { C, INFRA_COLORS, INFRAESTRUTURA_CONFIG } from "@/lib/constants";
+import { C, INFRA_COLORS, INFRAESTRUTURA_CONFIG, INFRA_GRUPOS_VISAO_GERAL, MUNICIPIOS } from "@/lib/constants";
+import { compactoBr, calcPct } from "@/lib/geo-utils";
+import { KPICard } from "@/components/KPICard";
 import { LogradourosSection } from "@/components/tabs/infra/LogradourosSection";
 import { QuadrasSection } from "@/components/tabs/infra/QuadrasSection";
 import { TerrenosSection } from "@/components/tabs/infra/TerrenosSection";
@@ -10,13 +12,13 @@ import type { DashboardState } from "@/hooks/useDashboard";
 interface Props {
   dash: Pick<
     DashboardState,
-    | "infraAtivas"
-    | "toggleInfra"
     | "municipio"
+    | "isVisaoGeral"
     | "mostraImpacto"
     | "isCenarioAtivo"
     | "baseInfra"
     | "atingidosInfra"
+    | "allMunInfraStats"
     | "showListaLogradouros"
     | "setShowListaLogradouros"
     | "showListaEixos"
@@ -26,22 +28,123 @@ interface Props {
 
 export function InfraTab({ dash }: Props) {
   const {
-    infraAtivas,
-    toggleInfra,
     municipio,
+    isVisaoGeral,
     mostraImpacto,
     isCenarioAtivo,
     baseInfra,
     atingidosInfra,
+    allMunInfraStats,
     showListaLogradouros,
     setShowListaLogradouros,
     showListaEixos,
     setShowListaEixos,
   } = dash;
 
-  const disponiveis = (INFRAESTRUTURA_CONFIG[municipio] ?? []).filter(
-    (n) => !infraAtivas.includes(n)
-  );
+  // ── Visão Geral RS ─────────────────────────────────────────────────────────
+  // Os GeoJSONs brutos de infra somam ~640MB entre os 4 municipios -- inviavel
+  // baixar tudo para desenhar mapa/KPIs detalhados aqui. Mostra so a contagem
+  // (e, para Edificações, a área construída) pré-calculada por município
+  // (ver pipeline/10_infra_stats.py), tipo a tipo -- cada tipo de infra so
+  // existe num subconjunto de municípios, entao nao ha um "total RS" universal
+  // como em Agricultura, so a comparação lado a lado dos que existem.
+  if (isVisaoGeral) {
+    // Município a município os tipos tem nomes diferentes pro mesmo ativo
+    // (ex.: "Eixos Logradouros" de Porto Alegre é a mesma coisa que
+    // "Logradouros" de Rio Grande/Lajeado) -- agrupa pelo rótulo canônico
+    // (INFRA_GRUPOS_VISAO_GERAL) em vez de listar cada nome bruto como uma
+    // categoria separada.
+    const rawParaGrupo: Record<string, string> = {};
+    Object.entries(INFRA_GRUPOS_VISAO_GERAL).forEach(([grupo, brutos]) => {
+      brutos.forEach(bruto => { rawParaGrupo[bruto] = grupo; });
+    });
+
+    const gruposComDado = new Set<string>();
+    MUNICIPIOS.forEach(mun => {
+      Object.keys(allMunInfraStats?.[mun] ?? {}).forEach(tipoBruto => {
+        gruposComDado.add(rawParaGrupo[tipoBruto] ?? tipoBruto);
+      });
+    });
+    const grupos = [...gruposComDado].sort((a, b) => a.localeCompare(b, "pt-BR"));
+
+    if (grupos.length === 0) {
+      return (
+        <TabsContent value="infra" className="flex-1 overflow-y-auto mt-4 pr-2 pb-2">
+          <p className="text-xs text-center py-4 text-muted-foreground">Carregando...</p>
+        </TabsContent>
+      );
+    }
+
+    return (
+      <TabsContent value="infra" className="flex-1 overflow-y-auto mt-4 pr-2 pb-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-thumb]:rounded-full">
+        <div className="flex flex-col gap-2 pb-2">
+          {grupos.map(grupo => {
+            const cor = INFRA_COLORS[grupo] ?? "#f59e0b";
+            // Cada município entra com no máximo um dos nomes brutos do grupo.
+            const entradas = MUNICIPIOS.flatMap(mun => {
+              const statsMun = allMunInfraStats?.[mun];
+              if (!statsMun) return [];
+              const tipoBruto = Object.keys(statsMun).find(t => (rawParaGrupo[t] ?? t) === grupo);
+              return tipoBruto ? [{ mun, tipoBruto, entry: statsMun[tipoBruto] }] : [];
+            });
+            const totalBase = entradas.reduce((s, { entry }) => s + entry.count_base, 0);
+            const totalAtg = entradas.reduce((s, { entry }) => s + entry.count_atingido, 0);
+            const temArea = entradas.some(({ entry }) => entry.area_m2_base != null);
+            const areaBase = temArea ? entradas.reduce((s, { entry }) => s + (entry.area_m2_base ?? 0), 0) : 0;
+            const areaAtg = temArea ? entradas.reduce((s, { entry }) => s + (entry.area_m2_atingido ?? 0), 0) : 0;
+
+            return (
+              <KPICard
+                key={grupo}
+                titulo={grupo}
+                cor={cor}
+                principal={{
+                  valor: compactoBr(totalAtg, 0),
+                  sub: "Atingidos",
+                  delta: `de ${compactoBr(totalBase, 0)} (${calcPct(totalAtg, totalBase)})`,
+                }}
+                secundarios={temArea ? [{
+                  titulo: "Área Construída (m²)",
+                  valor: compactoBr(areaAtg, 0),
+                  sub: "Atingidos",
+                  delta: `de ${compactoBr(areaBase, 0)} (${calcPct(areaAtg, areaBase)})`,
+                }] : undefined}
+              >
+                <div className="border-t px-3 py-2.5 flex flex-col gap-1.5" style={{ borderColor: "rgba(5,80,113,0.15)" }}>
+                  <span className="text-[9px] font-bold uppercase tracking-wide text-muted-foreground">Por Município</span>
+                  {entradas.map(({ mun, tipoBruto, entry }) => {
+                    const pct = entry.count_base > 0 ? (entry.count_atingido / entry.count_base * 100) : 0;
+                    return (
+                      <div key={mun} className="flex items-center gap-1.5">
+                        <span className="text-[10px] w-24 shrink-0 truncate" style={{ color: C.muted }} title={tipoBruto !== grupo ? `${mun} (${tipoBruto})` : mun}>
+                          {mun}{tipoBruto !== grupo && <span className="opacity-60"> ({tipoBruto})</span>}
+                        </span>
+                        <div className="flex-1 rounded-full h-1.5 overflow-hidden bg-slate-100">
+                          <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: cor }} />
+                        </div>
+                        <span className="text-[10px] tabular-nums w-24 text-right shrink-0" style={{ color: C.muted }}>
+                          {compactoBr(entry.count_atingido, 0)} de {compactoBr(entry.count_base, 0)}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </KPICard>
+            );
+          })}
+        </div>
+        <p className="text-[10px] italic mt-2 text-muted-foreground">
+          Fonte: Prefeituras Municipais
+        </p>
+      </TabsContent>
+    );
+  }
+
+  // Mostra a KPI de TODOS os tipos de infra do municipio, marcados ou nao no
+  // mapa -- infraAtivas so controla o que desenha no mapa (DashboardMap.tsx),
+  // nao o que aparece aqui. Os dados sao pre-carregados em useDashboard.ts
+  // assim que o municipio/cenario muda, entao a metrica ja vem pronta.
+  const todosTipos = INFRAESTRUTURA_CONFIG[municipio] ?? [];
 
   return (
     <TabsContent
@@ -49,49 +152,8 @@ export function InfraTab({ dash }: Props) {
       className="flex-1 overflow-y-auto mt-4 pr-2 pb-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full"
       style={{ scrollbarColor: `${C.border} transparent` }}
     >
-      {disponiveis.length > 0 && (
-        <div
-          className="flex flex-wrap gap-1.5 mb-4 p-2.5 rounded-lg"
-          style={{ backgroundColor: "rgba(255,255,255,0.38)", backdropFilter: "saturate(160%) blur(10px)", WebkitBackdropFilter: "saturate(160%) blur(10px)", border: "0.5px solid rgba(255,255,255,0.55)" }}
-        >
-          <span
-            className="w-full text-[9px] font-black uppercase tracking-wider mb-0.5"
-            style={{ color: C.primary }}
-          >
-            Camadas disponíveis
-          </span>
-          {disponiveis.map((nome) => (
-            <button
-              key={nome}
-              onClick={() => toggleInfra(nome)}
-              className="flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full border transition-colors duration-150 hover:text-white"
-              style={{
-                color: INFRA_COLORS[nome] ?? C.muted,
-                borderColor: INFRA_COLORS[nome] ?? C.border,
-                backgroundColor: `${INFRA_COLORS[nome] ?? C.muted}15`,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor =
-                  INFRA_COLORS[nome] ?? C.muted;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = `${
-                  INFRA_COLORS[nome] ?? C.muted
-                }15`;
-              }}
-            >
-              <span
-                className="w-1.5 h-1.5 rounded-full inline-block"
-                style={{ backgroundColor: INFRA_COLORS[nome] ?? C.muted }}
-              />
-              {nome}
-            </button>
-          ))}
-        </div>
-      )}
-
       <div className="flex flex-col gap-5 pb-2">
-        {infraAtivas.includes("Logradouros") && (
+        {todosTipos.includes("Logradouros") && (
           <LogradourosSection
             dash={{
               baseInfra,
@@ -104,19 +166,19 @@ export function InfraTab({ dash }: Props) {
           />
         )}
 
-        {infraAtivas.includes("Quadras") && (
+        {todosTipos.includes("Quadras") && (
           <QuadrasSection
             dash={{ baseInfra, atingidosInfra, mostraImpacto }}
           />
         )}
 
-        {infraAtivas.includes("Terrenos") && (
+        {todosTipos.includes("Terrenos") && (
           <TerrenosSection
             dash={{ baseInfra, atingidosInfra, mostraImpacto }}
           />
         )}
 
-        {infraAtivas
+        {todosTipos
           .filter((n) => !["Logradouros", "Quadras", "Terrenos"].includes(n))
           .map((infraNome) => (
             <GenericInfraSection

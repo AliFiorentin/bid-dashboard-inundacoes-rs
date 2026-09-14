@@ -1,38 +1,64 @@
 import type { Metadata } from "next";
 import React from "react";
 import katex from "katex";
+import { readFileSync } from "fs";
+import { join } from "path";
+import { HeaderLogos } from "@/components/HeaderLogos";
+import type { ClimadaData } from "@/app/danos/DanosClient";
 
 export const metadata: Metadata = {
   title: "Metodologia — Avaliação de Impactos Socioeconômicos RS",
   description: "Metodologias de cálculo utilizadas no painel de impactos das enchentes no Rio Grande do Sul.",
 };
 
+// ─── Constantes visuais — Dano Físico (CLIMADA) ────────────────────────────────
+const SETOR_LABEL: Record<string, string> = { empresas: "Empresas", educacao: "Educação", saude: "Saúde" };
+const SETOR_COLORS: Record<string, string> = { empresas: "#055071", educacao: "#2da8cc", saude: "#e35d4b" };
+// Nomes técnicos (campos do RAIS/Censo Escolar/CNES) traduzidos para rótulo legível.
+const PORTE_LABEL: Record<string, string> = {
+  qtd_vinculos: "Nº de vínculos empregatícios",
+  salas_equivalentes: "Salas de aula equivalentes (por matrícula e etapa)",
+  leitos_ou_profissionais: "Leitos (ou nº de profissionais, se 0 leitos)",
+};
+function fmtBRLPreciso(v: number): string {
+  return `R$ ${v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
 export default function MetodologiaPage() {
+  let dadosClimada: ClimadaData | null = null;
+  try {
+    const p = join(process.cwd(), "public", "dados_convertidos", "climada_dano_fisico_prototipo.json");
+    dadosClimada = JSON.parse(readFileSync(p, "utf8"));
+  } catch { /* graceful degradation */ }
+
   return (
     <div className="min-h-screen bg-[#f0f7fa] text-slate-800 font-sans">
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <header className="bg-[#055071] text-white px-6 py-10 print:py-5">
-        <div className="max-w-[1200px] mx-auto">
-          <div className="flex items-center gap-2 mb-5 print:hidden">
-            <a href="/" className="text-[10px] font-bold text-white/70 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">← Dashboard</a>
-            <a href="/danos" className="text-[10px] font-bold text-white/70 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">Danos Operacionais →</a>
+        <div className="max-w-[1200px] mx-auto flex items-start justify-between gap-6">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 mb-5 print:hidden">
+              <a href="/" className="text-[10px] font-bold text-white/70 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">← Dashboard</a>
+              <a href="/danos" className="text-[10px] font-bold text-white/70 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">Danos Operacionais →</a>
+            </div>
+            <p className="text-[11px] uppercase tracking-[0.18em] font-semibold opacity-60 mb-2">
+              BID · GPEA · FURG
+            </p>
+            <h1 className="text-4xl font-black leading-none mb-2 tracking-tight flex items-center gap-3">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-80 shrink-0">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+              </svg>
+              Metodologia
+            </h1>
+            <p className="text-base opacity-75 font-medium">
+              Avaliação de Impactos Socioeconômicos das Enchentes no Rio Grande do Sul
+            </p>
+            <p className="text-[11px] opacity-50 mt-3 font-mono">
+              Enchentes de Maio/2024 e Setembro/2023 · 4 municípios avaliados
+            </p>
           </div>
-          <p className="text-[11px] uppercase tracking-[0.18em] font-semibold opacity-60 mb-2">
-            BID · GPEA · FURG
-          </p>
-          <h1 className="text-4xl font-black leading-none mb-2 tracking-tight flex items-center gap-3">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-80 shrink-0">
-              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-            </svg>
-            Metodologia
-          </h1>
-          <p className="text-base opacity-75 font-medium">
-            Avaliação de Impactos Socioeconômicos das Enchentes no Rio Grande do Sul
-          </p>
-          <p className="text-[11px] opacity-50 mt-3 font-mono">
-            Enchentes de Maio/2024 e Setembro/2023 · 4 municípios avaliados
-          </p>
+          <HeaderLogos />
         </div>
       </header>
 
@@ -54,8 +80,9 @@ export default function MetodologiaPage() {
                   ["#infraestrutura", "7. Infraestrutura"],
                   ["#edificacoes",    "8. Edificações"],
                   ["#danos",          "9. Danos Operacionais"],
-                  ["#populacao",      "10. População Exposta"],
-                  ["#fontes",         "11. Fontes e Referências"],
+                  ["#dano-fisico",    "10. Dano Físico (CLIMADA)"],
+                  ["#populacao",      "11. População Exposta"],
+                  ["#fontes",         "12. Fontes e Referências"],
                 ] as [string, string][]).map(([href, label]) => (
                   <li key={href}>
                     <a href={href} className="text-[11px] text-[#055071] font-medium hover:underline underline-offset-4 transition-colors duration-150 leading-snug block py-0.5">
@@ -725,9 +752,11 @@ export default function MetodologiaPage() {
           ]} />
           <p>
             Este painel estima as <strong>perdas operacionais</strong> — o fluxo econômico que
-            deixou de ocorrer. Os danos físicos (estoque) não são estimados, pois exigiriam
-            dados de profundidade de inundação por ativo e curvas de vulnerabilidade calibradas
-            localmente.
+            deixou de ocorrer. Os danos físicos (estoque) têm uma estimativa à parte, via
+            protótipo CLIMADA — ver{" "}
+            <a href="#dano-fisico" className="text-[#055071] font-semibold hover:underline underline-offset-4">
+              Seção 10 — Dano Físico
+            </a>.
           </p>
 
           <SubTitle>Curva de Recuperação Linear (DaLA)</SubTitle>
@@ -785,14 +814,12 @@ export default function MetodologiaPage() {
             ["Adm. Pública (84)",    "88,3%",             "SCN 2021 — Tab17 (VAB ≈ custo salarial na Adm. Pública)"],
             ["Serviços (demais)",    "43,3%",             "SCN 2021 — Tabela 17, linha Serviços"],
           ]} />
-          <Note type="warning">
-            Estabelecimentos CNAE 84 (Administração Pública) em Porto Alegre/ADA representam
-            51 unidades e ~45% da folha salarial total da área atingida. Sua inclusão é coerente
-            com o DaLA (a interrupção do serviço público é uma perda real), mas amplifica o
-            total estimado. Ver{" "}
-            <a href="/danos#cnae84" target="_blank" rel="noopener noreferrer"
+          <Note type="info">
+            Estabelecimentos CNAE 84 (Administração Pública) são incluídos no cálculo — ver a
+            nota e as limitações sobre esse ponto na{" "}
+            <a href="/danos#notas" target="_blank" rel="noopener noreferrer"
               className="text-[#055071] font-semibold hover:underline underline-offset-4">
-              nota completa na página de Danos ↗
+              página de Danos ↗
             </a>.
           </Note>
 
@@ -800,16 +827,26 @@ export default function MetodologiaPage() {
           <p>
             A Lei de Diretrizes e Bases (LDB, Art. 24, I) exige mínimo de 200 dias letivos
             por ano. Dias interrompidos por calamidade geram obrigação legal de reposição.
-            O custo é estimado pelo Valor Anual por Aluno Total Mínimo (VAAT-MIN) do FUNDEB:
+            O custo é estimado pelo Valor Anual por Aluno Total Mínimo (VAAT-MIN) do FUNDEB —
+            dois componentes distintos, ambos com o mesmo custo unitário FUNDEB/aluno/dia:
           </p>
           <MathBlock exprs={[
-            { label: "Custo por aluno/dia", tex: "c = \\dfrac{\\text{VAAT-MIN}}{D_{\\text{letivos}}} = \\dfrac{\\text{R}\\$\\,8.481{,}21}{200} = \\text{R}\\$\\,42{,}41/\\text{aluno/dia}" },
-            { label: "Reposição total",     tex: "L_{\\text{edu}} = c \\times N_{\\text{alunos}} \\times d_{\\text{ef}}" },
+            { label: "Custo por aluno/dia",         tex: "c = \\dfrac{\\text{VAAT-MIN}}{D_{\\text{letivos}}} = \\dfrac{\\text{R}\\$\\,8.481{,}21}{200} = \\text{R}\\$\\,42{,}41/\\text{aluno/dia}" },
+            { label: "Perdas (serv. não prestado)", tex: "P_{\\text{edu}} = c \\times N_{\\text{alunos}} \\times d_a" },
+            { label: "Custo adicional (reposição)", tex: "C_{\\text{adic}} = c \\times N_{\\text{alunos}} \\times d_a" },
+            { label: "Total educação",              tex: "L_{\\text{edu}} = P_{\\text{edu}} + C_{\\text{adic}} = 2\\,c\\,N\\,d_a" },
           ]} />
+          <p className="text-[12px] text-slate-500 mt-1">
+            Usa <em>d</em><sub>a</sub> (dias de fechamento real), não <em>d</em><sub>ef</sub>,
+            porque escolas são obrigadas a compensar 100% dos dias perdidos — não há recuperação
+            parcial como em firmas.
+          </p>
           <DataTable rows={[
-            ["Parâmetro",     "Valor",       "Fonte"],
-            ["VAAT-MIN 2024", "R$ 8.481,21", "Portaria Interministerial MEC/MF nº 9, 28/08/2024"],
-            ["Dias letivos",  "200/ano",     "LDB, Art. 24, I"],
+            ["Parâmetro",      "Valor",       "Fonte"],
+            ["VAAT-MIN 2024",  "R$ 8.481,21", "Portaria Interministerial MEC/MF nº 9, 28/08/2024"],
+            ["Dias letivos",   "200/ano",     "LDB, Art. 24, I"],
+            ["dₐ — Maio 2024", "30 dias",     "DaLA RS — CEPAL, 2024"],
+            ["dₐ — Set. 2023", "15 dias",     "DaLA RS — CEPAL, 2024"],
           ]} />
 
           <SubTitle>Componente 3 — Saúde: Perda de Produção SUS</SubTitle>
@@ -840,7 +877,19 @@ export default function MetodologiaPage() {
           ]} />
           <p>
             Custo fixo por área — independente de <em>f</em> (não é um fluxo contínuo,
-            mas um custo incorrido no momento do evento). Ver metodologia detalhada na{" "}
+            mas um custo incorrido no momento do evento).
+          </p>
+          <DataTable rows={[
+            ["Cultura",                     "Período",    "Status",                      "Coef. (R$/ha)"],
+            ["Soja",                        "Maio 2024",  "Colhida — fev–abr/2024",      "R$ 1.100"],
+            ["Arroz",                       "Maio 2024",  "Colhido — fev–abr/2024",      "R$ 1.100"],
+            ["Outras Lavouras Temporárias", "Maio 2024",  "Plantio inicial — mai/2024",  "R$ 1.400"],
+            ["Soja",                        "Set. 2023",  "Pré-plantio",                 "R$ 250"],
+            ["Arroz",                       "Set. 2023",  "Pré-plantio",                 "R$ 250"],
+            ["Outras Lavouras Temporárias", "Set. 2023",  "Colheita — set–out/2023",     "R$ 2.800"],
+          ]} />
+          <p>
+            Ver a delimitação espacial das áreas agrícolas na{" "}
             <a href="#agricultura" className="text-[#055071] font-semibold hover:underline underline-offset-4">
               Seção 4 — Agricultura
             </a>.
@@ -851,6 +900,22 @@ export default function MetodologiaPage() {
             { label: "Total (por cenário)", tex: "L_{\\text{total}} = L_{\\text{emp}} + L_{\\text{edu}} + L_{\\text{sau}} + L_{\\text{agr}}" },
           ]} />
 
+          <SubTitle>Parâmetros consolidados</SubTitle>
+          <DataTable rows={[
+            ["Parâmetro",                   "Valor",          "Fonte"],
+            ["VAAT-MIN FUNDEB 2024",        "R$ 8.481,21",    "Portaria Interministerial MEC/MF nº 9/2024"],
+            ["Dias letivos/ano",            "200",            "LDB Art. 24, I"],
+            ["Labor share — Agropecuária",  "17,6%",          "IBGE SCN 2021 — Tab17"],
+            ["Labor share — Indústria",     "33,8%",          "IBGE SCN 2021 — Tab17"],
+            ["Labor share — Adm. Pública",  "88,3%",          "IBGE SCN 2021 — Tab17"],
+            ["Labor share — Serviços",      "43,3%",          "IBGE SCN 2021 — Tab17"],
+            ["Fase aguda — Maio 2024",      "30 dias",        "DaLA RS — CEPAL, 2024"],
+            ["Recuperação — Maio 2024",     "60 dias",        "DaLA RS — CEPAL, 2024"],
+            ["Fase aguda — Set. 2023",      "15 dias",        "DaLA RS — CEPAL, 2024"],
+            ["Recuperação — Set. 2023",     "30 dias",        "DaLA RS — CEPAL, 2024"],
+            ["Meses SIA/SIH disponíveis",   "7 (jan–jul/24)", "DataSUS"],
+          ]} />
+
           <SectionSources links={[
             ["CEPAL (2024) — Avaliação dos Efeitos e Impactos das Inundações no Rio Grande do Sul", "https://www.cepal.org/pt-br/publicacoes/81035-avaliacao-efeitos-impactos-inundacoes-rio-grande-sul-novembro-2024"],
             ["PDNA Vol. A Guidelines — GFDRR/UNDP/BM, 2013", "https://www.gfdrr.org/sites/default/files/2017-09/PDNA-Volume-A.pdf"],
@@ -858,13 +923,218 @@ export default function MetodologiaPage() {
             ["Karabarbounis & Neiman (2014, QJE) — The Global Decline of the Labor Share", "https://doi.org/10.1093/qje/qjt032"],
             ["LDB — Lei nº 9.394/1996, Art. 24", "https://www.planalto.gov.br/ccivil_03/leis/l9394.htm"],
             ["Portaria Interministerial MEC/MF nº 9, 28/08/2024 — VAAT-MIN FUNDEB 2024", "https://www.fnde.gov.br"],
+            ["CONAB — Preços Mínimos 2024", "https://www.conab.gov.br/politica-agricola/precos-minimos"],
+            ["MapBiomas — Coleção 10", "https://brasil.mapbiomas.org/colecoes-mapbiomas-1/"],
+            ["FNDE — FUNDEB 2024", "https://www.fnde.gov.br"],
+            ["DataSUS — Produção Hospitalar SIH/SUS", "https://datasus.saude.gov.br/acesso-a-informacao/producao-hospitalar-sih-sus"],
+            ["DataSUS — Produção Ambulatorial SIA/SUS", "https://datasus.saude.gov.br/acesso-a-informacao/producao-ambulatorial-sia-sus"],
           ]} />
         </Section>
 
         {/* ══════════════════════════════════════════════════════════════════════
-            10. POPULAÇÃO EXPOSTA
+            10. DANO FÍSICO — CLIMADA (PROTÓTIPO)
         ══════════════════════════════════════════════════════════════════════ */}
-        <Section id="populacao" num="10" title="População Exposta — WorldPop 2024">
+        {dadosClimada && (
+        <Section id="dano-fisico" num="10" title="Dano Físico — Metodologia CLIMADA (Protótipo)">
+          <Note type="info">
+            <strong>Protótipo exploratório</strong>, não uma métrica oficial do painel. Mede{" "}
+            <strong>destruição de patrimônio</strong> (estoque: prédio + equipamento), diferente
+            da metodologia DaLA acima, que mede perdas de fluxo (Seção 9). Resultados, comparativo
+            por período de retorno e limitações completas na{" "}
+            <a href="/danos?aba=climada" target="_blank" rel="noopener noreferrer"
+              className="font-semibold hover:underline underline-offset-4">
+              página de Danos — aba Dano Físico ↗
+            </a>.
+          </Note>
+
+          <SubTitle>Curvas de Dano (Profundidade → MDD)</SubTitle>
+          <p>
+            MDD (<em>Mean Damage Degree</em>) é a fração do valor de reposição do ativo destruída
+            em cada profundidade de água. Curvas calibradas pelo CLIMADA para Porto Alegre a
+            partir da base JRC (Huizinga et al., 2017).
+          </p>
+          <div className="bg-white border border-[#b3cdd8] rounded-xl p-5 shadow-sm mt-3">
+            <p className="text-[10px] text-slate-400 font-medium mb-2">
+              Eixo horizontal: profundidade da água no ponto (m). Eixo vertical: % do valor do
+              imóvel destruída nessa profundidade. Curva mais alta/íngreme no início = setor mais
+              vulnerável a alagamentos rasos; todas achatam (platô) a partir de ~2-3m, quando o
+              dano já atingiu o teto do modelo.
+            </p>
+            <CurvasChart curvas={dadosClimada.premissas.curvas} />
+            <div className="flex gap-4 flex-wrap mt-4 justify-center">
+              {Object.keys(dadosClimada.premissas.curvas).map((s) => (
+                <div key={s} className="flex items-center gap-1.5">
+                  <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: SETOR_COLORS[s] }} />
+                  <span className="text-[10px] text-slate-500 font-medium">{SETOR_LABEL[s] ?? s}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <DataTable rows={[
+            ["Setor", "Porte usado p/ ponderar", "Fonte da curva de dano"],
+            ...Object.entries(dadosClimada.premissas.curvas).map(([s, c]) => [
+              SETOR_LABEL[s] ?? s,
+              PORTE_LABEL[c.porte_campo] ?? c.porte_campo,
+              <span key="f" className="text-[11px]">{c.fonte}</span>,
+            ]),
+          ]} />
+          <SectionSources links={[
+            ["Huizinga, J., de Moel, H. & Szewczyk, W. (2017): Global flood depth-damage functions (JRC105688)", "https://publications.jrc.ec.europa.eu/repository/bitstream/JRC105688/global_flood_depth-damage_functions__10042017.pdf"],
+            ["CLIMADA: plataforma de modelagem de risco climático (ETH Zürich)", "https://climada-python.readthedocs.io/"],
+          ]} />
+
+          <SubTitle>Fórmula geral</SubTitle>
+          <MathBlock exprs={[
+            { label: "Dano físico", tex: "D_i = \\text{MDD}(h_i) \\times PAA \\times V_i" },
+            { label: "PAA", tex: "PAA = 1" },
+          ]} />
+          <p className="text-[12px] text-slate-500">
+            <Math tex="D_i" />: dano físico do ponto <Math tex="i" />.{" "}
+            <Math tex="\text{MDD}(h_i)" />: fração do valor destruída na profundidade{" "}
+            <Math tex="h_i" /> (curvas acima). PAA: percentual de ativos afetados, fixo em 1
+            quando há profundidade {'>'} 0. <Math tex="V_i" />: valor de reposição do ponto.
+          </p>
+
+          <SubTitle>Profundidade</SubTitle>
+          <p>
+            Amostrada do raster de profundidade máxima do CLIMADA correspondente ao período de
+            retorno (RP) selecionado (vizinho mais próximo, ~90 m/pixel) em cada ponto
+            geocodificado de empresa, escola ou unidade de saúde.
+          </p>
+
+          <SubTitle>Custo de reposição</SubTitle>
+          <p>
+            Estimativa de custo de reposição a partir de referências brasileiras reais e
+            datadas, com dois componentes: construção e conteúdo/equipamento.
+          </p>
+          <MathBlock exprs={[
+            { label: "Empresas", tex: "V_i = a \\times N_i \\times c_{\\text{com}} \\times k_{\\text{com}}" },
+            { label: "Saúde", tex: "V_i = a \\times N_i \\times c_{\\text{inst}} \\times k_{\\text{sau}}" },
+            { label: "Educação", tex: "V_i = S_i \\times a_{\\text{sala}} \\times c_{\\text{inst}} \\times k_{\\text{edu}}" },
+          ]} />
+          <p className="text-[12px] text-slate-500">
+            Nas Empresas, os pontos com CNAE industrial ({dadosClimada.premissas.n_empresas_industria} de{" "}
+            {dadosClimada.premissas.n_empresas_total.toLocaleString("pt-BR")} estabelecimentos) usam{" "}
+            <Math tex="c_{\text{ind}}" /> e <Math tex="k_{\text{ind}}" /> em vez de{" "}
+            <Math tex="c_{\text{com}}" /> e <Math tex="k_{\text{com}}" /> — o resto (comércio,
+            serviços, agropecuária e administração pública) segue com o tratamento comercial abaixo.
+          </p>
+          <DataTable rows={[
+            ["Símbolo", "Significado", "Valor", "Fonte"],
+            [<Math key="s" tex="a" />, "Área construída por pessoa (Empresas/Saúde)", `${dadosClimada.premissas.area_m2_por_pessoa.toFixed(0)} m²/pessoa`, "Manual de Padrão de Ocupação e Dimensionamento de Ambientes em Imóveis, Projeto Racionaliza, Min. da Gestão"],
+            [<Math key="s" tex="a_{\text{sala}}" />, "Área construída por sala de aula (Educação)", `${dadosClimada.premissas.area_por_sala_m2.toFixed(2)} m²/sala`, "derivado do projeto padrão FNDE, ver abaixo"],
+            [<Math key="s" tex="c_{\text{com}}" />, "Custo de construção, categoria comercial", `${fmtBRLPreciso(dadosClimada.premissas.cub_comercial_rs)}/m²`, "Sinduscon-RS, CUB/RS dez/2024, categoria CSL 8-N"],
+            [<Math key="s" tex="c_{\text{inst}}" />, "Custo de construção, categoria institucional", `${fmtBRLPreciso(dadosClimada.premissas.cub_institucional_rs)}/m²`, "Sinduscon-RS, CUB/RS dez/2024, categoria PP 4-N"],
+            [<Math key="s" tex="c_{\text{ind}}" />, "Custo de construção, categoria industrial (Empresas com CNAE industrial)", `${fmtBRLPreciso(dadosClimada.premissas.cub_industrial_rs)}/m²`, "Sinduscon-RS, CUB/RS dez/2024, categoria GI (Galpão Industrial)"],
+            [<Math key="s" tex="k_{\text{com}}, k_{\text{ind}}, k_{\text{res}}" />, "Conteúdo/equipamento, % do valor de construção", "100% / 150% / 50%", "Huizinga, de Moel & Szewczyk (2017), Table 3-26"],
+            [<Math key="s" tex="N_i" />, "Porte do ponto i (vínculos ou leitos/profissionais)", "por ponto", "RAIS / CNES"],
+            [<Math key="s" tex="S_i" />, "Salas de aula equivalentes da escola i", "por ponto", "Censo Escolar, ver abaixo"],
+          ]} />
+          <p>
+            O CUB (Custo Unitário Básico) só cobre a casca construtiva: o próprio Sinduscon-RS
+            declara que a tabela exclui equipamentos e instalações. Isso subestimaria o valor em
+            risco, já que o CLIMADA (via JRC) trata &ldquo;dano máximo&rdquo; como estrutura mais conteúdo
+            somados. A Table 3-26 do relatório JRC (Huizinga et al., 2017) informa o conteúdo
+            como percentual do valor da construção por categoria de uso: Residencial 50%,
+            Comercial 100%, Industrial 150%. Essas categorias são aplicadas como multiplicador{" "}
+            <Math tex="k = 1 + \%_{\text{conteúdo}}" /> sobre o valor de construção:
+          </p>
+          <DataTable rows={[
+            ["Setor", "Categoria JRC usada", <span key="k">Multiplicador (<Math tex="k" />)</span>, "Justificativa"],
+            ["Empresas", "Commercial (100%)", `${dadosClimada.premissas.multiplicador_empresas.toFixed(2)}×`, "categoria direta da Table 3-26"],
+            ["Empresas (CNAE industrial)", "Industrial (150%)", `${dadosClimada.premissas.multiplicador_empresas_industria.toFixed(2)}×`, "categoria direta da Table 3-26, aplicada aos estabelecimentos com CNAE 05-39"],
+            ["Saúde", "média Commercial + Industrial", `${dadosClimada.premissas.multiplicador_saude.toFixed(2)}×`, "aparelhagem médica e farmácia têm caráter mais industrial que uma loja comum, mesma lógica do blend usado na curva MDD"],
+            ["Educação", "Residential (50%)", `${dadosClimada.premissas.multiplicador_educacao.toFixed(2)}×`, "mobiliário e material didático, sem estoque comercial para vender"],
+          ]} />
+          <p>
+            O CUB também não tem categoria própria para escola ou unidade de saúde: PP 4-N
+            (prédio público/institucional simples, sem elevador) é a aproximação disponível mais
+            próxima.
+          </p>
+          <p>
+            RAIS e CNES não têm contagem de professores e funcionários, então nem &ldquo;área por
+            pessoa&rdquo; (como em Empresas/Saúde) nem &ldquo;área por matrícula&rdquo; direto são boas
+            aproximações: as duas ignoram o espaço de apoio (administração, cozinha, banheiros,
+            circulação) que a escola precisa além das salas de aula, e esse espaço escala com o{" "}
+            <em>tamanho da escola</em>, não com o aluno isolado. A saída: estimar quantas{" "}
+            <strong>salas de aula</strong> a matrícula implica, e converter salas em área pela
+            mesma proporção do projeto padrão FNDE — assim o espaço de apoio fica embutido
+            proporcionalmente, sem precisar saber quantos funcionários a escola tem.
+          </p>
+          <MathBlock exprs={[
+            { label: "Área por sala", tex: `a_{\\text{sala}} = \\dfrac{A_{\\text{esc}}}{6} = \\dfrac{${dadosClimada.premissas.area_escola_padrao_m2.toLocaleString("pt-BR")}}{6} \\approx ${dadosClimada.premissas.area_por_sala_m2.toFixed(2)}\\,\\text{m}^2` },
+            { label: "Salas necessárias", tex: "S_i = \\dfrac{M_i}{T \\times L}" },
+          ]} />
+          <p>
+            <Math tex="M_i" /> é a matrícula da escola numa etapa, <Math tex="L" /> é
+            a lotação máxima por turma dessa etapa, e <Math tex="T" /> é o número de turnos
+            (a maioria das escolas funciona em dois turnos, manhã e tarde: a mesma sala atende
+            grupos diferentes de alunos ao longo do dia, então a matrícula anual é bem maior que a
+            ocupação simultânea que a sala precisa suportar). O total de salas de uma escola soma
+            essa conta por etapa:
+          </p>
+          <DataTable rows={[
+            ["Etapa", <span key="l">Lotação máxima por turma (<Math tex="L" />)</span>, <span key="t">Turnos (<Math tex="T" />)</span>, "Fonte"],
+            ["Educação Infantil", `${dadosClimada.premissas.lotacao_infantil} alunos/turma`, `${dadosClimada.premissas.turnos_padrao}`, "CNE/CEB Resolução nº 1/2024, Art. 6º-V (faixa de 4-5 anos, a mais numerosa da pré-escola)"],
+            ["Ensino Fundamental (+ Especial)", `${dadosClimada.premissas.lotacao_fundamental} alunos/turma`, `${dadosClimada.premissas.turnos_padrao}`, "Média ponderada dos limites da rede estadual RS por ano (25 no 1º ano, 30 do 2º ao 4º, 35 do 5º ao 9º)"],
+            ["Ensino Médio, Profissional e EJA", `${dadosClimada.premissas.lotacao_medio} alunos/turma`, `${dadosClimada.premissas.turnos_padrao}`, "Parecer CEEd/RS nº 580/2000, também usado para Profissional/EJA por falta de norma específica"],
+          ]} />
+          <p className="text-[12px] text-slate-500">
+            Área construída do projeto padrão FNDE (6 salas): {dadosClimada.premissas.area_escola_padrao_m2.toLocaleString("pt-BR")} m².
+            Cobre salas de aula, bloco administrativo, cozinha, banheiros, circulação e pátio
+            coberto (área construída total do prédio, não só as 6 salas) — não inclui quadra
+            coberta nem área externa descoberta.
+          </p>
+          <SectionSources links={[
+            ["Sinduscon-RS: Preços e Custos da Construção, CUB/RS dezembro/2024", "https://sinduscon-rs.com.br/wp-content/uploads/2025/01/PRECOS-E-CUSTOS-DA-CONSTRUCAO-JANEIRO-2025.pdf"],
+            ["FNDE: planilha orçamentária, projeto padrão Escola 6 Salas", "https://www.fnde.gov.br/phocadownload/programas/plano_de_acoes_articuladas/projetos_arquitetonicos/planilhas_orcamentarias/planilha_orcamentaria_6salas.pdf"],
+            ["CNE/CEB: Resolução nº 1, de 17 de outubro de 2024 (lotação máxima na Educação Infantil)", "https://abmes.org.br/arquivos/legislacoes/Resolucao-cne-ceb-001-2024-10-17.pdf"],
+            ["CEEd/RS: Parecer nº 580/2000 (lotação máxima no Ensino Médio)", "https://www.ceed.rs.gov.br/parecer-n-0580-2000-revogado-pela-resolucao-n-340-2018"],
+            ["Manual de Padrão de Ocupação e Dimensionamento de Ambientes em Imóveis (Projeto Racionaliza, Min. da Gestão)", "https://www.gov.br/gestao/pt-br/acesso-a-informacao/acoes-e-programas/programas-projetos-acoes-obras-e-atividades/projeto-racionaliza/manual-racionalia-v1-1-junho-2022.pdf"],
+            ["Huizinga, J., de Moel, H. & Szewczyk, W. (2017): Global flood depth-damage functions (JRC105688), Table 3-26", "https://publications.jrc.ec.europa.eu/repository/bitstream/JRC105688/global_flood_depth-damage_functions__10042017.pdf"],
+          ]} />
+
+          <SubTitle>Fator de recalibração de Porto Alegre</SubTitle>
+          <p>
+            A amplitude bruta da curva JRC (Huizinga et al., 2017) superestimava a perda
+            observada em Porto Alegre em maio de 2024. A curva de Empresas foi recalibrada
+            usando o RP200 como âncora:
+          </p>
+          <MathBlock exprs={[
+            { label: "Fator POA", tex: `\\lambda = \\dfrac{\\text{MDD}_{\\text{ajustado}}}{\\text{MDD}_{\\text{JRC}}} = ${dadosClimada.premissas.poa_calibration_factor.toFixed(6)}` },
+          ]} />
+          <p>
+            É a única evidência empírica disponível de quanto reduzir a curva bruta para esta
+            cidade, reaproveitada na curva sintetizada de Saúde (que não tem âncora própria).
+            O fator afeta a <em>curva de dano</em> (fração destruída por profundidade),
+            independentemente da mudança no <em>valor de reposição</em> descrita acima.
+          </p>
+
+          <Note type="warning">
+            Premissas explícitas que precisam de validação antes de qualquer uso além de
+            exploração metodológica — ver a lista completa de{" "}
+            <a href="/danos?aba=climada#c-limitacoes" target="_blank" rel="noopener noreferrer"
+              className="font-semibold hover:underline underline-offset-4">
+              Limitações na página de Danos ↗
+            </a>.
+          </Note>
+
+          <SectionSources links={[
+            ["CLIMADA: plataforma de modelagem de risco climático (ETH Zürich)", "https://climada-python.readthedocs.io/"],
+            ["Huizinga, J., de Moel, H. & Szewczyk, W. (2017): Global flood depth-damage functions (JRC105688)", "https://publications.jrc.ec.europa.eu/repository/bitstream/JRC105688/global_flood_depth-damage_functions__10042017.pdf"],
+            ["Sinduscon-RS: Preços e Custos da Construção, CUB/RS dezembro/2024", "https://sinduscon-rs.com.br/wp-content/uploads/2025/01/PRECOS-E-CUSTOS-DA-CONSTRUCAO-JANEIRO-2025.pdf"],
+            ["FNDE: planilha orçamentária, projeto padrão Escola 6 Salas", "https://www.fnde.gov.br/phocadownload/programas/plano_de_acoes_articuladas/projetos_arquitetonicos/planilhas_orcamentarias/planilha_orcamentaria_6salas.pdf"],
+            ["Manual de Padrão de Ocupação e Dimensionamento de Ambientes em Imóveis (Projeto Racionaliza, Min. da Gestão)", "https://www.gov.br/gestao/pt-br/acesso-a-informacao/acoes-e-programas/programas-projetos-acoes-obras-e-atividades/projeto-racionaliza/manual-racionalia-v1-1-junho-2022.pdf"],
+            ["Comparativo CCDR × DaLA (pipeline/docs/comparativo_ccdr_dala.md, mesmo repositório)", ""],
+            ["pipeline/climada_risco_prototipo.py: script fonte deste protótipo", ""],
+          ]} />
+        </Section>
+        )}
+
+        {/* ══════════════════════════════════════════════════════════════════════
+            11. POPULAÇÃO EXPOSTA
+        ══════════════════════════════════════════════════════════════════════ */}
+        <Section id="populacao" num="11" title="População Exposta — WorldPop 2024">
           <p>
             A camada de população exposta quantifica o número de habitantes residentes dentro
             de cada mancha de inundação, cruzando as geometrias de flood extent com o raster
@@ -945,7 +1215,7 @@ export default function MetodologiaPage() {
         {/* ══════════════════════════════════════════════════════════════════════
             11. FONTES E REFERÊNCIAS
         ══════════════════════════════════════════════════════════════════════ */}
-        <Section id="fontes" num="11" title="Fontes e Referências">
+        <Section id="fontes" num="12" title="Fontes e Referências">
           <div className="space-y-4">
 
             <RefBlock title="Manchas de Inundação e Contexto">
@@ -1093,6 +1363,42 @@ function ExtLink({ href, children }: { href: string; children: React.ReactNode }
 function Math({ tex, display = false }: { tex: string; display?: boolean }) {
   const html = katex.renderToString(tex, { displayMode: display, throwOnError: false, trust: false });
   return <span dangerouslySetInnerHTML={{ __html: html }} className={display ? "block my-1" : "inline"} />;
+}
+
+function CurvasChart({ curvas }: { curvas: Record<string, ClimadaData["premissas"]["curvas"][string]> }) {
+  // globalThis.Math (não `Math` puro): este arquivo já define um componente
+  // <Math> para renderizar KaTeX, que sombreia o objeto global Math nesta
+  // mesma closure -- Math.min/round aqui chamariam o componente, não a API.
+  const { min, round } = globalThis.Math;
+  const W = 480, H = 200, pL = 34, pB = 22, pT = 8, pR = 8;
+  const chartW = W - pL - pR, chartH = H - pT - pB;
+  const maxDepth = 4; // recorte visual -- todas as curvas platôam antes disso
+  const xOf = (d: number) => pL + (min(d, maxDepth) / maxDepth) * chartW;
+  const yOf = (mdd: number) => pT + (1 - mdd) * chartH;
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full overflow-visible">
+      {[0, 0.25, 0.5, 0.75, 1].map((p, i) => (
+        <g key={i}>
+          <line x1={pL} y1={yOf(p)} x2={W - pR} y2={yOf(p)} stroke="#e2eef3" strokeWidth={i === 0 ? 1.5 : 0.75} />
+          <text x={pL - 6} y={yOf(p) + 3} textAnchor="end" fontSize="8" fill="#9ca3af">{round(p * 100)}%</text>
+        </g>
+      ))}
+      {[0, 1, 2, 3, 4].map((d) => (
+        <text key={d} x={xOf(d)} y={H - pB + 12} textAnchor="middle" fontSize="8" fill="#9ca3af">{d}m</text>
+      ))}
+      {Object.entries(curvas).map(([setor, c]) => {
+        const lastMdd = c.mdd[c.mdd.length - 1];
+        const lastDepth = c.depth[c.depth.length - 1];
+        const depths = lastDepth < maxDepth ? [...c.depth, maxDepth] : c.depth;
+        const mdds = lastDepth < maxDepth ? [...c.mdd, lastMdd] : c.mdd;
+        const pts = depths.map((d, i) => `${xOf(d)},${yOf(mdds[i])}`).join(" ");
+        return <polyline key={setor} points={pts} fill="none" stroke={SETOR_COLORS[setor]} strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />;
+      })}
+      <text x={pL} y={H - 2} fontSize="8" fill="#9ca3af">Profundidade da água</text>
+      <text x={W - pR} y={12} textAnchor="end" fontSize="8" fill="#9ca3af">MDD (% do valor destruído)</text>
+    </svg>
+  );
 }
 
 function MathBlock({ exprs }: { exprs: Array<{ label?: string; tex: string }> }) {

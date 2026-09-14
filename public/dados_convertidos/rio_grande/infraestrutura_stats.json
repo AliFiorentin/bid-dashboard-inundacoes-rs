@@ -1,0 +1,32 @@
+{
+  "Logradouros": {
+    "count_base": 8184,
+    "count_atingido": 1125
+  },
+  "Quadras": {
+    "count_base": 3203,
+    "count_atingido": 429
+  },
+  "Terrenos": {
+    "count_base": 71019,
+    "count_atingido": 8667
+  },
+  "Imóveis": {
+    "count_base": 90961,
+    "count_atingido": 5642
+  },
+  "Prédios Públicos": {
+    "count_base": 14,
+    "count_atingido": 10
+  },
+  "Segurança": {
+    "count_base": 18,
+    "count_atingido": 3
+  },
+  "Edificações": {
+    "count_base": 220655,
+    "count_atingido": 19897,
+    "area_m2_base": 18245586.1,
+    "area_m2_atingido": 1774483.7
+  }
+}

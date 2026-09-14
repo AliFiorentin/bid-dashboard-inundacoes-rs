@@ -1,0 +1,52 @@
+{
+  "Eixos Logradouros": {
+    "count_base": 32726,
+    "count_atingido": 4913
+  },
+  "Lotes": {
+    "count_base": 266256,
+    "count_atingido": 30305
+  },
+  "Quarteirões": {
+    "count_base": 7967,
+    "count_atingido": 1447
+  },
+  "Terminais": {
+    "count_base": 111,
+    "count_atingido": 25
+  },
+  "Rede Esgoto": {
+    "count_base": 59325,
+    "count_atingido": 7856
+  },
+  "Paradas": {
+    "count_base": 5892,
+    "count_atingido": 842
+  },
+  "Ônibus": {
+    "count_base": 1232,
+    "count_atingido": 888
+  },
+  "Hidrantes": {
+    "count_base": 1618,
+    "count_atingido": 271
+  },
+  "Gás": {
+    "count_base": 27197,
+    "count_atingido": 2967
+  },
+  "Bocas de Lobo": {
+    "count_base": 44332,
+    "count_atingido": 6706
+  },
+  "Poste": {
+    "count_base": 120388,
+    "count_atingido": 19292
+  },
+  "Edificações": {
+    "count_base": 494590,
+    "count_atingido": 32005,
+    "area_m2_base": 67232231.6,
+    "area_m2_atingido": 7195474.2
+  }
+}

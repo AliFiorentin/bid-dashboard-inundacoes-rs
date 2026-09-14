@@ -6,6 +6,13 @@ export interface PopulacaoMunData {
   cenarios: Record<string, { pop_atingida: number; pct_atingida: number }>;
 }
 export type PopulacaoData = Record<string, PopulacaoMunData>;
+
+export interface InfraStatsEntry {
+  count_base: number;
+  count_atingido: number;
+  area_m2_base?: number;
+  area_m2_atingido?: number;
+}
 import type { FeatureCollection } from "geojson";
 import type { MapRef, MapLayerMouseEvent } from "react-map-gl/maplibre";
 import * as XLSX from "xlsx";
@@ -61,6 +68,12 @@ export function useDashboard() {
   const mapRef = useRef<MapRef>(null);
   const permalinkCenarioRef = useRef<string | null>(null);
   const headerRef = useRef<HTMLElement>(null);
+  // Cache em memoria (dura so' a sessao da aba) dos dados de infraestrutura ja
+  // baixados, por municipio (base) e por municipio+cenario (atingidos) --
+  // evita rebaixar os mesmos ~400MB (Porto Alegre) toda vez que o usuario
+  // volta a um municipio ja visitado nesta sessao.
+  const infraBaseCacheRef = useRef<Record<string, Record<string, FeatureCollection>>>({});
+  const infraAtingidosCacheRef = useRef<Record<string, Record<string, FeatureCollection>>>({});
   const [headerBottom, setHeaderBottom] = useState(82);
 
   const [municipio, setMunicipio] = useState<string>("Visão Geral RS");
@@ -96,6 +109,7 @@ export function useDashboard() {
   const [conabStats, setConabStats] = useState<{ soja: { area_ha: number }; arroz: { area_ha: number } } | null>(null);
   const [allMunAgriStats, setAllMunAgriStats] = useState<Record<string, Record<string, number>> | null>(null);
   const [allMunAgriAtingidosStats, setAllMunAgriAtingidosStats] = useState<Record<string, Record<string, number>> | null>(null);
+  const [allMunInfraStats, setAllMunInfraStats] = useState<Record<string, Record<string, InfraStatsEntry>> | null>(null);
   const [manchaRS, setManchaRS] = useState<FeatureCollection | null>(null);
   const [danosData, setDanosData] = useState<import("@/components/tabs/DanosTab").DanosData | null>(null);
   const [popData, setPopData] = useState<PopulacaoData | null>(null);
@@ -103,7 +117,7 @@ export function useDashboard() {
   const [cursor, setCursor] = useState<string>("grab");
   const [popupInfo, setPopupInfo] = useState<{ lngLat: [number, number], properties: Record<string, unknown>, source: string } | null>(null);
 
-  const [tabAtiva, setTabAtiva] = useState<string>("empresas");
+  const [tabAtiva, setTabAtiva] = useState<string>("resumo");
   const [showMancha, setShowMancha] = useState<boolean>(true);
   const [showLegenda, setShowLegenda] = useState<boolean>(false);
   // Lido uma única vez, no mount. Quando existe, a câmera do link tem prioridade
@@ -143,11 +157,18 @@ export function useDashboard() {
   }, []);
 
   const hasFlownInitial = useRef(false);
+  // O <Map> do react-map-gl cria a instância maplibre de forma assíncrona: o
+  // ref já existe (map != null) antes do estilo terminar de carregar, e um
+  // flyTo disparado nesse meio-tempo é silenciosamente ignorado pelo
+  // maplibre-gl. Por isso esperamos mapReady (onLoad, setado no DashboardMap)
+  // antes de voar — sem isso, a primeira troca de município depois do carregamento
+  // da página não movia a câmera (só a segunda, quando o estilo já tinha carregado).
+  const [mapReady, setMapReady] = useState(false);
 
   useEffect(() => {
     const view = MUNICIPIO_VIEW[municipio];
     const map = mapRef.current?.getMap();
-    if (view && map) {
+    if (view && map && mapReady) {
       // Na primeira passagem, se a URL trouxe câmera própria ela vence: o
       // initialViewState já a aplicou e o is3D já nasceu coerente com ela, então
       // reenquadrar aqui só destruiria o que o link carregava.
@@ -157,21 +178,21 @@ export function useDashboard() {
 
       const isVg = municipio === "Visão Geral RS";
       const padLeft = showPainelAnalise ? 412 : 0;
-      map.flyTo({ 
-        center: view.center, 
-        zoom: view.zoom, 
+      map.flyTo({
+        center: view.center,
+        zoom: view.zoom,
         pitch: view.pitch ?? (isVg ? 0 : 65),
         bearing: view.bearing ?? (isVg ? 0 : -12),
-        padding: { left: padLeft, top: 0, right: 0, bottom: 0 }, 
-        duration: isVg ? 1500 : 3000, 
-        essential: true 
+        padding: { left: padLeft, top: 0, right: 0, bottom: 0 },
+        duration: isVg ? 1500 : 3000,
+        essential: true
       });
-      
+
       // Auto-toggle 3D: Desliga na Visão Geral e liga no Município
       setIs3D(!isVg);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [municipio]);
+  }, [municipio, mapReady]);
 
   // Reajusta o enquadramento (padding) quando o painel é mostrado/ocultado, sem re-voar.
   useEffect(() => {
@@ -201,12 +222,13 @@ export function useDashboard() {
         const aEmp: FeatureCollection[] = []; const aEdu: FeatureCollection[] = []; const aSau: FeatureCollection[] = [];
         const agriStats: Record<string, Record<string, number>> = {};
         const agriAtingidosStats: Record<string, Record<string, number>> = {};
+        const infraStats: Record<string, Record<string, InfraStatsEntry>> = {};
 
         const fetchPromises = MUNICIPIOS.map(async (mun) => {
           const mSlug = slugify(mun);
           const cSlug = scenarioSlug(mun, PIORES_CENARIOS[mun]);
           try {
-            const [emp, edu, sau, empAtg, eduAtg, sauAtg, agri, agriAtg] = await Promise.all([
+            const [emp, edu, sau, empAtg, eduAtg, sauAtg, agri, agriAtg, infra] = await Promise.all([
               fetch(`/dados_convertidos/${mSlug}/empresas_BASE.geojson?v=3`, { signal }).then(r => r.ok ? r.json() : null),
               fetch(`/dados_convertidos/${mSlug}/educacao_BASE.geojson?v=3`, { signal }).then(r => r.ok ? r.json() : null),
               fetch(`/dados_convertidos/${mSlug}/saude_BASE.geojson?v=3`, { signal }).then(r => r.ok ? r.json() : null),
@@ -215,6 +237,7 @@ export function useDashboard() {
               fetch(`/dados_convertidos/${mSlug}/cenarios/saude_ATINGIDOS_${cSlug}.geojson?v=3`, { signal }).then(r => r.ok ? r.json() : null),
               fetch(`/dados_convertidos/${mSlug}/agricultura_stats_BASE.json?v=3`, { signal }).then(r => r.ok ? r.json() : null),
               fetch(`/dados_convertidos/${mSlug}/cenarios/agricultura_stats_${cSlug}.json?v=3`, { signal }).then(r => r.ok ? r.json() : null),
+              fetch(`/dados_convertidos/${mSlug}/infraestrutura_stats.json?v=3`, { signal }).then(r => r.ok ? r.json() : null),
             ]);
             if (emp) bEmp.push(emp);
             if (edu) bEdu.push(edu);
@@ -224,6 +247,7 @@ export function useDashboard() {
             if (sauAtg) aSau.push(sauAtg);
             if (agri) agriStats[mun] = agri;
             if (agriAtg) agriAtingidosStats[mun] = agriAtg;
+            if (infra) infraStats[mun] = infra;
           } catch (e) { if ((e as Error).name !== 'AbortError') console.error(e); }
         });
 
@@ -232,7 +256,7 @@ export function useDashboard() {
         Promise.all([
           ...fetchPromises,
           manchaRSPromise,
-          new Promise(res => setTimeout(res, 1500))
+          new Promise(res => setTimeout(res, 300))
         ]).then((values) => {
           if (signal.aborted) return;
 
@@ -247,6 +271,7 @@ export function useDashboard() {
           setAtingidosEmpresas(mergeGeoJSON(aEmp)); setAtingidosEducacao(mergeGeoJSON(aEdu)); setAtingidosSaude(mergeGeoJSON(aSau));
           setAllMunAgriStats(agriStats);
           setAllMunAgriAtingidosStats(agriAtingidosStats);
+          setAllMunInfraStats(infraStats);
 
           setIsLoading(false);
         }).catch(e => { if ((e as Error).name !== 'AbortError') console.error(e); });
@@ -258,6 +283,31 @@ export function useDashboard() {
 
     const munSlug = slugify(municipio);
 
+    // Decide o cenario JA, sem esperar nenhum fetch -- so' depende de
+    // municipio e do permalink (ambos disponiveis na hora). Antes isso so'
+    // era decidido dentro do .then() do basePromises, atras do delay
+    // artificial abaixo: o efeito de cenario (que busca os dados "atingidos")
+    // so' comecava a rodar DEPOIS do delay + fetch principal terminarem, em
+    // serie. Decidindo aqui, os dois fetches (principal e atingidos) rodam em
+    // paralelo, cortando bastante do tempo ate' os numeros "atingidos"
+    // aparecerem na troca de municipio.
+    const cenariosDisp = CENARIOS_CONFIG[municipio] || [];
+    const desiredCenario = permalinkCenarioRef.current;
+    permalinkCenarioRef.current = null;
+    // A URL guarda o cenário em slug ("cenario_30m"), mas CENARIOS_CONFIG
+    // guarda o rótulo ("Cenário 30m") — comparar os dois direto nunca casa e
+    // faz todo permalink cair no primeiro cenário da lista. Em Lajeado e Rio
+    // Grande isso trocava o cenário do link em silêncio (e o efeito de URL
+    // abaixo ainda regravava o slug errado por cima). Casar por slug.
+    const initialCenario = cenariosDisp.find(c => slugify(c) === desiredCenario)
+      ?? (cenariosDisp.length > 0 ? cenariosDisp[0] : "(nenhum)");
+    setCenario(initialCenario);
+
+    // Nenhuma camada de infra vem marcada por padrao -- o usuario escolhe.
+    // As metricas de todos os tipos sao pre-carregadas nos efeitos abaixo de
+    // qualquer forma, entao marcar uma camada depois disso e' instantaneo.
+    setInfraAtivas([]);
+
     const basePromises = Promise.all([
       fetch(`/dados_convertidos/${munSlug}/empresas_BASE.geojson`, { signal }).then(r => r.ok ? r.json() : null),
       fetch(`/dados_convertidos/${munSlug}/educacao_BASE.geojson`, { signal }).then(r => r.ok ? r.json() : null),
@@ -267,47 +317,29 @@ export function useDashboard() {
       AGRI_BOUNDS[municipio] ? fetch(`/dados_convertidos/${munSlug}/agricultura_${AGRI_ANO_BASE}_BASE.geojson`, { signal }).then(r => r.ok ? r.json() : null) : Promise.resolve(null),
     ]);
 
+    // Pequeno piso de tempo (nao mais 3s) so' pra evitar um "pisca" caso o
+    // fetch responda quase instantaneo (cache do navegador) enquanto a camera
+    // ainda esta' voando -- nao trava mais o carregamento por segundos.
     Promise.all([
       basePromises,
-      new Promise(res => setTimeout(res, 3000))
+      new Promise(res => setTimeout(res, 400))
     ]).then(([[emp, edu, sau, agri, limite, agriGeo]]) => {
       if (signal.aborted) return;
 
       setRenderMunicipio(municipio);
-      setAtingidosInfra({});
-      setBaseAgriStats(null); setAtingidosAgriStats(null); setConabStats(null);
-      setAllMunAgriStats(null); setAllMunAgriAtingidosStats(null);
-      setBaseAgriGeo(null); setAtingidosAgriGeo(null);
+      // baseInfra/atingidosInfra NAO sao resetados aqui: ja foram zerados na
+      // troca de municipio (acima, logo no inicio do efeito) e os efeitos de
+      // pre-carga de infra (mais abaixo) podem ja ter preenchido eles de novo
+      // nesse meio-tempo -- resetar aqui jogaria fora esse trabalho.
+      //
+      // O mesmo vale para o que pertence ao efeito de cenario (atingidos de
+      // agricultura, stats do cenario, CONAB): este callback e' assincrono e
+      // roda DEPOIS do efeito de cenario ter buscado esses dados. Zerar aqui
+      // apagava a agricultura atingida sem ninguem re-buscar -- em Porto
+      // Alegre, onde as bases sao as mais pesadas, isso acontecia sempre e a
+      // camada nunca aparecia no mapa.
+      setAllMunAgriStats(null); setAllMunAgriAtingidosStats(null); setAllMunInfraStats(null);
       setFiltroSetor("(todos)"); setFiltroDep("(todas)"); setFiltroTipo("(todas)");
-      setBaseInfra({});
-
-      if (municipio === "Rio Grande") {
-        setInfraAtivas(["Logradouros", "Quadras", "Terrenos", "Edificações"]);
-        setCamadas(prev => prev.includes("Infraestrutura") ? prev : [...prev, "Infraestrutura"]);
-      } else if (municipio === "Porto Alegre") {
-        setInfraAtivas(["Eixos Logradouros", "Lotes", "Quarteirões", "Edificações"]);
-        setCamadas(prev => prev.includes("Infraestrutura") ? prev : [...prev, "Infraestrutura"]);
-      } else if (municipio === "Lajeado") {
-        setInfraAtivas(["Logradouros", "Lotes", "Quadras", "Edificações"]);
-        setCamadas(prev => prev.includes("Infraestrutura") ? prev : [...prev, "Infraestrutura"]);
-      } else if (municipio === "Eldorado do Sul") {
-        setInfraAtivas(["Edificações"]);
-        setCamadas(prev => prev.includes("Infraestrutura") ? prev : [...prev, "Infraestrutura"]);
-      } else {
-        setInfraAtivas([]);
-      }
-
-      const cenariosDisp = CENARIOS_CONFIG[municipio] || [];
-      const desiredCenario = permalinkCenarioRef.current;
-      permalinkCenarioRef.current = null;
-      // A URL guarda o cenário em slug ("cenario_30m"), mas CENARIOS_CONFIG
-      // guarda o rótulo ("Cenário 30m") — comparar os dois direto nunca casa e
-      // faz todo permalink cair no primeiro cenário da lista. Em Lajeado e Rio
-      // Grande isso trocava o cenário do link em silêncio (e o efeito de URL
-      // abaixo ainda regravava o slug errado por cima). Casar por slug.
-      const initialCenario = cenariosDisp.find(c => slugify(c) === desiredCenario)
-        ?? (cenariosDisp.length > 0 ? cenariosDisp[0] : "(nenhum)");
-      setCenario(initialCenario);
 
       setBaseEmpresas(emp); setBaseEducacao(edu); setBaseSaude(sau);
       setBaseAgriStats(agri);
@@ -368,35 +400,72 @@ export function useDashboard() {
         .catch(e => { if ((e as Error).name !== 'AbortError') console.error(e); });
     }
 
-    infraAtivas.forEach(infra => {
+    return () => controller.abort();
+  }, [municipio, cenario]);
+
+  // Pre-carrega ATINGIDOS de TODOS os tipos de infra do municipio (leves e
+  // pesados, marcados ou nao em infraAtivas) -- as metricas do Painel devem
+  // aparecer mesmo sem nenhuma camada marcada no mapa (infraAtivas so
+  // controla o que desenha no mapa, ver DashboardMap.tsx). Efeito separado do
+  // de empresas/educacao/saude/agricultura pra nao re-buscar tudo isso toda
+  // vez que cenario muda por causa so da infra.
+  useEffect(() => {
+    if (municipio === "Visão Geral RS" || !cenario || cenario === "(nenhum)") return;
+
+    const cacheKey = `${municipio}::${cenario}`;
+    const cache = infraAtingidosCacheRef.current[cacheKey] ?? (infraAtingidosCacheRef.current[cacheKey] = {});
+    if (Object.keys(cache).length > 0) setAtingidosInfra(prev => ({ ...cache, ...prev }));
+
+    const tipos = (INFRAESTRUTURA_CONFIG[municipio] || []).filter(infra => !cache[infra]);
+    if (tipos.length === 0) return;
+
+    const controller = new AbortController();
+    const { signal } = controller;
+    const munSlug = slugify(municipio);
+    const sSlug = scenarioSlug(municipio, cenario);
+
+    tipos.forEach(infra => {
       const url = `/dados_convertidos/${munSlug}/cenarios/infra_${slugify(infra)}_ATINGIDOS_${sSlug}.geojson`;
       fetch(url, { signal })
         .then(r => r.ok ? r.json() : null)
-        .then(d => { if (d && !signal.aborted) setAtingidosInfra(prev => ({ ...prev, [infra]: d })); })
+        .then(d => {
+          if (d && !signal.aborted) {
+            cache[infra] = d;
+            setAtingidosInfra(prev => ({ ...prev, [infra]: d }));
+          }
+        })
         .catch(e => { if ((e as Error).name !== 'AbortError') console.error(e); });
     });
 
     return () => controller.abort();
-  }, [municipio, cenario, infraAtivas]);
+  }, [municipio, cenario]);
 
+  // Pre-carrega BASE de TODOS os tipos de infra do municipio (leves e
+  // pesados), independente de estarem marcados em infraAtivas -- mesma logica
+  // do efeito acima, so que para o total (nao filtrado por cenario). Isso
+  // baixa todos os arquivos de infra do municipio de uma vez (para Porto
+  // Alegre, ~400MB+ somados) -- aceito de proposito para que o Painel mostre
+  // a metrica de qualquer camada sem exigir selecao previa; INFRA_TAMANHOS_MB
+  // continua usado so para o aviso de confirmacao antes de desenhar a camada
+  // no MAPA (toggleInfra), que e' a parte cara de renderizar, nao de baixar.
   useEffect(() => {
-    if (municipio === "Visão Geral RS" || infraAtivas.length === 0) {
+    const tipos = INFRAESTRUTURA_CONFIG[municipio] || [];
+    if (municipio === "Visão Geral RS" || tipos.length === 0) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setBaseInfra(prev => Object.keys(prev).length === 0 ? prev : {});
       return;
     }
+
+    const cache = infraBaseCacheRef.current[municipio] ?? (infraBaseCacheRef.current[municipio] = {});
+    if (Object.keys(cache).length > 0) setBaseInfra(prev => ({ ...cache, ...prev }));
+
+    const toLoad = tipos.filter(infra => !cache[infra]);
+    if (toLoad.length === 0) return;
+
     const controller = new AbortController();
     const { signal } = controller;
     const munSlug = slugify(municipio);
-
-    setBaseInfra(prev => {
-      const updated = { ...prev };
-      Object.keys(updated).forEach(k => { if (!infraAtivas.includes(k)) delete updated[k]; });
-      return updated;
-    });
-
-    const toLoad = infraAtivas.filter(infra => !baseInfra[infra]);
-    if (toLoad.length > 0) setIsLoading(true);
+    setIsLoading(true);
 
     Promise.all(toLoad.map(infra => {
       const url = `/dados_convertidos/${munSlug}/infraestrutura/${slugify(infra)}_BASE.geojson`;
@@ -406,13 +475,18 @@ export function useDashboard() {
         .catch(e => { if ((e as Error).name !== 'AbortError') console.error(e); return null; });
     })).then(results => {
       if (signal.aborted) return;
-      results.forEach(r => { if (r?.d) setBaseInfra(prev => ({ ...prev, [r.infra]: r.d })); });
+      results.forEach(r => {
+        if (r?.d) {
+          cache[r.infra] = r.d;
+          setBaseInfra(prev => ({ ...prev, [r.infra]: r.d }));
+        }
+      });
       setIsLoading(false);
     });
 
     return () => controller.abort();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [municipio, infraAtivas]);
+  }, [municipio]);
 
   const toggleCamada = (camada: string) => { setCamadas(prev => prev.includes(camada) ? prev.filter(c => c !== camada) : [...prev, camada]); setPopupInfo(null); };
   const toggleInfra = (infra: string) => {
@@ -498,14 +572,20 @@ export function useDashboard() {
   }, [municipio, cenario]);
 
   useEffect(() => {
-    if (tabAtiva === "infra" && (!camadas.includes("Infraestrutura") || isVisaoGeral || infraAtivas.length === 0)) {
+    // A aba Infraestrutura fica disponivel sempre que o municipio tem infra
+    // configurada (INFRAESTRUTURA_CONFIG) ou estamos na Visao Geral (que
+    // agrega os stats pre-calculados de todos os municipios -- ver
+    // pipeline/10_infra_stats.py), independente de camadas/infraAtivas -- as
+    // KPIs de tipos leves aparecem la mesmo sem nenhuma camada marcada (ver
+    // InfraTab.tsx). So reseta se o municipio realmente nao tem infra.
+    if (tabAtiva === "infra" && !isVisaoGeral && (INFRAESTRUTURA_CONFIG[municipio]?.length ?? 0) === 0) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setTabAtiva("empresas");
+      setTabAtiva("resumo");
     }
     if (tabAtiva === "agricultura" && !camadas.includes("Agricultura")) {
-      setTabAtiva("empresas");
+      setTabAtiva("resumo");
     }
-  }, [camadas, infraAtivas, isVisaoGeral, tabAtiva]);
+  }, [camadas, isVisaoGeral, tabAtiva, municipio]);
 
   const possuiInfra = INFRAESTRUTURA_CONFIG[municipio] && INFRAESTRUTURA_CONFIG[municipio].length > 0;
   const mostraImpacto = isVisaoGeral || isCenarioAtivo;
@@ -628,7 +708,7 @@ export function useDashboard() {
     if (camadas.includes("Educação") && renderEdu?.features) ids.push("educacao-cluster", "educacao-point");
     if (camadas.includes("Saúde") && renderSau?.features) ids.push("saude-cluster", "saude-point");
     if (camadas.includes("Infraestrutura") && !isVisaoGeral) {
-      Object.keys(baseInfra).forEach(nomeInfra => {
+      infraAtivas.forEach(nomeInfra => {
         const dataGeo = isCenarioAtivo ? atingidosInfra[nomeInfra] : baseInfra[nomeInfra];
         if (dataGeo?.features) {
           const sid = `infra-${slugify(nomeInfra)}`;
@@ -637,7 +717,7 @@ export function useDashboard() {
       });
     }
     return ids;
-  }, [camadas, renderEmp, renderEdu, renderSau, baseInfra, atingidosInfra, isVisaoGeral, isCenarioAtivo]);
+  }, [camadas, renderEmp, renderEdu, renderSau, baseInfra, atingidosInfra, infraAtivas, isVisaoGeral, isCenarioAtivo]);
 
   const handleMapClick = (event: MapLayerMouseEvent) => {
     const feature = event.features && event.features[0];
@@ -691,19 +771,38 @@ export function useDashboard() {
     const bearing = map.getBearing();
 
     const params = new URLSearchParams(window.location.search);
-    params.set('lng', center.lng.toFixed(5));
-    params.set('lat', center.lat.toFixed(5));
-    params.set('z', zoom.toFixed(2));
-    if (pitch > 0) params.set('p', pitch.toFixed(0));
-    else params.delete('p');
-    if (bearing !== 0) params.set('b', bearing.toFixed(1));
-    else params.delete('b');
-    
+
+    // Permalink amigável: se a câmera está essencialmente no enquadramento
+    // padrão do município (dentro de uma tolerância pequena), omite
+    // lng/lat/z/p/b da URL -- assim só trocar de município/cenário mantém o
+    // link curto (?m=porto_alegre&c=cenario_ada) e a câmera só aparece na
+    // URL quando o usuário de fato a ajustou manualmente.
+    const view = MUNICIPIO_VIEW[municipio];
+    const isVg = municipio === "Visão Geral RS";
+    const isDefaultView = !!view &&
+      Math.abs(center.lng - view.center[0]) < 0.0005 &&
+      Math.abs(center.lat - view.center[1]) < 0.0005 &&
+      Math.abs(zoom - view.zoom) < 0.05 &&
+      Math.abs(pitch - (view.pitch ?? (isVg ? 0 : 65))) < 1 &&
+      Math.abs(bearing - (view.bearing ?? (isVg ? 0 : -12))) < 1;
+
+    if (isDefaultView) {
+      params.delete('lng'); params.delete('lat'); params.delete('z'); params.delete('p'); params.delete('b');
+    } else {
+      params.set('lng', center.lng.toFixed(5));
+      params.set('lat', center.lat.toFixed(5));
+      params.set('z', zoom.toFixed(2));
+      if (pitch > 0) params.set('p', pitch.toFixed(0));
+      else params.delete('p');
+      if (bearing !== 0) params.set('b', bearing.toFixed(1));
+      else params.delete('b');
+    }
+
     window.history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
-  }, []);
+  }, [municipio]);
 
   return {
-    mapRef, headerRef, headerBottom,
+    mapRef, mapReady, setMapReady, headerRef, headerBottom,
     municipio, setMunicipio, renderMunicipio,
     cenario, setCenario,
     camadas,
@@ -722,7 +821,7 @@ export function useDashboard() {
     manchaCenario, manchaRS, limitePA,
     baseAgriStats, atingidosAgriStats, conabStats,
     baseAgriGeo, atingidosAgriGeo,
-    allMunAgriStats, allMunAgriAtingidosStats,
+    allMunAgriStats, allMunAgriAtingidosStats, allMunInfraStats,
     cursor, setCursor,
     popupInfo, setPopupInfo,
     tabAtiva, setTabAtiva,

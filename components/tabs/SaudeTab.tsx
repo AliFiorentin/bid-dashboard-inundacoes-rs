@@ -1,20 +1,19 @@
 import React from "react";
-import { PieChart, Pie, Label } from "recharts";
 import type { Feature } from "geojson";
 import { ChevronDown, MapPin } from "lucide-react";
 import { TabsContent } from "@/components/ui/tabs";
-import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
+import { DonutChart } from "@/components/ui/donut-chart";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
-import { COLORS, DONUT_COLORS, STAFF_COLS, STAFF_LABELS } from "@/lib/constants";
+import { COLORS, DONUT_COLORS, STAFF_COLS, STAFF_LABELS, PANEL_CARD_BG } from "@/lib/constants";
 import { compactoBr, inteiroBr, calcPct, formatName } from "@/lib/geo-utils";
-import { KPIRow } from "@/components/KPIRow";
-import { ChartCenterLabel } from "@/components/ChartCenterLabel";
+import { KPICard } from "@/components/KPICard";
 import { cn } from "@/lib/utils";
 import type { DashboardState } from "@/hooks/useDashboard";
 
 const PANEL_HDR = { background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)" } as const;
 const PANEL_GLASS: React.CSSProperties = {
   border: "1px solid rgba(5,80,113,0.15)",
+  backgroundColor: PANEL_CARD_BG,
 };
 
 interface Props {
@@ -47,11 +46,9 @@ export function SaudeTab({ dash }: Props) {
         const srcFeats = atingidosSaude?.features ?? [];
         const baseTipos = metricasSau.base.tipos;
         const atgTipos = metricasSau.impacto.tipos;
-        const chartConfig: ChartConfig = {};
         const pieData = Object.entries(baseTipos).filter(([, v]) => (v as number) > 0).sort((a, b) => (b[1] as number) - (a[1] as number)).map(([name, value], i) => {
           const key = `h${i}`;
-          chartConfig[key] = { label: name, color: DONUT_COLORS[i % DONUT_COLORS.length] };
-          return { key, name, value: value as number, atg: (atgTipos[name] as number) ?? 0, fill: `var(--color-h${i})` };
+          return { key, name, value: value as number, atg: (atgTipos[name] as number) ?? 0, cor: DONUT_COLORS[i % DONUT_COLORS.length] };
         });
         const totalBase = pieData.reduce((s, d) => s + d.value, 0);
         const totalAtg = pieData.reduce((s, d) => s + d.atg, 0);
@@ -59,43 +56,43 @@ export function SaudeTab({ dash }: Props) {
 
         return (
           <>
-            <div className="flex items-center px-2.5 py-1.5 rounded-lg mb-3 mt-2" style={PANEL_HDR}>
-              <h3 className="text-[10px] font-black uppercase tracking-wider text-white">Unidades por Tipo</h3>
-            </div>
-            <ChartContainer config={chartConfig} className="aspect-auto h-[170px] w-full" initialDimension={{ width: 320, height: 170 }}>
-              <PieChart>
-                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                <Pie data={pieData} cx="50%" cy="50%" innerRadius={50} outerRadius={76} dataKey="value" nameKey="key" strokeWidth={5}>
-                  <Label
-                    content={({ viewBox }) => {
-                      if (viewBox && "cx" in viewBox && "cy" in viewBox && viewBox.cx != null && viewBox.cy != null) {
-                        return (
-                          <ChartCenterLabel
-                            cx={viewBox.cx}
-                            cy={viewBox.cy}
-                            big={mostraImpacto ? inteiroBr(totalAtg) : inteiroBr(totalBase)}
-                            small={mostraImpacto ? `de ${inteiroBr(totalBase)} (${totalBase > 0 ? Math.round(totalAtg / totalBase * 100) : 0}%)` : "unidades"}
-                          />
-                        );
-                      }
-                    }}
+            <div className="rounded-lg overflow-hidden mb-3 mt-2" style={{ border: "1px solid rgba(5,80,113,0.15)" }}>
+              <div className="flex items-center px-2.5 py-1.5" style={PANEL_HDR}>
+                <h3 className="text-[10px] font-black uppercase tracking-wider text-white">Unidades por Tipo</h3>
+              </div>
+              <div className="flex flex-col" style={{ backgroundColor: PANEL_CARD_BG }}>
+                <div className="flex items-center justify-center py-2">
+                  <DonutChart
+                    data={pieData.map(d => ({ label: d.name, value: d.value, color: d.cor }))}
+                    size={170}
+                    strokeWidth={22}
+                    centerContent={
+                      <div className="flex flex-col items-center justify-center text-center">
+                        <span className="text-2xl font-black text-foreground leading-none">
+                          {mostraImpacto ? inteiroBr(totalAtg) : inteiroBr(totalBase)}
+                        </span>
+                        <span className="mt-1 text-[9px] text-muted-foreground leading-none">
+                          {mostraImpacto ? `de ${inteiroBr(totalBase)} (${totalBase > 0 ? Math.round(totalAtg / totalBase * 100) : 0}%)` : "unidades"}
+                        </span>
+                      </div>
+                    }
                   />
-                </Pie>
-              </PieChart>
-            </ChartContainer>
-            <div className="flex flex-col gap-1.5 mb-3">
-              {pieData.map((d, i) => (
-                <div key={d.name} className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length] }} />
-                  <span className="text-xs flex-1 truncate text-muted-foreground" title={d.name}>{d.name}</span>
-                  <span className="text-xs font-bold tabular-nums text-foreground">
-                    {mostraImpacto ? `${inteiroBr(d.atg)}/${inteiroBr(d.value)}` : inteiroBr(d.value)}
-                  </span>
-                  <span className="text-xs w-9 text-right tabular-nums text-muted-foreground">
-                    {mostraImpacto ? `${d.value > 0 ? Math.round(d.atg / d.value * 100) : 0}%` : `${Math.round(d.value / totalBase * 100)}%`}
-                  </span>
                 </div>
-              ))}
+                <div className="flex flex-col gap-1.5 px-2.5 pb-2.5">
+                  {pieData.map((d, i) => (
+                    <div key={d.name} className="flex items-center gap-2">
+                      <span className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length] }} />
+                      <span className="text-xs flex-1 truncate text-muted-foreground" title={d.name}>{d.name}</span>
+                      <span className="text-xs font-bold tabular-nums text-foreground">
+                        {mostraImpacto ? `${inteiroBr(d.atg)}/${inteiroBr(d.value)}` : inteiroBr(d.value)}
+                      </span>
+                      <span className="text-xs w-9 text-right tabular-nums text-muted-foreground">
+                        {mostraImpacto ? `${d.value > 0 ? Math.round(d.atg / d.value * 100) : 0}%` : `${Math.round(d.value / totalBase * 100)}%`}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
             {mostraImpacto && !isVisaoGeral && (
               <div className="flex flex-col gap-2 mb-3">
@@ -129,23 +126,9 @@ export function SaudeTab({ dash }: Props) {
           </>
         );
       })()}
-      <div className="flex items-center px-2.5 py-1.5 rounded-lg mt-2 mb-2" style={PANEL_HDR}>
-        <h3 className="text-[10px] font-black uppercase tracking-wider text-white">Profissionais de Saúde</h3>
-      </div>
       {(() => {
         const totalBase = STAFF_COLS.reduce((s, c) => s + (metricasSau.base.staff[c] ?? 0), 0);
         const totalAtg  = STAFF_COLS.reduce((s, c) => s + (metricasSau.impacto.staff[c] ?? 0), 0);
-        return (
-          <KPIRow
-            titulo="Total de Profissionais"
-            cor={COLORS.saude}
-            valor={compactoBr(mostraImpacto ? totalAtg : totalBase, 0)}
-            sub={mostraImpacto ? "Atingidos" : "Total"}
-            delta={mostraImpacto ? `de ${compactoBr(totalBase, 0)} (${calcPct(totalAtg, totalBase)})` : undefined}
-          />
-        );
-      })()}
-      {(() => {
         const baseStaff    = metricasSau.base.staff;
         const impactoStaff = metricasSau.impacto.staff;
         const staffData = STAFF_COLS
@@ -153,30 +136,40 @@ export function SaudeTab({ dash }: Props) {
           .filter(d => d.base > 0)
           .sort((a, b) => b.base - a.base);
         return (
-          <div className="flex flex-col gap-1.5 pb-2 mt-2">
-            {staffData.map((d, i) => {
-              const pct = d.base > 0 ? Math.round(d.atg / d.base * 100) : 0;
-              return (
-                <div key={d.name} className="flex items-center gap-2">
-                  <span className="text-[10px] w-20 shrink-0 truncate text-muted-foreground" title={d.name}>{d.name}</span>
-                  <div className="flex-1 rounded-full h-2.5 overflow-hidden bg-muted">
-                    <div className="h-full rounded-full" style={{
-                      width: mostraImpacto
-                        ? `${Math.min(pct, 100)}%`
-                        : `${staffData[0]?.base > 0 ? (d.base / staffData[0].base) * 100 : 0}%`,
-                      backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length],
-                    }} />
+          <KPICard
+            titulo="Profissionais de Saúde"
+            cor={COLORS.saude}
+            principal={{
+              valor: compactoBr(mostraImpacto ? totalAtg : totalBase, 0),
+              sub: mostraImpacto ? "Atingidos" : "Total",
+              delta: mostraImpacto ? `de ${compactoBr(totalBase, 0)} (${calcPct(totalAtg, totalBase)})` : undefined,
+            }}
+          >
+            <div className="flex flex-col gap-1.5 px-3 pb-2.5 pt-1 border-t" style={{ borderColor: "rgba(5,80,113,0.15)", backgroundColor: PANEL_CARD_BG }}>
+              {staffData.map((d, i) => {
+                const pct = d.base > 0 ? Math.round(d.atg / d.base * 100) : 0;
+                return (
+                  <div key={d.name} className="flex items-center gap-2">
+                    <span className="text-[10px] w-16 shrink-0 truncate text-muted-foreground" title={d.name}>{d.name}</span>
+                    <div className="flex-1 rounded-full h-2.5 overflow-hidden bg-muted">
+                      <div className="h-full rounded-full" style={{
+                        width: mostraImpacto
+                          ? `${Math.min(pct, 100)}%`
+                          : `${staffData[0]?.base > 0 ? (d.base / staffData[0].base) * 100 : 0}%`,
+                        backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length],
+                      }} />
+                    </div>
+                    <span className="text-[10px] font-bold tabular-nums shrink-0 whitespace-nowrap text-foreground">
+                      {mostraImpacto ? `${inteiroBr(d.atg)}/${inteiroBr(d.base)}` : inteiroBr(d.base)}
+                      {mostraImpacto && d.base > 0 && (
+                        <span className="text-muted-foreground font-normal ml-0.5">({pct}%)</span>
+                      )}
+                    </span>
                   </div>
-                  <span className="text-[10px] font-bold tabular-nums w-20 text-right shrink-0 text-foreground">
-                    {mostraImpacto ? `${inteiroBr(d.atg)}/${inteiroBr(d.base)}` : inteiroBr(d.base)}
-                    {mostraImpacto && d.base > 0 && (
-                      <span className="text-muted-foreground font-normal ml-0.5">({pct}%)</span>
-                    )}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          </KPICard>
         );
       })()}
       <p className="text-[10px] italic pt-2 text-muted-foreground">Fonte: CNES — Cadastro Nacional de Estabelecimentos de Saúde</p>

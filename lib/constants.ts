@@ -9,6 +9,11 @@ export const C = {
   dark: "#033a52",
 }
 
+// Fundo translúcido único para o conteúdo de qualquer card/caixa dentro do
+// Painel -- mesmo tom do glass do Painel (AnalysisPanel.tsx), para que todo
+// card se funda visualmente com o painel em vez de destacar um bloco branco.
+export const PANEL_CARD_BG = "rgba(255,255,255,0.55)"
+
 export const COLORS = {
   empresas: "#2563eb",
   educacao: "#16a34a",
@@ -89,6 +94,16 @@ export const INFRA_TAMANHOS_MB: Record<string, number> = {
   Terrenos: 28,
   Imóveis: 23,
   Edificações: 65,
+}
+
+// Cada município nomeia o mesmo tipo de ativo de um jeito diferente (herdado
+// da fonte de dados da prefeitura) -- usado so' na Visão Geral RS pra somar
+// como uma única categoria em vez de listar 2-3 linhas parecidas lado a lado.
+// A chave é o rótulo canônico exibido; a lista inclui a própria chave.
+export const INFRA_GRUPOS_VISAO_GERAL: Record<string, string[]> = {
+  "Logradouros": ["Logradouros", "Eixos Logradouros"],
+  "Iluminação Pública": ["Iluminação Pública", "Poste"],
+  "Quadras": ["Quadras", "Quarteirões"],
 }
 
 // ── Municípios / Cenários / Vistas ───────────────────────────────────────────

@@ -32,14 +32,21 @@ export function WelcomeModal() {
         {/* Header */}
         <div className="px-6 py-5" style={{ background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)" }}>
           <div className="flex items-center gap-2 mb-3">
-            <div className="bg-white rounded-md px-2 py-1 flex items-center">
-              <Image src="/BID.png"   alt="BID"  width={48} height={20} className="h-5 w-auto object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
+            {/* Caixa do mesmo tamanho para as 4 -- BID/GPEA são bem mais
+                largas que altas e CIEX/IPH mais quadradas/altas, então só
+                igualar a altura deixava essas duas menores visualmente.
+                `fill` + object-contain evita cortar a CIEX. */}
+            <div className="relative bg-white rounded-md h-8 w-14 p-1">
+              <Image src="/BID.png"   alt="BID"  fill className="object-contain p-0.5" onError={(e) => (e.currentTarget.style.display = "none")} />
             </div>
-            <div className="bg-white rounded-md px-2 py-1 flex items-center">
-              <Image src="/GPEA.png"  alt="GPEA" width={48} height={20} className="h-5 w-auto object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
+            <div className="relative bg-white rounded-md h-8 w-14 p-1">
+              <Image src="/GPEA.png"  alt="GPEA" fill className="object-contain p-0.5" onError={(e) => (e.currentTarget.style.display = "none")} />
             </div>
-            <div className="bg-white rounded-md px-2 py-1 flex items-center">
-              <Image src="/CIEX2.png" alt="CIEX" width={48} height={20} className="h-5 w-auto object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
+            <div className="relative bg-white rounded-md h-8 w-14 p-1">
+              <Image src="/CIEX2.png" alt="CIEX" fill className="object-contain p-0.5" onError={(e) => (e.currentTarget.style.display = "none")} />
+            </div>
+            <div className="relative bg-white rounded-md h-8 w-14 p-1">
+              <Image src="/IPH.jpg" alt="IPH" fill className="object-contain p-0.5 rounded-sm" onError={(e) => (e.currentTarget.style.display = "none")} />
             </div>
           </div>
           <h2 className="text-xl font-black text-white leading-tight tracking-tight">
@@ -87,6 +94,15 @@ export function WelcomeModal() {
               }
               title="Danos Operacionais"
               desc="Consulte a estimativa de perdas econômicas (VAB, educação, saúde e agricultura) para cada cenário, com análise de sensibilidade por duração."
+            />
+            <FeatureItem
+              icon={
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#055071" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/>
+                </svg>
+              }
+              title="Dano Físico (Protótipo)"
+              desc="Estimativa de dano físico a edificações e infraestrutura pela metodologia CLIMADA, disponível para Porto Alegre na aba “Dano Físico” da página de Danos."
             />
             <FeatureItem
               icon={
