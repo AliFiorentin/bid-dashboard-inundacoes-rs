@@ -164,7 +164,7 @@ export const MUNICIPIO_VIEW: Record<
   "Visão Geral RS": { center: [-53.5, -29.8], zoom: 5.8 },
   "Eldorado do Sul": { center: [-51.31029, -30.00382], zoom: 14.14 },
   Lajeado: { center: [-51.96347, -29.46729], zoom: 13.92 },
-  "Porto Alegre": { center: [-51.23172, -30.04057], zoom: 15.08, pitch: 72, bearing: -8.8 },
+  "Porto Alegre": { center: [-51.22750, -30.04205], zoom: 15.08, pitch: 72, bearing: -8.8 },
   "Rio Grande": { center: [-52.09086, -32.04344], zoom: 14.36 },
 }
 
