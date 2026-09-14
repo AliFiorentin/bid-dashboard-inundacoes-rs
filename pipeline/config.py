@@ -92,7 +92,13 @@ MUNICIPIOS = {
         "ibge7": 4314902,
         "ibge6": "431490",
         "slug": "porto_alegre",
-        "cenarios": ["Cenario ADA"],
+        # Os RPs do CLIMADA (RP10..RP500 -- periodos de retorno sinteticos) ficam
+        # vetorizados em MANCHAS abaixo mas de fora do dashboard por enquanto: sao
+        # insumo para um calculo de risco CLIMADA proprio (profundidade x funcao de
+        # dano x valor de reposicao do ativo), nao mais um cenario de mancha "atingido
+        # sim/nao" como os demais. So "Climada Evento 2024" (evento real de mai/2024,
+        # mesma logica dos demais cenarios) esta habilitado como cenario.
+        "cenarios": ["Cenario ADA", "Climada Evento 2024"],
     },
     "Rio Grande": {
         "ibge7": 4315602,
@@ -143,6 +149,26 @@ MANCHAS = {
     },
     "Porto Alegre": {
         "Cenario ADA": DATA_RAW / "manchas" / "porto_alegre" / "enchente_poa_intersects.shp",
+        # Manchas derivadas dos rasters de inundacao do CLIMADA (D:\Projetos\Climada,
+        # starter_pack_brazil/data/hazard) -- vetorizadas (profundidade/duracao > 0,
+        # fechamento morfologico p/ legibilidade) via pipeline/vetorizar_climada.py em
+        # data/raw/manchas/porto_alegre/climada/.
+        # RP10..RP500: profundidade maxima (m) por periodo de retorno sintetico (anos).
+        # Mantidas aqui (e no shapefile) para um futuro calculo de risco CLIMADA proprio
+        # (profundidade x funcao de dano x valor de reposicao do ativo) -- de proposito
+        # NAO estao em MUNICIPIOS["Porto Alegre"]["cenarios"], entao 06_geojson.py nao
+        # as trata como cenario "atingido sim/nao" (nao fariam sentido assim: o raster
+        # de risco captura magnitude/intensidade por periodo de retorno, nao extensao
+        # observada de um evento).
+        "Climada RP10":  DATA_RAW / "manchas" / "porto_alegre" / "climada" / "climada_rp10.shp",
+        "Climada RP20":  DATA_RAW / "manchas" / "porto_alegre" / "climada" / "climada_rp20.shp",
+        "Climada RP50":  DATA_RAW / "manchas" / "porto_alegre" / "climada" / "climada_rp50.shp",
+        "Climada RP75":  DATA_RAW / "manchas" / "porto_alegre" / "climada" / "climada_rp75.shp",
+        "Climada RP100": DATA_RAW / "manchas" / "porto_alegre" / "climada" / "climada_rp100.shp",
+        "Climada RP200": DATA_RAW / "manchas" / "porto_alegre" / "climada" / "climada_rp200.shp",
+        "Climada RP500": DATA_RAW / "manchas" / "porto_alegre" / "climada" / "climada_rp500.shp",
+        # Duracao do evento real de maio/2024 (raster de calibracao do Climada).
+        "Climada Evento 2024": DATA_RAW / "manchas" / "porto_alegre" / "climada" / "climada_evento_2024.shp",
     },
     "Rio Grande": {
         "Cenario Maio 2024": DATA_RAW / "manchas" / "rio_grande" / "CEN_MAI2024.shp",
@@ -227,6 +253,7 @@ CENARIO_PERIODO = {
     "lajeado___cenario_30m": "maio_2024",
     "eldorado_do_sul___cenario_ada": "maio_2024",
     "porto_alegre___cenario_ada": "maio_2024",
+    "porto_alegre___climada_evento_2024": "maio_2024",
     "rio_grande___cenario_maio_2024": "maio_2024",
     "rio_grande___cenario_maio_2024_50": "maio_2024",
     "rio_grande___cenario_setembro_2023": "setembro_2023",
