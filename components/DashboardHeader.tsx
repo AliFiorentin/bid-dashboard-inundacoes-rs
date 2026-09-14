@@ -7,7 +7,7 @@ import { Building2, GraduationCap, HeartPulse, Wrench, Sprout } from "lucide-rea
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { MUNICIPIOS, CENARIOS_CONFIG, INFRAESTRUTURA_CONFIG, AGRI_BOUNDS } from "@/lib/constants";
+import { MUNICIPIOS, CENARIOS_CONFIG, INFRAESTRUTURA_CONFIG, AGRI_BOUNDS, cenarioLabel } from "@/lib/constants";
 import type { DashboardState } from "@/hooks/useDashboard";
 
 interface DashboardHeaderProps {
@@ -109,7 +109,7 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
             <SelectTrigger className="bg-slate-50/80 w-full min-w-0" style={{ height: SELECT_H, fontSize: SELECT_TRIGGER_SIZE }}><SelectValue placeholder={isVisaoGeral ? "Piores Cenários" : "(nenhum)"} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="(nenhum)">(Ver Total)</SelectItem>
-              {(CENARIOS_CONFIG[municipio] || []).map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+              {(CENARIOS_CONFIG[municipio] || []).map(c => <SelectItem key={c} value={c}>{cenarioLabel(c)}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>

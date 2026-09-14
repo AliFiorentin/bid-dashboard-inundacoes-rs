@@ -1,0 +1,24 @@
+{
+  "coordinates": [
+    [
+      -51.303301739765324,
+      -29.932275427387985
+    ],
+    [
+      -51.01181553868163,
+      -29.932275427387985
+    ],
+    [
+      -51.01181553868163,
+      -30.269566525448447
+    ],
+    [
+      -51.303301739765324,
+      -30.269566525448447
+    ]
+  ],
+  "duracao_max_dias": 91.0,
+  "duracao_media_dias": 71.33,
+  "fonte": "Brazil_Porto_Alegre_2024_duration.tif (exercicio CLIMADA/UNU-EHS, evento real maio/2024)",
+  "paleta": "matplotlib Blues (claro=poucos dias, escuro=muitos dias)"
+}

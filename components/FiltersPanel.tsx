@@ -4,7 +4,7 @@ import React from "react";
 import { SlidersHorizontal } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { COLORS, CNAE_LABELS } from "@/lib/constants";
+import { COLORS, CNAE_LABELS, DANO_FISICO_MUNICIPIO, DANO_FISICO_RPS } from "@/lib/constants";
 import type { DashboardState } from "@/hooks/useDashboard";
 
 interface FiltersPanelProps {
@@ -13,6 +13,7 @@ interface FiltersPanelProps {
 
 export function FiltersPanel({ dash }: FiltersPanelProps) {
   const {
+    municipio,
     camadas,
     infraAtivas,
     filtroSetor, setFiltroSetor,
@@ -20,6 +21,8 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
     filtroTipo, setFiltroTipo,
     showFiltros, setShowFiltros,
     showMancha, setShowMancha,
+    showDanoFisico, setShowDanoFisico,
+    rpDanoFisico, setRpDanoFisico,
     isVisaoGeral, isCenarioAtivo, temCamadaTabular,
     setoresUnicos, depsUnicas, tiposUnicos,
     toggleInfra, toggleCamada,
@@ -120,6 +123,42 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
               >
                 {showMancha ? "Visível" : "Oculta"}
               </button>
+            </div>
+          )}
+
+          {/* Dano Físico (CLIMADA, protótipo) -- só existe para Porto Alegre */}
+          {municipio === DANO_FISICO_MUNICIPIO && (
+            <div className="flex flex-col gap-1 w-full shrink-0">
+              <label className="text-[9px] font-bold text-amber-700 uppercase tracking-wider">Dano Físico (CLIMADA)</label>
+              <button
+                onClick={() => setShowDanoFisico(p => !p)}
+                className="h-7 w-full rounded text-[10px] font-bold border transition-colors duration-150"
+                style={{
+                  backgroundColor: showDanoFisico ? "#d9770620" : "transparent",
+                  borderColor: showDanoFisico ? "#d97706" : "#cbd5e1",
+                  color: showDanoFisico ? "#d97706" : "#64748b",
+                }}
+              >
+                {showDanoFisico ? "Visível (protótipo)" : "Oculto"}
+              </button>
+              {showDanoFisico && (
+                <div className="flex flex-wrap gap-1 mt-0.5">
+                  {DANO_FISICO_RPS.map((rp) => (
+                    <button
+                      key={rp}
+                      onClick={() => setRpDanoFisico(rp)}
+                      className="px-1.5 py-0.5 rounded text-[9px] font-bold border transition-colors duration-150"
+                      style={{
+                        backgroundColor: rpDanoFisico === rp ? "#d97706" : "transparent",
+                        borderColor: rpDanoFisico === rp ? "#d97706" : "#cbd5e1",
+                        color: rpDanoFisico === rp ? "#fff" : "#64748b",
+                      }}
+                    >
+                      {rp}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

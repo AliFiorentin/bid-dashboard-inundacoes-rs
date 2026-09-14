@@ -12,7 +12,7 @@ import { SaudeTab } from "@/components/tabs/SaudeTab";
 import { AgriculturaTab } from "@/components/AgriculturaTab";
 import { InfraTab } from "@/components/tabs/InfraTab";
 import { findCenarioData } from "@/lib/geo-utils";
-import { MUNICIPIOS, PIORES_CENARIOS } from "@/lib/constants";
+import { MUNICIPIOS, PIORES_CENARIOS, cenarioLabel } from "@/lib/constants";
 import type { DashboardState } from "@/hooks/useDashboard";
 
 interface AnalysisPanelProps {
@@ -88,7 +88,7 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
               </div>
             </h2>
             <p className="text-white/80 font-medium leading-tight" style={{ fontSize: "clamp(10px, 1.3vh, 12px)", marginTop: "clamp(1px, 0.3vh, 4px)" }}>
-              <strong className="text-white">{municipio}</strong> {mostraImpacto && (isVisaoGeral ? ` — Piores Cenários` : ` — ${cenario}`)}
+              <strong className="text-white">{municipio}</strong> {mostraImpacto && (isVisaoGeral ? ` · Piores Cenários` : ` · ${cenarioLabel(cenario)}`)}
             </p>
           </div>
           <Tabs value={tabAtiva} className="w-full flex-1 flex flex-col overflow-hidden px-4 print:overflow-visible print:h-auto" style={{ paddingBlockStart: "clamp(0.35rem, 0.9vh, 0.75rem)" }}>

@@ -117,7 +117,9 @@ export const MUNICIPIOS = [
 export const CENARIOS_CONFIG: Record<string, string[]> = {
   "Eldorado do Sul": ["Cenário ADA"],
   Lajeado: ["Cenário 27m", "Cenário 30m"],
-  "Porto Alegre": ["Cenário ADA", "Climada Evento 2024"],
+  // "Climada Evento 2024" primeiro -- vira o cenário padrão de Porto Alegre
+  // (cenariosDisp[0] em useDashboard.ts, quando não há permalink específico).
+  "Porto Alegre": ["Climada Evento 2024", "Cenário ADA"],
   "Rio Grande": ["Cenário Maio 2024", "Cenário Maio 2024 + 50%"],
 }
 
@@ -298,10 +300,23 @@ export const STAFF_LABELS: Record<string, string> = {
   staff_transporte_urgencia: "Transporte",
 }
 
+// Rótulo de EXIBIÇÃO de um cenário, quando difere da chave interna usada para
+// estado/slug de arquivo (scenarioSlug -- ver lib/geo-utils.ts) e para casar
+// com os dados já publicados (CENARIOS_CONFIG, PIORES_CENARIOS,
+// CENARIO_PERIODO, danos_operacionais.json etc. continuam usando a chave
+// interna sem alteração). Use cenarioLabel(cen) em todo texto visível ao
+// usuário; nunca troque a chave interna só para "renomear" um cenário --
+// quebraria o casamento com os arquivos *_ATINGIDOS_<slug>.geojson já
+// publicados pelo pipeline.
+export const CENARIO_DISPLAY_LABEL: Record<string, string> = {
+  "Climada Evento 2024": "Climada - UNU/EHS",
+}
+export const cenarioLabel = (cen: string): string => CENARIO_DISPLAY_LABEL[cen] ?? cen
+
 export const PIORES_CENARIOS: Record<string, string> = {
   "Eldorado do Sul": "Cenário ADA",
   Lajeado: "Cenário 27m",
-  "Porto Alegre": "Cenário ADA",
+  "Porto Alegre": "Climada Evento 2024",
   "Rio Grande": "Cenário Maio 2024",
 }
 
@@ -313,3 +328,34 @@ export const PIORES_CENARIOS: Record<string, string> = {
 // entrada própria "Visão Geral RS" em area_atingida.json.
 export const AREA_VISAO_GERAL_LABEL = "Visão Geral RS"
 export const AREA_VISAO_GERAL_CENARIO = "ADA Estadual"
+
+// ── Dano Físico (CLIMADA, protótipo) — camada de mapa ───────────────────────
+// Só existe para Porto Alegre: é o único município com raster de profundidade
+// (ver pipeline/climada_risco_prototipo.py) -- os outros 3 só têm polígono de
+// extensão da mancha (atingido sim/não), sem lâmina d'água por ponto.
+export const DANO_FISICO_MUNICIPIO = "Porto Alegre"
+export const DANO_FISICO_RPS = ["RP10", "RP20", "RP50", "RP75", "RP100", "RP200", "RP500"] as const
+export const DANO_FISICO_SETORES = ["empresas", "educacao", "saude"] as const
+
+// Rampa de cor por "% do valor de reposição destruído" (0-100), usada no
+// circle-color (interpolate) da camada -- do cinza (sem dano) ao vermelho
+// escuro (destruição quase total), mesma leitura de calor das demais camadas.
+export const DANO_FISICO_COLOR_STOPS: (string | number)[] = [
+  0, "#cbd5e1",
+  5, "#93c5fd",
+  20, "#fbbf24",
+  50, "#f97316",
+  80, "#dc2626",
+  100, "#7f1d1d",
+]
+
+// ── Mancha por Duração (CLIMADA, evento real maio/2024) ─────────────────────
+// Só existe para o cenário "Climada Evento 2024" em Porto Alegre -- é o único
+// dado por pixel disponível para esse evento observado (o CLIMADA só tem
+// profundidade para os cenários sintéticos RP10..RP500, usados na camada Dano
+// Físico acima; ver pipeline/gerar_mancha_duracao_climada.py). Paleta azul
+// (Blues), deliberadamente distinta das demais (plasma da população,
+// vermelho/laranja dos heatmaps e do Dano Físico).
+export const MANCHA_DURACAO_CENARIO = "Climada Evento 2024"
+export const MANCHA_DURACAO_GRADIENT_CSS =
+  "linear-gradient(to right, #f7fbff, #c6dbef, #6baed6, #2171b5, #08306b)"

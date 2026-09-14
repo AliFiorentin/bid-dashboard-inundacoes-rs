@@ -6,9 +6,47 @@ import { compactoBr, formatName } from "@/lib/geo-utils";
 interface Props {
   source: string;
   properties: Record<string, unknown>;
+  /** RP ativo na camada "Dano Físico (CLIMADA)" -- define qual propriedade
+   * (por RP) do ponto exibir. Só relevante para source "dano-fisico-*". */
+  rp?: string;
 }
 
-export function MapPopup({ source, properties: p }: Props) {
+const DANO_FISICO_SETOR_LABEL: Record<string, string> = {
+  "dano-fisico-empresas": "Empresas",
+  "dano-fisico-educacao": "Educação",
+  "dano-fisico-saude": "Saúde",
+};
+
+export function MapPopup({ source, properties: p, rp = "RP200" }: Props) {
+  if (source.startsWith("dano-fisico-")) {
+    // Campos fixos (..._atual, já no RP selecionado -- ver mergeDanoFisico em
+    // useDashboard.ts) em vez de montar a chave por RP aqui: mantém a leitura
+    // do popup em sincronia com o que a própria camada do mapa está desenhando.
+    const dano = Number(p.dano_fisico_brl_atual ?? 0);
+    const pct = Number(p.dano_fisico_pct_atual ?? 0);
+    const prof = Number(p.profundidade_m_atual ?? 0);
+    const valor = Number(p.valor_reposicao_brl ?? 0);
+    return (
+      <div className="flex flex-col gap-1.5 p-3 w-56 bg-white rounded-xl shadow-lg border border-slate-100">
+        <strong className="text-amber-700 uppercase tracking-wider text-[10px] border-b border-slate-100 pb-1">
+          🧪 Dano Físico (CLIMADA) · {DANO_FISICO_SETOR_LABEL[source] ?? source}
+        </strong>
+        <span className="text-[10px] text-slate-500">{rp} · profundidade estimada {prof.toFixed(2)} m</span>
+        <div className="grid grid-cols-2 gap-2 mt-1">
+          <div className="bg-slate-50 p-1.5 rounded border border-slate-100">
+            <span className="block text-[9px] text-slate-500 uppercase font-bold">Valor de reposição</span>
+            <span className="text-xs font-black text-slate-800">R$ {compactoBr(valor, 1)}</span>
+          </div>
+          <div className="bg-slate-50 p-1.5 rounded border border-slate-100">
+            <span className="block text-[9px] text-slate-500 uppercase font-bold">Dano estimado</span>
+            <span className="text-xs font-black text-slate-800">R$ {compactoBr(dano, 1)} ({pct.toFixed(0)}%)</span>
+          </div>
+        </div>
+        <span className="text-[8px] text-slate-400 leading-tight">Protótipo exploratório — ver Metodologia.</span>
+      </div>
+    );
+  }
+
   if (source === "empresas") {
     return (
       <div className="flex flex-col gap-1.5 p-3 w-56 bg-white rounded-xl shadow-lg border border-slate-100">

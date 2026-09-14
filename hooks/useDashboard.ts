@@ -19,6 +19,21 @@ export interface InfraStatsEntry {
   area_m2_base?: number;
   area_m2_atingido?: number;
 }
+
+// Indice {id_do_ponto: {propriedades por RP}} da camada "Dano Físico
+// (CLIMADA)" -- SEM geometria (ver pipeline/climada_risco_prototipo.py,
+// gerar_indice_dano_pontos). O id é o campo estável de cada setor (id p/
+// empresas, co_entidade p/ educação, co_cnes p/ saúde) -- mergeDanoFisico
+// (abaixo) casa este índice com os pontos JÁ exibidos no mapa (BASE ou
+// ATINGIDOS, conforme o cenário ativo), em vez de desenhar uma coleção
+// separada com todos os ~40 mil pontos da cidade.
+export type DanoFisicoIndice = Record<string, Record<string, number>>;
+
+export interface ManchaDuracaoClimada {
+  coordinates: [[number, number], [number, number], [number, number], [number, number]];
+  duracao_max_dias: number;
+  duracao_media_dias: number;
+}
 import type { FeatureCollection } from "geojson";
 import type { MapRef, MapLayerMouseEvent } from "react-map-gl/maplibre";
 import * as XLSX from "xlsx";
@@ -117,9 +132,9 @@ export function useDashboard() {
   const [allMunAgriAtingidosStats, setAllMunAgriAtingidosStats] = useState<Record<string, Record<string, number>> | null>(null);
   const [allMunInfraStats, setAllMunInfraStats] = useState<Record<string, Record<string, InfraStatsEntry>> | null>(null);
   const [manchaRS, setManchaRS] = useState<FeatureCollection | null>(null);
-  const [danosData, setDanosData] = useState<import("@/components/tabs/DanosTab").DanosData | null>(null);
   const [popData, setPopData] = useState<PopulacaoData | null>(null);
   const [areaData, setAreaData] = useState<AreaAtingidaData | null>(null);
+  const [manchaDuracaoClimada, setManchaDuracaoClimada] = useState<ManchaDuracaoClimada | null>(null);
 
   const [cursor, setCursor] = useState<string>("grab");
   const [popupInfo, setPopupInfo] = useState<{ lngLat: [number, number], properties: Record<string, unknown>, source: string } | null>(null);
@@ -141,20 +156,17 @@ export function useDashboard() {
   const [showHeatmapEmpresas, setShowHeatmapEmpresas] = useState<boolean>(false);
   const [showHeatmapSaude, setShowHeatmapSaude] = useState<boolean>(false);
   const [showHeatmapEducacao, setShowHeatmapEducacao] = useState<boolean>(false);
+  const [showDanoFisico, setShowDanoFisico] = useState<boolean>(false);
+  const [rpDanoFisico, setRpDanoFisico] = useState<string>("RP200");
+  const [danoFisicoIndiceEmpresas, setDanoFisicoIndiceEmpresas] = useState<DanoFisicoIndice | null>(null);
+  const [danoFisicoIndiceEducacao, setDanoFisicoIndiceEducacao] = useState<DanoFisicoIndice | null>(null);
+  const [danoFisicoIndiceSaude, setDanoFisicoIndiceSaude] = useState<DanoFisicoIndice | null>(null);
   const [showListaEscolas, setShowListaEscolas] = useState(false);
   const [showListaHospitais, setShowListaHospitais] = useState(false);
   const [showListaUBS, setShowListaUBS] = useState(false);
   const [showListaAmbulat, setShowListaAmbulat] = useState(false);
   const [showListaLogradouros, setShowListaLogradouros] = useState(false);
   const [showListaEixos, setShowListaEixos] = useState(false);
-
-  useEffect(() => {
-    fetch("/dados_convertidos/danos_operacionais.json")
-      .then(r => r.ok ? r.json() : null)
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      .then(d => d && setDanosData(d))
-      .catch(() => {/* silently ignore if file not available */});
-  }, []);
 
   useEffect(() => {
     fetch("/dados_convertidos/populacao_atingida.json")
@@ -168,6 +180,82 @@ export function useDashboard() {
       .then(r => r.ok ? r.json() : null)
       .then(d => d && setAreaData(d))
       .catch(() => {});
+  }, []);
+
+  // Metadados (coordenadas + min/max) do PNG de duração do "Climada Evento
+  // 2024" -- arquivo pequeno, carregado uma vez no mount como popData/areaData.
+  useEffect(() => {
+    fetch("/dados_convertidos/porto_alegre/mancha_duracao_climada_evento_2024.json")
+      .then(r => r.ok ? r.json() : null)
+      .then(d => d && setManchaDuracaoClimada(d))
+      .catch(() => {});
+  }, []);
+
+  // Camada "Dano Físico (CLIMADA)" -- so' existe para Porto Alegre (ver
+  // lib/constants.ts, DANO_FISICO_MUNICIPIO). Carregada sob demanda (so'
+  // quando o toggle e' ligado) porque os 3 arquivos somados ja' tem um volume
+  // razoavel (saude sozinho tem ~7 mil pontos x 7 RPs de propriedades).
+  useEffect(() => {
+    if (!showDanoFisico || municipio !== "Porto Alegre") return;
+    if (danoFisicoIndiceEmpresas || danoFisicoIndiceEducacao || danoFisicoIndiceSaude) return; // ja carregado nesta sessao
+
+    const controller = new AbortController();
+    const { signal } = controller;
+    Promise.all([
+      fetch("/dados_convertidos/porto_alegre/empresas_dano_fisico_indice.json", { signal }).then(r => r.ok ? r.json() : null),
+      fetch("/dados_convertidos/porto_alegre/educacao_dano_fisico_indice.json", { signal }).then(r => r.ok ? r.json() : null),
+      fetch("/dados_convertidos/porto_alegre/saude_dano_fisico_indice.json", { signal }).then(r => r.ok ? r.json() : null),
+    ]).then(([emp, edu, sau]) => {
+      if (signal.aborted) return;
+      setDanoFisicoIndiceEmpresas(emp); setDanoFisicoIndiceEducacao(edu); setDanoFisicoIndiceSaude(sau);
+    }).catch(e => { if ((e as Error).name !== 'AbortError') console.error(e); });
+
+    return () => controller.abort();
+  }, [showDanoFisico, municipio, danoFisicoIndiceEmpresas, danoFisicoIndiceEducacao, danoFisicoIndiceSaude]);
+
+  // Desliga a camada e libera os dados ao sair de Porto Alegre -- nos outros
+  // municipios ela nao tem sentido (sem raster de profundidade) nem dado pra
+  // mostrar.
+  useEffect(() => {
+    if (municipio === "Porto Alegre") return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setShowDanoFisico(false);
+    setDanoFisicoIndiceEmpresas(null); setDanoFisicoIndiceEducacao(null); setDanoFisicoIndiceSaude(null);
+  }, [municipio]);
+
+  // Mescla o indice de dano fisico nos MESMOS pontos ja exibidos pelo mapa
+  // (renderEmp/renderEdu/renderSau -- BASE ou ATINGIDOS, conforme o cenario
+  // ativo), casando pelo campo id de cada setor. Sem isso a camada desenharia
+  // uma coleção paralela com todo o BASE (~40 mil pontos em Empresas), fazendo
+  // parecer que pontos "aparecem do nada" ao ligar o toggle -- ver
+  // pipeline/climada_risco_prototipo.py, gerar_indice_dano_pontos.
+  // rp: além de mesclar TODAS as propriedades por RP do índice (usadas no
+  // popup), copia as do RP atualmente selecionado para chaves FIXAS
+  // (..._atual) -- assim clusterProperties/paint na camada do mapa referenciam
+  // um nome de propriedade constante, e trocar de RP vira só um `setData()`
+  // (o mesmo Source/GeoJSONSource do MapLibre é reaproveitado). Antes disso a
+  // troca de RP forçava remontar a Source inteira (key dinâmica, necessária
+  // porque clusterProperties não é reativo a uma troca de propriedade dentro
+  // da mesma source) -- destruir/recriar a source enquanto o MapLibre ainda
+  // processava a anterior (cluster em worker) causava um crash interno do
+  // MapLibre ("Cannot read properties of null (reading 'signal')", abort de
+  // uma requisição/worker já finalizado).
+  const mergeDanoFisico = useCallback((fc: FeatureCollection | null, indice: DanoFisicoIndice | null, idField: string, rp: string): FeatureCollection | null => {
+    if (!fc || !indice || !Array.isArray(fc.features)) return null;
+    return {
+      ...fc,
+      features: fc.features.map((f) => {
+        const chave = String((f.properties as Record<string, unknown> | null)?.[idField] ?? "");
+        const extra = indice[chave];
+        if (!extra) return f;
+        const atual = {
+          dano_fisico_pct_atual: extra[`dano_fisico_pct_${rp}`] ?? 0,
+          dano_fisico_brl_atual: extra[`dano_fisico_brl_${rp}`] ?? 0,
+          profundidade_m_atual: extra[`profundidade_m_${rp}`] ?? 0,
+        };
+        return { ...f, properties: { ...f.properties, ...extra, ...atual } };
+      }),
+    };
   }, []);
 
   const hasFlownInitial = useRef(false);
@@ -542,6 +630,30 @@ export function useDashboard() {
     return { ...showSau, features: showSau.features.filter((f) => String((f.properties as Record<string, unknown>)?.co_tipo_estabelecimento || "").toLowerCase() === filtroTipo.toLowerCase()) };
   }, [isTransitioning, showSau, filtroTipo]);
 
+  // Só compõe (map sobre todos os pontos) quando a camada está realmente
+  // ligada -- evita esse trabalho toda vez que baseEmpresas/Edu/Sau mudam por
+  // qualquer outro motivo enquanto Dano Físico está desligado.
+  //
+  // Usa BASE (todos os pontos da cidade), não renderEmp/Edu/Sau (que seguem o
+  // cenário/ATINGIDOS ativo): a exposição ao RP é uma análise independente do
+  // polígono do cenário selecionado -- mesma cobertura de antes (quando a
+  // camada publicava um GeoJSON próprio com o BASE inteiro), só que agora sem
+  // duplicar a geometria (mergeDanoFisico reaproveita a do BASE já carregado)
+  // e agrupada em cluster (abaixo, DashboardMap.tsx) para não poluir o mapa.
+  const mostraDanoFisicoAtivo = showDanoFisico && renderMunicipio === "Porto Alegre";
+  const danoFisicoEmpresas = useMemo(
+    () => (mostraDanoFisicoAtivo ? mergeDanoFisico(baseEmpresas, danoFisicoIndiceEmpresas, "id", rpDanoFisico) : null),
+    [mostraDanoFisicoAtivo, baseEmpresas, danoFisicoIndiceEmpresas, rpDanoFisico, mergeDanoFisico]
+  );
+  const danoFisicoEducacao = useMemo(
+    () => (mostraDanoFisicoAtivo ? mergeDanoFisico(baseEducacao, danoFisicoIndiceEducacao, "co_entidade", rpDanoFisico) : null),
+    [mostraDanoFisicoAtivo, baseEducacao, danoFisicoIndiceEducacao, rpDanoFisico, mergeDanoFisico]
+  );
+  const danoFisicoSaude = useMemo(
+    () => (mostraDanoFisicoAtivo ? mergeDanoFisico(baseSaude, danoFisicoIndiceSaude, "co_cnes", rpDanoFisico) : null),
+    [mostraDanoFisicoAtivo, baseSaude, danoFisicoIndiceSaude, rpDanoFisico, mergeDanoFisico]
+  );
+
   const metricasEmp = useMemo(() => ({ base: calcEmp(baseEmpresas), impacto: calcEmp(atingidosEmpresas) }), [baseEmpresas, atingidosEmpresas]);
   const metricasEdu = useMemo(() => ({ base: calcEdu(baseEducacao), impacto: calcEdu(atingidosEducacao) }), [baseEducacao, atingidosEducacao]);
   const metricasSau = useMemo(() => ({ base: calcSau(baseSaude), impacto: calcSau(atingidosSaude) }), [baseSaude, atingidosSaude]);
@@ -718,9 +830,15 @@ export function useDashboard() {
 
   const interactiveLayerIds = useMemo(() => {
     const ids: string[] = [];
-    if (camadas.includes("Empresas") && renderEmp?.features) ids.push("empresas-cluster", "empresas-point");
-    if (camadas.includes("Educação") && renderEdu?.features) ids.push("educacao-cluster", "educacao-point");
-    if (camadas.includes("Saúde") && renderSau?.features) ids.push("saude-cluster", "saude-point");
+    const mostraDanoFisico = showDanoFisico && renderMunicipio === "Porto Alegre";
+    if (camadas.includes("Empresas") && renderEmp?.features && !mostraDanoFisico) ids.push("empresas-cluster", "empresas-point");
+    if (camadas.includes("Educação") && renderEdu?.features && !mostraDanoFisico) ids.push("educacao-cluster", "educacao-point");
+    if (camadas.includes("Saúde") && renderSau?.features && !mostraDanoFisico) ids.push("saude-cluster", "saude-point");
+    if (mostraDanoFisico) {
+      if (camadas.includes("Empresas") && danoFisicoEmpresas?.features) ids.push("dano-fisico-empresas-cluster", "dano-fisico-empresas-point");
+      if (camadas.includes("Educação") && danoFisicoEducacao?.features) ids.push("dano-fisico-educacao-cluster", "dano-fisico-educacao-point");
+      if (camadas.includes("Saúde") && danoFisicoSaude?.features) ids.push("dano-fisico-saude-cluster", "dano-fisico-saude-point");
+    }
     if (camadas.includes("Infraestrutura") && !isVisaoGeral) {
       infraAtivas.forEach(nomeInfra => {
         const dataGeo = isCenarioAtivo ? atingidosInfra[nomeInfra] : baseInfra[nomeInfra];
@@ -731,7 +849,7 @@ export function useDashboard() {
       });
     }
     return ids;
-  }, [camadas, renderEmp, renderEdu, renderSau, baseInfra, atingidosInfra, infraAtivas, isVisaoGeral, isCenarioAtivo]);
+  }, [camadas, renderEmp, renderEdu, renderSau, baseInfra, atingidosInfra, infraAtivas, isVisaoGeral, isCenarioAtivo, showDanoFisico, renderMunicipio, danoFisicoEmpresas, danoFisicoEducacao, danoFisicoSaude]);
 
   const handleMapClick = (event: MapLayerMouseEvent) => {
     const feature = event.features && event.features[0];
@@ -842,6 +960,10 @@ export function useDashboard() {
     showHeatmapEmpresas, setShowHeatmapEmpresas,
     showHeatmapSaude, setShowHeatmapSaude,
     showHeatmapEducacao, setShowHeatmapEducacao,
+    showDanoFisico, setShowDanoFisico,
+    rpDanoFisico, setRpDanoFisico,
+    danoFisicoEmpresas, danoFisicoEducacao, danoFisicoSaude,
+    manchaDuracaoClimada,
     showListaEscolas, setShowListaEscolas,
     showListaHospitais, setShowListaHospitais,
     showListaUBS, setShowListaUBS,
@@ -859,7 +981,6 @@ export function useDashboard() {
     toggleCamada, toggleInfra, toggleMenuInfra,
     handleMapClick,
     exportarExcel,
-    danosData,
     popData,
     areaData,
     // geo-utils re-exports needed in JSX

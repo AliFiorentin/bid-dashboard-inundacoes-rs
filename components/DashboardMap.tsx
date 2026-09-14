@@ -14,6 +14,8 @@ import {
   INFRA_COLORS,
   AGRI_BOUNDS,
   AGRI_COLORS,
+  DANO_FISICO_COLOR_STOPS,
+  MANCHA_DURACAO_CENARIO,
 } from "@/lib/constants"
 import { slugify } from "@/lib/geo-utils"
 import { MapPopup } from "@/components/MapPopup"
@@ -64,8 +66,30 @@ export function DashboardMap({ dash }: Props) {
     showHeatmapEmpresas,
     showHeatmapSaude,
     showHeatmapEducacao,
+    showDanoFisico,
+    rpDanoFisico,
+    danoFisicoEmpresas,
+    danoFisicoEducacao,
+    danoFisicoSaude,
+    manchaDuracaoClimada,
     cameraVeioDoLink,
   } = dash
+
+  // Ligada, a camada "Dano Físico (CLIMADA)" substitui os pontos padrão de
+  // Empresas/Educação/Saúde (cor fixa) pelos mesmos pontos coloridos por dano
+  // estimado no RP selecionado -- ver lib/constants.ts (DANO_FISICO_MUNICIPIO:
+  // só Porto Alegre tem o raster de profundidade que esse cálculo exige).
+  const mostraDanoFisico = showDanoFisico && renderMunicipio === "Porto Alegre" && !isTransitioning
+
+  // Cenário "Climada Evento 2024" (evento real de maio/2024): a mancha ganha
+  // uma textura de duração de alagamento (dias) por cima do polígono de
+  // extensão -- único dado por pixel que existe para esse evento (ver
+  // lib/constants.ts, MANCHA_DURACAO_CENARIO e pipeline/gerar_mancha_duracao_climada.py).
+  const mostraDuracaoClimada =
+    renderMunicipio === "Porto Alegre" && cenario === MANCHA_DURACAO_CENARIO && !isTransitioning
+  const duracaoImgUrl = manchaDuracaoClimada
+    ? "/dados_convertidos/porto_alegre/mancha_duracao_climada_evento_2024.png"
+    : null
 
   const popMunData =
     !isVisaoGeral && !isTransitioning ? popData?.[renderMunicipio] : null
@@ -285,6 +309,7 @@ export function DashboardMap({ dash }: Props) {
             <MapPopup
               source={popupInfo.source}
               properties={popupInfo.properties}
+              rp={rpDanoFisico}
             />
           </Popup>
         )}
@@ -378,8 +403,11 @@ export function DashboardMap({ dash }: Props) {
               beforeId="anchor-mancha"
               type="fill"
               paint={{
+                // Com a textura de duração por cima (mostraDuracaoClimada), o
+                // preenchimento fica quase invisível -- só a linha de contorno
+                // abaixo segue marcando a extensão da mancha com nitidez.
                 "fill-color": COLORS.cenario,
-                "fill-opacity": is3D ? 0.45 : 0.25,
+                "fill-opacity": mostraDuracaoClimada ? 0.05 : (is3D ? 0.45 : 0.25),
               }}
             />
             <Layer
@@ -391,6 +419,24 @@ export function DashboardMap({ dash }: Props) {
                 "line-width": 2,
                 "line-opacity": 0.8,
               }}
+            />
+          </Source>
+        )}
+
+        {/* Textura de duração de alagamento (dias) -- só "Climada Evento
+            2024" em Porto Alegre, por cima do contorno acima. */}
+        {mostraDuracaoClimada && showMancha && duracaoImgUrl && manchaDuracaoClimada && (
+          <Source
+            id="duracao-climada-img"
+            type="image"
+            url={duracaoImgUrl}
+            coordinates={manchaDuracaoClimada.coordinates}
+          >
+            <Layer
+              id="duracao-climada-raster"
+              beforeId="anchor-mancha"
+              type="raster"
+              paint={{ "raster-opacity": 0.85, "raster-resampling": "linear" }}
             />
           </Source>
         )}
@@ -664,7 +710,7 @@ export function DashboardMap({ dash }: Props) {
           </Source>
         )}
 
-        {camadas.includes("Empresas") && renderEmp?.features && (
+        {camadas.includes("Empresas") && renderEmp?.features && !mostraDanoFisico && (
           <Source
             id="empresas"
             type="geojson"
@@ -721,7 +767,7 @@ export function DashboardMap({ dash }: Props) {
           </Source>
         )}
 
-        {camadas.includes("Educação") && renderEdu?.features && (
+        {camadas.includes("Educação") && renderEdu?.features && !mostraDanoFisico && (
           <Source
             id="educacao"
             type="geojson"
@@ -778,7 +824,7 @@ export function DashboardMap({ dash }: Props) {
           </Source>
         )}
 
-        {camadas.includes("Saúde") && renderSau?.features && (
+        {camadas.includes("Saúde") && renderSau?.features && !mostraDanoFisico && (
           <Source
             id="saude"
             type="geojson"
@@ -830,6 +876,174 @@ export function DashboardMap({ dash }: Props) {
                 "circle-stroke-width": 1.5,
                 "circle-stroke-color": "#fff",
                 "circle-translate": isVisaoGeral ? [12, 8] : [0, 0],
+              }}
+            />
+          </Source>
+        )}
+
+        {/* Dano Físico (CLIMADA, protótipo) -- substitui os 3 pontos acima quando
+            ligada (ver mostraDanoFisico): mesma geometria, cor por dano estimado
+            (%) no RP selecionado em vez de cor fixa por setor. Sem clustering
+            (precisamos do valor por ponto individual, não de uma contagem
+            agregada). */}
+        {mostraDanoFisico && camadas.includes("Empresas") && danoFisicoEmpresas?.features && (
+          // Sem key dinâmica: dano_fisico_pct_atual é copiado (em useDashboard.ts,
+          // mergeDanoFisico) do RP selecionado para um nome de propriedade FIXO,
+          // então clusterProperties não precisa mudar quando o RP muda -- só o
+          // `data` muda (setData(), que o MapLibre atualiza na mesma source). Uma
+          // key dinâmica aqui força destruir/recriar a source inteira a cada troca
+          // de RP; se isso acontecer enquanto o MapLibre ainda processa a anterior
+          // (cluster em worker), o próprio MapLibre quebra internamente
+          // ("Cannot read properties of null (reading 'signal')", abort de uma
+          // requisição/worker já finalizado) -- já visto em produção.
+          <Source
+            id="dano-fisico-empresas"
+            type="geojson"
+            data={danoFisicoEmpresas}
+            cluster={true}
+            clusterMaxZoom={18}
+            clusterRadius={60}
+            clusterProperties={{
+              soma_dano: ["+", ["get", "dano_fisico_pct_atual"]],
+            }}
+          >
+            <Layer
+              id="dano-fisico-empresas-cluster"
+              type="circle"
+              filter={["has", "point_count"]}
+              paint={{
+                "circle-color": [
+                  "interpolate", ["linear"],
+                  ["/", ["get", "soma_dano"], ["get", "point_count"]],
+                  ...DANO_FISICO_COLOR_STOPS,
+                ],
+                "circle-radius": ["step", ["get", "point_count"], 14, 50, 20, 200, 26],
+                "circle-stroke-width": 2,
+                "circle-stroke-color": COLORS.empresas,
+              }}
+            />
+            <Layer
+              id="dano-fisico-empresas-count"
+              type="symbol"
+              filter={["has", "point_count"]}
+              layout={{ "text-field": "{point_count_abbreviated}", "text-size": 11 }}
+              paint={{ "text-color": "#fff" }}
+            />
+            <Layer
+              id="dano-fisico-empresas-point"
+              type="circle"
+              filter={["!", ["has", "point_count"]]}
+              paint={{
+                "circle-color": [
+                  "interpolate", ["linear"],
+                  ["coalesce", ["get", "dano_fisico_pct_atual"], 0],
+                  ...DANO_FISICO_COLOR_STOPS,
+                ],
+                "circle-radius": 5,
+                "circle-stroke-width": 1.5,
+                "circle-stroke-color": COLORS.empresas,
+              }}
+            />
+          </Source>
+        )}
+        {mostraDanoFisico && camadas.includes("Educação") && danoFisicoEducacao?.features && (
+          <Source
+            id="dano-fisico-educacao"
+            type="geojson"
+            data={danoFisicoEducacao}
+            cluster={true}
+            clusterMaxZoom={18}
+            clusterRadius={60}
+            clusterProperties={{
+              soma_dano: ["+", ["get", "dano_fisico_pct_atual"]],
+            }}
+          >
+            <Layer
+              id="dano-fisico-educacao-cluster"
+              type="circle"
+              filter={["has", "point_count"]}
+              paint={{
+                "circle-color": [
+                  "interpolate", ["linear"],
+                  ["/", ["get", "soma_dano"], ["get", "point_count"]],
+                  ...DANO_FISICO_COLOR_STOPS,
+                ],
+                "circle-radius": ["step", ["get", "point_count"], 14, 50, 20, 200, 26],
+                "circle-stroke-width": 2,
+                "circle-stroke-color": COLORS.educacao,
+              }}
+            />
+            <Layer
+              id="dano-fisico-educacao-count"
+              type="symbol"
+              filter={["has", "point_count"]}
+              layout={{ "text-field": "{point_count_abbreviated}", "text-size": 11 }}
+              paint={{ "text-color": "#fff" }}
+            />
+            <Layer
+              id="dano-fisico-educacao-point"
+              type="circle"
+              filter={["!", ["has", "point_count"]]}
+              paint={{
+                "circle-color": [
+                  "interpolate", ["linear"],
+                  ["coalesce", ["get", "dano_fisico_pct_atual"], 0],
+                  ...DANO_FISICO_COLOR_STOPS,
+                ],
+                "circle-radius": 5,
+                "circle-stroke-width": 1.5,
+                "circle-stroke-color": COLORS.educacao,
+              }}
+            />
+          </Source>
+        )}
+        {mostraDanoFisico && camadas.includes("Saúde") && danoFisicoSaude?.features && (
+          <Source
+            id="dano-fisico-saude"
+            type="geojson"
+            data={danoFisicoSaude}
+            cluster={true}
+            clusterMaxZoom={18}
+            clusterRadius={60}
+            clusterProperties={{
+              soma_dano: ["+", ["get", "dano_fisico_pct_atual"]],
+            }}
+          >
+            <Layer
+              id="dano-fisico-saude-cluster"
+              type="circle"
+              filter={["has", "point_count"]}
+              paint={{
+                "circle-color": [
+                  "interpolate", ["linear"],
+                  ["/", ["get", "soma_dano"], ["get", "point_count"]],
+                  ...DANO_FISICO_COLOR_STOPS,
+                ],
+                "circle-radius": ["step", ["get", "point_count"], 14, 50, 20, 200, 26],
+                "circle-stroke-width": 2,
+                "circle-stroke-color": COLORS.saude,
+              }}
+            />
+            <Layer
+              id="dano-fisico-saude-count"
+              type="symbol"
+              filter={["has", "point_count"]}
+              layout={{ "text-field": "{point_count_abbreviated}", "text-size": 11 }}
+              paint={{ "text-color": "#fff" }}
+            />
+            <Layer
+              id="dano-fisico-saude-point"
+              type="circle"
+              filter={["!", ["has", "point_count"]]}
+              paint={{
+                "circle-color": [
+                  "interpolate", ["linear"],
+                  ["coalesce", ["get", "dano_fisico_pct_atual"], 0],
+                  ...DANO_FISICO_COLOR_STOPS,
+                ],
+                "circle-radius": 4,
+                "circle-stroke-width": 1.5,
+                "circle-stroke-color": COLORS.saude,
               }}
             />
           </Source>

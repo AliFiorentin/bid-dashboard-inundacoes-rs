@@ -6,6 +6,7 @@ import Image from "next/image";
 import {
   COLORS, INFRA_COLORS,
   AGRI_COLORS, AGRI_BOUNDS,
+  MANCHA_DURACAO_CENARIO, MANCHA_DURACAO_GRADIENT_CSS, cenarioLabel,
 } from "@/lib/constants";
 import { DashboardMap } from "@/components/DashboardMap";
 import { LegendItem } from "@/components/LegendItem";
@@ -30,7 +31,11 @@ export default function Dashboard() {
     isVisaoGeral,
     renderEmp, renderEdu, renderSau,
     popData,
+    showDanoFisico, rpDanoFisico, renderMunicipio,
+    manchaDuracaoClimada,
   } = dash;
+
+  const mostraDuracaoClimada = renderMunicipio === "Porto Alegre" && cenario === MANCHA_DURACAO_CENARIO;
 
   return (
     <div className="relative w-screen h-screen font-sans overflow-hidden bg-slate-100 text-slate-900 print:overflow-visible print:h-auto print:w-full">
@@ -110,20 +115,54 @@ export default function Dashboard() {
           </button>
           {showLegenda && (
             <div className="flex flex-col gap-1.5 px-2.5 py-2.5">
-              {camadas.includes("Empresas") && renderEmp?.features && <LegendItem cor={COLORS.empresas} label="Empresas" />}
-              {camadas.includes("Educação") && renderEdu?.features && <LegendItem cor={COLORS.educacao} label="Educação" />}
-              {camadas.includes("Saúde") && renderSau?.features && <LegendItem cor={COLORS.saude} label="Saúde" />}
+              {showDanoFisico && renderMunicipio === "Porto Alegre" ? (
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <div className="w-16 h-3 rounded-sm shrink-0" style={{ background: "linear-gradient(to right, #cbd5e1, #93c5fd, #fbbf24, #f97316, #dc2626, #7f1d1d)" }} />
+                    <div className="flex flex-col leading-none gap-0.5">
+                      <span className="text-[10px] text-slate-700 font-medium">Dano Físico (CLIMADA) · {rpDanoFisico}</span>
+                      <span className="text-[8px] text-slate-400">0% → 100% do valor de reposição</span>
+                    </div>
+                  </div>
+                  <span className="text-[8px] leading-tight text-slate-400 max-w-[180px]">
+                    Protótipo exploratório — ver página de Danos para detalhes e limitações.
+                  </span>
+                </div>
+              ) : (
+                <>
+                  {camadas.includes("Empresas") && renderEmp?.features && <LegendItem cor={COLORS.empresas} label="Empresas" />}
+                  {camadas.includes("Educação") && renderEdu?.features && <LegendItem cor={COLORS.educacao} label="Educação" />}
+                  {camadas.includes("Saúde") && renderSau?.features && <LegendItem cor={COLORS.saude} label="Saúde" />}
+                </>
+              )}
               {camadas.includes("Agricultura") && !isVisaoGeral && AGRI_BOUNDS[municipio] && Object.entries(AGRI_COLORS).map(([tipo, cor]) => (
                 <LegendItem key={`agri-${tipo}`} cor={cor} label={tipo} area />
               ))}
               {camadas.includes("Infraestrutura") && infraAtivas.map(nome => (
                 <LegendItem key={`infra-${nome}`} cor={INFRA_COLORS[nome] ?? COLORS.infra} label={nome} area={["Quadras","Terrenos"].includes(nome)} />
               ))}
-              {manchaCenario && !isVisaoGeral && showMancha && <LegendItem cor={COLORS.cenario} label={cenario} area />}
-              {manchaCenario && !isVisaoGeral && showMancha && (
-                <span className="text-[8px] leading-tight text-slate-400 max-w-[180px]">
-                  Extensão da área alagada. Não há dado de profundidade da água para este cenário.
-                </span>
+              {manchaCenario && !isVisaoGeral && showMancha && mostraDuracaoClimada && manchaDuracaoClimada ? (
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <div className="w-16 h-3 rounded-sm shrink-0" style={{ background: MANCHA_DURACAO_GRADIENT_CSS }} />
+                    <div className="flex flex-col leading-none gap-0.5">
+                      <span className="text-[10px] text-slate-700 font-medium">Duração da inundação (dias)</span>
+                      <span className="text-[8px] text-slate-400">0 → {manchaDuracaoClimada.duracao_max_dias.toFixed(0)} dias</span>
+                    </div>
+                  </div>
+                  <span className="text-[8px] leading-tight text-slate-400 max-w-[180px]">
+                    Evento real de maio/2024 (CLIMADA/UNU-EHS).
+                  </span>
+                </div>
+              ) : (
+                manchaCenario && !isVisaoGeral && showMancha && (
+                  <>
+                    <LegendItem cor={COLORS.cenario} label={cenarioLabel(cenario)} area />
+                    <span className="text-[8px] leading-tight text-slate-400 max-w-[180px]">
+                      Extensão da área alagada. Não há dado de profundidade da água para este cenário.
+                    </span>
+                  </>
+                )
               )}
               {isVisaoGeral && manchaRS && showMancha && <LegendItem cor={COLORS.cenario} label="Enchente 2024 — RS" area />}
               {camadas.includes("População") && !isVisaoGeral && popData?.[municipio] && (
