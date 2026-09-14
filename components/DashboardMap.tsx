@@ -887,10 +887,48 @@ export function DashboardMap({ dash }: Props) {
             (precisamos do valor por ponto individual, não de uma contagem
             agregada). */}
         {mostraDanoFisico && camadas.includes("Empresas") && danoFisicoEmpresas?.features && (
-          <Source id="dano-fisico-empresas" type="geojson" data={danoFisicoEmpresas}>
+          // key força o react-map-gl a recriar a Source (e o indice de cluster do
+          // MapLibre) quando o RP muda -- clusterProperties nao e' reativo a uma
+          // troca de propriedade dentro da MESMA source (o nome da propriedade
+          // agregada, dano_fisico_pct_<RP>, muda com o RP selecionado).
+          <Source
+            key={`dano-fisico-empresas-${rpDanoFisico}`}
+            id="dano-fisico-empresas"
+            type="geojson"
+            data={danoFisicoEmpresas}
+            cluster={true}
+            clusterMaxZoom={14}
+            clusterRadius={40}
+            clusterProperties={{
+              soma_dano: ["+", ["get", `dano_fisico_pct_${rpDanoFisico}`]],
+            }}
+          >
+            <Layer
+              id="dano-fisico-empresas-cluster"
+              type="circle"
+              filter={["has", "point_count"]}
+              paint={{
+                "circle-color": [
+                  "interpolate", ["linear"],
+                  ["/", ["get", "soma_dano"], ["get", "point_count"]],
+                  ...DANO_FISICO_COLOR_STOPS,
+                ],
+                "circle-radius": ["step", ["get", "point_count"], 14, 50, 20, 200, 26],
+                "circle-stroke-width": 2,
+                "circle-stroke-color": COLORS.empresas,
+              }}
+            />
+            <Layer
+              id="dano-fisico-empresas-count"
+              type="symbol"
+              filter={["has", "point_count"]}
+              layout={{ "text-field": "{point_count_abbreviated}", "text-size": 11 }}
+              paint={{ "text-color": "#fff" }}
+            />
             <Layer
               id="dano-fisico-empresas-point"
               type="circle"
+              filter={["!", ["has", "point_count"]]}
               paint={{
                 "circle-color": [
                   "interpolate", ["linear"],
@@ -905,10 +943,44 @@ export function DashboardMap({ dash }: Props) {
           </Source>
         )}
         {mostraDanoFisico && camadas.includes("Educação") && danoFisicoEducacao?.features && (
-          <Source id="dano-fisico-educacao" type="geojson" data={danoFisicoEducacao}>
+          <Source
+            key={`dano-fisico-educacao-${rpDanoFisico}`}
+            id="dano-fisico-educacao"
+            type="geojson"
+            data={danoFisicoEducacao}
+            cluster={true}
+            clusterMaxZoom={14}
+            clusterRadius={40}
+            clusterProperties={{
+              soma_dano: ["+", ["get", `dano_fisico_pct_${rpDanoFisico}`]],
+            }}
+          >
+            <Layer
+              id="dano-fisico-educacao-cluster"
+              type="circle"
+              filter={["has", "point_count"]}
+              paint={{
+                "circle-color": [
+                  "interpolate", ["linear"],
+                  ["/", ["get", "soma_dano"], ["get", "point_count"]],
+                  ...DANO_FISICO_COLOR_STOPS,
+                ],
+                "circle-radius": ["step", ["get", "point_count"], 14, 50, 20, 200, 26],
+                "circle-stroke-width": 2,
+                "circle-stroke-color": COLORS.educacao,
+              }}
+            />
+            <Layer
+              id="dano-fisico-educacao-count"
+              type="symbol"
+              filter={["has", "point_count"]}
+              layout={{ "text-field": "{point_count_abbreviated}", "text-size": 11 }}
+              paint={{ "text-color": "#fff" }}
+            />
             <Layer
               id="dano-fisico-educacao-point"
               type="circle"
+              filter={["!", ["has", "point_count"]]}
               paint={{
                 "circle-color": [
                   "interpolate", ["linear"],
@@ -923,10 +995,44 @@ export function DashboardMap({ dash }: Props) {
           </Source>
         )}
         {mostraDanoFisico && camadas.includes("Saúde") && danoFisicoSaude?.features && (
-          <Source id="dano-fisico-saude" type="geojson" data={danoFisicoSaude}>
+          <Source
+            key={`dano-fisico-saude-${rpDanoFisico}`}
+            id="dano-fisico-saude"
+            type="geojson"
+            data={danoFisicoSaude}
+            cluster={true}
+            clusterMaxZoom={14}
+            clusterRadius={40}
+            clusterProperties={{
+              soma_dano: ["+", ["get", `dano_fisico_pct_${rpDanoFisico}`]],
+            }}
+          >
+            <Layer
+              id="dano-fisico-saude-cluster"
+              type="circle"
+              filter={["has", "point_count"]}
+              paint={{
+                "circle-color": [
+                  "interpolate", ["linear"],
+                  ["/", ["get", "soma_dano"], ["get", "point_count"]],
+                  ...DANO_FISICO_COLOR_STOPS,
+                ],
+                "circle-radius": ["step", ["get", "point_count"], 14, 50, 20, 200, 26],
+                "circle-stroke-width": 2,
+                "circle-stroke-color": COLORS.saude,
+              }}
+            />
+            <Layer
+              id="dano-fisico-saude-count"
+              type="symbol"
+              filter={["has", "point_count"]}
+              layout={{ "text-field": "{point_count_abbreviated}", "text-size": 11 }}
+              paint={{ "text-color": "#fff" }}
+            />
             <Layer
               id="dano-fisico-saude-point"
               type="circle"
+              filter={["!", ["has", "point_count"]]}
               paint={{
                 "circle-color": [
                   "interpolate", ["linear"],

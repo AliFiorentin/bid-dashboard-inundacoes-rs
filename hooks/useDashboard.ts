@@ -20,6 +20,15 @@ export interface InfraStatsEntry {
   area_m2_atingido?: number;
 }
 
+// Indice {id_do_ponto: {propriedades por RP}} da camada "Dano Físico
+// (CLIMADA)" -- SEM geometria (ver pipeline/climada_risco_prototipo.py,
+// gerar_indice_dano_pontos). O id é o campo estável de cada setor (id p/
+// empresas, co_entidade p/ educação, co_cnes p/ saúde) -- mergeDanoFisico
+// (abaixo) casa este índice com os pontos JÁ exibidos no mapa (BASE ou
+// ATINGIDOS, conforme o cenário ativo), em vez de desenhar uma coleção
+// separada com todos os ~40 mil pontos da cidade.
+export type DanoFisicoIndice = Record<string, Record<string, number>>;
+
 export interface ManchaDuracaoClimada {
   coordinates: [[number, number], [number, number], [number, number], [number, number]];
   duracao_max_dias: number;
@@ -149,9 +158,9 @@ export function useDashboard() {
   const [showHeatmapEducacao, setShowHeatmapEducacao] = useState<boolean>(false);
   const [showDanoFisico, setShowDanoFisico] = useState<boolean>(false);
   const [rpDanoFisico, setRpDanoFisico] = useState<string>("RP200");
-  const [danoFisicoEmpresas, setDanoFisicoEmpresas] = useState<FeatureCollection | null>(null);
-  const [danoFisicoEducacao, setDanoFisicoEducacao] = useState<FeatureCollection | null>(null);
-  const [danoFisicoSaude, setDanoFisicoSaude] = useState<FeatureCollection | null>(null);
+  const [danoFisicoIndiceEmpresas, setDanoFisicoIndiceEmpresas] = useState<DanoFisicoIndice | null>(null);
+  const [danoFisicoIndiceEducacao, setDanoFisicoIndiceEducacao] = useState<DanoFisicoIndice | null>(null);
+  const [danoFisicoIndiceSaude, setDanoFisicoIndiceSaude] = useState<DanoFisicoIndice | null>(null);
   const [showListaEscolas, setShowListaEscolas] = useState(false);
   const [showListaHospitais, setShowListaHospitais] = useState(false);
   const [showListaUBS, setShowListaUBS] = useState(false);
@@ -188,21 +197,21 @@ export function useDashboard() {
   // razoavel (saude sozinho tem ~7 mil pontos x 7 RPs de propriedades).
   useEffect(() => {
     if (!showDanoFisico || municipio !== "Porto Alegre") return;
-    if (danoFisicoEmpresas || danoFisicoEducacao || danoFisicoSaude) return; // ja carregado nesta sessao
+    if (danoFisicoIndiceEmpresas || danoFisicoIndiceEducacao || danoFisicoIndiceSaude) return; // ja carregado nesta sessao
 
     const controller = new AbortController();
     const { signal } = controller;
     Promise.all([
-      fetch("/dados_convertidos/porto_alegre/empresas_dano_fisico_climada.geojson", { signal }).then(r => r.ok ? r.json() : null),
-      fetch("/dados_convertidos/porto_alegre/educacao_dano_fisico_climada.geojson", { signal }).then(r => r.ok ? r.json() : null),
-      fetch("/dados_convertidos/porto_alegre/saude_dano_fisico_climada.geojson", { signal }).then(r => r.ok ? r.json() : null),
+      fetch("/dados_convertidos/porto_alegre/empresas_dano_fisico_indice.json", { signal }).then(r => r.ok ? r.json() : null),
+      fetch("/dados_convertidos/porto_alegre/educacao_dano_fisico_indice.json", { signal }).then(r => r.ok ? r.json() : null),
+      fetch("/dados_convertidos/porto_alegre/saude_dano_fisico_indice.json", { signal }).then(r => r.ok ? r.json() : null),
     ]).then(([emp, edu, sau]) => {
       if (signal.aborted) return;
-      setDanoFisicoEmpresas(emp); setDanoFisicoEducacao(edu); setDanoFisicoSaude(sau);
+      setDanoFisicoIndiceEmpresas(emp); setDanoFisicoIndiceEducacao(edu); setDanoFisicoIndiceSaude(sau);
     }).catch(e => { if ((e as Error).name !== 'AbortError') console.error(e); });
 
     return () => controller.abort();
-  }, [showDanoFisico, municipio, danoFisicoEmpresas, danoFisicoEducacao, danoFisicoSaude]);
+  }, [showDanoFisico, municipio, danoFisicoIndiceEmpresas, danoFisicoIndiceEducacao, danoFisicoIndiceSaude]);
 
   // Desliga a camada e libera os dados ao sair de Porto Alegre -- nos outros
   // municipios ela nao tem sentido (sem raster de profundidade) nem dado pra
@@ -211,8 +220,26 @@ export function useDashboard() {
     if (municipio === "Porto Alegre") return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setShowDanoFisico(false);
-    setDanoFisicoEmpresas(null); setDanoFisicoEducacao(null); setDanoFisicoSaude(null);
+    setDanoFisicoIndiceEmpresas(null); setDanoFisicoIndiceEducacao(null); setDanoFisicoIndiceSaude(null);
   }, [municipio]);
+
+  // Mescla o indice de dano fisico nos MESMOS pontos ja exibidos pelo mapa
+  // (renderEmp/renderEdu/renderSau -- BASE ou ATINGIDOS, conforme o cenario
+  // ativo), casando pelo campo id de cada setor. Sem isso a camada desenharia
+  // uma coleção paralela com todo o BASE (~40 mil pontos em Empresas), fazendo
+  // parecer que pontos "aparecem do nada" ao ligar o toggle -- ver
+  // pipeline/climada_risco_prototipo.py, gerar_indice_dano_pontos.
+  const mergeDanoFisico = useCallback((fc: FeatureCollection | null, indice: DanoFisicoIndice | null, idField: string): FeatureCollection | null => {
+    if (!fc || !indice || !Array.isArray(fc.features)) return null;
+    return {
+      ...fc,
+      features: fc.features.map((f) => {
+        const chave = String((f.properties as Record<string, unknown> | null)?.[idField] ?? "");
+        const extra = indice[chave];
+        return extra ? { ...f, properties: { ...f.properties, ...extra } } : f;
+      }),
+    };
+  }, []);
 
   const hasFlownInitial = useRef(false);
   // O <Map> do react-map-gl cria a instância maplibre de forma assíncrona: o
@@ -586,6 +613,30 @@ export function useDashboard() {
     return { ...showSau, features: showSau.features.filter((f) => String((f.properties as Record<string, unknown>)?.co_tipo_estabelecimento || "").toLowerCase() === filtroTipo.toLowerCase()) };
   }, [isTransitioning, showSau, filtroTipo]);
 
+  // Só compõe (map sobre todos os pontos) quando a camada está realmente
+  // ligada -- evita esse trabalho toda vez que baseEmpresas/Edu/Sau mudam por
+  // qualquer outro motivo enquanto Dano Físico está desligado.
+  //
+  // Usa BASE (todos os pontos da cidade), não renderEmp/Edu/Sau (que seguem o
+  // cenário/ATINGIDOS ativo): a exposição ao RP é uma análise independente do
+  // polígono do cenário selecionado -- mesma cobertura de antes (quando a
+  // camada publicava um GeoJSON próprio com o BASE inteiro), só que agora sem
+  // duplicar a geometria (mergeDanoFisico reaproveita a do BASE já carregado)
+  // e agrupada em cluster (abaixo, DashboardMap.tsx) para não poluir o mapa.
+  const mostraDanoFisicoAtivo = showDanoFisico && renderMunicipio === "Porto Alegre";
+  const danoFisicoEmpresas = useMemo(
+    () => (mostraDanoFisicoAtivo ? mergeDanoFisico(baseEmpresas, danoFisicoIndiceEmpresas, "id") : null),
+    [mostraDanoFisicoAtivo, baseEmpresas, danoFisicoIndiceEmpresas, mergeDanoFisico]
+  );
+  const danoFisicoEducacao = useMemo(
+    () => (mostraDanoFisicoAtivo ? mergeDanoFisico(baseEducacao, danoFisicoIndiceEducacao, "co_entidade") : null),
+    [mostraDanoFisicoAtivo, baseEducacao, danoFisicoIndiceEducacao, mergeDanoFisico]
+  );
+  const danoFisicoSaude = useMemo(
+    () => (mostraDanoFisicoAtivo ? mergeDanoFisico(baseSaude, danoFisicoIndiceSaude, "co_cnes") : null),
+    [mostraDanoFisicoAtivo, baseSaude, danoFisicoIndiceSaude, mergeDanoFisico]
+  );
+
   const metricasEmp = useMemo(() => ({ base: calcEmp(baseEmpresas), impacto: calcEmp(atingidosEmpresas) }), [baseEmpresas, atingidosEmpresas]);
   const metricasEdu = useMemo(() => ({ base: calcEdu(baseEducacao), impacto: calcEdu(atingidosEducacao) }), [baseEducacao, atingidosEducacao]);
   const metricasSau = useMemo(() => ({ base: calcSau(baseSaude), impacto: calcSau(atingidosSaude) }), [baseSaude, atingidosSaude]);
@@ -767,9 +818,9 @@ export function useDashboard() {
     if (camadas.includes("Educação") && renderEdu?.features && !mostraDanoFisico) ids.push("educacao-cluster", "educacao-point");
     if (camadas.includes("Saúde") && renderSau?.features && !mostraDanoFisico) ids.push("saude-cluster", "saude-point");
     if (mostraDanoFisico) {
-      if (camadas.includes("Empresas") && danoFisicoEmpresas?.features) ids.push("dano-fisico-empresas-point");
-      if (camadas.includes("Educação") && danoFisicoEducacao?.features) ids.push("dano-fisico-educacao-point");
-      if (camadas.includes("Saúde") && danoFisicoSaude?.features) ids.push("dano-fisico-saude-point");
+      if (camadas.includes("Empresas") && danoFisicoEmpresas?.features) ids.push("dano-fisico-empresas-cluster", "dano-fisico-empresas-point");
+      if (camadas.includes("Educação") && danoFisicoEducacao?.features) ids.push("dano-fisico-educacao-cluster", "dano-fisico-educacao-point");
+      if (camadas.includes("Saúde") && danoFisicoSaude?.features) ids.push("dano-fisico-saude-cluster", "dano-fisico-saude-point");
     }
     if (camadas.includes("Infraestrutura") && !isVisaoGeral) {
       infraAtivas.forEach(nomeInfra => {
