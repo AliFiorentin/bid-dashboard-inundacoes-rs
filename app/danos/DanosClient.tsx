@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import katex from "katex";
 import { TrendingDown, FlaskConical } from "lucide-react";
 import { HeaderLogos } from "@/components/HeaderLogos";
@@ -211,8 +212,8 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
         <div className="max-w-[1200px] mx-auto flex items-start justify-between gap-6">
           <div className="min-w-0">
             <div className="flex items-center gap-2 mb-5 print:hidden">
-              <a href="/" className="text-[10px] font-bold text-white/70 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">← Dashboard</a>
-              <a href="/metodologia" className="text-[10px] font-bold text-white/70 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">← Metodologia</a>
+              <Link href="/" className="text-[10px] font-bold text-white/70 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">← Dashboard</Link>
+              <Link href="/metodologia" className="text-[10px] font-bold text-white/70 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">← Metodologia</Link>
             </div>
             <p className="text-[11px] uppercase tracking-[0.18em] font-semibold opacity-60 mb-2">
               BID · GPEA · FURG
