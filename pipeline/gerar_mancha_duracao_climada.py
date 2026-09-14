@@ -43,15 +43,37 @@ TIFF_PATH = Path(
 OUT_DIR = DASH_DATA / "porto_alegre"
 
 
+SUPERSAMPLE = 4  # ver make_png -- raster fonte ~90m/pixel, sem isso a borda da
+# mancha fica serrilhada (efeito "escada" dos pixels originais) quando ampliada
+# no mapa. Interpolacao bicubica antes de colorizar suaviza tanto a borda
+# quanto o degrade interno de cor, sem alterar a extensao geografica (mesmos
+# bounds -- so' mais pixels dentro deles).
+
+
 def make_png(arr2d: np.ndarray, nodata) -> tuple[Image.Image, float, float]:
     """Coloriza a duracao (dias) com colormap Blues -- claro=poucos dias,
-    escuro=muitos dias. Alpha 0 fora da mancha (seco / nodata)."""
+    escuro=muitos dias. Alpha 0 fora da mancha (seco / nodata). Supersample
+    bicubico (ver SUPERSAMPLE) antes de colorizar: suaviza a borda serrilhada
+    do raster original (~90m/pixel) e cria um degrade mais gradual de alpha
+    perto da borda, em vez de um corte duro pixel a pixel."""
     nd = nodata if nodata is not None else -9999
-    valid = np.isfinite(arr2d) & (arr2d != nd) & (arr2d > 0)
-    dur_max = float(arr2d[valid].max()) if valid.any() else 0.0
-    dur_media = float(arr2d[valid].mean()) if valid.any() else 0.0
+    valid_orig = np.isfinite(arr2d) & (arr2d != nd) & (arr2d > 0)
+    dur_max = float(arr2d[valid_orig].max()) if valid_orig.any() else 0.0
+    dur_media = float(arr2d[valid_orig].mean()) if valid_orig.any() else 0.0
 
-    norm = np.where(valid, np.clip(arr2d, 0, dur_max) / dur_max if dur_max > 0 else 0.0, 0.0)
+    # Zera nodata/seco ANTES de suavizar (senao valores nodata, tipicamente
+    # bem negativos, contaminariam a interpolacao bicubica das bordas).
+    arr_limpo = np.where(valid_orig, arr2d, 0.0).astype(np.float32)
+    h, w = arr_limpo.shape
+    im_raw = Image.fromarray(arr_limpo, mode="F")
+    im_up = im_raw.resize((w * SUPERSAMPLE, h * SUPERSAMPLE), Image.BICUBIC)
+    arr_up = np.clip(np.array(im_up), 0, dur_max if dur_max > 0 else None)
+
+    # Mascara suave: bicubico ja cria um degrade proximo de 0 na borda (em vez
+    # do corte duro pixel-a-pixel do raster original) -- limiar baixo so' pra
+    # cortar ruido residual de interpolacao bem longe da mancha real.
+    valid = arr_up > 0.05
+    norm = np.where(valid, arr_up / dur_max if dur_max > 0 else 0.0, 0.0)
 
     cmap = matplotlib.colormaps["Blues"]
     rgba = (cmap(norm) * 255).astype(np.uint8)
