@@ -1,0 +1,24 @@
+{
+  "Iluminação Pública": {
+    "count_base": 15660,
+    "count_atingido": 616
+  },
+  "Logradouros": {
+    "count_base": 1439,
+    "count_atingido": 312
+  },
+  "Lotes": {
+    "count_base": 38299,
+    "count_atingido": 1596
+  },
+  "Quadras": {
+    "count_base": 2388,
+    "count_atingido": 271
+  },
+  "Edificações": {
+    "count_base": 84925,
+    "count_atingido": 2571,
+    "area_m2_base": 10329310.0,
+    "area_m2_atingido": 331335.9
+  }
+}

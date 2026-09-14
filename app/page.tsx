@@ -54,8 +54,15 @@ export default function Dashboard() {
           </p>
         </div>
         <div className="flex items-center gap-3 mt-2">
-          <Image src="/GPEA.png" alt="GPEa" width={80} height={32} className="h-7 w-auto object-contain" />
-          <Image src="/CIEX2.png" alt="CIEX" width={80} height={32} className="h-7 w-auto object-contain" />
+          <div className="relative h-11 w-20">
+            <Image src="/GPEA.png" alt="GPEa" fill className="object-contain" />
+          </div>
+          <div className="relative h-11 w-20">
+            <Image src="/CIEX2.png" alt="CIEX" fill className="object-contain" />
+          </div>
+          <div className="relative h-11 w-20">
+            <Image src="/IPH.jpg" alt="IPH" fill className="object-contain rounded-sm" />
+          </div>
         </div>
       </div>
 
@@ -73,52 +80,61 @@ export default function Dashboard() {
         </div>
       )}
 
+      {/* Legenda e Copyright lado a lado, alinhados pela base -- antes o
+          Copyright ficava centralizado na tela inteira (inset-x-0) e a
+          Legenda flutuava sozinha, sem relação visual entre os dois. Agora um
+          único wrapper posiciona ambos juntos (mesmo left dinâmico do painel,
+          items-end pra alinhar a base mesmo quando a Legenda expande e fica
+          mais alta que o Copyright). */}
       <div
-        className={`absolute bottom-4 rounded-xl z-10 print:hidden transition-[left] duration-300 overflow-hidden ${showPainelAnalise ? "left-[440px]" : "left-4"}`}
-        style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)", transitionTimingFunction: "var(--ease-out)" }}
+        className={`absolute bottom-4 z-10 print:hidden flex items-end gap-3 transition-[left] duration-300 ${showPainelAnalise ? "left-[440px]" : "left-4"}`}
+        style={{ transitionTimingFunction: "var(--ease-out)" }}
       >
-        <button
-          onClick={() => setShowLegenda(p => !p)}
-          className="w-full flex items-center justify-between gap-3 px-2.5 py-2"
-          style={{ background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)" }}
-        >
-          <span className="text-[9px] font-black uppercase tracking-wider text-white">Legenda</span>
-          <span className="text-white" style={{ fontSize: 8 }}>{showLegenda ? "▼" : "▲"}</span>
-        </button>
-        {showLegenda && (
-          <div className="flex flex-col gap-1.5 px-2.5 py-2.5">
-            {camadas.includes("Empresas") && renderEmp?.features && <LegendItem cor={COLORS.empresas} label="Empresas" />}
-            {camadas.includes("Educação") && renderEdu?.features && <LegendItem cor={COLORS.educacao} label="Educação" />}
-            {camadas.includes("Saúde") && renderSau?.features && <LegendItem cor={COLORS.saude} label="Saúde" />}
-            {camadas.includes("Agricultura") && !isVisaoGeral && AGRI_BOUNDS[municipio] && Object.entries(AGRI_COLORS).map(([tipo, cor]) => (
-              <LegendItem key={`agri-${tipo}`} cor={cor} label={tipo} area />
-            ))}
-            {camadas.includes("Infraestrutura") && infraAtivas.map(nome => (
-              <LegendItem key={`infra-${nome}`} cor={INFRA_COLORS[nome] ?? COLORS.infra} label={nome} area={["Quadras","Terrenos"].includes(nome)} />
-            ))}
-            {manchaCenario && !isVisaoGeral && showMancha && <LegendItem cor={COLORS.cenario} label={cenario} area />}
-            {manchaCenario && !isVisaoGeral && showMancha && (
-              <span className="text-[8px] leading-tight text-slate-400 max-w-[180px]">
-                Extensão da área alagada. Não há dado de profundidade da água para este cenário.
-              </span>
-            )}
-            {isVisaoGeral && manchaRS && showMancha && <LegendItem cor={COLORS.cenario} label="Enchente 2024 — RS" area />}
-            {camadas.includes("População") && !isVisaoGeral && popData?.[municipio] && (
-              <div className="flex items-center gap-2">
-                <div className="w-16 h-3 rounded-sm shrink-0" style={{ background: "linear-gradient(to right, #0d0887, #9c179e, #ed7953, #f0f921)" }} />
-                <div className="flex flex-col leading-none gap-0.5">
-                  <span className="text-[10px] text-slate-700 font-medium">Pop. (hab./pixel)</span>
-                  <span className="text-[8px] text-slate-400">baixo → alto</span>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      <div className="absolute bottom-4 inset-x-0 flex justify-center z-10 print:hidden pointer-events-none">
         <div
-          className="px-3 py-1 rounded-xl select-none leading-none text-center"
+          className="rounded-xl overflow-hidden"
+          style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}
+        >
+          <button
+            onClick={() => setShowLegenda(p => !p)}
+            className="w-full flex items-center justify-between gap-3 px-2.5 py-2"
+            style={{ background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)" }}
+          >
+            <span className="text-[9px] font-black uppercase tracking-wider text-white">Legenda</span>
+            <span className="text-white" style={{ fontSize: 8 }}>{showLegenda ? "▼" : "▲"}</span>
+          </button>
+          {showLegenda && (
+            <div className="flex flex-col gap-1.5 px-2.5 py-2.5">
+              {camadas.includes("Empresas") && renderEmp?.features && <LegendItem cor={COLORS.empresas} label="Empresas" />}
+              {camadas.includes("Educação") && renderEdu?.features && <LegendItem cor={COLORS.educacao} label="Educação" />}
+              {camadas.includes("Saúde") && renderSau?.features && <LegendItem cor={COLORS.saude} label="Saúde" />}
+              {camadas.includes("Agricultura") && !isVisaoGeral && AGRI_BOUNDS[municipio] && Object.entries(AGRI_COLORS).map(([tipo, cor]) => (
+                <LegendItem key={`agri-${tipo}`} cor={cor} label={tipo} area />
+              ))}
+              {camadas.includes("Infraestrutura") && infraAtivas.map(nome => (
+                <LegendItem key={`infra-${nome}`} cor={INFRA_COLORS[nome] ?? COLORS.infra} label={nome} area={["Quadras","Terrenos"].includes(nome)} />
+              ))}
+              {manchaCenario && !isVisaoGeral && showMancha && <LegendItem cor={COLORS.cenario} label={cenario} area />}
+              {manchaCenario && !isVisaoGeral && showMancha && (
+                <span className="text-[8px] leading-tight text-slate-400 max-w-[180px]">
+                  Extensão da área alagada. Não há dado de profundidade da água para este cenário.
+                </span>
+              )}
+              {isVisaoGeral && manchaRS && showMancha && <LegendItem cor={COLORS.cenario} label="Enchente 2024 — RS" area />}
+              {camadas.includes("População") && !isVisaoGeral && popData?.[municipio] && (
+                <div className="flex items-center gap-2">
+                  <div className="w-16 h-3 rounded-sm shrink-0" style={{ background: "linear-gradient(to right, #0d0887, #9c179e, #ed7953, #f0f921)" }} />
+                  <div className="flex flex-col leading-none gap-0.5">
+                    <span className="text-[10px] text-slate-700 font-medium">Pop. (hab./pixel)</span>
+                    <span className="text-[8px] text-slate-400">baixo → alto</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div
+          className="px-3 py-1 rounded-xl select-none leading-none text-center shrink-0 pointer-events-none"
           style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}
         >
           <span className="text-[9px] font-black uppercase tracking-wider" style={{ color: "#055071" }}>© GPEa - Grupo de Pesquisa em Economia Azul</span>

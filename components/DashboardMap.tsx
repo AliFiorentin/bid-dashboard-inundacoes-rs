@@ -1,9 +1,11 @@
 "use client"
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef } from "react"
+import Image from "next/image"
 import Map, {
   Source,
   Layer,
   NavigationControl,
+  AttributionControl,
   Popup,
 } from "react-map-gl/maplibre"
 import "maplibre-gl/dist/maplibre-gl.css"
@@ -29,6 +31,8 @@ interface Props {
 export function DashboardMap({ dash }: Props) {
   const {
     mapRef,
+    mapReady,
+    setMapReady,
     municipio,
     renderMunicipio,
     cenario,
@@ -36,6 +40,7 @@ export function DashboardMap({ dash }: Props) {
     showMancha,
     baseInfra,
     atingidosInfra,
+    infraAtivas,
     manchaCenario,
     manchaRS,
     limitePA,
@@ -73,7 +78,8 @@ export function DashboardMap({ dash }: Props) {
   // assíncrona — então um efeito com deps [is3D, mapRef] pode rodar antes do
   // mapa existir, sair no "if (!map) return" e nunca mais re-executar sozinho.
   // onLoad nos avisa quando o mapa está pronto, forçando o efeito a rodar de novo.
-  const [mapReady, setMapReady] = useState(false)
+  // Mora no useDashboard (não aqui) porque o efeito de flyTo por troca de
+  // município precisa da mesma garantia.
 
   // Guarda o is3D da última vez que o efeito abaixo reposicionou a câmera. Sem
   // isso, qualquer re-execução do efeito (o mapReady virando true, por exemplo)
@@ -84,6 +90,25 @@ export function DashboardMap({ dash }: Props) {
   // a PRIMEIRA execução também pula o easeTo e preserva o pitch/bearing exatos do
   // link, em vez de sobrescrevê-los pelos 65°/-12° padrão.
   const ultimoModo3D = useRef<boolean | null>(cameraVeioDoLink ? is3D : null)
+
+  // O AttributionControl compacto do maplibre-gl nasce com a classe
+  // "maplibregl-compact-show" já aplicada (ver _updateCompact no código-fonte
+  // da lib) -- ou seja, começa AABERTO em vez de recolhido, ao contrário do
+  // que o nome "compact" sugere. O clique do usuário no ícone "i" (via
+  // _toggleAttribution) só alterna essa mesma classe, então removê-la aqui
+  // uma vez restaura o padrão recolhido sem quebrar o toggle manual depois.
+  useEffect(() => {
+    const map = mapRef.current?.getMap()
+    if (!map) return
+    const recolher = () => {
+      map.getContainer()
+        .querySelector(".maplibregl-ctrl-attrib.maplibregl-compact-show")
+        ?.classList.remove("maplibregl-compact-show")
+    }
+    recolher()
+    map.on("resize", recolher)
+    return () => { map.off("resize", recolher) }
+  }, [mapReady, mapRef])
 
   useEffect(() => {
     const map = mapRef.current?.getMap()
@@ -182,8 +207,29 @@ export function DashboardMap({ dash }: Props) {
         onLoad={() => setMapReady(true)}
         onMoveEnd={dash.handleMapMoveEnd}
         maxPitch={85}
+        attributionControl={false}
       >
         <NavigationControl position="bottom-right" visualizePitch />
+        <AttributionControl compact position="bottom-left" />
+
+        {/* Logo GPEa no vão acima da linha "3D ↺ ↻ ▲ ▼" (rotação/inclinação)
+            e ao lado do NavigationControl (zoom +/-/bússola) -- não empilhada
+            por cima de tudo. A linha abaixo nasce no mesmo bottom-10px padrão
+            do NavigationControl. O topo desta caixa (bottom-45+h-13(52)=97px)
+            é calçado para bater com o topo do NavigationControl (10px de
+            margem padrão + 3 botões de 29px = 97px).
+            De propósito SEM `fill`/`object-contain`: com `fill`, o <img>
+            precisa herdar corretamente position:relative+padding do pai pra
+            se encaixar, e qualquer contexto de stacking/transform intermediário
+            (o mapa tem varios) pode quebrar isso silenciosamente. Aqui a
+            largura/altura do PNG (1024x339, razão ~3.02) são fixas e a caixa
+            centraliza via flex -- não tem como "cortar": o navegador so'
+            desenha a imagem inteira, do tamanho exato pedido. */}
+        <div className="absolute bottom-[45px] right-[48px] z-10 print:hidden pointer-events-none">
+          <div className="flex items-center justify-center h-[52px] w-[156px] rounded-md bg-white/90 shadow-sm" style={{ border: "2px solid rgba(0,0,0,0.1)" }}>
+            <Image src="/GPEA.png" alt="GPEa" width={124} height={41} style={{ width: "auto", height: "auto", maxWidth: "132px", maxHeight: "40px" }} />
+          </div>
+        </div>
 
         {/* Controles de câmera em linha, à ESQUERDA do NavigationControl: ficam
             todos no mesmo canto sem depender da altura dele (empilhar por cima
@@ -191,7 +237,7 @@ export function DashboardMap({ dash }: Props) {
             Todos aparecem sempre, inclusive em 2D: o toggle 3D precisa estar lá
             para dar como voltar, e girar/inclinar funciona igual sem o terreno
             ligado — esconder os botões só tirava controle sem motivo. */}
-        <div className="absolute bottom-[45px] right-[48px] z-10 flex flex-row gap-1 print:hidden">
+        <div className="absolute bottom-[10px] right-[48px] z-10 flex flex-row gap-1 print:hidden">
           <button
             onClick={() => setIs3D((v) => !v)}
             className="flex h-7 w-7 items-center justify-center rounded-md text-[10px] font-black transition-colors duration-150"
@@ -266,28 +312,20 @@ export function DashboardMap({ dash }: Props) {
           </Source>
         )}
 
-        {/* Âncora permanente: garante que Infra e Prédios fiquem sempre abaixo dos pontos, independente do timing */}
-        <Source
-          id="anchor-src"
-          type="geojson"
-          data={{ type: "FeatureCollection" as const, features: [] }}
-        >
-          <Layer
-            id="anchor-mancha"
-            type="circle"
-            paint={{ "circle-radius": 0, "circle-opacity": 0 }}
-          />
-          <Layer
-            id="anchor-buildings"
-            type="circle"
-            paint={{ "circle-radius": 0, "circle-opacity": 0 }}
-          />
-          <Layer
-            id="anchor-pts"
-            type="circle"
-            paint={{ "circle-radius": 0, "circle-opacity": 0 }}
-          />
-        </Source>
+        {/* Âncoras permanentes: garantem que Infra e Prédios fiquem sempre
+            abaixo dos pontos, independente do timing.
+
+            São layers "background" (sem source) de propósito. Dentro de uma
+            <Source>, o react-map-gl só renderiza os filhos depois que a source
+            existe, e ele reage ao "styledata" com setTimeout(0) -- enquanto o
+            <Layer> reage de forma síncrona. Ou seja: toda camada com beforeId
+            era re-adicionada ANTES de as âncoras voltarem a existir, e o
+            maplibre recusava a camada inteira ("Cannot add layer ... before
+            non-existing layer"). Sem source, a âncora só depende do estilo
+            estar carregado e é criada junto das demais, na ordem do JSX. */}
+        <Layer id="anchor-mancha" type="background" paint={{ "background-opacity": 0 }} />
+        <Layer id="anchor-buildings" type="background" paint={{ "background-opacity": 0 }} />
+        <Layer id="anchor-pts" type="background" paint={{ "background-opacity": 0 }} />
 
         {/* Terreno (DEM global Terrarium) — só ativa quando is3D=true via setTerrain */}
         <Source
@@ -378,12 +416,21 @@ export function DashboardMap({ dash }: Props) {
           renderMunicipio !== "Visão Geral RS" &&
           AGRI_BOUNDS[renderMunicipio] &&
           (() => {
+            // A Source fica montada mesmo sem dados (FeatureCollection vazia).
+            // Desmontá-la enquanto os fetches de base/atingidos chegam fazia o
+            // react-map-gl remontar a mesma id em sequência e estourar
+            // "source id changed", derrubando a camada de vez -- por isso a
+            // agricultura nunca aparecia no mapa dos municípios.
             const agriGeo = isCenarioAtivo ? atingidosAgriGeo : baseAgriGeo
-            if (!agriGeo?.features?.length) return null
             return (
-              <Source id="agricultura-geo" type="geojson" data={agriGeo}>
+              <Source
+                id="agricultura-geo"
+                type="geojson"
+                data={agriGeo ?? { type: "FeatureCollection", features: [] }}
+              >
                 <Layer
                   id="agricultura-fill"
+                  beforeId="anchor-buildings"
                   type="fill"
                   paint={{
                     "fill-color": AGRI_FILL_COLOR,
@@ -398,7 +445,7 @@ export function DashboardMap({ dash }: Props) {
           !isTransitioning &&
           !isVisaoGeral &&
           Object.entries(baseInfra).map(([nomeInfra, dadosTotal]) => {
-            if (!dadosTotal) return null
+            if (!dadosTotal || !infraAtivas.includes(nomeInfra)) return null
             const srcId = `infra-${slugify(nomeInfra)}`
             const infraCor = INFRA_COLORS[nomeInfra] ?? COLORS.infra
             const cenarioSelecionado = cenario !== "(nenhum)"

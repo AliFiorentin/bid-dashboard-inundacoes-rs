@@ -1,10 +1,11 @@
 "use client";
 
 import React from "react";
-import { Download, Printer, EyeOff, PanelLeft, Building2, GraduationCap, HeartPulse, Sprout, Wrench, Users } from "lucide-react";
+import { Download, EyeOff, PanelLeft, LayoutDashboard, Building2, GraduationCap, HeartPulse, Sprout, Wrench, Users } from "lucide-react";
 import { Tabs } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { AGRI_BOUNDS } from "@/lib/constants";
+import { AGRI_BOUNDS, INFRAESTRUTURA_CONFIG } from "@/lib/constants";
+import { ResumoTab } from "@/components/tabs/ResumoTab";
 import { EmpresasTab } from "@/components/tabs/EmpresasTab";
 import { EducacaoTab } from "@/components/tabs/EducacaoTab";
 import { SaudeTab } from "@/components/tabs/SaudeTab";
@@ -26,7 +27,7 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
     municipio, cenario,
     mostraImpacto, isVisaoGeral,
     tabAtiva, setTabAtiva,
-    camadas, infraAtivas,
+    camadas,
     isCenarioAtivo,
     setoresChart, setoresEmpregadosChart, metricasEmp,
     metricasEdu, professoresDepChart,
@@ -39,7 +40,8 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
     showListaAmbulat, setShowListaAmbulat,
     baseAgriStats, atingidosAgriStats, conabStats,
     allMunAgriStats, allMunAgriAtingidosStats,
-    baseInfra, atingidosInfra, toggleInfra,
+    baseInfra, atingidosInfra,
+    allMunInfraStats,
     showListaLogradouros, setShowListaLogradouros,
     showListaEixos, setShowListaEixos,
     popData,
@@ -79,35 +81,33 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
     <>
       {showPainelAnalise && (
         <div className="hidden lg:flex absolute left-3 bottom-1.5 w-[400px] flex-col rounded-xl overflow-hidden z-20 print:flex print:static print:w-full print:shadow-none print:max-h-none print:h-auto print:overflow-visible print:border-slate-200" style={{ top: headerBottom, backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)", animation: "panelSlideIn 320ms var(--ease-drawer) both" }}>
-          <div className="px-3 pt-3 pb-2 shrink-0 rounded-t-xl" style={{ background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)" }}>
-            <h2 className="text-base font-black text-white tracking-tight flex items-center justify-between">
+          <div className="shrink-0 rounded-t-xl" style={{ background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)", paddingInline: "0.75rem", paddingBlockStart: "clamp(0.4rem, 1.2vh, 0.75rem)", paddingBlockEnd: "clamp(0.25rem, 0.8vh, 0.5rem)" }}>
+            <h2 className="font-black text-white tracking-tight flex items-center justify-between" style={{ fontSize: "clamp(12px, 1.7vh, 16px)" }}>
               Painel
               <div className="flex gap-1">
                 <Button variant="outline" size="xs" onClick={exportarExcel} className="text-[9px] font-bold border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
                   <Download size={10} strokeWidth={2.5} />Baixar
-                </Button>
-                <Button variant="outline" size="xs" onClick={() => window.print()} className="text-[9px] font-bold border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white print:hidden">
-                  <Printer size={10} strokeWidth={2.5} />Imprimir
                 </Button>
                 <Button variant="outline" size="xs" onClick={() => setShowPainelAnalise(false)} className="text-[9px] font-bold border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white print:hidden">
                   <EyeOff size={10} strokeWidth={2.5} />Ocultar
                 </Button>
               </div>
             </h2>
-            <p className="text-xs text-white/80 font-medium mt-1 leading-tight">
+            <p className="text-white/80 font-medium leading-tight" style={{ fontSize: "clamp(10px, 1.3vh, 12px)", marginTop: "clamp(1px, 0.3vh, 4px)" }}>
               <strong className="text-white">{municipio}</strong> {mostraImpacto && (isVisaoGeral ? ` — Piores Cenários` : ` — ${cenario}`)}
             </p>
           </div>
-          <Tabs value={tabAtiva} className="w-full flex-1 flex flex-col overflow-hidden px-4 pt-3 print:overflow-visible print:h-auto">
-            <div className="flex flex-wrap gap-1.5 shrink-0 pb-2">
+          <Tabs value={tabAtiva} className="w-full flex-1 flex flex-col overflow-hidden px-4 print:overflow-visible print:h-auto" style={{ paddingBlockStart: "clamp(0.35rem, 0.9vh, 0.75rem)" }}>
+            <div className="flex flex-wrap shrink-0" style={{ gap: "clamp(0.2rem, 0.5vh, 0.375rem)", paddingBottom: "clamp(0.25rem, 0.7vh, 0.5rem)" }}>
               {([
+                { value: "resumo",   label: "Resumo",   icon: <LayoutDashboard size={11} strokeWidth={2.5} /> },
                 { value: "empresas", label: "Empresas", icon: <Building2     size={11} strokeWidth={2.5} /> },
                 { value: "educacao", label: "Educação", icon: <GraduationCap size={11} strokeWidth={2.5} /> },
                 { value: "saude",    label: "Saúde",    icon: <HeartPulse    size={11} strokeWidth={2.5} /> },
                 ...( camadas.includes("Agricultura") && (isVisaoGeral || AGRI_BOUNDS[municipio])
                   ? [{ value: "agricultura", label: "Agricultura", icon: <Sprout size={11} strokeWidth={2.5} /> }]
                   : []),
-                ...( camadas.includes("Infraestrutura") && !isVisaoGeral && infraAtivas.length > 0
+                ...( isVisaoGeral || (INFRAESTRUTURA_CONFIG[municipio]?.length ?? 0) > 0
                   ? [{ value: "infra", label: "Infraestrutura", icon: <Wrench size={11} strokeWidth={2.5} /> }]
                   : []),
               ] as { value: string; label: string; icon: React.ReactNode }[]).map(({ value, label, icon }) => (
@@ -125,31 +125,31 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
 
             {/* KPI fixo de população — largura total, abaixo das abas */}
             {(popMunData || isVisaoGeral) && (popMunData || popGeralTotal != null) && (
-              <div className="shrink-0 mb-2 rounded-lg border overflow-hidden"
-                style={{ borderColor: "#e9d5ff", background: "linear-gradient(135deg, #faf5ff 0%, #ede9fe 100%)" }}>
-                <div className="flex items-center gap-2 px-3 py-2">
+              <div className="shrink-0 rounded-lg border overflow-hidden"
+                style={{ borderColor: "#e9d5ff", background: "linear-gradient(135deg, #faf5ff 0%, #ede9fe 100%)", marginBottom: "clamp(0.25rem, 0.7vh, 0.5rem)" }}>
+                <div className="flex items-center gap-2" style={{ paddingInline: "0.75rem", paddingBlock: "clamp(0.3rem, 0.9vh, 0.5rem)" }}>
                   <Users size={13} strokeWidth={2.5} className="text-purple-600 shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-end gap-1">
                       <div className="min-w-0">
-                        <div className="text-[9px] font-bold text-purple-500 uppercase tracking-wider leading-none mb-0.5">Pop. Total</div>
+                        <div className="font-bold text-purple-500 uppercase tracking-wider leading-none mb-0.5" style={{ fontSize: "clamp(7.5px, 0.95vh, 9px)" }}>Pop. Total</div>
                         <div className="flex items-baseline gap-0.5">
-                          <span className="text-[13px] font-black text-purple-800 tabular-nums">
+                          <span className="font-black text-purple-800 tabular-nums" style={{ fontSize: "clamp(11px, 1.5vh, 13px)" }}>
                             {(isVisaoGeral ? popGeralTotal : popMunData?.pop_total)?.toLocaleString("pt-BR")}
                           </span>
-                          <span className="text-[9px] text-purple-400">hab.</span>
+                          <span className="text-purple-400" style={{ fontSize: "clamp(7.5px, 0.95vh, 9px)" }}>hab.</span>
                         </div>
                       </div>
                       {(isVisaoGeral ? popGeralAtingida != null : !!popCenData) && (
                         <div className="text-right shrink-0 min-w-0">
-                          <div className="text-[9px] font-bold text-red-500 uppercase tracking-wider leading-none mb-0.5">
+                          <div className="font-bold text-red-500 uppercase tracking-wider leading-none mb-0.5" style={{ fontSize: "clamp(7.5px, 0.95vh, 9px)" }}>
                             {isVisaoGeral ? "Atingida (piores)" : "Atingida"}
                           </div>
                           <div className="flex items-baseline gap-0.5 justify-end">
-                            <span className="text-[13px] font-black text-red-700 tabular-nums">
+                            <span className="font-black text-red-700 tabular-nums" style={{ fontSize: "clamp(11px, 1.5vh, 13px)" }}>
                               {(isVisaoGeral ? popGeralAtingida : popCenData?.pop_atingida)?.toLocaleString("pt-BR")}
                             </span>
-                            <span className="text-[9px] text-red-400">
+                            <span className="text-red-400" style={{ fontSize: "clamp(7.5px, 0.95vh, 9px)" }}>
                               ({(isVisaoGeral ? popGeralPct : popCenData?.pct_atingida)?.toFixed(1)}%)
                             </span>
                           </div>
@@ -172,6 +172,8 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
               </div>
             )}
 
+            <ResumoTab dash={{ municipio, cenario, mostraImpacto, isVisaoGeral, isCenarioAtivo, metricasEmp, metricasEdu, metricasSau, baseAgriStats, atingidosAgriStats, conabStats, allMunAgriStats, allMunAgriAtingidosStats, baseInfra, atingidosInfra, allMunInfraStats }} />
+
             <EmpresasTab dash={{ setoresChart, setoresEmpregadosChart, metricasEmp, mostraImpacto }} />
 
             <EducacaoTab dash={{ metricasEdu, professoresDepChart, mostraImpacto, isVisaoGeral, atingidosEducacao, baseEducacao, showListaEscolas, setShowListaEscolas }} />
@@ -193,8 +195,8 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
               />
             )}
 
-            {camadas.includes("Infraestrutura") && !isVisaoGeral && infraAtivas.length > 0 && (
-              <InfraTab dash={{ infraAtivas, toggleInfra, municipio, mostraImpacto, isCenarioAtivo, baseInfra, atingidosInfra, showListaLogradouros, setShowListaLogradouros, showListaEixos, setShowListaEixos }} />
+            {(isVisaoGeral || (INFRAESTRUTURA_CONFIG[municipio]?.length ?? 0) > 0) && (
+              <InfraTab dash={{ municipio, isVisaoGeral, mostraImpacto, isCenarioAtivo, baseInfra, atingidosInfra, allMunInfraStats, showListaLogradouros, setShowListaLogradouros, showListaEixos, setShowListaEixos }} />
             )}
 
           </Tabs>

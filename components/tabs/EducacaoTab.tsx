@@ -1,20 +1,19 @@
 import React from "react";
-import { PieChart, Pie, Label } from "recharts";
 import type { Feature } from "geojson";
 import { ChevronDown, MapPin } from "lucide-react";
 import { TabsContent } from "@/components/ui/tabs";
-import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
+import { DonutChart } from "@/components/ui/donut-chart";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
-import { COLORS, DONUT_COLORS, normalizeDep } from "@/lib/constants";
+import { COLORS, DONUT_COLORS, normalizeDep, PANEL_CARD_BG } from "@/lib/constants";
 import { compactoBr, inteiroBr, calcPct, formatName } from "@/lib/geo-utils";
 import { KPIRow } from "@/components/KPIRow";
-import { ChartCenterLabel } from "@/components/ChartCenterLabel";
 import { cn } from "@/lib/utils";
 import type { DashboardState } from "@/hooks/useDashboard";
 
 const PANEL_HDR = { background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)" } as const;
 const PANEL_GLASS: React.CSSProperties = {
   border: "1px solid rgba(5,80,113,0.15)",
+  backgroundColor: PANEL_CARD_BG,
 };
 
 interface Props {
@@ -48,11 +47,9 @@ export function EducacaoTab({ dash }: Props) {
           const dep = normalizeDep(String(f.properties?.tp_dependencia || ""));
           if (dep) atgCounts[dep] = (atgCounts[dep] || 0) + 1;
         });
-        const escolasConfig: ChartConfig = {};
         const pieData = Object.entries(baseCounts).sort((a, b) => b[1] - a[1]).map(([name, value], i) => {
           const key = `e${i}`;
-          escolasConfig[key] = { label: name, color: DONUT_COLORS[i % DONUT_COLORS.length] };
-          return { key, name, value, atg: atgCounts[name] ?? 0, fill: `var(--color-e${i})` };
+          return { key, name, value, atg: atgCounts[name] ?? 0, cor: DONUT_COLORS[i % DONUT_COLORS.length] };
         });
         const totalBase = pieData.reduce((s, d) => s + d.value, 0);
         const totalAtg = pieData.reduce((s, d) => s + d.atg, 0);
@@ -63,43 +60,43 @@ export function EducacaoTab({ dash }: Props) {
 
         return (
           <>
-            <div className="flex items-center px-2.5 py-1.5 rounded-lg mb-3" style={PANEL_HDR}>
-              <h3 className="text-[10px] font-black uppercase tracking-wider text-white">Escolas por Dependência</h3>
-            </div>
-            <ChartContainer config={escolasConfig} className="aspect-auto h-[160px] w-full" initialDimension={{ width: 320, height: 160 }}>
-              <PieChart>
-                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                <Pie data={pieData} cx="50%" cy="50%" innerRadius={46} outerRadius={70} dataKey="value" nameKey="key" strokeWidth={5}>
-                  <Label
-                    content={({ viewBox }) => {
-                      if (viewBox && "cx" in viewBox && "cy" in viewBox && viewBox.cx != null && viewBox.cy != null) {
-                        return (
-                          <ChartCenterLabel
-                            cx={viewBox.cx}
-                            cy={viewBox.cy}
-                            big={mostraImpacto ? inteiroBr(totalAtg) : inteiroBr(totalBase)}
-                            small={mostraImpacto ? `de ${inteiroBr(totalBase)} (${totalBase > 0 ? Math.round(totalAtg / totalBase * 100) : 0}%)` : "escolas"}
-                          />
-                        );
-                      }
-                    }}
+            <div className="rounded-lg overflow-hidden mb-3" style={{ border: "1px solid rgba(5,80,113,0.15)" }}>
+              <div className="flex items-center px-2.5 py-1.5" style={PANEL_HDR}>
+                <h3 className="text-[10px] font-black uppercase tracking-wider text-white">Escolas por Dependência</h3>
+              </div>
+              <div className="flex flex-col" style={{ backgroundColor: PANEL_CARD_BG }}>
+                <div className="flex items-center justify-center py-2">
+                  <DonutChart
+                    data={pieData.map(d => ({ label: d.name, value: d.value, color: d.cor }))}
+                    size={170}
+                    strokeWidth={22}
+                    centerContent={
+                      <div className="flex flex-col items-center justify-center text-center">
+                        <span className="text-2xl font-black text-foreground leading-none">
+                          {mostraImpacto ? inteiroBr(totalAtg) : inteiroBr(totalBase)}
+                        </span>
+                        <span className="mt-1 text-[9px] text-muted-foreground leading-none">
+                          {mostraImpacto ? `de ${inteiroBr(totalBase)} (${totalBase > 0 ? Math.round(totalAtg / totalBase * 100) : 0}%)` : "escolas"}
+                        </span>
+                      </div>
+                    }
                   />
-                </Pie>
-              </PieChart>
-            </ChartContainer>
-            <div className="flex flex-col gap-1.5 mb-2">
-              {pieData.map((d, i) => (
-                <div key={d.name} className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length] }} />
-                  <span className="text-xs flex-1 text-muted-foreground">{d.name}</span>
-                  <span className="text-xs font-bold tabular-nums text-foreground">
-                    {mostraImpacto ? `${inteiroBr(d.atg)}/${inteiroBr(d.value)}` : inteiroBr(d.value)}
-                  </span>
-                  <span className="text-xs w-9 text-right tabular-nums text-muted-foreground">
-                    {mostraImpacto ? `${d.value > 0 ? Math.round(d.atg / d.value * 100) : 0}%` : `${Math.round(d.value / totalBase * 100)}%`}
-                  </span>
                 </div>
-              ))}
+                <div className="flex flex-col gap-1.5 px-2.5 pb-2.5">
+                  {pieData.map((d, i) => (
+                    <div key={d.name} className="flex items-center gap-2">
+                      <span className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length] }} />
+                      <span className="text-xs flex-1 text-muted-foreground">{d.name}</span>
+                      <span className="text-xs font-bold tabular-nums text-foreground">
+                        {mostraImpacto ? `${inteiroBr(d.atg)}/${inteiroBr(d.value)}` : inteiroBr(d.value)}
+                      </span>
+                      <span className="text-xs w-9 text-right tabular-nums text-muted-foreground">
+                        {mostraImpacto ? `${d.value > 0 ? Math.round(d.atg / d.value * 100) : 0}%` : `${Math.round(d.value / totalBase * 100)}%`}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
             {lista.length > 0 && (
               <Collapsible open={showListaEscolas} onOpenChange={() => setShowListaEscolas(p => !p)} className="mb-2 rounded-lg overflow-hidden">
@@ -159,57 +156,53 @@ export function EducacaoTab({ dash }: Props) {
         ];
         const baseRecord = metricasEdu.base as Record<string, number>;
         const atgRecord = metricasEdu.impacto as Record<string, number>;
-        const alunosConfig: ChartConfig = {};
         const pieData = NIVEIS.map(([name, key]) => ({ name, value: baseRecord[key] || 0, atg: atgRecord[key] || 0 })).filter(d => d.value > 0).map((d, i) => {
           const k = `a${i}`;
-          alunosConfig[k] = { label: d.name, color: DONUT_COLORS[i % DONUT_COLORS.length] };
-          return { ...d, key: k, fill: `var(--color-a${i})` };
+          return { ...d, key: k, cor: DONUT_COLORS[i % DONUT_COLORS.length] };
         });
         const totalBase = pieData.reduce((s, d) => s + d.value, 0);
         const totalAtg = pieData.reduce((s, d) => s + d.atg, 0);
         if (pieData.length === 0) return null;
 
         return (
-          <>
-            <div className="flex items-center px-2.5 py-1.5 rounded-lg mt-3 mb-3" style={PANEL_HDR}>
+          <div className="rounded-lg overflow-hidden mt-3 mb-3" style={{ border: "1px solid rgba(5,80,113,0.15)" }}>
+            <div className="flex items-center px-2.5 py-1.5" style={PANEL_HDR}>
               <h3 className="text-[10px] font-black uppercase tracking-wider text-white">Matrículas por Nível</h3>
             </div>
-            <ChartContainer config={alunosConfig} className="aspect-auto h-[170px] w-full" initialDimension={{ width: 320, height: 170 }}>
-              <PieChart>
-                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                <Pie data={pieData} cx="50%" cy="50%" innerRadius={50} outerRadius={76} dataKey="value" nameKey="key" strokeWidth={5}>
-                  <Label
-                    content={({ viewBox }) => {
-                      if (viewBox && "cx" in viewBox && "cy" in viewBox && viewBox.cx != null && viewBox.cy != null) {
-                        return (
-                          <ChartCenterLabel
-                            cx={viewBox.cx}
-                            cy={viewBox.cy}
-                            big={mostraImpacto ? compactoBr(totalAtg, 0) : compactoBr(totalBase, 0)}
-                            small={mostraImpacto ? `de ${compactoBr(totalBase, 0)} (${totalBase > 0 ? Math.round(totalAtg / totalBase * 100) : 0}%)` : "alunos"}
-                          />
-                        );
-                      }
-                    }}
-                  />
-                </Pie>
-              </PieChart>
-            </ChartContainer>
-            <div className="flex flex-col gap-1.5 pb-2">
-              {pieData.map((d, i) => (
-                <div key={d.name} className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length] }} />
-                  <span className="text-xs flex-1 text-muted-foreground">{d.name}</span>
-                  <span className="text-xs font-bold tabular-nums text-foreground">
-                    {mostraImpacto ? `${inteiroBr(d.atg)}/${inteiroBr(d.value)}` : inteiroBr(d.value)}
-                  </span>
-                  <span className="text-xs w-9 text-right tabular-nums text-muted-foreground">
-                    {mostraImpacto ? `${d.value > 0 ? Math.round(d.atg / d.value * 100) : 0}%` : `${Math.round(d.value / totalBase * 100)}%`}
-                  </span>
-                </div>
-              ))}
+            <div className="flex flex-col" style={{ backgroundColor: PANEL_CARD_BG }}>
+              <div className="flex items-center justify-center py-2">
+                <DonutChart
+                  data={pieData.map(d => ({ label: d.name, value: d.value, color: d.cor }))}
+                  size={170}
+                  strokeWidth={22}
+                  centerContent={
+                    <div className="flex flex-col items-center justify-center text-center">
+                      <span className="text-2xl font-black text-foreground leading-none">
+                        {mostraImpacto ? compactoBr(totalAtg, 0) : compactoBr(totalBase, 0)}
+                      </span>
+                      <span className="mt-1 text-[9px] text-muted-foreground leading-none">
+                        {mostraImpacto ? `de ${compactoBr(totalBase, 0)} (${totalBase > 0 ? Math.round(totalAtg / totalBase * 100) : 0}%)` : "alunos"}
+                      </span>
+                    </div>
+                  }
+                />
+              </div>
+              <div className="flex flex-col gap-1.5 px-2.5 pb-2.5">
+                {pieData.map((d, i) => (
+                  <div key={d.name} className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length] }} />
+                    <span className="text-xs flex-1 text-muted-foreground">{d.name}</span>
+                    <span className="text-xs font-bold tabular-nums text-foreground">
+                      {mostraImpacto ? `${inteiroBr(d.atg)}/${inteiroBr(d.value)}` : inteiroBr(d.value)}
+                    </span>
+                    <span className="text-xs w-9 text-right tabular-nums text-muted-foreground">
+                      {mostraImpacto ? `${d.value > 0 ? Math.round(d.atg / d.value * 100) : 0}%` : `${Math.round(d.value / totalBase * 100)}%`}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </>
+          </div>
         );
       })()}
       <p className="text-[10px] italic mt-2 text-muted-foreground">Fonte: IBGE — Censo Escolar</p>

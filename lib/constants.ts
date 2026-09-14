@@ -9,6 +9,11 @@ export const C = {
   dark: "#033a52",
 }
 
+// Fundo translúcido único para o conteúdo de qualquer card/caixa dentro do
+// Painel -- mesmo tom do glass do Painel (AnalysisPanel.tsx), para que todo
+// card se funda visualmente com o painel em vez de destacar um bloco branco.
+export const PANEL_CARD_BG = "rgba(255,255,255,0.55)"
+
 export const COLORS = {
   empresas: "#2563eb",
   educacao: "#16a34a",
@@ -91,6 +96,16 @@ export const INFRA_TAMANHOS_MB: Record<string, number> = {
   Edificações: 65,
 }
 
+// Cada município nomeia o mesmo tipo de ativo de um jeito diferente (herdado
+// da fonte de dados da prefeitura) -- usado so' na Visão Geral RS pra somar
+// como uma única categoria em vez de listar 2-3 linhas parecidas lado a lado.
+// A chave é o rótulo canônico exibido; a lista inclui a própria chave.
+export const INFRA_GRUPOS_VISAO_GERAL: Record<string, string[]> = {
+  "Logradouros": ["Logradouros", "Eixos Logradouros"],
+  "Iluminação Pública": ["Iluminação Pública", "Poste"],
+  "Quadras": ["Quadras", "Quarteirões"],
+}
+
 // ── Municípios / Cenários / Vistas ───────────────────────────────────────────
 export const MUNICIPIOS = [
   "Eldorado do Sul",
@@ -102,7 +117,7 @@ export const MUNICIPIOS = [
 export const CENARIOS_CONFIG: Record<string, string[]> = {
   "Eldorado do Sul": ["Cenário ADA"],
   Lajeado: ["Cenário 27m", "Cenário 30m"],
-  "Porto Alegre": ["Cenário ADA"],
+  "Porto Alegre": ["Cenário ADA", "Climada Evento 2024"],
   "Rio Grande": ["Cenário Maio 2024", "Cenário Maio 2024 + 50%"],
 }
 
@@ -196,6 +211,7 @@ export const CENARIO_PERIODO: Record<string, string> = {
   lajeado___cenario_30m: "maio_2024",
   eldorado_do_sul___cenario_ada: "maio_2024",
   porto_alegre___cenario_ada: "maio_2024",
+  porto_alegre___climada_evento_2024: "maio_2024",
   rio_grande___cenario_maio_2024: "maio_2024",
   rio_grande___cenario_maio_2024_50: "maio_2024",
   rio_grande___cenario_setembro_2023: "setembro_2023",
