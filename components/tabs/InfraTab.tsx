@@ -1,18 +1,22 @@
 import React from "react";
 import { TabsContent } from "@/components/ui/tabs";
-import { C, INFRA_COLORS, INFRAESTRUTURA_CONFIG, INFRA_GRUPOS_VISAO_GERAL, MUNICIPIOS } from "@/lib/constants";
-import { compactoBr, calcPct } from "@/lib/geo-utils";
+import { C, INFRA_COLORS, INFRAESTRUTURA_CONFIG, INFRA_GRUPOS_VISAO_GERAL, MUNICIPIOS, AREA_VISAO_GERAL_LABEL, AREA_VISAO_GERAL_CENARIO } from "@/lib/constants";
+import { compactoBr, calcPct, findCenarioData } from "@/lib/geo-utils";
 import { KPICard } from "@/components/KPICard";
 import { LogradourosSection } from "@/components/tabs/infra/LogradourosSection";
 import { QuadrasSection } from "@/components/tabs/infra/QuadrasSection";
 import { TerrenosSection } from "@/components/tabs/infra/TerrenosSection";
 import { GenericInfraSection } from "@/components/tabs/infra/GenericInfraSection";
+import { AreaAtingidaSection } from "@/components/tabs/infra/AreaAtingidaSection";
 import type { DashboardState } from "@/hooks/useDashboard";
+
+const COR_AREA = "#0891b2";
 
 interface Props {
   dash: Pick<
     DashboardState,
     | "municipio"
+    | "cenario"
     | "isVisaoGeral"
     | "mostraImpacto"
     | "isCenarioAtivo"
@@ -23,12 +27,14 @@ interface Props {
     | "setShowListaLogradouros"
     | "showListaEixos"
     | "setShowListaEixos"
+    | "areaData"
   >;
 }
 
 export function InfraTab({ dash }: Props) {
   const {
     municipio,
+    cenario,
     isVisaoGeral,
     mostraImpacto,
     isCenarioAtivo,
@@ -39,6 +45,7 @@ export function InfraTab({ dash }: Props) {
     setShowListaLogradouros,
     showListaEixos,
     setShowListaEixos,
+    areaData,
   } = dash;
 
   // ── Visão Geral RS ─────────────────────────────────────────────────────────
@@ -75,9 +82,55 @@ export function InfraTab({ dash }: Props) {
       );
     }
 
+    // Área territorial x área atingida pelo cenário da própria Visão Geral
+    // (mancha estadual única "ADA Estadual", ver pipeline/11_area_atingida.py)
+    // por município -- não é um "tipo de infra" como os grupos acima, mas
+    // mora aqui (e não no Resumo) porque é a mesma lógica de "por município
+    // lado a lado" já usada nesta aba. Usa a entrada agregada pronta para o
+    // total (bate exatamente com a soma do detalhamento por município).
+    const areaVisaoGeral = areaData?.[AREA_VISAO_GERAL_LABEL];
+    const areaTerrTotal = areaVisaoGeral?.area_km2 ?? 0;
+    const areaAtgTotal = findCenarioData(areaVisaoGeral?.cenarios ?? {}, AREA_VISAO_GERAL_CENARIO)?.area_atingida_km2 ?? 0;
+
     return (
       <TabsContent value="infra" className="flex-1 overflow-y-auto mt-4 pr-2 pb-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-thumb]:rounded-full">
         <div className="flex flex-col gap-2 pb-2">
+          {areaVisaoGeral && (
+            <KPICard
+              titulo="Área Atingida"
+              cor={COR_AREA}
+              principal={{
+                valor: `${compactoBr(areaAtgTotal, 1)} km²`,
+                sub: "Atingida (ADA Estadual)",
+                delta: `de ${compactoBr(areaTerrTotal, 1)} km² (${calcPct(areaAtgTotal, areaTerrTotal)})`,
+              }}
+            >
+              <div className="border-t px-3 py-2.5 flex flex-col gap-1.5" style={{ borderColor: "rgba(5,80,113,0.15)" }}>
+                <span className="text-[9px] font-bold uppercase tracking-wide text-muted-foreground">Por Município</span>
+                {MUNICIPIOS.map(mun => {
+                  const d = areaData?.[mun];
+                  if (!d) return null;
+                  const cenData = findCenarioData(d.cenarios, AREA_VISAO_GERAL_CENARIO);
+                  const atg = cenData?.area_atingida_km2 ?? 0;
+                  const pctMun = d.area_km2 > 0 ? (atg / d.area_km2 * 100) : 0;
+                  return (
+                    <div key={mun} className="flex items-center gap-1.5">
+                      <span className="text-[10px] w-24 shrink-0 truncate" style={{ color: C.muted }} title={mun}>
+                        {mun}
+                      </span>
+                      <div className="flex-1 rounded-full h-1.5 overflow-hidden bg-slate-100">
+                        <div className="h-full rounded-full" style={{ width: `${pctMun}%`, backgroundColor: COR_AREA }} />
+                      </div>
+                      <span className="text-[10px] tabular-nums w-28 text-right shrink-0" style={{ color: C.muted }}>
+                        {compactoBr(atg, 1)} de {compactoBr(d.area_km2, 1)} km²
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </KPICard>
+          )}
+
           {grupos.map(grupo => {
             const cor = INFRA_COLORS[grupo] ?? "#f59e0b";
             // Cada município entra com no máximo um dos nomes brutos do grupo.
@@ -153,6 +206,8 @@ export function InfraTab({ dash }: Props) {
       style={{ scrollbarColor: `${C.border} transparent` }}
     >
       <div className="flex flex-col gap-5 pb-2">
+        <AreaAtingidaSection dash={{ municipio, cenario, mostraImpacto, areaData }} />
+
         {todosTipos.includes("Logradouros") && (
           <LogradourosSection
             dash={{
