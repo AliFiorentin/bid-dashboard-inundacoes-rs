@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Building2, GraduationCap, HeartPulse, Wrench, Sprout } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -72,26 +73,22 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
         </div>
       </div>
       <div className="flex flex-col gap-0.5 shrink-0 mr-auto">
-        <a
+        <Link
           href="/danos"
-          target="_blank"
-          rel="noopener noreferrer"
           className="h-5 px-2 rounded-md text-[10px] font-bold border border-slate-200/80 bg-white/70 text-slate-500 hover:bg-slate-100 hover:text-slate-700 hover:border-slate-300 transition-colors duration-150 flex items-center gap-1 shrink-0"
           title="Ver danos operacionais estimados"
         >
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
           Danos
-        </a>
-        <a
+        </Link>
+        <Link
           href="/metodologia"
-          target="_blank"
-          rel="noopener noreferrer"
           className="h-5 px-2 rounded-md text-[10px] font-bold border border-slate-200/80 bg-white/70 text-slate-500 hover:bg-slate-100 hover:text-slate-700 hover:border-slate-300 transition-colors duration-150 flex items-center gap-1 shrink-0"
           title="Ver metodologia de cálculo"
         >
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
           Metodologia
-        </a>
+        </Link>
       </div>
 
       <div className="flex items-center" style={{ gap: SELECT_GAP }}>

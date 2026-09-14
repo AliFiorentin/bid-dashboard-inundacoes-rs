@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 export function WelcomeModal() {
   const [open, setOpen] = useState(true);
@@ -127,26 +128,24 @@ export function WelcomeModal() {
             Explorar Impacto
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </button>
-          <a
+          <Link
             href="/danos"
-            target="_blank"
-            rel="noopener noreferrer"
+            onClick={() => setOpen(false)}
             className="flex-1 min-w-[100px] h-9 rounded-xl text-[12px] font-black border flex items-center justify-center gap-1.5 transition-all duration-150 hover:bg-slate-50"
             style={{ color: "#055071", borderColor: "#b3cdd8" }}
           >
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
             Danos
-          </a>
-          <a
+          </Link>
+          <Link
             href="/metodologia"
-            target="_blank"
-            rel="noopener noreferrer"
+            onClick={() => setOpen(false)}
             className="flex-1 min-w-[100px] h-9 rounded-xl text-[12px] font-black border flex items-center justify-center gap-1.5 transition-all duration-150 hover:bg-slate-50"
             style={{ color: "#055071", borderColor: "#b3cdd8" }}
           >
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
             Metodologia
-          </a>
+          </Link>
         </div>
       </div>
     </div>
