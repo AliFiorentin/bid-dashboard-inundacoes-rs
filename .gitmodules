@@ -1,0 +1,4 @@
+[submodule "Dashboard BID"]
+	path = Dashboard BID
+	url = https://github.com/AliFiorentin/bid-dashboard-inundacoes-rs.git
+	branch = main
