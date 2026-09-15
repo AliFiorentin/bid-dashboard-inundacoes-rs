@@ -1,3 +1,5 @@
 # Git LFS — GeoJSONs maiores que 100 MB
 public/dados_convertidos/porto_alegre/infraestrutura/edificacoes_BASE.geojson filter=lfs diff=lfs merge=lfs -text
 public/dados_convertidos/porto_alegre/infraestrutura/lotes_BASE.geojson filter=lfs diff=lfs merge=lfs -text
+public/dados_convertidos/rio_grande/infraestrutura/edificacoes_BASE.geojson filter=lfs diff=lfs merge=lfs -text
+public/dados_convertidos/porto_alegre/infraestrutura/rede_esgoto_BASE.geojson filter=lfs diff=lfs merge=lfs -text
