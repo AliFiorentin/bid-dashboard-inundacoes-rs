@@ -40,25 +40,32 @@ from config import (
 from common import (
     df_to_geojson, save_geojson, load_geojson,
     intersect_points_with_mancha, intersect_polygons_with_mancha,
-    mancha_to_geojson, slugify, pct,
+    mancha_to_geojson, slugify, pct, clean_polygon_geom,
 )
 
 
 SETORES_PONTOS = ["empresas", "educacao", "saude"]
 
 
-def _round_geojson_coords(node, nd: int):
-    """Arredonda coordenadas de um GeoJSON recursivamente (reduz tamanho do arquivo).
+def _round_geojson_geometry(feature: dict, grid_size: float) -> None:
+    """Arredonda a geometria de uma feature GeoJSON para uma grade de
+    `grid_size` graus (reduz tamanho do arquivo), em-lugar.
 
-    Usado so na mancha RS (estadual, so exibicao) -- a precisao de ~11m (4 casas
-    decimais) e irrelevante em zoom de visao geral, mas os ~17 digitos do float
-    original inflam bastante o arquivo (poligono com muitos aneis/buracos).
+    Usado so na mancha RS (estadual, so exibicao) -- a precisao de ~11m
+    (grid_size=1e-4) e irrelevante em zoom de visao geral, mas os ~17 digitos
+    do float original inflam bastante o arquivo (poligono com muitos
+    aneis/buracos). Ao contrario de arredondar as coordenadas cruas do dict
+    (que podia colapsar aneis pequenos em geometria invalida -- "too few
+    points in geometry component"), usa shapely.set_precision com
+    mode="valid_output" que arredonda E repara a topologia resultante.
     """
-    if isinstance(node, list):
-        if node and isinstance(node[0], (int, float)):
-            return [round(x, nd) for x in node]
-        return [_round_geojson_coords(x, nd) for x in node]
-    return node
+    import shapely
+    from shapely.geometry import shape as shapely_shape
+
+    geom = shapely_shape(feature["geometry"])
+    geom = shapely.set_precision(geom, grid_size=grid_size, mode="valid_output")
+    geom = clean_polygon_geom(geom)
+    feature["geometry"] = geom.__geo_interface__
 
 
 # ---------------------------------------------------------------------------
@@ -344,7 +351,7 @@ def main():
     mancha_rs = mancha_to_geojson(MANCHA_RS_ADA, simplify_tolerance=0.005)
     if mancha_rs:
         for feat in mancha_rs["features"]:
-            feat["geometry"]["coordinates"] = _round_geojson_coords(feat["geometry"]["coordinates"], 4)
+            _round_geojson_geometry(feat, grid_size=1e-4)
         out_rs = DASH_DATA / "mancha_rs_enchente_2024.geojson"
         save_geojson(mancha_rs, out_rs)
         print(f"    mancha_rs_enchente_2024.geojson: gerado de {MANCHA_RS_ADA.name}")
