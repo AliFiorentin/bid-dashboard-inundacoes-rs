@@ -35,16 +35,37 @@ import pandas as pd
 
 from config import (
     MUNICIPIOS, DATA_BASES, DASH_DATA, MANCHAS, MAPBIOMAS_ANOS,
-    CENARIO_PERIODO, PERIODO_ANO, STAFF_BUCKETS,
+    CENARIO_PERIODO, PERIODO_ANO, STAFF_BUCKETS, MANCHA_RS_ADA,
 )
 from common import (
     df_to_geojson, save_geojson, load_geojson,
     intersect_points_with_mancha, intersect_polygons_with_mancha,
-    mancha_to_geojson, slugify, pct,
+    mancha_to_geojson, slugify, pct, clean_polygon_geom,
 )
 
 
 SETORES_PONTOS = ["empresas", "educacao", "saude"]
+
+
+def _round_geojson_geometry(feature: dict, grid_size: float) -> None:
+    """Arredonda a geometria de uma feature GeoJSON para uma grade de
+    `grid_size` graus (reduz tamanho do arquivo), em-lugar.
+
+    Usado so na mancha RS (estadual, so exibicao) -- a precisao de ~11m
+    (grid_size=1e-4) e irrelevante em zoom de visao geral, mas os ~17 digitos
+    do float original inflam bastante o arquivo (poligono com muitos
+    aneis/buracos). Ao contrario de arredondar as coordenadas cruas do dict
+    (que podia colapsar aneis pequenos em geometria invalida -- "too few
+    points in geometry component"), usa shapely.set_precision com
+    mode="valid_output" que arredonda E repara a topologia resultante.
+    """
+    import shapely
+    from shapely.geometry import shape as shapely_shape
+
+    geom = shapely_shape(feature["geometry"])
+    geom = shapely.set_precision(geom, grid_size=grid_size, mode="valid_output")
+    geom = clean_polygon_geom(geom)
+    feature["geometry"] = geom.__geo_interface__
 
 
 # ---------------------------------------------------------------------------
@@ -319,26 +340,23 @@ def main():
         make_atingidos(nome, cfg, slug, limite_geom)
 
     # --- mancha RS (Visão Geral) ---
+    # Mancha unica do ADA estadual, so para exibicao na Visao Geral -- os calculos de
+    # dano por municipio (make_atingidos acima) continuam usando a mancha propria de
+    # cada municipio (MANCHAS), nao esta.
     print("\n  Gerando mancha_rs_enchente_2024.geojson...")
-    piores = {
-        "eldorado_do_sul": "eldorado_do_sul___cenario_ada",
-        "lajeado": "lajeado___cenario_27m",
-        "porto_alegre": "porto_alegre___cenario_ada",
-        "rio_grande": "rio_grande___cenario_maio_2024",
-    }
-    features_rs = []
-    for slug_m, cen_slug in piores.items():
-        mancha_path = DASH_DATA / slug_m / "cenarios" / f"{cen_slug}.geojson"
-        gj = load_geojson(mancha_path)
-        if gj:
-            features_rs.extend(gj["features"])
-    if features_rs:
-        mancha_rs = {"type": "FeatureCollection", "features": features_rs}
+    # Tolerancia bem mais grosseira que o default (municipal) -- essa mancha cobre o
+    # estado inteiro so para contexto visual na Visao Geral, no zoom de um municipio
+    # so ela nunca aparece (isVisaoGeral). Arredondamento de coordenadas reduz o
+    # arquivo ~5x sem perda visivel nesse zoom.
+    mancha_rs = mancha_to_geojson(MANCHA_RS_ADA, simplify_tolerance=0.005)
+    if mancha_rs:
+        for feat in mancha_rs["features"]:
+            _round_geojson_geometry(feat, grid_size=1e-4)
         out_rs = DASH_DATA / "mancha_rs_enchente_2024.geojson"
         save_geojson(mancha_rs, out_rs)
-        print(f"    mancha_rs_enchente_2024.geojson: {len(features_rs)} features")
+        print(f"    mancha_rs_enchente_2024.geojson: gerado de {MANCHA_RS_ADA.name}")
     else:
-        print("    AVISO: nenhuma mancha encontrada para Visão Geral RS")
+        print(f"    AVISO: mancha nao encontrada em {MANCHA_RS_ADA}")
 
     print("\nConcluido.")
 

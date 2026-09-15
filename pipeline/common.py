@@ -247,6 +247,84 @@ def load_geojson(path):
         return json.load(f)
 
 
+def clean_polygon_geom(geom, max_hole_ratio: float = 1.0):
+    """Corrige um poligono/multipoligono shapely: auto-intersecao (make_valid)
+    e buracos anormalmente grandes (anel interno que ocupa mais de
+    max_hole_ratio da area do anel externo -- sintoma de topologia quebrada
+    apos union/simplify, nao um enclave real de uso do solo).
+
+    max_hole_ratio=1.0 desativa a remocao de buracos (so corrige validade).
+    """
+    from shapely import make_valid
+    from shapely.geometry import Polygon, MultiPolygon
+
+    if geom is None or geom.is_empty:
+        return geom
+    if not geom.is_valid:
+        geom = make_valid(geom)
+        if geom.is_empty:
+            return geom
+
+    if max_hole_ratio >= 1.0:
+        return geom
+
+    def _fix_poly(poly: Polygon) -> Polygon:
+        if not poly.interiors:
+            return poly
+        ext_area = Polygon(poly.exterior).area
+        kept = []
+        for ring in poly.interiors:
+            hole_area = Polygon(ring).area
+            if ext_area <= 0 or (hole_area / ext_area) <= max_hole_ratio:
+                kept.append(ring)
+        return Polygon(poly.exterior, kept) if len(kept) != len(poly.interiors) else poly
+
+    if geom.geom_type == "Polygon":
+        return _fix_poly(geom)
+    elif geom.geom_type == "MultiPolygon":
+        return MultiPolygon([_fix_poly(p) for p in geom.geoms])
+    elif geom.geom_type == "GeometryCollection":
+        # make_valid pode devolver colecao mista -- mantem so as partes poligonais
+        polys = [g for g in geom.geoms if g.geom_type in ("Polygon", "MultiPolygon")]
+        if not polys:
+            return geom
+        fixed = [clean_polygon_geom(g, max_hole_ratio) for g in polys]
+        return MultiPolygon([p for f in fixed for p in ([f] if f.geom_type == "Polygon" else list(f.geoms))])
+    return geom
+
+
+def fix_polygon_geometry(gdf, simplify_tol: float = 0.0, min_area_m2: float = 0.0,
+                          max_hole_ratio: float = 1.0):
+    """Limpeza geometrica em lote para um GeoDataFrame de poligonos: auto-
+    intersecao, buracos anormalmente grandes, serrilhado (simplify) e
+    fragmentos "sliver" minusculos que sobram de recortes (clip).
+
+    simplify_tol: tolerancia de simplify nas unidades do CRS de gdf (graus se
+        WGS84). 0 desativa.
+    min_area_m2: descarta poligonos com area menor que este valor em m².
+        Reprojeta para EPSG:5880 (area igual) so para medir, se necessario.
+        0 desativa.
+    max_hole_ratio: ver clean_polygon_geom. 1.0 desativa.
+    """
+    gdf = gdf.copy()
+    gdf["geometry"] = gdf.geometry.apply(lambda g: clean_polygon_geom(g, max_hole_ratio))
+
+    if simplify_tol > 0:
+        gdf["geometry"] = gdf.geometry.simplify(simplify_tol, preserve_topology=True)
+        gdf["geometry"] = gdf.geometry.apply(lambda g: clean_polygon_geom(g, 1.0))
+
+    gdf = gdf[gdf.geometry.notna() & ~gdf.geometry.is_empty].copy()
+
+    if min_area_m2 > 0 and not gdf.empty:
+        if gdf.crs is not None and gdf.crs.is_geographic:
+            areas_m2 = gdf.geometry.to_crs("EPSG:5880").area
+        else:
+            areas_m2 = gdf.geometry.area
+        gdf = gdf[areas_m2 >= min_area_m2].copy()
+
+    return gdf
+
+
 def intersect_points_with_mancha(base_gj, mancha_path):
     """Filtra features do base_gj que estao dentro da mancha (point-in-polygon)."""
     import geopandas as gpd
@@ -301,6 +379,11 @@ def mancha_to_geojson(mancha_path, clip_geom=None, simplify_tolerance=0.0003):
     if simplify_tolerance > 0:
         union = union.simplify(simplify_tolerance, preserve_topology=True)
 
+    # simplify() com preserve_topology=True raramente ainda devolve uma
+    # geometria invalida (aneis aninhados/auto-intersecao) em uniao de muitos
+    # poligonos -- corrige antes de salvar.
+    union = clean_polygon_geom(union)
+
     gdf = gpd.GeoDataFrame(geometry=[union], crs="EPSG:4326")
     return json.loads(gdf.to_json())
 
@@ -336,11 +419,14 @@ def intersect_polygons_with_mancha(base_gj, mancha_path, simplify_tolerance=0.00
         return {"type": "FeatureCollection", "features": []}
 
     # Descarta fragmentos degenerados (pontos/linhas) que podem sobrar do
-    # overlay e mantem so poligonos; suaviza a borda recortada.
+    # overlay e mantem so poligonos; suaviza a borda recortada e descarta
+    # slivers minusculos (< 5 m²) que o corte pela borda da mancha deixa para
+    # tras (ruido geometrico, nao area agricola real).
     clipped = clipped.explode(index_parts=False)
     clipped = clipped[clipped.geometry.geom_type.isin(["Polygon", "MultiPolygon"])].copy()
-    clipped["geometry"] = clipped.geometry.simplify(simplify_tolerance, preserve_topology=True)
-    clipped = clipped[~clipped.geometry.is_empty]
+    clipped = fix_polygon_geometry(
+        clipped, simplify_tol=simplify_tolerance, min_area_m2=5.0, max_hole_ratio=0.5
+    )
     if clipped.empty:
         return {"type": "FeatureCollection", "features": []}
 
