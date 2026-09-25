@@ -28,12 +28,14 @@ from shapely.ops import unary_union
 
 from config import (
     DATA_BASES,
+    DATA_RAW,
     DATA_RAW_MAPBIOMAS,
     MAPBIOMAS_ANOS,
     MAPBIOMAS_CLASSES,
     MAPBIOMAS_TIFF_BASE,
     MUNICIPIOS,
 )
+from common import clean_polygon_geom
 
 
 # ---------------------------------------------------------------------------
@@ -72,10 +74,20 @@ def download_geotiff(year: int) -> Path:
 # ---------------------------------------------------------------------------
 
 def get_municipio_geom(ibge7: int) -> gpd.GeoDataFrame:
-    """Obtem geometria do municipio via geobr."""
-    import geobr
-    gdf = geobr.read_municipality(code_muni=ibge7, year=2022)
-    return gdf
+    """Obtem geometria do municipio via geobr, com fallback para o GeoJSON
+    IBGE ja commitado em data/raw/ibge quando o pacote geobr nao esta
+    disponivel no ambiente (mesmo fallback usado em 06_geojson.py:make_limite)."""
+    try:
+        import geobr
+        return geobr.read_municipality(code_muni=ibge7, year=2022)
+    except ImportError:
+        local_path = DATA_RAW / "ibge" / f"{ibge7}.geojson"
+        if not local_path.exists():
+            raise
+        gdf = gpd.read_file(local_path)
+        if gdf.crs is None:
+            gdf = gdf.set_crs("EPSG:4326")
+        return gdf.to_crs(epsg=4326)
 
 
 # ---------------------------------------------------------------------------
@@ -197,6 +209,12 @@ def process_municipio(tiff_path: Path, nome: str, cfg: dict, ano: int) -> tuple:
         for cultura, polys in fragmentos_por_cultura.items():
             merged = unary_union(polys)
             merged = merged.simplify(tolerance=0.0005, preserve_topology=True)
+            # simplify() com preserve_topology=True ainda pode devolver uma
+            # geometria invalida (auto-intersecao) ou com buracos internos
+            # enormes (>50% da area) quando une centenas de fragmentos pixel-
+            # a-pixel -- sintoma de topologia quebrada, nao enclave real de
+            # uso do solo. Corrige antes de gravar (ver auditoria de poligonos).
+            merged = clean_polygon_geom(merged, max_hole_ratio=0.5)
             if merged.is_empty:
                 continue
             geoms_finais = list(merged.geoms) if merged.geom_type == "MultiPolygon" else [merged]
