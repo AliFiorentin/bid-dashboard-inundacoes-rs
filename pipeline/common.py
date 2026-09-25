@@ -207,7 +207,12 @@ def df_to_geojson(df, lat_col, lon_col, prop_cols):
     for _, row in df.iterrows():
         lat = row[lat_col]
         lon = row[lon_col]
+        # Segunda etapa de validacao (ver CLAUDE.md, "Coordinate validation"): descarta
+        # nulos, (0,0) e pontos fora do retangulo do RS. Cobre tambem as coordenadas que
+        # vem prontas da fonte (CNES), que nao passam pela validacao por poligono do 05.
         if pd.isna(lat) or pd.isna(lon) or (lat == 0 and lon == 0):
+            continue
+        if not (-34 <= float(lat) <= -27 and -58 <= float(lon) <= -49):
             continue
         props = {}
         for pc in prop_cols:
