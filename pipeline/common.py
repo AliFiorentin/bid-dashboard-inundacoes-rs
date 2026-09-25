@@ -188,8 +188,11 @@ def cnae_to_denominacao(cnae_code):
 
 def cnae_to_setor(cnae_str):
     """Mapeia CNAE para macrossetor (agro/industria/servicos/adm_pub)."""
+    # O CNAE chega como inteiro em parte das bases (ex.: 1113 em vez de "01113"), o
+    # que perde o zero a esquerda e desloca a divisao (01 -> "11" = industria).
+    # Normaliza para 5 digitos antes de ler a divisao.
     try:
-        cnae2 = int(str(cnae_str).strip()[:2])
+        cnae2 = int(str(cnae_str).strip().split(".")[0].zfill(5)[:2])
     except (ValueError, TypeError):
         return "servicos"
     if 1 <= cnae2 <= 3: return "agro"
