@@ -213,8 +213,10 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
               { tex: "\\text{atingido}(p) = \\mathbf{1}[p \\in M]" },
             ]} />
             <p className="text-[11px] text-[#3d7a94] mt-2">
-              Coordenadas validadas para o bounding box do RS: lat ∈ [−34°, −27°], lon ∈ [−58°, −49°].
-              Pontos em (0, 0) ou fora da caixa são excluídos da análise.
+              Empresas e escolas: o ponto geocodificado só é aceito se estiver dentro do polígono
+              do município declarado (IBGE). Unidades de saúde: coordenadas informadas pelo próprio
+              CNES. Em todas as camadas, pontos em (0, 0) ou fora do retângulo do RS
+              (lat ∈ [−34°, −27°], lon ∈ [−58°, −49°]) são excluídos da análise.
             </p>
           </GeoCard>
 
@@ -305,8 +307,11 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             A geocodificação é realizada com uma instância local do{" "}
             <ExtLink href="https://nominatim.org">Nominatim</ExtLink> (OpenStreetMap),
             que converte o endereço textual em coordenadas geográficas (lat/lon, EPSG:4326).
-            As coordenadas são então validadas pelo bounding box do Rio Grande do Sul
-            (lat ∈ [−34°, −27°], lon ∈ [−58°, −49°]) e armazenadas em cache para uso posterior.
+            O ponto só é aceito se estiver dentro do polígono do município declarado na fonte
+            (malha municipal do IBGE), o que descarta correspondências em municípios vizinhos com
+            logradouro homônimo. Na conversão para GeoJSON, pontos em (0, 0) ou fora do retângulo
+            do Rio Grande do Sul (lat ∈ [−34°, −27°], lon ∈ [−58°, −49°]) também são excluídos.
+            As coordenadas ficam em cache para uso posterior.
           </p>
           <Note type="info">
             Estabelecimentos sem endereço geocodificável (endereços incompletos, caixas postais
@@ -364,8 +369,8 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
         <Section id="agricultura" num="4" title="Agricultura: Impacto por Cultura e Período">
           <p>
             A estimativa de perdas agrícolas combina o <strong>mapeamento de uso do solo</strong>{" "}
-            (MapBiomas) com dados de <strong>área cultivada georeferenciada</strong> (CONAB)
-            e <strong>coeficientes de impacto direto</strong> (R$/ha) calibrados ao estágio
+            (MapBiomas), fonte da área cultivada, com <strong>coeficientes de impacto direto</strong>{" "}
+            (R$/ha) calibrados ao estágio
             fenológico de cada cultura no momento do evento. O resultado representa o custo
             direto de produção perdido (insumos, sementes, corretivos e trabalho), sem
             considerar renda futura, preços de mercado ou perdas de solo de longo prazo.
@@ -392,24 +397,21 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             ["Código MapBiomas", "Classe",                       "Cor no painel"],
             ["39",               "Soja",                         "#D4A017 (amarelo-ouro)"],
             ["40",               "Arroz",                        "#4FC3F7 (azul-claro)"],
-            ["41",               "Outras Lavouras Temporárias",  "#AED581 (verde-claro)"],
+            ["41, 20, 62",       "Outras Lavouras Temporárias (inclui cana e algodão)", "#AED581 (verde-claro)"],
           ]} />
-          <MathBlock exprs={[
-            { label: "Área por pixel [ha]", tex: "a_{\\text{pixel}} = \\frac{30 \\times 30}{10{.}000} = 0{,}09\\ \\text{ha}" },
-            { label: "Área total [ha]",     tex: "A_{\\text{total}} = N_{\\text{pixels}} \\times 0{,}09" },
-          ]} />
-
-          <SubTitle>Prioridade: CONAB sobre MapBiomas</SubTitle>
           <p>
-            Para Soja e Arroz, quando disponíveis, os shapefiles georeferenciados da{" "}
-            <ExtLink href="https://www.conab.gov.br/info-agro/safras/mapeamento-agricola">
-              CONAB (Mapeamento Agrícola, safra 2023/24)
-            </ExtLink>{" "}
-            substituem o MapBiomas como fonte de área cultivada. O campo utilizado é{" "}
-            <code className="text-xs font-mono bg-[#e8f4f8] px-1 py-0.5 rounded">AREA_HA</code>{" "}
-            (EPSG:4674), que representa a área declarada pelo produtor. O MapBiomas é mantido
-            como fonte para Outras Lavouras Temporárias (trigo, aveia, etc.) e quando os
-            shapefiles CONAB não cobrem o município.
+            Lavouras perenes (café, citros, dendê e outras; códigos 36, 46, 47, 35 e 48) ficam fora
+            da camada. Como o raster é referenciado em graus, a área de cada pixel depende da
+            latitude: cerca de 0,078 ha nas regiões-foco, e não os 0,09 ha nominais de 30 × 30 m.
+          </p>
+          <MathBlock exprs={[
+            { label: "Área por pixel [ha]", tex: "a_{\\text{pixel}} = \\dfrac{|\\Delta\\lambda| \\cdot 111{.}320 \\cdot \\cos\\varphi_c \\cdot |\\Delta\\varphi| \\cdot 111{.}320}{10{.}000}" },
+            { label: "Área total [ha]",     tex: "A_{\\text{total}} = N_{\\text{pixels}} \\times a_{\\text{pixel}}" },
+          ]} />
+          <p className="text-[12px] text-slate-500">
+            Δλ e Δφ: resolução angular do raster; φ<sub>c</sub>: latitude central do recorte municipal.
+            A área atingida é medida sobre os polígonos de cultura recortados pela mancha
+            (EPSG:32722), após suavização da geometria e descarte de fragmentos menores que 5 m².
           </p>
 
           <SubTitle>Coeficientes de impacto: calendário agrícola do RS</SubTitle>
@@ -438,13 +440,12 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           <SubTitle>Origem dos dados</SubTitle>
           <DataTable rows={[
             ["Fonte",                      "Referência temporal", "Variáveis"],
-            ["MapBiomas (Coleção 10)",     "2023 e 2024",         "Raster 30 m; classes 39 (Soja), 40 (Arroz), 41 (Outras)"],
-            ["CONAB (Mapeamento Agrícola)","Safra 2023/24",       "Shapefiles georeferenciados, campo AREA_HA"],
+            ["MapBiomas (Coleção 10)",     "2023 e 2024",         "Raster 30 m; classes 39 (Soja), 40 (Arroz), 41, 20 e 62 (Outras)"],
             ["CONAB (Preços Mínimos)",     "2024",                "Base para calibração dos coeficientes R$/ha"],
           ]} />
           <SectionSources links={[
             ["MapBiomas: Coleção 10", "https://brasil.mapbiomas.org/colecoes-mapbiomas-1/"],
-            ["CONAB: Mapeamento Agrícola", "https://www.conab.gov.br/info-agro/safras/mapeamento-agricola"],
+            ["MapBiomas: Códigos da legenda da Coleção 10", "https://brasil.mapbiomas.org/wp-content/uploads/sites/4/2025/08/Legenda-Colecao-10-Legend-Code.pdf"],
             ["CONAB: Preços Mínimos 2024", "https://www.conab.gov.br/politica-agricola/precos-minimos"],
           ]} />
         </Section>
@@ -486,9 +487,9 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
 
           <SubTitle>Geocodificação das escolas</SubTitle>
           <p>
-            O Censo Escolar 2024 fornece latitude e longitude para a maioria dos estabelecimentos.
-            Para escolas sem coordenadas na base INEP, o endereço é geocodificado via Nominatim
-            (OSM). Coordenadas são validadas para o bounding box do RS antes de uso.
+            As escolas são georreferenciadas pelo endereço registrado no Censo Escolar, com o mesmo
+            procedimento das empresas: geocodificação na instância local do Nominatim (OSM) e aceite
+            do ponto apenas dentro do polígono do município (IBGE).
           </p>
 
           <Note type="info">
@@ -1156,9 +1157,10 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
               soma de todos os pixels com valor positivo (pixels sem dado excluídos).
             </li>
             <li>
-              <strong>População atingida por cenário</strong>: recorte pelo polígono da mancha de
-              inundação correspondente; mesma operação de soma. Apenas pixels dentro da mancha
-              são contabilizados.
+              <strong>População atingida por cenário</strong>: recorte pela interseção da mancha de
+              inundação com o limite municipal; mesma operação de soma. A interseção é necessária
+              porque algumas manchas se estendem sobre municípios vizinhos (a ADA de Porto Alegre,
+              por exemplo, cobre áreas de Canoas), cuja população não pertence à região-foco.
             </li>
             <li>
               <strong>Heatmap</strong>: raster recortado pelo limite municipal convertido a imagem
@@ -1238,16 +1240,13 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
                 desc="Boletim de Produção Ambulatorial (BPA) por estabelecimento CNES: base para estimativa da perda de produção ambulatorial durante a interrupção." />
               <RefItem href="https://nominatim.org"
                 label="OpenStreetMap / Nominatim"
-                desc="Geocodificador de endereços baseado em dados OSM, instância local. Usado para estabelecimentos RAIS e escolas sem coordenadas próprias." />
+                desc="Geocodificador de endereços baseado em dados OSM, instância local. Usado para os estabelecimentos da RAIS e as escolas do Censo Escolar, que não trazem coordenadas; as unidades de saúde usam as coordenadas do CNES." />
             </RefBlock>
 
             <RefBlock title="Dados Agrícolas">
               <RefItem href="https://brasil.mapbiomas.org/colecoes-mapbiomas-1/"
                 label="MapBiomas: Coleção 10"
-                desc="Mapeamento anual de uso e cobertura do solo no Brasil em raster de 30 m. Anos 2023 e 2024 utilizados conforme o período do cenário. Classes: Soja (39), Arroz (40), Outras Lavouras Temporárias (41)." />
-              <RefItem href="https://www.conab.gov.br/info-agro/safras/mapeamento-agricola"
-                label="CONAB: Mapeamento Agrícola (safra 2023/24)"
-                desc="Shapefiles georeferenciados de área cultivada de soja e arroz com campo AREA_HA declarado pelo produtor. Tem prioridade sobre MapBiomas quando disponível." />
+                desc="Mapeamento anual de uso e cobertura do solo no Brasil em raster de 30 m, fonte da área cultivada. Anos 2023 e 2024 utilizados conforme o período do cenário. Classes: Soja (39), Arroz (40), Outras Lavouras Temporárias (41, 20 e 62)." />
               <RefItem href="https://www.conab.gov.br/politica-agricola/precos-minimos"
                 label="CONAB: Preços Mínimos 2024"
                 desc="Base para calibração dos coeficientes R$/ha de impacto direto por cultura e estágio fenológico." />
