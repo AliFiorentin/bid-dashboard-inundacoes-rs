@@ -30,13 +30,17 @@ MAPBIOMAS_TIFF_BASE = "https://storage.googleapis.com/mapbiomas-public/initiativ
 MAPBIOMAS_ANOS = [2023, 2024]
 DATA_RAW_MAPBIOMAS = DATA_RAW / "mapbiomas"
 
+# Codigos da legenda da Colecao 10 (brasil.mapbiomas.org, "Legenda-Colecao-10-Legend-Code"):
+# 3.2.1 Lavoura Temporaria -> 39 Soja, 20 Cana, 40 Arroz, 62 Algodao (beta), 41 Outras.
+# 3.2.2 Lavoura Perene (36, 46 Cafe, 47 Citrus, 35 Dende, 48 Outras) fica de fora: a camada
+# cobre so lavouras temporarias. Antes 20 (cana) estava como Arroz e 46 (cafe) como
+# temporaria.
 MAPBIOMAS_CLASSES = {
     39: "Soja",
-    20: "Arroz",
     40: "Arroz",
+    20: "Outras Lavouras Temporárias",  # cana-de-acucar
+    62: "Outras Lavouras Temporárias",  # algodao (beta)
     41: "Outras Lavouras Temporárias",
-    46: "Outras Lavouras Temporárias",
-    62: "Outras Lavouras Temporárias",
 }
 
 # Colunas RAIS que usamos
