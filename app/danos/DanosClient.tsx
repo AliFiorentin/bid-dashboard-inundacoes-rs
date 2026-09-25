@@ -590,7 +590,7 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
             ["Indicador (Porto Alegre / ADA)", "Valor"],
             ["Estabelecimentos CNAE 84",      "51"],
             ["Participação na massa salarial", "45,3%  (R$ 559,7 mi/mês)"],
-            ["Contribuição ao total (60 dias)","≈ R$ 625 mi de R$ 4,5 bi"],
+            ["Contribuição ao total (60 dias)","≈ R$ 1,25 bi de R$ 4,42 bi (28,3%)"],
           ]} />
           <Note type="warning">
             O labor share de Adm. Pública (88,3%) é elevado, pois o VAB deste setor é
@@ -610,7 +610,7 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
               <li>
                 <strong>1. Domicílio fiscal fora do município atingido.</strong>{" "}
                 Em Lajeado, o shortfall ICMS maio/2024 foi de apenas R$ 8 mil, enquanto nosso VAB estimado
-                implica R$ 1,74 mi de queda de ICMS (razão de 206×). Grandes empregadoras como Tramontina
+                implica R$ 1,90 mi de queda de ICMS (razão de 225×). Grandes empregadoras como Tramontina
                 recolhem ICMS na sede em Carlos Barbosa (RS), não em Lajeado, tornando o ICMS municipal
                 completamente dissociado da atividade econômica local.
               </li>
@@ -619,7 +619,7 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
                 O ICMS incide sobre circulação de mercadorias e alguns serviços de comunicação e transporte.
                 Serviços em geral, que representam a maior parcela do VAB nas cidades maiores,
                 recolhem ISS ao município, não ICMS ao Estado. Em Porto Alegre, o ICMS capturou apenas
-                R$ 136,8 mi de shortfall frente a R$ 388 mi implicados pelo nosso VAB estimado (razão 2,84×),
+                R$ 136,8 mi de shortfall frente a R$ 389 mi implicados pelo nosso VAB estimado (razão 2,84×),
                 refletindo que bancos, consultorias e tecnologia estão fora do escopo do ICMS.
               </li>
               <li>

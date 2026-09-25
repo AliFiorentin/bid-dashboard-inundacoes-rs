@@ -4,12 +4,12 @@
       "dias_agudo": 30,
       "dias_efetivos": 60,
       "f_interrup": 0.164384,
-      "empresas_vab": 403075054.73,
+      "empresas_vab": 404827271.87,
       "educacao_perdas": 11112505.4,
       "educacao_custo_adicional": 11112505.4,
       "saude_producao": 83170.67,
-      "agricultura_perdas": 9096160.0,
-      "total": 434479396.2
+      "agricultura_perdas": 9090230.0,
+      "total": 436225683.35
     }
   },
   "Lajeado": {
@@ -17,23 +17,23 @@
       "dias_agudo": 30,
       "dias_efetivos": 60,
       "f_interrup": 0.164384,
-      "empresas_vab": 19836506.23,
+      "empresas_vab": 21604522.07,
       "educacao_perdas": 1719989.39,
       "educacao_custo_adicional": 1719989.39,
       "saude_producao": 7662817.55,
-      "agricultura_perdas": 389970.0,
-      "total": 31329272.56
+      "agricultura_perdas": 375330.0,
+      "total": 33082648.4
     },
     "Cenario 30m": {
       "dias_agudo": 30,
       "dias_efetivos": 60,
       "f_interrup": 0.164384,
-      "empresas_vab": 33082577.9,
+      "empresas_vab": 34850593.74,
       "educacao_perdas": 1797592.46,
       "educacao_custo_adicional": 1797592.46,
       "saude_producao": 7690511.59,
-      "agricultura_perdas": 437500.0,
-      "total": 44805774.41
+      "agricultura_perdas": 415330.0,
+      "total": 46551620.25
     }
   },
   "Porto Alegre": {
@@ -41,23 +41,23 @@
       "dias_agudo": 30,
       "dias_efetivos": 60,
       "f_interrup": 0.164384,
-      "empresas_vab": 4410522315.45,
+      "empresas_vab": 4416059077.47,
       "educacao_perdas": 42289857.42,
       "educacao_custo_adicional": 42289857.42,
       "saude_producao": 7730338.63,
-      "agricultura_perdas": 456810.0,
-      "total": 4503289178.93
+      "agricultura_perdas": 436880.0,
+      "total": 4508806010.94
     },
     "Climada Evento 2024": {
       "dias_agudo": 30,
       "dias_efetivos": 60,
       "f_interrup": 0.164384,
-      "empresas_vab": 2203577203.25,
+      "empresas_vab": 2205938181.1,
       "educacao_perdas": 44573423.22,
       "educacao_custo_adicional": 44573423.22,
       "saude_producao": 2495978.8,
-      "agricultura_perdas": 691040.0,
-      "total": 2295911068.48
+      "agricultura_perdas": 686750.0,
+      "total": 2298267756.33
     }
   },
   "Rio Grande": {
@@ -65,34 +65,34 @@
       "dias_agudo": 30,
       "dias_efetivos": 60,
       "f_interrup": 0.164384,
-      "empresas_vab": 77178858.58,
+      "empresas_vab": 77722882.47,
       "educacao_perdas": 9163523.34,
       "educacao_custo_adicional": 9163523.34,
       "saude_producao": 9131.69,
-      "agricultura_perdas": 140.0,
-      "total": 95515176.96
+      "agricultura_perdas": 0,
+      "total": 96059060.85
     },
     "Cenario Maio 2024 + 50%": {
       "dias_agudo": 30,
       "dias_efetivos": 60,
       "f_interrup": 0.164384,
-      "empresas_vab": 460048560.8,
+      "empresas_vab": 473890497.29,
       "educacao_perdas": 37017937.29,
       "educacao_custo_adicional": 37017937.29,
       "saude_producao": 9850834.15,
-      "agricultura_perdas": 63390.0,
-      "total": 543998659.52
+      "agricultura_perdas": 61150.0,
+      "total": 557838356.02
     },
     "Cenario Setembro 2023": {
       "dias_agudo": 15,
       "dias_efetivos": 30,
       "f_interrup": 0.082192,
-      "empresas_vab": 10001754.11,
+      "empresas_vab": 10210341.28,
       "educacao_perdas": 1345331.94,
       "educacao_custo_adicional": 1345331.94,
       "saude_producao": 0.0,
-      "agricultura_perdas": 0.0,
-      "total": 12692417.99
+      "agricultura_perdas": 0,
+      "total": 12901005.15
     }
   }
 }

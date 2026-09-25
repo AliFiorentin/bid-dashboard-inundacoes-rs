@@ -6,7 +6,7 @@
     "cub_industrial_rs": 1301.56,
     "cub_fonte": "Sinduscon-RS, Precos e Custos da Construcao, CUB/RS dez/2024 (NBR 12.721/2006)",
     "cnae_industria_fonte": "common.cnae_to_setor() -- CNAE 05-39 (industrias extrativas, transformacao, eletricidade/gas, agua/esgoto)",
-    "n_empresas_industria": 2033,
+    "n_empresas_industria": 1870,
     "n_empresas_total": 39808,
     "area_m2_por_pessoa": 9.0,
     "area_m2_por_pessoa_fonte": "Manual de Padrao de Ocupacao (Projeto Racionaliza, gov.br/gestao) -- teto adm. publica federal",
@@ -134,11 +134,11 @@
         "n_atingidos_profundidade_gt_0": 1111,
         "profundidade_media_atingidos_m": 1.291,
         "profundidade_max_m": 4.736,
-        "valor_unitario_brl": 788342.14,
-        "exposicao_total_brl": 31382324008.74,
-        "dano_fisico_total_brl": 307576473.61,
+        "valor_unitario_brl": 788831.77,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_total_brl": 307269360.93,
         "dano_fisico_pct_exposicao": 0.98,
-        "fonte_curva": "Curva JRC South America commerce, calibrada pelo CLIMADA com ancora no RP200 (37775 pontos); Curva JRC South America industry, reescalada pelo fator de Empresas (sem ancora observada propria) (2033 pontos industriais)",
+        "fonte_curva": "Curva JRC South America commerce, calibrada pelo CLIMADA com ancora no RP200 (37938 pontos); Curva JRC South America industry, reescalada pelo fator de Empresas (sem ancora observada propria) (1870 pontos industriais)",
         "porte_campo": "qtd_vinculos"
       },
       "educacao": {
@@ -149,7 +149,7 @@
         "profundidade_max_m": 4.137,
         "valor_unitario_brl": 3182816.24,
         "exposicao_total_brl": 2985481634.17,
-        "dano_fisico_total_brl": 23458610.13,
+        "dano_fisico_total_brl": 23458610.26,
         "dano_fisico_pct_exposicao": 0.79,
         "fonte_curva": "Curva de dano para escolas calibrada pelo CLIMADA",
         "porte_campo": "salas_equivalentes"
@@ -175,11 +175,11 @@
         "n_atingidos_profundidade_gt_0": 2071,
         "profundidade_media_atingidos_m": 1.168,
         "profundidade_max_m": 5.358,
-        "valor_unitario_brl": 788342.14,
-        "exposicao_total_brl": 31382324008.74,
-        "dano_fisico_total_brl": 477773856.8,
+        "valor_unitario_brl": 788831.77,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_total_brl": 477426862.29,
         "dano_fisico_pct_exposicao": 1.52,
-        "fonte_curva": "Curva JRC South America commerce, calibrada pelo CLIMADA com ancora no RP200 (37775 pontos); Curva JRC South America industry, reescalada pelo fator de Empresas (sem ancora observada propria) (2033 pontos industriais)",
+        "fonte_curva": "Curva JRC South America commerce, calibrada pelo CLIMADA com ancora no RP200 (37938 pontos); Curva JRC South America industry, reescalada pelo fator de Empresas (sem ancora observada propria) (1870 pontos industriais)",
         "porte_campo": "qtd_vinculos"
       },
       "educacao": {
@@ -190,7 +190,7 @@
         "profundidade_max_m": 4.758,
         "valor_unitario_brl": 3182816.24,
         "exposicao_total_brl": 2985481634.17,
-        "dano_fisico_total_brl": 40364819.81,
+        "dano_fisico_total_brl": 40364820.0,
         "dano_fisico_pct_exposicao": 1.35,
         "fonte_curva": "Curva de dano para escolas calibrada pelo CLIMADA",
         "porte_campo": "salas_equivalentes"
@@ -203,7 +203,7 @@
         "profundidade_max_m": 3.836,
         "valor_unitario_brl": 324840.72,
         "exposicao_total_brl": 2281031565.12,
-        "dano_fisico_total_brl": 13360817.91,
+        "dano_fisico_total_brl": 13360817.89,
         "dano_fisico_pct_exposicao": 0.59,
         "fonte_curva": "Sintetizada a partir das curvas JRC South America commerce e industry (Huizinga et al. 2017), reescalada pelo fator de Empresas",
         "porte_campo": "leitos_ou_profissionais"
@@ -216,11 +216,11 @@
         "n_atingidos_profundidade_gt_0": 3191,
         "profundidade_media_atingidos_m": 1.623,
         "profundidade_max_m": 6.08,
-        "valor_unitario_brl": 788342.14,
-        "exposicao_total_brl": 31382324008.74,
-        "dano_fisico_total_brl": 1005090987.42,
+        "valor_unitario_brl": 788831.77,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_total_brl": 1004874928.98,
         "dano_fisico_pct_exposicao": 3.2,
-        "fonte_curva": "Curva JRC South America commerce, calibrada pelo CLIMADA com ancora no RP200 (37775 pontos); Curva JRC South America industry, reescalada pelo fator de Empresas (sem ancora observada propria) (2033 pontos industriais)",
+        "fonte_curva": "Curva JRC South America commerce, calibrada pelo CLIMADA com ancora no RP200 (37938 pontos); Curva JRC South America industry, reescalada pelo fator de Empresas (sem ancora observada propria) (1870 pontos industriais)",
         "porte_campo": "qtd_vinculos"
       },
       "educacao": {
@@ -231,7 +231,7 @@
         "profundidade_max_m": 5.48,
         "valor_unitario_brl": 3182816.24,
         "exposicao_total_brl": 2985481634.17,
-        "dano_fisico_total_brl": 99582413.42,
+        "dano_fisico_total_brl": 99582413.7,
         "dano_fisico_pct_exposicao": 3.34,
         "fonte_curva": "Curva de dano para escolas calibrada pelo CLIMADA",
         "porte_campo": "salas_equivalentes"
@@ -244,7 +244,7 @@
         "profundidade_max_m": 5.381,
         "valor_unitario_brl": 324840.72,
         "exposicao_total_brl": 2281031565.12,
-        "dano_fisico_total_brl": 19172750.28,
+        "dano_fisico_total_brl": 19172750.26,
         "dano_fisico_pct_exposicao": 0.84,
         "fonte_curva": "Sintetizada a partir das curvas JRC South America commerce e industry (Huizinga et al. 2017), reescalada pelo fator de Empresas",
         "porte_campo": "leitos_ou_profissionais"
@@ -257,11 +257,11 @@
         "n_atingidos_profundidade_gt_0": 3954,
         "profundidade_media_atingidos_m": 1.591,
         "profundidade_max_m": 6.385,
-        "valor_unitario_brl": 788342.14,
-        "exposicao_total_brl": 31382324008.74,
-        "dano_fisico_total_brl": 1138074795.4,
-        "dano_fisico_pct_exposicao": 3.63,
-        "fonte_curva": "Curva JRC South America commerce, calibrada pelo CLIMADA com ancora no RP200 (37775 pontos); Curva JRC South America industry, reescalada pelo fator de Empresas (sem ancora observada propria) (2033 pontos industriais)",
+        "valor_unitario_brl": 788831.77,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_total_brl": 1137920322.61,
+        "dano_fisico_pct_exposicao": 3.62,
+        "fonte_curva": "Curva JRC South America commerce, calibrada pelo CLIMADA com ancora no RP200 (37938 pontos); Curva JRC South America industry, reescalada pelo fator de Empresas (sem ancora observada propria) (1870 pontos industriais)",
         "porte_campo": "qtd_vinculos"
       },
       "educacao": {
@@ -272,7 +272,7 @@
         "profundidade_max_m": 5.786,
         "valor_unitario_brl": 3182816.24,
         "exposicao_total_brl": 2985481634.17,
-        "dano_fisico_total_brl": 111921175.06,
+        "dano_fisico_total_brl": 111921175.24,
         "dano_fisico_pct_exposicao": 3.75,
         "fonte_curva": "Curva de dano para escolas calibrada pelo CLIMADA",
         "porte_campo": "salas_equivalentes"
@@ -285,7 +285,7 @@
         "profundidade_max_m": 5.686,
         "valor_unitario_brl": 324840.72,
         "exposicao_total_brl": 2281031565.12,
-        "dano_fisico_total_brl": 21544856.36,
+        "dano_fisico_total_brl": 21544856.35,
         "dano_fisico_pct_exposicao": 0.94,
         "fonte_curva": "Sintetizada a partir das curvas JRC South America commerce e industry (Huizinga et al. 2017), reescalada pelo fator de Empresas",
         "porte_campo": "leitos_ou_profissionais"
@@ -298,11 +298,11 @@
         "n_atingidos_profundidade_gt_0": 4196,
         "profundidade_media_atingidos_m": 1.707,
         "profundidade_max_m": 6.596,
-        "valor_unitario_brl": 788342.14,
-        "exposicao_total_brl": 31382324008.74,
-        "dano_fisico_total_brl": 1230226773.52,
+        "valor_unitario_brl": 788831.77,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_total_brl": 1230249137.27,
         "dano_fisico_pct_exposicao": 3.92,
-        "fonte_curva": "Curva JRC South America commerce, calibrada pelo CLIMADA com ancora no RP200 (37775 pontos); Curva JRC South America industry, reescalada pelo fator de Empresas (sem ancora observada propria) (2033 pontos industriais)",
+        "fonte_curva": "Curva JRC South America commerce, calibrada pelo CLIMADA com ancora no RP200 (37938 pontos); Curva JRC South America industry, reescalada pelo fator de Empresas (sem ancora observada propria) (1870 pontos industriais)",
         "porte_campo": "qtd_vinculos"
       },
       "educacao": {
@@ -313,7 +313,7 @@
         "profundidade_max_m": 5.996,
         "valor_unitario_brl": 3182816.24,
         "exposicao_total_brl": 2985481634.17,
-        "dano_fisico_total_brl": 126967961.62,
+        "dano_fisico_total_brl": 126967961.67,
         "dano_fisico_pct_exposicao": 4.25,
         "fonte_curva": "Curva de dano para escolas calibrada pelo CLIMADA",
         "porte_campo": "salas_equivalentes"
@@ -326,7 +326,7 @@
         "profundidade_max_m": 5.896,
         "valor_unitario_brl": 324840.72,
         "exposicao_total_brl": 2281031565.12,
-        "dano_fisico_total_brl": 23107811.7,
+        "dano_fisico_total_brl": 23107811.73,
         "dano_fisico_pct_exposicao": 1.01,
         "fonte_curva": "Sintetizada a partir das curvas JRC South America commerce e industry (Huizinga et al. 2017), reescalada pelo fator de Empresas",
         "porte_campo": "leitos_ou_profissionais"
@@ -339,11 +339,11 @@
         "n_atingidos_profundidade_gt_0": 5003,
         "profundidade_media_atingidos_m": 1.918,
         "profundidade_max_m": 7.129,
-        "valor_unitario_brl": 788342.14,
-        "exposicao_total_brl": 31382324008.74,
-        "dano_fisico_total_brl": 1463034889.13,
+        "valor_unitario_brl": 788831.77,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_total_brl": 1463321878.74,
         "dano_fisico_pct_exposicao": 4.66,
-        "fonte_curva": "Curva JRC South America commerce, calibrada pelo CLIMADA com ancora no RP200 (37775 pontos); Curva JRC South America industry, reescalada pelo fator de Empresas (sem ancora observada propria) (2033 pontos industriais)",
+        "fonte_curva": "Curva JRC South America commerce, calibrada pelo CLIMADA com ancora no RP200 (37938 pontos); Curva JRC South America industry, reescalada pelo fator de Empresas (sem ancora observada propria) (1870 pontos industriais)",
         "porte_campo": "qtd_vinculos"
       },
       "educacao": {
@@ -354,7 +354,7 @@
         "profundidade_max_m": 6.53,
         "valor_unitario_brl": 3182816.24,
         "exposicao_total_brl": 2985481634.17,
-        "dano_fisico_total_brl": 160927901.47,
+        "dano_fisico_total_brl": 160927901.53,
         "dano_fisico_pct_exposicao": 5.39,
         "fonte_curva": "Curva de dano para escolas calibrada pelo CLIMADA",
         "porte_campo": "salas_equivalentes"
@@ -367,7 +367,7 @@
         "profundidade_max_m": 6.43,
         "valor_unitario_brl": 324840.72,
         "exposicao_total_brl": 2281031565.12,
-        "dano_fisico_total_brl": 28131529.97,
+        "dano_fisico_total_brl": 28131530.02,
         "dano_fisico_pct_exposicao": 1.23,
         "fonte_curva": "Sintetizada a partir das curvas JRC South America commerce e industry (Huizinga et al. 2017), reescalada pelo fator de Empresas",
         "porte_campo": "leitos_ou_profissionais"
@@ -380,11 +380,11 @@
         "n_atingidos_profundidade_gt_0": 6155,
         "profundidade_media_atingidos_m": 2.166,
         "profundidade_max_m": 7.801,
-        "valor_unitario_brl": 788342.14,
-        "exposicao_total_brl": 31382324008.74,
-        "dano_fisico_total_brl": 1813582952.39,
+        "valor_unitario_brl": 788831.77,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_total_brl": 1814012931.74,
         "dano_fisico_pct_exposicao": 5.78,
-        "fonte_curva": "Curva JRC South America commerce, calibrada pelo CLIMADA com ancora no RP200 (37775 pontos); Curva JRC South America industry, reescalada pelo fator de Empresas (sem ancora observada propria) (2033 pontos industriais)",
+        "fonte_curva": "Curva JRC South America commerce, calibrada pelo CLIMADA com ancora no RP200 (37938 pontos); Curva JRC South America industry, reescalada pelo fator de Empresas (sem ancora observada propria) (1870 pontos industriais)",
         "porte_campo": "qtd_vinculos"
       },
       "educacao": {
@@ -395,7 +395,7 @@
         "profundidade_max_m": 7.201,
         "valor_unitario_brl": 3182816.24,
         "exposicao_total_brl": 2985481634.17,
-        "dano_fisico_total_brl": 198165677.15,
+        "dano_fisico_total_brl": 198165676.88,
         "dano_fisico_pct_exposicao": 6.64,
         "fonte_curva": "Curva de dano para escolas calibrada pelo CLIMADA",
         "porte_campo": "salas_equivalentes"
@@ -408,7 +408,7 @@
         "profundidade_max_m": 7.101,
         "valor_unitario_brl": 324840.72,
         "exposicao_total_brl": 2281031565.12,
-        "dano_fisico_total_brl": 49095091.38,
+        "dano_fisico_total_brl": 49095091.45,
         "dano_fisico_pct_exposicao": 2.15,
         "fonte_curva": "Sintetizada a partir das curvas JRC South America commerce e industry (Huizinga et al. 2017), reescalada pelo fator de Empresas",
         "porte_campo": "leitos_ou_profissionais"
@@ -416,10 +416,10 @@
     }
   },
   "eai_anual_esperado": {
-    "empresas": 206652446.1,
-    "educacao": 17009040.71,
+    "empresas": 206490700.43,
+    "educacao": 17009040.78,
     "saude": 5333033.39,
-    "total": 228994520.2,
+    "total": 228832774.6,
     "rps_usados": [
       "RP10",
       "RP20",
@@ -480,19 +480,19 @@
     },
     "por_setor": {
       "empresas": {
-        "risco_2025_brl": 206737979.68,
-        "risco_2050_brl": 432505183.76,
-        "aumento_total_brl": 225767204.08,
-        "parcela_crescimento_brl": 132437589.06,
-        "parcela_clima_brl": 93329615.02,
-        "pct_climatico": 41.3
+        "risco_2025_brl": 206576720.82,
+        "risco_2050_brl": 432231131.86,
+        "aumento_total_brl": 225654411.04,
+        "parcela_crescimento_brl": 132334285.67,
+        "parcela_clima_brl": 93320125.37,
+        "pct_climatico": 41.4
       },
       "educacao": {
-        "risco_2025_brl": 17038632.06,
-        "risco_2050_brl": 37405150.02,
-        "aumento_total_brl": 20366517.96,
-        "parcela_crescimento_brl": 10915049.84,
-        "parcela_clima_brl": 9451468.12,
+        "risco_2025_brl": 17038632.14,
+        "risco_2050_brl": 37405150.16,
+        "aumento_total_brl": 20366518.02,
+        "parcela_crescimento_brl": 10915049.88,
+        "parcela_clima_brl": 9451468.14,
         "pct_climatico": 46.4
       },
       "saude": {
@@ -505,11 +505,11 @@
       }
     },
     "total": {
-      "risco_2025_brl": 229110901.47,
-      "risco_2050_brl": 480673869.48,
-      "aumento_total_brl": 251562968.01,
-      "parcela_crescimento_brl": 146769816.88,
-      "parcela_clima_brl": 104793151.13,
+      "risco_2025_brl": 228949642.69,
+      "risco_2050_brl": 480399817.72,
+      "aumento_total_brl": 251450175.03,
+      "parcela_crescimento_brl": 146666513.53,
+      "parcela_clima_brl": 104783661.5,
       "pct_climatico": 41.7
     }
   }

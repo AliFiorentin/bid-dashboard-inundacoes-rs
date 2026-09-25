@@ -21,7 +21,7 @@
     ],
     "cenarios": {
       "Cenario ADA": {
-        "pop_atingida": 29406,
+        "pop_atingida": 29404,
         "pct_atingida": 70.1
       }
     }
@@ -48,12 +48,12 @@
     ],
     "cenarios": {
       "Cenario 27m": {
-        "pop_atingida": 5124,
-        "pct_atingida": 5.1
+        "pop_atingida": 4931,
+        "pct_atingida": 4.9
       },
       "Cenario 30m": {
-        "pop_atingida": 7453,
-        "pct_atingida": 7.4
+        "pop_atingida": 6986,
+        "pct_atingida": 6.9
       }
     }
   },
@@ -79,8 +79,40 @@
     ],
     "cenarios": {
       "Cenario ADA": {
-        "pop_atingida": 379596,
-        "pct_atingida": 28.3
+        "pop_atingida": 148825,
+        "pct_atingida": 11.1
+      },
+      "Climada RP10": {
+        "pop_atingida": 36080,
+        "pct_atingida": 2.7
+      },
+      "Climada RP20": {
+        "pop_atingida": 55537,
+        "pct_atingida": 4.1
+      },
+      "Climada RP50": {
+        "pop_atingida": 87383,
+        "pct_atingida": 6.5
+      },
+      "Climada RP75": {
+        "pop_atingida": 103171,
+        "pct_atingida": 7.7
+      },
+      "Climada RP100": {
+        "pop_atingida": 111622,
+        "pct_atingida": 8.3
+      },
+      "Climada RP200": {
+        "pop_atingida": 137070,
+        "pct_atingida": 10.2
+      },
+      "Climada RP500": {
+        "pop_atingida": 164546,
+        "pct_atingida": 12.3
+      },
+      "Climada Evento 2024": {
+        "pop_atingida": 165400,
+        "pct_atingida": 12.3
       }
     }
   },
@@ -106,16 +138,16 @@
     ],
     "cenarios": {
       "Cenario Maio 2024": {
-        "pop_atingida": 23058,
+        "pop_atingida": 23012,
         "pct_atingida": 11.6
       },
       "Cenario Maio 2024 + 50%": {
-        "pop_atingida": 80124,
+        "pop_atingida": 80077,
         "pct_atingida": 40.4
       },
       "Cenario Setembro 2023": {
-        "pop_atingida": 7844,
-        "pct_atingida": 4.0
+        "pop_atingida": 7798,
+        "pct_atingida": 3.9
       }
     }
   }
