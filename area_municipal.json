@@ -1,0 +1,18 @@
+{
+ "Eldorado do Sul": {
+  "ibge7": 4306767,
+  "area_km2": 509.3
+ },
+ "Lajeado": {
+  "ibge7": 4311403,
+  "area_km2": 91.2
+ },
+ "Porto Alegre": {
+  "ibge7": 4314902,
+  "area_km2": 495.0
+ },
+ "Rio Grande": {
+  "ibge7": 4315602,
+  "area_km2": 2681.7
+ }
+}

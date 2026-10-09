@@ -310,6 +310,9 @@ def main():
 
     saude = pd.read_csv(DATA_BASES / "saude_estabelecimentos.csv", encoding="utf-8-sig", dtype={"co_cnes": str})
     saude = _add_dashboard_aliases_saude(saude)
+    from config import COORDENADAS_CORRIGIDAS  # excecoes pontuais de coordenada (ver config.py)
+    for cnes, (lat, lon) in COORDENADAS_CORRIGIDAS.get("saude", {}).items():
+        saude.loc[saude["co_cnes"] == cnes, ["latitude", "longitude"]] = [lat, lon]
     print(f"  Empresas: {len(empresas):,} | Escolas: {len(escolas):,} | Saude: {len(saude):,}")
 
     agricultura_csv = DATA_BASES / "agricultura.csv"

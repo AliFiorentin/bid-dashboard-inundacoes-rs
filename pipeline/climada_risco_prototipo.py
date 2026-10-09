@@ -167,7 +167,7 @@ REFINAMENTO -- valor de reposicao ponderado por porte:
               (CUB_industrial x 2,50 em vez de CUB_comercial x 2,00 se a empresa e'
               industrial -- ver item 1/4 e classificar_empresas_industria)
     Saude:    value_i = 9 m2/pessoa x porte_i x CUB_institucional x 2,25
-              (porte = leitos_total; qtd_profissionais se leitos = 0)
+              (porte = qtd_profissionais + leitos_total: pessoas que ocupam a unidade)
     Educacao: value_i = salas_i x 142,20 m2/sala x CUB_institucional x 1,50
               (salas_i = numero de salas de aula equivalentes, estimado a partir das
               matriculas por etapa e a lotacao maxima de cada uma -- ver item 3 acima)
@@ -257,6 +257,12 @@ achados novos marcados como "NOVO"):
      mais severa que a de 2024, isso pode subestimar o dano de pontos atingidos por
      laminas d'agua extremas em Empresas/Saude -- nao ha correcao possivel sem um dado
      de calibracao real do proprio exercicio CLIMADA para um evento mais severo.
+  11. Coordenadas repetidas na base oficial (RAIS/CNES/Censo geocodificados): muitos
+     estabelecimentos compartilham o MESMO ponto (endereco incompleto/centroide de
+     rua ou bairro). Porto Alegre: empresas 39.808 em 6.154 coordenadas (maior pilha:
+     1.474), saude 7.022 em 6.296 (448), educacao 938 em 811 (54). A base e' mantida
+     como reportada pelo governo, sem filtro; cada pilha recebe a profundidade de um
+     unico pixel e entra/sai da mancha por inteiro, o que gera degraus no dano.
 
 HISTORICO -- valores originais do CLIMADA (substituidos, mantidos aqui so como
 referencia de proveniencia): 375.275 USD/empresa e 2.500.000 USD/escola, rastreados
@@ -331,6 +337,7 @@ Uso:  python pipeline/climada_risco_prototipo.py [--rp RP100]
 """
 import argparse
 import json
+import shutil
 import sys
 from pathlib import Path
 
@@ -341,7 +348,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from config import DASH_DATA
 from common import load_geojson, cnae_to_setor
 
-HAZARD_DIR = Path(r"D:\Projetos\Climada\CLIMADA_starter_packs-main\starter_pack_brazil\data\hazard")
+HAZARD_DIR = Path(r"G:\Meu Drive\Projetos\Climada\climada-brazil-adaptation\data\hazard")  # mesmos rasters (resultado identico verificado em 2026-10-06); o caminho antigo em D: nao existe mais
 OUT_DIR = Path(__file__).resolve().parent.parent / "data" / "processed"
 
 # --- Custo de reposicao: referencias brasileiras reais (ver docstring, secao "VALOR DE
@@ -426,10 +433,7 @@ RP_ANOS = {"RP10": 10, "RP20": 20, "RP50": 50, "RP75": 75, "RP100": 100, "RP200"
 CRESCIMENTO_ANUAL = 0.02  # 2%/ano -- mesma taxa do exercicio CLIMADA original (report, decomposicao de risco)
 ANOS_PROJECAO = 25  # 2025 -> 2050
 FATOR_CRESCIMENTO_2050 = (1 + CRESCIMENTO_ANUAL) ** ANOS_PROJECAO
-CRESCIMENTO_FONTE = (
-    "report_brazil_adaptation_exercise_pt.tex (exercicio CLIMADA original): "
-    "\"mesma taxa de crescimento economico de 2% ao ano\" para os 3 ativos, 2025-2050"
-)
+CRESCIMENTO_FONTE = "Premissa de crescimento econômico de 2% ao ano para os 3 setores, 2025-2050 (estudo de risco de inundação de Porto Alegre, UNU-EHS)"
 
 # Remapeamento RP historico -> RP futuro (2050), do exercicio CLIMADA original:
 # D:\Projetos\Climada\climada-brazil-adaptation\data\hazard\porto_alegre_rp_mapping_2025_2050.csv
@@ -442,10 +446,7 @@ RP_REMAP_2050 = {
     "RP200": {"freq_hist": 0.005, "freq_2050": 0.010, "rp_futuro_equivalente": 100},
     "RP500": {"freq_hist": 0.002, "freq_2050": 0.005, "rp_futuro_equivalente": 200},
 }
-RP_REMAP_FONTE = (
-    "D:\\Projetos\\Climada\\climada-brazil-adaptation\\data\\hazard\\"
-    "porto_alegre_rp_mapping_2025_2050.csv (tabela oficial do exercicio CLIMADA)"
-)
+RP_REMAP_FONTE = "Tabela de remapeamento de períodos de retorno 2025-2050 do estudo de risco de inundação de Porto Alegre (UNU-EHS)"
 
 # Curvas cruas JRC South America (Huizinga et al. 2017), antes de qualquer
 # recalibracao -- Table 3-9 (commerce) e Table 3-13 (industry) do relatorio JRC105688.
@@ -501,7 +502,7 @@ CURVAS_MDD = {
         **_blend_and_scale(_JRC_SA_COMMERCE, _JRC_SA_INDUSTRY, POA_CALIBRATION_FACTOR),
         "porte_campo": "leitos_ou_profissionais",
         "fonte": "Sintetizada a partir das curvas JRC South America commerce e industry (Huizinga et al. 2017), reescalada pelo fator de Empresas",
-        "reposicao_fonte": f"{AREA_M2_POR_PESSOA:.0f} m2/leito-ou-profissional x R$ {CUB_INSTITUCIONAL_RS:,.2f}/m2 ({CUB_FONTE})",
+        "reposicao_fonte": f"{AREA_M2_POR_PESSOA:.0f} m2/pessoa (profissionais + leitos) x R$ {CUB_INSTITUCIONAL_RS:,.2f}/m2 ({CUB_FONTE})",
     },
 }
 
@@ -543,9 +544,13 @@ def porte_por_ponto(setor: str, gj: dict) -> np.ndarray:
     elif setor == "saude":
         vals = []
         for p in props_list:
+            # Porte = pessoas que ocupam a unidade: profissionais + leitos (pacientes internados).
+            # Antes era "leitos; profissionais so' se leitos = 0", o que descartava a equipe dos
+            # hospitais (em Porto Alegre, 57.388 profissionais em 42 hospitais com 8.238 leitos)
+            # e os deixava subvalorizados frente a clinicas sem leito (corrigido em 2026-10-06).
             leitos = float(p.get("leitos_total") or 0)
             profs = float(p.get("qtd_profissionais") or 0)
-            vals.append(leitos if leitos > 0 else profs)
+            vals.append(leitos + profs)
     else:
         vals = [0.0] * len(props_list)
 
@@ -588,14 +593,17 @@ def valor_por_ponto_reposicao(setor: str, porte: np.ndarray, is_industria: np.nd
     raise ValueError(f"setor desconhecido: {setor}")
 
 
-def calcular_dano_fisico(setor: str, gj: dict, tif_path: Path, valor_por_ponto: np.ndarray, is_industria: np.ndarray | None = None) -> tuple[dict, np.ndarray, np.ndarray]:
+def calcular_dano_fisico(setor: str, gj: dict, tif_path: Path | None, valor_por_ponto: np.ndarray, is_industria: np.ndarray | None = None, depths: np.ndarray | None = None) -> tuple[dict, np.ndarray, np.ndarray]:
     """valor_por_ponto: valor de reposicao ja calculado por porte (ver
     valor_por_ponto_reposicao) -- independe do RP/raster, entao o chamador o calcula
     fora do loop de RPs em vez de refazer a cada chamada. Para 'empresas', is_industria
     seleciona a curva MDD industrial nos pontos industriais (ver classificar_empresas_industria).
     Retorna (resumo agregado, profundidade por ponto, dano fisico por ponto) -- os dois
-    arrays servem para exportar o indice por ponto (mapa), sem reamostrar o raster."""
-    depths = sample_depth(gj, tif_path)
+    arrays servem para exportar o indice por ponto (mapa), sem reamostrar o raster.
+    depths: profundidade por ponto ja calculada (climada_rp_por_cota.py, que deriva o
+    "raster do RP" a partir de rasters por cota); se None, amostra tif_path."""
+    if depths is None:
+        depths = sample_depth(gj, tif_path)
 
     if setor == "empresas" and is_industria is not None and is_industria.any():
         curva_com = CURVAS_MDD["empresas"]
@@ -776,6 +784,38 @@ def calcular_projecao_2050(resultados_por_rp: dict, setores: list) -> dict | Non
     }
 
 
+def montar_premissas(is_industria_empresas: np.ndarray) -> dict:
+    """Premissas gravadas no JSON de saida (compartilhado com climada_rp_por_cota.py)."""
+    return {
+        "poa_calibration_factor": POA_CALIBRATION_FACTOR,
+        "cub_comercial_rs": CUB_COMERCIAL_RS,
+        "cub_institucional_rs": CUB_INSTITUCIONAL_RS,
+        "cub_industrial_rs": CUB_INDUSTRIAL_RS,
+        "cub_fonte": CUB_FONTE,
+        "cnae_industria_fonte": CNAE_INDUSTRIA_FONTE,
+        "n_empresas_industria": int(is_industria_empresas.sum()),
+        "n_empresas_total": int(len(is_industria_empresas)),
+        "area_m2_por_pessoa": AREA_M2_POR_PESSOA,
+        "area_m2_por_pessoa_fonte": AREA_M2_POR_PESSOA_FONTE,
+        "area_escola_padrao_m2": AREA_ESCOLA_PADRAO_M2,
+        "area_escola_padrao_fonte": AREA_ESCOLA_PADRAO_FONTE,
+        "area_por_sala_m2": round(AREA_POR_SALA_M2, 4),
+        "area_por_sala_fonte": AREA_POR_SALA_FONTE,
+        "turnos_padrao": TURNOS_PADRAO,
+        "lotacao_infantil": LOTACAO_INFANTIL,
+        "lotacao_fundamental": LOTACAO_FUNDAMENTAL,
+        "lotacao_medio": LOTACAO_MEDIO,
+        "lotacao_fonte": LOTACAO_FONTE,
+        "valor_escola_padrao_brl": VALOR_ESCOLA_PADRAO_BRL,
+        "conteudo_fonte": CONTEUDO_FONTE,
+        "multiplicador_empresas": MULTIPLICADOR_EMPRESAS,
+        "multiplicador_empresas_industria": MULTIPLICADOR_EMPRESAS_INDUSTRIA,
+        "multiplicador_saude": MULTIPLICADOR_SAUDE,
+        "multiplicador_educacao": MULTIPLICADOR_EDUCACAO,
+        "curvas": CURVAS_MDD,
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(description="Prototipo de dano fisico (CLIMADA) para Porto Alegre")
     parser.add_argument("--rp", choices=RPS, default=None, help="Rodar so um periodo de retorno (default: todos)")
@@ -870,39 +910,14 @@ def main():
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump({
-            "premissas": {
-                "poa_calibration_factor": POA_CALIBRATION_FACTOR,
-                "cub_comercial_rs": CUB_COMERCIAL_RS,
-                "cub_institucional_rs": CUB_INSTITUCIONAL_RS,
-                "cub_industrial_rs": CUB_INDUSTRIAL_RS,
-                "cub_fonte": CUB_FONTE,
-                "cnae_industria_fonte": CNAE_INDUSTRIA_FONTE,
-                "n_empresas_industria": int(is_industria_empresas.sum()),
-                "n_empresas_total": int(len(is_industria_empresas)),
-                "area_m2_por_pessoa": AREA_M2_POR_PESSOA,
-                "area_m2_por_pessoa_fonte": AREA_M2_POR_PESSOA_FONTE,
-                "area_escola_padrao_m2": AREA_ESCOLA_PADRAO_M2,
-                "area_escola_padrao_fonte": AREA_ESCOLA_PADRAO_FONTE,
-                "area_por_sala_m2": round(AREA_POR_SALA_M2, 4),
-                "area_por_sala_fonte": AREA_POR_SALA_FONTE,
-                "turnos_padrao": TURNOS_PADRAO,
-                "lotacao_infantil": LOTACAO_INFANTIL,
-                "lotacao_fundamental": LOTACAO_FUNDAMENTAL,
-                "lotacao_medio": LOTACAO_MEDIO,
-                "lotacao_fonte": LOTACAO_FONTE,
-                "valor_escola_padrao_brl": VALOR_ESCOLA_PADRAO_BRL,
-                "conteudo_fonte": CONTEUDO_FONTE,
-                "multiplicador_empresas": MULTIPLICADOR_EMPRESAS,
-                "multiplicador_empresas_industria": MULTIPLICADOR_EMPRESAS_INDUSTRIA,
-                "multiplicador_saude": MULTIPLICADOR_SAUDE,
-                "multiplicador_educacao": MULTIPLICADOR_EDUCACAO,
-                "curvas": CURVAS_MDD,
-            },
+            "premissas": montar_premissas(is_industria_empresas),
             "resultados_por_rp": resultados,
             "eai_anual_esperado": eai,
             "projecao_2050": projecao_2050,
         }, f, ensure_ascii=False, indent=2)
     print(f"\n  Salvo: {out_path}")
+    shutil.copyfile(out_path, DASH_DATA / out_path.name)  # a pagina /danos le este arquivo
+    print(f"  Copiado: {DASH_DATA / out_path.name}")
 
 
 if __name__ == "__main__":

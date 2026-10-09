@@ -1,9 +1,13 @@
 """
 03_saude.py -- Gera bases de saude: Estabelecimentos, Profissionais, SIA e SIH.
 
-Baixa dados do FTP DataSUS (CNES PF/ST, SIA PA, SIH RD) e cruza com
+Baixa dados do FTP DataSUS (CNES PF/ST/LT, SIA PA, SIH RD) e cruza com
 tbEstabelecimento do ZIP do CNES para endereco/lat/lon. Salva 4 tabelas
 linkadas por CO_CNES.
+
+leitos_total vem da tabela CNES LT (uma linha por CNES x tipo de leito,
+somada por QT_EXIST), nao da ST -- o campo LEITHOSP da ST e' uma flag de
+1 caractere ("tem leito? 0/1"), nao uma contagem real de leitos.
 """
 
 import argparse
@@ -16,8 +20,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import pandas as pd
-from pyreaddbc import dbc2dbf
 import dbfread
+
+from dbc_decode import dbc_to_dbf
 
 from config import (
     CNES_ZIP,
@@ -73,7 +78,7 @@ def _ensure_dbc(ftp_dir: str, filename: str) -> Path:
 
     dbf_path = dbc_path.with_suffix(".dbf")
     if not dbf_path.exists():
-        dbc2dbf(str(dbc_path), str(dbf_path))
+        dbc_to_dbf(dbc_path, dbf_path)
 
     return dbf_path
 
@@ -182,20 +187,41 @@ def main():
     print(f"  Estabelecimentos filtrados: {len(estab):,}")
     gc.collect()
 
-    # Cruzar com CNES ST do FTP para VINC_SUS e LEITHOSP
-    print("  Baixando CNES ST (leitos + vinc SUS)...")
+    # Cruzar com CNES ST do FTP para VINC_SUS
+    print("  Baixando CNES ST (vinc SUS)...")
     dbf_st = _ensure_dbc(f"{FTP_CNES}/ST/", "STRS2404.dbc")
     df_st = read_dbf_filtered(dbf_st, "CODUFMUN", ibge6_to_nome)
     df_st["CNES"] = df_st["CNES"].astype(str).str.strip()
-    st_agg = df_st[["CNES", "VINC_SUS", "LEITHOSP"]].copy()
-    st_agg["LEITHOSP"] = pd.to_numeric(st_agg["LEITHOSP"], errors="coerce").fillna(0).astype(int)
+    st_agg = df_st[["CNES", "VINC_SUS"]].copy()
     st_agg = st_agg.drop_duplicates(subset="CNES", keep="first")
 
     estab["CO_CNES"] = estab["CO_CNES"].astype(str).str.strip()
     estab = estab.merge(st_agg, left_on="CO_CNES", right_on="CNES", how="left")
     estab = estab.drop(columns=["CNES"], errors="ignore")
     estab["VINC_SUS"] = estab["VINC_SUS"].fillna("")
-    estab["LEITHOSP"] = estab["LEITHOSP"].fillna(0).astype(int)
+
+    # Cruzar com CNES LT (Leitos) do FTP para a contagem real de leitos por
+    # estabelecimento. NAO usar LEITHOSP da tabela ST para isso: apesar do
+    # nome sugestivo, e' um campo de 1 caractere (flag "tem leito? 0/1"),
+    # nao uma contagem -- usa-lo como "leitos_total" faz TODO estabelecimento
+    # com leito aparecer com o valor fixo 1, subestimando hospitais grandes.
+    # A LT tem uma linha por (CNES, tipo de leito), com QT_EXIST = quantidade
+    # de leitos existentes daquele tipo; somando por CNES chega-se ao total
+    # real de leitos instalados no estabelecimento.
+    print("  Baixando CNES LT (leitos reais por estabelecimento)...")
+    dbf_lt = _ensure_dbc(f"{FTP_CNES}/LT/", "LTRS2404.dbc")
+    df_lt = read_dbf_filtered(dbf_lt, "CODUFMUN", ibge6_to_nome)
+    if not df_lt.empty:
+        df_lt["CNES"] = df_lt["CNES"].astype(str).str.strip()
+        df_lt["QT_EXIST"] = pd.to_numeric(df_lt["QT_EXIST"], errors="coerce").fillna(0).astype(int)
+        leitos_agg = df_lt.groupby("CNES")["QT_EXIST"].sum().reset_index(name="LEITOS_REAIS")
+    else:
+        leitos_agg = pd.DataFrame(columns=["CNES", "LEITOS_REAIS"])
+
+    estab = estab.merge(leitos_agg, left_on="CO_CNES", right_on="CNES", how="left")
+    estab = estab.drop(columns=["CNES"], errors="ignore")
+    estab["LEITHOSP"] = estab["LEITOS_REAIS"].fillna(0).astype(int)
+    estab = estab.drop(columns=["LEITOS_REAIS"])
 
     estab["NU_LATITUDE"] = pd.to_numeric(estab["NU_LATITUDE"], errors="coerce")
     estab["NU_LONGITUDE"] = pd.to_numeric(estab["NU_LONGITUDE"], errors="coerce")

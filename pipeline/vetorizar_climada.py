@@ -91,7 +91,7 @@ def vectorize(tif_path: Path, threshold: float, out_shp: Path, close_radius: flo
 
     out_shp.parent.mkdir(parents=True, exist_ok=True)
     gdf.to_file(out_shp)
-    area_km2 = gdf.to_crs(31982).geometry.area.sum() / 1e6  # SIRGAS2000/UTM 22S
+    area_km2 = gdf.to_crs(32722).geometry.area.sum() / 1e6  # WGS84/UTM 22S -- mesma convencao de common.py
     print(f"  {out_shp.name}: {n_wet} px -> {len(gdf)} poligono(s), {area_km2:.2f} km2")
     return len(gdf)
 

@@ -1,0 +1,42 @@
+{
+ "Eldorado do Sul": {
+  "Produto Interno Bruto a preços correntes": {
+   "valor": "2623491",
+   "ano": "2023"
+  },
+  "Valor adicionado bruto a preços correntes da agropecuária": {
+   "valor": "...",
+   "ano": "2023"
+  }
+ },
+ "Lajeado": {
+  "Produto Interno Bruto a preços correntes": {
+   "valor": "6705227",
+   "ano": "2023"
+  },
+  "Valor adicionado bruto a preços correntes da agropecuária": {
+   "valor": "...",
+   "ano": "2023"
+  }
+ },
+ "Porto Alegre": {
+  "Produto Interno Bruto a preços correntes": {
+   "valor": "104743272",
+   "ano": "2023"
+  },
+  "Valor adicionado bruto a preços correntes da agropecuária": {
+   "valor": "...",
+   "ano": "2023"
+  }
+ },
+ "Rio Grande": {
+  "Produto Interno Bruto a preços correntes": {
+   "valor": "14106680",
+   "ano": "2023"
+  },
+  "Valor adicionado bruto a preços correntes da agropecuária": {
+   "valor": "...",
+   "ano": "2023"
+  }
+ }
+}
