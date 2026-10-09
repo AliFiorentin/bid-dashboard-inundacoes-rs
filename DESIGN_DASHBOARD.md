@@ -149,13 +149,13 @@ lib/
   utils.ts                          # cn() (clsx + tailwind-merge)
 
 public/
-  BID.png, GPEA.png, CIEX2.png, IPH.jpg     # Logos institucionais
+  BID.webp, GPEA.webp, CIEX2.webp, IPH.webp     # Logos institucionais
   dados_convertidos/
     populacao_atingida.json, area_atingida.json, mancha_rs_enchente_2024.geojson
     {slug_do_municipio}/
       empresas_BASE.geojson, educacao_BASE.geojson, saude_BASE.geojson
       agricultura_{ano}_BASE.geojson, agricultura_stats.json, agricultura_stats_BASE.json
-      limite_BASE.geojson, populacao.png
+      limite_BASE.geojson, populacao.webp
       infraestrutura/ , infraestrutura_stats.json
       cenarios/
         {setor}_ATINGIDOS_{cenario_slug}.geojson
@@ -937,7 +937,7 @@ Matemática do posicionamento (por que `bottom-[45px]` e não outro valor): o `N
     style={{ border: "2px solid rgba(0,0,0,0.1)" }}
   >
     <Image
-      src="/GPEA.png"
+      src="/GPEA.webp"
       alt="GPEa"
       width={124}
       height={41}

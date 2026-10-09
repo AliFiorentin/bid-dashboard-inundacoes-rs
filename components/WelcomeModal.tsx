@@ -38,16 +38,16 @@ export function WelcomeModal() {
                 igualar a altura deixava essas duas menores visualmente.
                 `fill` + object-contain evita cortar a CIEX. */}
             <div className="relative bg-white rounded-md h-8 w-14 p-1">
-              <Image src="/BID.png"   alt="BID"  fill className="object-contain p-0.5" onError={(e) => (e.currentTarget.style.display = "none")} />
+              <Image src="/BID.webp"   alt="BID"  fill className="object-contain p-0.5" onError={(e) => (e.currentTarget.style.display = "none")} />
             </div>
             <div className="relative bg-white rounded-md h-8 w-14 p-1">
-              <Image src="/GPEA.png"  alt="GPEA" fill className="object-contain p-0.5" onError={(e) => (e.currentTarget.style.display = "none")} />
+              <Image src="/GPEA.webp"  alt="GPEA" fill className="object-contain p-0.5" onError={(e) => (e.currentTarget.style.display = "none")} />
             </div>
             <div className="relative bg-white rounded-md h-8 w-14 p-1">
-              <Image src="/CIEX2.png" alt="CIEX" fill className="object-contain p-0.5" onError={(e) => (e.currentTarget.style.display = "none")} />
+              <Image src="/CIEX2.webp" alt="CIEX" fill className="object-contain p-0.5" onError={(e) => (e.currentTarget.style.display = "none")} />
             </div>
             <div className="relative bg-white rounded-md h-8 w-14 p-1">
-              <Image src="/IPH.jpg" alt="IPH" fill className="object-contain p-0.5 rounded-sm" onError={(e) => (e.currentTarget.style.display = "none")} />
+              <Image src="/IPH.webp" alt="IPH" fill className="object-contain p-0.5 rounded-sm" onError={(e) => (e.currentTarget.style.display = "none")} />
             </div>
           </div>
           <h2 className="text-xl font-black text-white leading-tight tracking-tight">
