@@ -7,7 +7,7 @@ Todos os caminhos, codigos IBGE, cenarios e constantes em um unico lugar.
 from pathlib import Path
 
 # --- Diretorios raiz ---
-BASE = Path("D:/Projetos/BID")
+BASE = Path(__file__).resolve().parent.parent
 DATA_RAW = BASE / "data" / "raw"
 DATA_INTERIM = BASE / "data" / "interim"
 DATA_PROCESSED = BASE / "data" / "processed"
@@ -322,3 +322,12 @@ DIAS_LETIVOS = 200
 # Bounding box RS
 LAT_MIN, LAT_MAX = -34.0, -27.0
 LON_MIN, LON_MAX = -58.0, -49.0
+
+# Correcoes pontuais de coordenada (excecao a regra de manter a base como reportada), aplicadas
+# em 06_geojson.py. {setor: {id: (lat, lon)}}.
+# Saude 2252287 = Hospital Bruno Born (Lajeado): a geocodificacao caiu na coordenada generica do
+# centro (-29.467, -51.961), dentro das manchas; o endereco real (Av. Benjamin Constant, 881) fica
+# fora. Coordenada do OpenStreetMap/Nominatim, coerente com o outro CNES do mesmo endereco (9932879).
+COORDENADAS_CORRIGIDAS = {
+    "saude": {"2252287": (-29.4629282, -51.9662650)},
+}

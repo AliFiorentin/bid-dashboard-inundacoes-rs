@@ -1,0 +1,46 @@
+{
+ "Eldorado do Sul": {
+  "PIB": 2623491.0,
+  "ano_pib": "2023",
+  "VAB_agro": null,
+  "VAB_industria": null,
+  "VAB_servicos": null,
+  "VAB_adm_publica": null,
+  "pop_censo2022": 39559.0,
+  "ano_pop": "2022",
+  "pib_per_capita": 66318.43575418994
+ },
+ "Lajeado": {
+  "PIB": 6705227.0,
+  "ano_pib": "2023",
+  "VAB_agro": null,
+  "VAB_industria": null,
+  "VAB_servicos": null,
+  "VAB_adm_publica": null,
+  "pop_censo2022": 93646.0,
+  "ano_pop": "2022",
+  "pib_per_capita": 71601.85165410161
+ },
+ "Porto Alegre": {
+  "PIB": 104743272.0,
+  "ano_pib": "2023",
+  "VAB_agro": null,
+  "VAB_industria": null,
+  "VAB_servicos": null,
+  "VAB_adm_publica": null,
+  "pop_censo2022": 1332845.0,
+  "ano_pop": "2022",
+  "pib_per_capita": 78586.23620901155
+ },
+ "Rio Grande": {
+  "PIB": 14106680.0,
+  "ano_pib": "2023",
+  "VAB_agro": null,
+  "VAB_industria": null,
+  "VAB_servicos": null,
+  "VAB_adm_publica": null,
+  "pop_censo2022": 191900.0,
+  "ano_pop": "2022",
+  "pib_per_capita": 73510.57842626367
+ }
+}

@@ -1,0 +1,450 @@
+{
+ "Eldorado do Sul": {
+  "slug": "eldorado_do_sul",
+  "populacao": 41958,
+  "empresas": {
+   "estab": 524,
+   "empregados": 17506,
+   "massa": 90655280.57000001,
+   "salario_medio": 5178.526252142123,
+   "por_setor": {
+    "COMERCIO; REPARACAO DE VEICULOS": 167,
+    "INDUSTRIAS DE TRANSFORMACAO": 62,
+    "ALOJAMENTO E ALIMENTACAO": 43,
+    "AGRICULTURA, PECUARIA, PRODUCAO FLORESTAL, PESCA E AQUICULTURA": 42,
+    "CONSTRUCAO": 39,
+    "ATIVIDADES ADMINISTRATIVAS E SERVICOS COMPLEMENTARES": 35,
+    "TRANSPORTE, ARMAZENAGEM E CORREIO": 31,
+    "EDUCACAO": 19,
+    "ATIVIDADES PROFISSIONAIS, CIENTIFICAS E TECNICAS": 18,
+    "SAUDE HUMANA E SERVICOS SOCIAIS": 15,
+    "OUTRAS ATIVIDADES DE SERVICOS": 11,
+    "ATIVIDADES IMOBILIARIAS": 9,
+    "ATIVIDADES FINANCEIRAS E SEGUROS": 9,
+    "ARTES, CULTURA, ESPORTE E RECREACAO": 9,
+    "INFORMACAO E COMUNICACAO": 7,
+    "AGUA, ESGOTO, GESTAO DE RESIDUOS E DESCONTAMINACAO": 5,
+    "ADMINISTRACAO PUBLICA, DEFESA E SEGURIDADE SOCIAL": 2,
+    "INDUSTRIAS EXTRATIVAS": 1
+   }
+  },
+  "educacao": {
+   "escolas": 35,
+   "professores": 432,
+   "docentes": 453,
+   "mat_infantil": 1885,
+   "mat_fundamental": 5046,
+   "mat_medio": 1056,
+   "mat_profissional": 0,
+   "mat_eja": 309,
+   "mat_especial": 439,
+   "mat_total": 8735,
+   "por_dependencia": {
+    "Municipal": 18,
+    "Privada": 11,
+    "Estadual": 6
+   }
+  },
+  "saude": {
+   "unidades": 45,
+   "leitos": 0,
+   "profissionais": 599,
+   "por_tipo": {
+    "Ambulatório": 21,
+    "Farmacia": 8,
+    "Unidade Básica de Saúde": 7,
+    "Unidade de Apoio Diagnostico": 3,
+    "Outros": 2,
+    "Pronto Atendimento": 1,
+    "Central de Gestao em Saude": 1,
+    "Unidade de Atencao Domiciliar": 1,
+    "Central de Abastecimento": 1
+   },
+   "staff": {
+    "staff_medicos": 202,
+    "staff_enfermagem": 211,
+    "staff_odontologia": 31,
+    "staff_farmacia": 13,
+    "staff_diag_lab_imagem": 0,
+    "staff_acs_endemias": 36,
+    "staff_admin_gestao_apoio": 52,
+    "staff_servicos_gerais": 3,
+    "staff_transporte_urgencia": 4,
+    "staff_outros_superior_saude": 24,
+    "staff_outros": 23
+   },
+   "staff_total": 599
+  },
+  "agricultura": {
+   "Soja": 2857.4,
+   "Arroz": 11362.4,
+   "Outras Lavouras Temporárias": 1181.2
+  },
+  "infraestrutura": {
+   "edificacoes": {
+    "feicoes": 142554
+   }
+  }
+ },
+ "Lajeado": {
+  "slug": "lajeado",
+  "populacao": 100717,
+  "empresas": {
+   "estab": 3443,
+   "empregados": 37768,
+   "massa": 115966006.36999993,
+   "salario_medio": 3070.483117189153,
+   "por_setor": {
+    "COMERCIO; REPARACAO DE VEICULOS": 1220,
+    "INDUSTRIAS DE TRANSFORMACAO": 442,
+    "ATIVIDADES ADMINISTRATIVAS E SERVICOS COMPLEMENTARES": 275,
+    "CONSTRUCAO": 264,
+    "SAUDE HUMANA E SERVICOS SOCIAIS": 232,
+    "ATIVIDADES PROFISSIONAIS, CIENTIFICAS E TECNICAS": 209,
+    "ALOJAMENTO E ALIMENTACAO": 205,
+    "TRANSPORTE, ARMAZENAGEM E CORREIO": 176,
+    "OUTRAS ATIVIDADES DE SERVICOS": 125,
+    "EDUCACAO": 65,
+    "INFORMACAO E COMUNICACAO": 60,
+    "ATIVIDADES FINANCEIRAS E SEGUROS": 58,
+    "ATIVIDADES IMOBILIARIAS": 44,
+    "ARTES, CULTURA, ESPORTE E RECREACAO": 33,
+    "AGRICULTURA, PECUARIA, PRODUCAO FLORESTAL, PESCA E AQUICULTURA": 17,
+    "AGUA, ESGOTO, GESTAO DE RESIDUOS E DESCONTAMINACAO": 11,
+    "INDUSTRIAS EXTRATIVAS": 3,
+    "ADMINISTRACAO PUBLICA, DEFESA E SEGURIDADE SOCIAL": 2,
+    "SERVICOS DOMESTICOS": 1,
+    "ELETRICIDADE E GAS": 1
+   }
+  },
+  "educacao": {
+   "escolas": 74,
+   "professores": 910,
+   "docentes": 1471,
+   "mat_infantil": 5670,
+   "mat_fundamental": 10646,
+   "mat_medio": 2753,
+   "mat_profissional": 1682,
+   "mat_eja": 282,
+   "mat_especial": 905,
+   "mat_total": 21938,
+   "por_dependencia": {
+    "Privada": 19,
+    "Federal": 1,
+    "Estadual": 14,
+    "Municipal": 40
+   }
+  },
+  "saude": {
+   "unidades": 587,
+   "leitos": 1,
+   "profissionais": 4656,
+   "por_tipo": {
+    "Ambulatório": 443,
+    "Unidade de Apoio Diagnostico": 35,
+    "Unidade Básica de Saúde": 22,
+    "Farmacia": 16,
+    "Unidade de Reabilitacao": 16,
+    "Casas de Apoio a Saude": 11,
+    "Outros": 10,
+    "Unidade de Atencao Psicossocial": 7,
+    "Laboratorio de Protese Dentaria": 6,
+    "Pronto Atendimento": 4,
+    "Unidade de Terapias Especiais": 3,
+    "Polo de Prevencao de Doencas e Agravos e Promocao da Saude": 3,
+    "Unidade de Atencao Hematologica": 2,
+    "Central de Gestao em Saude": 2,
+    "Centro de Imunizacao": 2,
+    "Central de Transplante": 1,
+    "Hospital": 1,
+    "Centro de Referencia em Saude do Trabalhador": 1,
+    "Central de Regulacao": 1,
+    "Laboratorio de Saude Publica": 1
+   },
+   "staff": {
+    "staff_medicos": 1599,
+    "staff_enfermagem": 1117,
+    "staff_odontologia": 214,
+    "staff_farmacia": 105,
+    "staff_diag_lab_imagem": 0,
+    "staff_acs_endemias": 92,
+    "staff_admin_gestao_apoio": 469,
+    "staff_servicos_gerais": 309,
+    "staff_transporte_urgencia": 0,
+    "staff_outros_superior_saude": 226,
+    "staff_outros": 525
+   },
+   "staff_total": 4656
+  },
+  "agricultura": {
+   "Soja": 1241.8,
+   "Outras Lavouras Temporárias": 654.6
+  },
+  "infraestrutura": {
+   "edificacoes": {
+    "feicoes": 84925
+   },
+   "iluminacao_publica": {
+    "feicoes": 15660
+   },
+   "logradouros": {
+    "feicoes": 1439
+   },
+   "lotes": {
+    "feicoes": 38299
+   },
+   "quadras": {
+    "feicoes": 2388
+   }
+  }
+ },
+ "Porto Alegre": {
+  "slug": "porto_alegre",
+  "populacao": 1342008,
+  "empresas": {
+   "estab": 39808,
+   "empregados": 680847,
+   "massa": 3334930292.3200016,
+   "salario_medio": 4898.208103024617,
+   "por_setor": {
+    "COMERCIO; REPARACAO DE VEICULOS": 11474,
+    "ATIVIDADES ADMINISTRATIVAS E SERVICOS COMPLEMENTARES": 7104,
+    "SAUDE HUMANA E SERVICOS SOCIAIS": 3451,
+    "ALOJAMENTO E ALIMENTACAO": 3370,
+    "ATIVIDADES PROFISSIONAIS, CIENTIFICAS E TECNICAS": 2674,
+    "OUTRAS ATIVIDADES DE SERVICOS": 2071,
+    "CONSTRUCAO": 1819,
+    "INDUSTRIAS DE TRANSFORMACAO": 1781,
+    "TRANSPORTE, ARMAZENAGEM E CORREIO": 1424,
+    "EDUCACAO": 1191,
+    "ATIVIDADES FINANCEIRAS E SEGUROS": 1028,
+    "INFORMACAO E COMUNICACAO": 1001,
+    "ARTES, CULTURA, ESPORTE E RECREACAO": 538,
+    "ATIVIDADES IMOBILIARIAS": 533,
+    "AGRICULTURA, PECUARIA, PRODUCAO FLORESTAL, PESCA E AQUICULTURA": 176,
+    "ADMINISTRACAO PUBLICA, DEFESA E SEGURIDADE SOCIAL": 71,
+    "AGUA, ESGOTO, GESTAO DE RESIDUOS E DESCONTAMINACAO": 55,
+    "ELETRICIDADE E GAS": 21,
+    "INDUSTRIAS EXTRATIVAS": 13,
+    "ORGANISMOS INTERNACIONAIS": 9,
+    "SERVICOS DOMESTICOS": 4
+   }
+  },
+  "educacao": {
+   "escolas": 938,
+   "professores": 13251,
+   "docentes": 16151,
+   "mat_infantil": 42668,
+   "mat_fundamental": 140347,
+   "mat_medio": 38012,
+   "mat_profissional": 58536,
+   "mat_eja": 15395,
+   "mat_especial": 15365,
+   "mat_total": 310323,
+   "por_dependencia": {
+    "Privada": 607,
+    "Estadual": 229,
+    "Federal": 4,
+    "Municipal": 98
+   }
+  },
+  "saude": {
+   "unidades": 7022,
+   "leitos": 31,
+   "profissionais": 86518,
+   "por_tipo": {
+    "Ambulatório": 6063,
+    "Farmacia": 324,
+    "Unidade de Apoio Diagnostico": 264,
+    "Unidade Básica de Saúde": 151,
+    "Outros": 38,
+    "Hospital": 34,
+    "Central de Regulacao": 25,
+    "Pronto Atendimento": 24,
+    "Unidade de Atencao Domiciliar": 22,
+    "Unidade de Atencao Psicossocial": 21,
+    "Central de Gestao em Saude": 14,
+    "Unidade de Atencao Hematologica": 6,
+    "Unidade de Reabilitacao": 6,
+    "Laboratorio de Protese Dentaria": 5,
+    "Central de Transplante": 4,
+    "Casas de Apoio a Saude": 4,
+    "Centro de Imunizacao": 4,
+    "Unidade de Terapias Especiais": 3,
+    "Nucleo de Telessaude": 3,
+    "Laboratorio de Saude Publica": 2,
+    "Polo de Prevencao de Doencas e Agravos e Promocao da Saude": 2,
+    "Central de Abastecimento": 1,
+    "Centro de Referencia em Saude do Trabalhador": 1,
+    "Servico de Verificacao de Obito": 1
+   },
+   "staff": {
+    "staff_medicos": 29060,
+    "staff_enfermagem": 26295,
+    "staff_odontologia": 3203,
+    "staff_farmacia": 2014,
+    "staff_diag_lab_imagem": 0,
+    "staff_acs_endemias": 671,
+    "staff_admin_gestao_apoio": 8439,
+    "staff_servicos_gerais": 6087,
+    "staff_transporte_urgencia": 35,
+    "staff_outros_superior_saude": 3263,
+    "staff_outros": 7451
+   },
+   "staff_total": 86518
+  },
+  "agricultura": {
+   "Soja": 228.8,
+   "Arroz": 192.5,
+   "Outras Lavouras Temporárias": 272.9
+  },
+  "infraestrutura": {
+   "bocas_de_lobo": {
+    "feicoes": 44332
+   },
+   "edificacoes": {
+    "feicoes": 494590
+   },
+   "eixos_logradouros": {
+    "feicoes": 32726
+   },
+   "gas": {
+    "feicoes": 27197
+   },
+   "hidrantes": {
+    "feicoes": 1618
+   },
+   "lotes": {
+    "feicoes": 266256
+   },
+   "onibus": {
+    "feicoes": 1232
+   },
+   "paradas": {
+    "feicoes": 5892
+   },
+   "poste": {
+    "feicoes": 120388
+   },
+   "quarteiroes": {
+    "feicoes": 7967
+   },
+   "rede_esgoto": {
+    "feicoes": 59325
+   },
+   "terminais": {
+    "feicoes": 111
+   }
+  }
+ },
+ "Rio Grande": {
+  "slug": "rio_grande",
+  "populacao": 198418,
+  "empresas": {
+   "estab": 3220,
+   "empregados": 43568,
+   "massa": 174496687.86999992,
+   "salario_medio": 4005.157176597501,
+   "por_setor": {
+    "COMERCIO; REPARACAO DE VEICULOS": 1188,
+    "ALOJAMENTO E ALIMENTACAO": 285,
+    "TRANSPORTE, ARMAZENAGEM E CORREIO": 278,
+    "SAUDE HUMANA E SERVICOS SOCIAIS": 231,
+    "ATIVIDADES ADMINISTRATIVAS E SERVICOS COMPLEMENTARES": 223,
+    "INDUSTRIAS DE TRANSFORMACAO": 177,
+    "AGRICULTURA, PECUARIA, PRODUCAO FLORESTAL, PESCA E AQUICULTURA": 169,
+    "ATIVIDADES PROFISSIONAIS, CIENTIFICAS E TECNICAS": 141,
+    "CONSTRUCAO": 128,
+    "OUTRAS ATIVIDADES DE SERVICOS": 118,
+    "EDUCACAO": 97,
+    "ARTES, CULTURA, ESPORTE E RECREACAO": 50,
+    "ATIVIDADES IMOBILIARIAS": 42,
+    "ATIVIDADES FINANCEIRAS E SEGUROS": 35,
+    "INFORMACAO E COMUNICACAO": 34,
+    "AGUA, ESGOTO, GESTAO DE RESIDUOS E DESCONTAMINACAO": 10,
+    "ADMINISTRACAO PUBLICA, DEFESA E SEGURIDADE SOCIAL": 6,
+    "INDUSTRIAS EXTRATIVAS": 5,
+    "ELETRICIDADE E GAS": 3
+   }
+  },
+  "educacao": {
+   "escolas": 140,
+   "professores": 1762,
+   "docentes": 2637,
+   "mat_infantil": 6359,
+   "mat_fundamental": 21583,
+   "mat_medio": 5941,
+   "mat_profissional": 2660,
+   "mat_eja": 1635,
+   "mat_especial": 4625,
+   "mat_total": 42803,
+   "por_dependencia": {
+    "Municipal": 71,
+    "Estadual": 30,
+    "Privada": 38,
+    "Federal": 1
+   }
+  },
+  "saude": {
+   "unidades": 462,
+   "leitos": 4,
+   "profissionais": 6669,
+   "por_tipo": {
+    "Ambulatório": 334,
+    "Farmacia": 41,
+    "Unidade Básica de Saúde": 36,
+    "Unidade de Apoio Diagnostico": 25,
+    "Pronto Atendimento": 6,
+    "Hospital": 4,
+    "Laboratorio de Saude Publica": 4,
+    "Unidade de Terapias Especiais": 4,
+    "Unidade de Reabilitacao": 3,
+    "Unidade de Vigilancia de Zoonoses": 2,
+    "Central de Gestao em Saude": 2,
+    "Centro de Imunizacao": 1
+   },
+   "staff": {
+    "staff_medicos": 1592,
+    "staff_enfermagem": 2094,
+    "staff_odontologia": 164,
+    "staff_farmacia": 184,
+    "staff_diag_lab_imagem": 0,
+    "staff_acs_endemias": 267,
+    "staff_admin_gestao_apoio": 640,
+    "staff_servicos_gerais": 585,
+    "staff_transporte_urgencia": 58,
+    "staff_outros_superior_saude": 244,
+    "staff_outros": 841
+   },
+   "staff_total": 6669
+  },
+  "agricultura": {
+   "Soja": 10248.6,
+   "Arroz": 17399.2,
+   "Outras Lavouras Temporárias": 10958.1
+  },
+  "infraestrutura": {
+   "edificacoes": {
+    "feicoes": 220655
+   },
+   "imoveis": {
+    "feicoes": 90961
+   },
+   "logradouros": {
+    "feicoes": 8184
+   },
+   "predios_publicos": {
+    "feicoes": 14
+   },
+   "quadras": {
+    "feicoes": 3203
+   },
+   "seguranca": {
+    "feicoes": 18
+   },
+   "terrenos": {
+    "feicoes": 71019
+   }
+  }
+ }
+}

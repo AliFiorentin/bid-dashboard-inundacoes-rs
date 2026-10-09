@@ -1,0 +1,279 @@
+{
+ "Eldorado do Sul": {
+  "cenario": "eldorado_do_sul___cenario_ada",
+  "populacao": 29406,
+  "empresas": {
+   "estab": 498,
+   "empregados": 17372,
+   "massa": 90346617.93,
+   "salario_medio": 5200.703311650933
+  },
+  "educacao": {
+   "escolas": 35,
+   "docentes": 453,
+   "professores": 432,
+   "mat_infantil": 1885,
+   "mat_fundamental": 5046,
+   "mat_medio": 1056,
+   "mat_profissional": 0,
+   "mat_eja": 309,
+   "mat_especial": 439,
+   "mat_total": 8735,
+   "por_dependencia": {
+    "Municipal": 18,
+    "Privada": 11,
+    "Estadual": 6
+   }
+  },
+  "saude": {
+   "unidades": 40,
+   "profissionais": 533,
+   "por_tipo": {
+    "Farmacia": 7,
+    "Ambulatório": 19,
+    "Unidade de Apoio Diagnostico": 3,
+    "Unidade Básica de Saúde": 5,
+    "Outros": 2,
+    "Pronto Atendimento": 1,
+    "Central de Gestao em Saude": 1,
+    "Unidade de Atencao Domiciliar": 1,
+    "Central de Abastecimento": 1
+   }
+  },
+  "agricultura": {
+   "Outras Lavouras Temporárias": 361.3,
+   "Arroz": 7729,
+   "Soja": 80.4
+  },
+  "infraestrutura": {
+   "edificacoes": {
+    "feicoes": 22557
+   }
+  }
+ },
+ "Lajeado": {
+  "cenario": "lajeado___cenario_27m",
+  "populacao": 5124,
+  "empresas": {
+   "estab": 153,
+   "empregados": 1318,
+   "massa": 3940973.5800000005,
+   "salario_medio": 2990.1165250379368
+  },
+  "educacao": {
+   "escolas": 1,
+   "docentes": 76,
+   "professores": 63,
+   "mat_infantil": 318,
+   "mat_fundamental": 844,
+   "mat_medio": 133,
+   "mat_profissional": 0,
+   "mat_eja": 0,
+   "mat_especial": 57,
+   "mat_total": 1352,
+   "por_dependencia": {
+    "Privada": 1
+   }
+  },
+  "saude": {
+   "unidades": 133,
+   "profissionais": 2181,
+   "por_tipo": {
+    "Ambulatório": 111,
+    "Farmacia": 1,
+    "Unidade de Apoio Diagnostico": 9,
+    "Laboratorio de Protese Dentaria": 1,
+    "Unidade Básica de Saúde": 1,
+    "Hospital": 1,
+    "Outros": 3,
+    "Casas de Apoio a Saude": 2,
+    "Unidade de Terapias Especiais": 1,
+    "Unidade de Reabilitacao": 3
+   }
+  },
+  "agricultura": {
+   "Soja": 272.3,
+   "Outras Lavouras Temporárias": 64.6
+  },
+  "infraestrutura": {
+   "edificacoes": {
+    "feicoes": 2571
+   },
+   "iluminacao_publica": {
+    "feicoes": 616
+   },
+   "logradouros": {
+    "feicoes": 312
+   },
+   "lotes": {
+    "feicoes": 1596
+   },
+   "quadras": {
+    "feicoes": 271
+   }
+  }
+ },
+ "Porto Alegre": {
+  "cenario": "porto_alegre___cenario_ada",
+  "populacao": 379596,
+  "empresas": {
+   "estab": 8692,
+   "empregados": 206894,
+   "massa": 1236142908.3999987,
+   "salario_medio": 5974.764412694417
+  },
+  "educacao": {
+   "escolas": 126,
+   "docentes": 2012,
+   "professores": 1713,
+   "mat_infantil": 6010,
+   "mat_fundamental": 14628,
+   "mat_medio": 4747,
+   "mat_profissional": 4298,
+   "mat_eja": 2029,
+   "mat_especial": 1530,
+   "mat_total": 33242,
+   "por_dependencia": {
+    "Privada": 81,
+    "Municipal": 14,
+    "Estadual": 30,
+    "Federal": 1
+   }
+  },
+  "saude": {
+   "unidades": 852,
+   "profissionais": 10109,
+   "por_tipo": {
+    "Ambulatório": 715,
+    "Laboratorio de Saude Publica": 1,
+    "Laboratorio de Protese Dentaria": 2,
+    "Farmacia": 37,
+    "Unidade de Apoio Diagnostico": 51,
+    "Unidade de Atencao Hematologica": 1,
+    "Casas de Apoio a Saude": 1,
+    "Outros": 8,
+    "Unidade de Atencao Psicossocial": 4,
+    "Unidade Básica de Saúde": 18,
+    "Central de Abastecimento": 1,
+    "Unidade de Atencao Domiciliar": 6,
+    "Central de Gestao em Saude": 2,
+    "Centro de Imunizacao": 1,
+    "Hospital": 2,
+    "Unidade de Reabilitacao": 1,
+    "Pronto Atendimento": 1
+   }
+  },
+  "agricultura": {
+   "Outras Lavouras Temporárias": 166.4,
+   "Arroz": 168,
+   "Soja": 35.5
+  },
+  "infraestrutura": {
+   "bocas_de_lobo": {
+    "feicoes": 6706
+   },
+   "edificacoes": {
+    "feicoes": 32005
+   },
+   "eixos_logradouros": {
+    "feicoes": 4913
+   },
+   "gas": {
+    "feicoes": 2967
+   },
+   "hidrantes": {
+    "feicoes": 271
+   },
+   "lotes": {
+    "feicoes": 30305
+   },
+   "onibus": {
+    "feicoes": 888
+   },
+   "paradas": {
+    "feicoes": 842
+   },
+   "poste": {
+    "feicoes": 19292
+   },
+   "quarteiroes": {
+    "feicoes": 1447
+   },
+   "rede_esgoto": {
+    "feicoes": 7856
+   },
+   "terminais": {
+    "feicoes": 25
+   }
+  }
+ },
+ "Rio Grande": {
+  "cenario": "rio_grande___cenario_maio_2024",
+  "populacao": 23058,
+  "empresas": {
+   "estab": 601,
+   "empregados": 5833,
+   "massa": 16879570.490000002,
+   "salario_medio": 2893.8060157723303
+  },
+  "educacao": {
+   "escolas": 18,
+   "docentes": 420,
+   "professores": 315,
+   "mat_infantil": 754,
+   "mat_fundamental": 2887,
+   "mat_medio": 1719,
+   "mat_profissional": 1067,
+   "mat_eja": 291,
+   "mat_especial": 485,
+   "mat_total": 7203,
+   "por_dependencia": {
+    "Municipal": 5,
+    "Privada": 9,
+    "Estadual": 4
+   }
+  },
+  "saude": {
+   "unidades": 66,
+   "profissionais": 1114,
+   "por_tipo": {
+    "Farmacia": 8,
+    "Ambulatório": 44,
+    "Unidade Básica de Saúde": 1,
+    "Unidade de Apoio Diagnostico": 6,
+    "Laboratorio de Saude Publica": 1,
+    "Hospital": 2,
+    "Unidade de Terapias Especiais": 2,
+    "Central de Gestao em Saude": 1,
+    "Unidade de Vigilancia de Zoonoses": 1
+   }
+  },
+  "agricultura": {
+   "Arroz": 0,
+   "Outras Lavouras Temporárias": 0.1
+  },
+  "infraestrutura": {
+   "edificacoes": {
+    "feicoes": 19897
+   },
+   "imoveis": {
+    "feicoes": 5642
+   },
+   "logradouros": {
+    "feicoes": 1125
+   },
+   "predios_publicos": {
+    "feicoes": 10
+   },
+   "quadras": {
+    "feicoes": 429
+   },
+   "seguranca": {
+    "feicoes": 3
+   },
+   "terrenos": {
+    "feicoes": 8667
+   }
+  }
+ }
+}

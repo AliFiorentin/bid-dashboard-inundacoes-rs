@@ -8,3 +8,5 @@ __pycache__/
 *.pyc
 *.pyo
 .env
+data/raw/*.tif
+.claude/settings.local.json

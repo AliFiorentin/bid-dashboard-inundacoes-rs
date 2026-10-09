@@ -1,0 +1,110 @@
+{
+ "Eldorado do Sul": {
+  "edificacoes": {
+   "base": 38729,
+   "atingido": 22552
+  }
+ },
+ "Lajeado": {
+  "edificacoes": {
+   "base": 53688,
+   "atingido": 2434
+  },
+  "iluminacao_publica": {
+   "base": 15604,
+   "atingido": 616
+  },
+  "logradouros": {
+   "base": 1438,
+   "atingido": 312
+  },
+  "lotes": {
+   "base": 38299,
+   "atingido": 1595
+  },
+  "quadras": {
+   "base": 2388,
+   "atingido": 270
+  }
+ },
+ "Porto Alegre": {
+  "bocas_de_lobo": {
+   "base": 44250,
+   "atingido": 6706
+  },
+  "edificacoes": {
+   "base": 269361,
+   "atingido": 31969
+  },
+  "eixos_logradouros": {
+   "base": 32650,
+   "atingido": 4903
+  },
+  "gas": {
+   "base": 19565,
+   "atingido": 2966
+  },
+  "hidrantes": {
+   "base": 1613,
+   "atingido": 271
+  },
+  "lotes": {
+   "base": 253658,
+   "atingido": 30271
+  },
+  "onibus": {
+   "base": 1224,
+   "atingido": 888
+  },
+  "paradas": {
+   "base": 5814,
+   "atingido": 842
+  },
+  "poste": {
+   "base": 115124,
+   "atingido": 19282
+  },
+  "quarteiroes": {
+   "base": 7923,
+   "atingido": 1444
+  },
+  "rede_esgoto": {
+   "base": 59228,
+   "atingido": 7854
+  },
+  "terminais": {
+   "base": 110,
+   "atingido": 25
+  }
+ },
+ "Rio Grande": {
+  "edificacoes": {
+   "base": 179874,
+   "atingido": 19300
+  },
+  "imoveis": {
+   "base": 81834,
+   "atingido": 5617
+  },
+  "logradouros": {
+   "base": 8168,
+   "atingido": 1109
+  },
+  "predios_publicos": {
+   "base": 14,
+   "atingido": 10
+  },
+  "quadras": {
+   "base": 3201,
+   "atingido": 428
+  },
+  "seguranca": {
+   "base": 18,
+   "atingido": 3
+  },
+  "terrenos": {
+   "base": 70868,
+   "atingido": 8524
+  }
+ }
+}
