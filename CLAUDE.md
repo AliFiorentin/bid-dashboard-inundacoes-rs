@@ -63,7 +63,7 @@ These paths are hardcoded in `config.py` and must exist locally:
 - **Operational damage**: VAB loss (firms, via labor share inversion), FUNDEB reposition cost (education), SUS production loss (health)
 - **CBO classification**: health professionals are bucketed into 11 `staff_*` categories by 4-digit CBO code (Brazilian Occupation Classification)
 - **ICMS validation (08)**: sanity-checks the 07 VAB-loss estimate against real tax data — compares observed ICMS revenue in the flood month/aftermath to a 2021–2023 (COVID-excluded) baseline, using a fixed effective ICMS-to-GDP rate for RS to back into an independent damage figure
-- **Population exposure (09)**: independent of the empresas/educacao/saude/agricultura layers — clips a WorldPop raster (not RAIS/Censo/CNES/MapBiomas) against IBGE municipal boundaries and flood polygons to get exposed-population counts and a density heatmap PNG per municipality; writes to `populacao_atingida.json` and `{slug}/populacao.png` in `DASH_DATA`, merging into any existing JSON rather than overwriting it (so partial `--mun` runs don't clobber other municipalities)
+- **Population exposure (09)**: independent of the empresas/educacao/saude/agricultura layers — clips a WorldPop raster (not RAIS/Censo/CNES/MapBiomas) against IBGE municipal boundaries and flood polygons to get exposed-population counts and a density heatmap PNG per municipality; writes to `populacao_atingida.json` and `{slug}/populacao.webp` in `DASH_DATA`, merging into any existing JSON rather than overwriting it (so partial `--mun` runs don't clobber other municipalities)
 
 ## Conventions
 

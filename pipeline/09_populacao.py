@@ -5,7 +5,7 @@ Fonte: WorldPop 2024 Constrained (CN) 100m - bra_pop_2024_CN_100m_R2025A_v1.tif
 Limites municipais: IBGE API v3 (cache em data/raw/ibge/)
 
 Saidas (por municipio):
-  Dashboard BID/public/dados_convertidos/{slug}/populacao.png      -- heatmap RGBA
+  Dashboard BID/public/dados_convertidos/{slug}/populacao.webp      -- heatmap RGBA
   Dashboard BID/public/dados_convertidos/populacao_atingida.json   -- KPIs e bbox
 
 Uso:
@@ -149,8 +149,8 @@ def process(mun_nome: str, cfg: dict, src: rasterio.DatasetReader) -> dict:
 
     out_dir = DASH_DATA / slug
     out_dir.mkdir(parents=True, exist_ok=True)
-    png_path = out_dir / "populacao.png"
-    img.save(str(png_path), "PNG", optimize=True)
+    png_path = out_dir / "populacao.webp"
+    img.save(str(png_path), "WEBP", lossless=True, method=6)
     print(f"  PNG: {png_path.name}  ({png_path.stat().st_size / 1024:.0f} KB)")
 
     # 4. Pop atingida por cenario

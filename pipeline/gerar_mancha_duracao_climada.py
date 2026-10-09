@@ -104,8 +104,9 @@ def main():
         coordinates = [[west, north], [east, north], [east, south], [west, south]]
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    png_path = OUT_DIR / "mancha_duracao_climada_evento_2024.png"
-    img.save(str(png_path), "PNG", optimize=True)
+    png_path = OUT_DIR / "mancha_duracao_climada_evento_2024.webp"
+    img.thumbnail((2048, 2048), Image.LANCZOS)
+    img.save(str(png_path), "WEBP", quality=85, method=6)
 
     json_path = OUT_DIR / "mancha_duracao_climada_evento_2024.json"
     with open(json_path, "w", encoding="utf-8") as f:
