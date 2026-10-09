@@ -14,16 +14,16 @@ export function HeaderLogos() {
           encaixar logos de proporções bem diferentes numa caixa fixa com
           next/image -- w-auto/h-auto por si só cortava a CIEX. */}
       <div className="relative bg-white rounded-md h-9 w-16 p-1">
-        <Image src="/BID.png" alt="BID" fill className="object-contain p-1" />
+        <Image src="/BID.webp" alt="BID" fill className="object-contain p-1" />
       </div>
       <div className="relative bg-white rounded-md h-9 w-16 p-1">
-        <Image src="/GPEA.png" alt="GPEA" fill className="object-contain p-1" />
+        <Image src="/GPEA.webp" alt="GPEA" fill className="object-contain p-1" />
       </div>
       <div className="relative bg-white rounded-md h-9 w-16 p-1">
-        <Image src="/CIEX2.png" alt="CIEX" fill className="object-contain p-1" />
+        <Image src="/CIEX2.webp" alt="CIEX" fill className="object-contain p-1" />
       </div>
       <div className="relative bg-white rounded-md h-9 w-16 p-1">
-        <Image src="/IPH.jpg" alt="IPH" fill className="object-contain p-1 rounded-sm" />
+        <Image src="/IPH.webp" alt="IPH" fill className="object-contain p-1 rounded-sm" />
       </div>
     </div>
   );

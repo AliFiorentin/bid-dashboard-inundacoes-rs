@@ -88,13 +88,13 @@ export function DashboardMap({ dash }: Props) {
   const mostraDuracaoClimada =
     renderMunicipio === "Porto Alegre" && cenario === MANCHA_DURACAO_CENARIO && !isTransitioning
   const duracaoImgUrl = manchaDuracaoClimada
-    ? "/dados_convertidos/porto_alegre/mancha_duracao_climada_evento_2024.png"
+    ? "/dados_convertidos/porto_alegre/mancha_duracao_climada_evento_2024.webp"
     : null
 
   const popMunData =
     !isVisaoGeral && !isTransitioning ? popData?.[renderMunicipio] : null
   const popImgUrl = popMunData
-    ? `/dados_convertidos/${slugify(renderMunicipio)}/populacao.png`
+    ? `/dados_convertidos/${slugify(renderMunicipio)}/populacao.webp`
     : null
 
   // mapRef é um objeto estável (sua identidade não muda quando .current é
@@ -251,7 +251,7 @@ export function DashboardMap({ dash }: Props) {
             desenha a imagem inteira, do tamanho exato pedido. */}
         <div className="absolute bottom-[45px] right-[48px] z-10 print:hidden pointer-events-none">
           <div className="flex items-center justify-center h-[52px] w-[156px] rounded-md bg-white/90 shadow-sm" style={{ border: "2px solid rgba(0,0,0,0.1)" }}>
-            <Image src="/GPEA.png" alt="GPEa" width={124} height={41} style={{ width: "auto", height: "auto", maxWidth: "132px", maxHeight: "40px" }} />
+            <Image src="/GPEA.webp" alt="GPEa" width={124} height={41} style={{ width: "auto", height: "auto", maxWidth: "132px", maxHeight: "40px" }} />
           </div>
         </div>
 

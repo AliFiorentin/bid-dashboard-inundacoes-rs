@@ -263,7 +263,7 @@ Dashboard BID/
         │   ├── limite_BASE.geojson
         │   ├── agricultura_stats_BASE.json
         │   ├── infraestrutura_stats.json  ← saída de 10_infra_stats.py
-        │   ├── populacao.png               ← heatmap de densidade (09_populacao.py)
+        │   ├── populacao.webp               ← heatmap de densidade (09_populacao.py)
         │   ├── infraestrutura/
         │   │   └── {nome}_BASE.geojson
         │   └── cenarios/

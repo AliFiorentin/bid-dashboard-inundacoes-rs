@@ -52,16 +52,16 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
             só cortava a CIEX. Tamanho em clamp() (vw) pra nao forcar o header
             a quebrar em duas linhas em telas mais estreitas. */}
         <div className="relative shrink-0" style={{ height: LOGO_H, width: LOGO_W }}>
-          <Image src="/BID.png" alt="BID Logo" fill className="object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
+          <Image src="/BID.webp" alt="BID Logo" fill className="object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
         </div>
         <div className="relative shrink-0" style={{ height: LOGO_H, width: LOGO_W }}>
-          <Image src="/GPEA.png" alt="GPEA Logo" fill className="object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
+          <Image src="/GPEA.webp" alt="GPEA Logo" fill className="object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
         </div>
         <div className="relative shrink-0" style={{ height: LOGO_H, width: LOGO_W }}>
-          <Image src="/CIEX2.png" alt="CIEX Logo" fill className="object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
+          <Image src="/CIEX2.webp" alt="CIEX Logo" fill className="object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
         </div>
         <div className="relative shrink-0" style={{ height: LOGO_H, width: LOGO_W }}>
-          <Image src="/IPH.jpg" alt="IPH Logo" fill className="object-contain rounded-sm" onError={(e) => (e.currentTarget.style.display = 'none')} />
+          <Image src="/IPH.webp" alt="IPH Logo" fill className="object-contain rounded-sm" onError={(e) => (e.currentTarget.style.display = 'none')} />
         </div>
         <div className="flex flex-col justify-center min-w-0" style={{ paddingLeft: LOGO_GAP, maxWidth: "clamp(130px, 15vw, 260px)" }}>
           {/* Sem whitespace-nowrap de propósito: com titulo curto o texto cabe

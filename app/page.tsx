@@ -41,7 +41,7 @@ export default function Dashboard() {
     <div className="relative w-screen h-screen font-sans overflow-hidden bg-slate-100 text-slate-900 print:overflow-visible print:h-auto print:w-full">
 
       <div className="lg:hidden fixed inset-0 z-[100] flex flex-col items-center justify-center gap-6 px-8 text-center bg-white">
-        <Image src="/BID.png" alt="BID" width={160} height={64} className="h-12 w-auto object-contain" />
+        <Image src="/BID.webp" alt="BID" width={160} height={64} className="h-12 w-auto object-contain" />
         <div className="flex flex-col gap-2">
           <h1 className="text-xl font-black leading-tight" style={{ color: "#055071" }}>Avaliação de Impactos Socioeconômicos</h1>
           <p className="text-sm text-slate-500">Painel de Monitoramento</p>
@@ -60,13 +60,13 @@ export default function Dashboard() {
         </div>
         <div className="flex items-center gap-3 mt-2">
           <div className="relative h-11 w-20">
-            <Image src="/GPEA.png" alt="GPEa" fill className="object-contain" />
+            <Image src="/GPEA.webp" alt="GPEa" fill className="object-contain" />
           </div>
           <div className="relative h-11 w-20">
-            <Image src="/CIEX2.png" alt="CIEX" fill className="object-contain" />
+            <Image src="/CIEX2.webp" alt="CIEX" fill className="object-contain" />
           </div>
           <div className="relative h-11 w-20">
-            <Image src="/IPH.jpg" alt="IPH" fill className="object-contain rounded-sm" />
+            <Image src="/IPH.webp" alt="IPH" fill className="object-contain rounded-sm" />
           </div>
         </div>
       </div>
