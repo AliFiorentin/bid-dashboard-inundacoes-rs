@@ -70,7 +70,15 @@ export interface Projecao2050 {
   por_setor: Record<string, ProjecaoSetor>;
   total: ProjecaoSetor;
 }
+export interface RpPorCota {
+  frequencia: { metodo: string; serie: string; fonte: string; datum: string };
+  rps: Record<string, { cota_regua_m: number; cota_raster_m: number }>;
+  rps_acima_do_ultimo_raster: string[];
+  cota_cobertura_raster_m: [number, number];
+}
 export interface ClimadaData {
+  // Só nos municípios cujo RP foi derivado de rasters por cota (climada_rp_por_cota.py).
+  rp_por_cota?: RpPorCota;
   projecao_2050?: Projecao2050 | null;
   premissas: {
     poa_calibration_factor: number;
@@ -102,6 +110,93 @@ export interface ClimadaData {
   };
   resultados_por_rp: Record<string, Record<string, SetorResultado>>;
   eai_anual_esperado: EaiAnualEsperado | null;
+}
+
+// ─── Tipos — CLIMADA por cota do rio (Lajeado, Eldorado do Sul, Porto Alegre) ─────────────────────────────────
+export interface CotaSetor {
+  n_total: number;
+  n_atingidos: number;
+  profundidade_media_atingidos_m: number;
+  profundidade_max_m: number;
+  exposicao_total_brl: number;
+  dano_fisico_brl_poa: number;       // curvas com o fator de calibração de Porto Alegre
+  dano_fisico_brl_jrc_crua: number;  // sensibilidade: curva JRC sem recalibração
+}
+export interface CotasData {
+  municipio: string;
+  premissas: {
+    calibracao: string;
+    poa_calibration_factor: number;
+    raster_nota: string;
+  };
+  diagnostico: {
+    pontos_molhados_na_cota_mais_baixa: Record<string, number>;
+    pontos_fora_do_raster: Record<string, number>;
+    n_pontos: Record<string, number>;
+    coordenadas_repetidas: Record<string, { n_pontos: number; n_coordenadas_unicas: number; maior_pilha: number }>;
+    cota_mais_baixa: string;
+    cota_mais_alta: string;
+  };
+  resultados_por_cota: Record<string, Record<string, CotaSetor>>;
+}
+
+// ─── Tipos — medidas de adaptação (climada_medidas.py) ─────────────────────────
+export interface MedidaResultado {
+  id: string;
+  nome: string;
+  mecanismo: string;
+  eai_evitado_brl: number;
+  pct_evitado: number;
+  eai_evitado_sem_cauda_brl: number;
+  pct_evitado_sem_cauda: number;
+  eai_2050_evitado_brl: number | null;
+  evitado_por_setor_brl: Record<string, number>;
+  fonte?: string;
+  fonte_url?: string | null;
+  custo_beneficio?: {
+    custo_brl: number | null;
+    custo_min_brl?: number;
+    bc_max?: number;
+    bc_sem_cauda_max?: number;
+    custo_equilibrio_brl?: number;
+    custo_fonte: string;
+    custo_descricao?: string;
+    custo_fonte_url?: string | null;
+    setores_com_custo: string[];
+    beneficio_vp_brl: number;
+    beneficio_vp_sem_cauda_brl: number;
+    bc: number | null;
+    bc_sem_cauda: number | null;
+  };
+}
+export interface MedidasMun {
+  base: { eai_brl: number; eai_sem_cauda_brl: number; eai_2050_brl: number; rps: string[] };
+  custo_beneficio_premissas?: { cambio_brl_usd: number; taxa_desconto: number; horizonte: [number, number]; fonte_custos: string };
+  medidas: MedidaResultado[];
+}
+
+// ─── Tipos — CLIMADA sem curva de dano (climada_exposicao.py) ──────────────────
+export interface ExposicaoSetor {
+  n_total: number;
+  n_atingidos: number;
+  valor_exposto_atingido_brl: number;
+  exposicao_total_brl: number;
+  profundidade_media_atingidos_m: number;
+  profundidade_max_m: number;
+  faixas_valor_brl: Record<string, number>;
+}
+export interface ExposicaoMun {
+  resultados_por_rp: Record<string, Record<string, ExposicaoSetor>>;
+  rp_por_cota: {
+    rps: Record<string, { cota_regua_m: number }>;
+    rps_acima_do_ultimo_raster: string[];
+    cota_cobertura_raster_m: [number, number];
+  };
+  eai_exposto: { empresas: number; educacao: number; saude: number; total: number };
+  eai_exposto_sem_cauda_brl: number;
+  projecao_2050: Projecao2050 | null;
+  medidas: MedidasMun;
+  por_cota: Record<string, Record<string, ExposicaoSetor>>;
 }
 
 // ─── Constantes visuais — Danos Operacionais ───────────────────────────────────
@@ -174,16 +269,20 @@ function eaiValor(eai: EaiAnualEsperado, setor: string): number {
 }
 
 // ─── Componente principal ───────────────────────────────────────────────────────
-export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosClimada: ClimadaData | null }) {
+export function DanosClient({ dados, dadosClimada: climadaPA, dadosClimadaMun, dadosCotas: cotasPorMun, dadosMedidas, dadosExposicao }: { dados: DanosData; dadosClimada: ClimadaData | null; dadosClimadaMun: Record<string, ClimadaData>; dadosCotas: Record<string, CotasData>; dadosMedidas: Record<string, MedidasMun>; dadosExposicao: Record<string, ExposicaoMun> }) {
   const [aba, setAba] = useState<"dala" | "climada">("dala");
   const [dias, setDias] = useState<DiasOpcao>(30);
   const [rp, setRp] = useState("RP200");
+  // Município e visão da aba CLIMADA: por período de retorno (RP) ou por cota do rio.
+  const [munClimada, setMunClimada] = useState("Porto Alegre");
+  const [visao, setVisao] = useState<"rp" | "cota">("rp");
+  const [cota, setCota] = useState("29.45");
 
   // Deep-link opcional: /danos?aba=climada abre direto na aba CLIMADA (ex.: botão do header do mapa).
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get("aba") === "climada" && dadosClimada) setAba("climada");
-  }, [dadosClimada]);
+    if (params.get("aba") === "climada" && (climadaPA || Object.keys(cotasPorMun).length)) setAba("climada");
+  }, [climadaPA, cotasPorMun]);
 
   // ── Dados escalados (Danos Operacionais) para a duração selecionada ──
   const dadosEscalados: DanosData = Object.fromEntries(
@@ -215,10 +314,20 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
   );
   const maxTotalDala = Math.max(...todosCenarios.map((c) => c.v.total));
 
+  // ── Município ativo da aba CLIMADA ──
+  // Porto Alegre: RPs do estudo de risco de inundação de Porto Alegre (UNU-EHS). Lajeado: RPs derivados das cotas.
+  // Eldorado do Sul fica fora da aba por enquanto (os JSONs existem, mas a frequência do
+  // Guaíba vem de uma tabela defasada, sem 2024): basta incluí-lo na lista para reativar.
+  const climadaPorMun: Record<string, ClimadaData | null | undefined> = { ...dadosClimadaMun, "Porto Alegre": climadaPA };
+  const munsClimada = ["Porto Alegre", "Lajeado"].filter((m) => !!(climadaPorMun[m] || cotasPorMun[m]));
+  const munClimadaAtivo = munsClimada.includes(munClimada) ? munClimada : munsClimada[0];
+  const dadosClimada: ClimadaData | null = climadaPorMun[munClimadaAtivo] ?? null;
+  const medidasMun: MedidasMun | null = dadosMedidas[munClimadaAtivo] ?? null;
+
   // ── Dados CLIMADA para o RP selecionado ──
   const climadaSetores = ["empresas", "educacao", "saude"];
   const rpsDisponiveis = dadosClimada ? RP_ORDER.filter((r) => dadosClimada.resultados_por_rp[r]) : [];
-  const rpAtivo = dadosClimada && dadosClimada.resultados_por_rp[rp] ? rp : rpsDisponiveis[0];
+  const rpAtivo = dadosClimada && dadosClimada.resultados_por_rp[rp] ? rp : rpsDisponiveis[rpsDisponiveis.length - 1];
   const atualClimada = rpAtivo ? dadosClimada?.resultados_por_rp[rpAtivo] : undefined;
   const totalAtualClimada = atualClimada ? climadaSetores.reduce((s, k) => s + atualClimada[k].dano_fisico_total_brl, 0) : 0;
   const exposicaoAtualClimada = atualClimada ? climadaSetores.reduce((s, k) => s + atualClimada[k].exposicao_total_brl, 0) : 0;
@@ -226,6 +335,28 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
     ? Math.max(...rpsDisponiveis.map((r) => climadaSetores.reduce((s, k) => s + dadosClimada.resultados_por_rp[r][k].dano_fisico_total_brl, 0)))
     : 0;
   const eai = dadosClimada?.eai_anual_esperado ?? null;
+
+  // ── Dados CLIMADA por cota (Lajeado, Eldorado do Sul, Porto Alegre) ──
+  const dadosCotas: CotasData | null = cotasPorMun[munClimadaAtivo] ?? null;
+  const cotasDisponiveis = dadosCotas
+    ? Object.keys(dadosCotas.resultados_por_cota).sort((a, b) => parseFloat(a) - parseFloat(b))
+    : [];
+  const cotaAtiva = cotasDisponiveis.includes(cota) ? cota : cotasDisponiveis[Math.floor(cotasDisponiveis.length / 2)];
+  const atualCota = dadosCotas && cotaAtiva ? dadosCotas.resultados_por_cota[cotaAtiva] : undefined;
+  const totalCota = (c: Record<string, CotaSetor>, k: "dano_fisico_brl_poa" | "dano_fisico_brl_jrc_crua") =>
+    climadaSetores.reduce((s, st) => s + c[st][k], 0);
+  const maxTotalCota = dadosCotas && cotasDisponiveis.length
+    ? Math.max(...cotasDisponiveis.map((c) => totalCota(dadosCotas.resultados_por_cota[c], "dano_fisico_brl_jrc_crua")))
+    : 0;
+  // Visão por cota: quando escolhida, ou quando o município não tem a visão por RP.
+  // Municípios sem curva de dano (Lajeado): valor exposto atingido no lugar do dano.
+  const expo: ExposicaoMun | null = dadosExposicao[munClimadaAtivo] ?? null;
+  const semCurva = !!expo;
+  const cotaAtivo = !!dadosCotas && !!atualCota && (visao === "cota" || !dadosClimada);
+  const totalRp10 = dadosClimada?.resultados_por_rp?.RP10
+    ? climadaSetores.reduce((sum, k) => sum + dadosClimada.resultados_por_rp.RP10[k].dano_fisico_total_brl, 0)
+    : 0;
+  const foraRasterTotal = dadosCotas ? Object.values(dadosCotas.diagnostico.pontos_fora_do_raster).reduce((a, b) => a + b, 0) : 0;
 
   return (
     <div className="min-h-screen bg-[#f0f7fa] text-slate-800 font-sans">
@@ -249,7 +380,7 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
               Perdas Econômicas e Dano Físico Estimado: Enchentes no Rio Grande do Sul
             </p>
             <p className="text-[11px] opacity-50 mt-3 font-mono">
-              Metodologia DaLA (CEPAL/BID), Maio 2024 e Setembro 2023 · Protótipo CLIMADA/CCDR, Porto Alegre
+              Metodologia DaLA (CEPAL/BID), Maio 2024 e Setembro 2023 · Protótipo CLIMADA/CCDR, Porto Alegre e Lajeado
             </p>
           </div>
           <HeaderLogos />
@@ -272,7 +403,7 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
               <TrendingDown size={16} strokeWidth={2.5} />
               Danos Operacionais
             </button>
-            {dadosClimada && (
+            {munsClimada.length > 0 && (
               <button
                 onClick={() => setAba("climada")}
                 className={`px-5 py-2.5 rounded-xl text-[13px] font-black border-2 transition-all duration-150 flex items-center gap-2 ${
@@ -321,11 +452,75 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
             </>
           ) : (
             <>
+              {munsClimada.length > 1 && (
+                <div className="flex gap-1.5">
+                  {munsClimada.map((m) => (
+                    <button
+                      key={m}
+                      onClick={() => setMunClimada(m)}
+                      className={`px-3 py-1 rounded-full text-[11px] font-black border transition-all duration-150 ${
+                        munClimadaAtivo === m
+                          ? "bg-[#055071] text-white border-[#055071] shadow-sm"
+                          : "bg-white text-slate-500 border-slate-200 hover:border-[#055071] hover:text-[#055071]"
+                      }`}
+                    >
+                      {m}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {dadosClimada && dadosCotas && (
+                <div className="flex gap-1.5">
+                  {([["rp", "Por RP"], ["cota", "Por cota"]] as const).map(([v, label]) => (
+                    <button
+                      key={v}
+                      onClick={() => setVisao(v)}
+                      className={`px-3 py-1 rounded-full text-[11px] font-black border transition-all duration-150 ${
+                        visao === v
+                          ? "bg-amber-500 text-white border-amber-500 shadow-sm"
+                          : "bg-white text-slate-500 border-slate-200 hover:border-amber-400 hover:text-amber-700"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {cotaAtivo ? (
+                <>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94]">Cota do rio</span>
+                    <span className="text-[9px] text-slate-400">(m)</span>
+                  </div>
+                  <div className="flex gap-1.5 flex-wrap">
+                    {cotasDisponiveis.map((c) => (
+                      <button
+                        key={c}
+                        onClick={() => setCota(c)}
+                        className={`px-2.5 py-1 rounded-full text-[11px] font-black border transition-all duration-150 ${
+                          cotaAtiva === c
+                            ? "bg-amber-500 text-white border-amber-500 shadow-sm"
+                            : "bg-white text-slate-500 border-slate-200 hover:border-amber-400 hover:text-amber-700"
+                        }`}
+                      >
+                        {c}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="ml-auto flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                    <span className="text-[10px] text-slate-500 font-medium">
+                      Sem período de retorno: sem EAI
+                    </span>
+                  </div>
+                </>
+              ) : (
+              <>
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94]">
                   Período de retorno
                 </span>
-                <span className="text-[9px] text-slate-400">(cenário sintético CLIMADA)</span>
+                <span className="text-[9px] text-slate-400">{dadosClimada?.rp_por_cota ? "(derivado das cotas do rio)" : "(cenário sintético CLIMADA)"}</span>
               </div>
               <div className="flex gap-1.5 flex-wrap">
                 {rpsDisponiveis.map((r) => (
@@ -346,9 +541,11 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
               <div className="ml-auto flex items-center gap-1.5">
                 <div className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
                 <span className="text-[10px] text-slate-500 font-medium">
-                  RP200 é a âncora de calibração usada pelo CLIMADA
+                  {dadosClimada?.rp_por_cota ? "RPs convertidos em cota por análise de frequência" : "RP200 é a âncora de calibração usada pelo CLIMADA"}
                 </span>
               </div>
+              </>
+              )}
             </>
           )}
         </div>
@@ -367,12 +564,30 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
                   ["#cenarios",    "2. Análise por Cenário"],
                   ["#sensib",      "3. Sensibilidade por Duração"],
                   ["#notas",       "4. Notas e Ressalvas"],
+                ] : semCurva ? (cotaAtivo ? [
+                  ["#c-resumo",       "1. Resumo"],
+                  ["#c-tabela",       "2. Valor por Cota"],
+                  ["#c-limitacoes",   "3. Limitações"],
+                ] : [
+                  ["#c-resumo",       "1. Resumo"],
+                  ["#c-faixas",       "2. Faixas de Profundidade"],
+                  ["#c-eai",          "3. Exposição Anual Esperada"],
+                  ["#c-projecao",     "4. Projeção 2025→2050"],
+                  ["#c-comparativo",  "5. Comparativo por RP"],
+                  ["#c-medidas",      "6. Medidas de Adaptação"],
+                  ["#c-limitacoes",   "7. Limitações"],
+                ]) : cotaAtivo ? [
+                  ["#c-resumo",       "1. Resumo"],
+                  ["#c-curva",        "2. Dano por Cota"],
+                  ["#c-tabela",       "3. Tabela por Cota"],
+                  ["#c-limitacoes",   "4. Limitações"],
                 ] : [
                   ["#c-resumo",       "1. Resumo"],
                   ["#c-eai",          "2. Risco Anual Esperado"],
                   ["#c-projecao",     "3. Projeção 2025→2050"],
                   ["#c-comparativo",  "4. Comparativo por RP"],
-                  ["#c-limitacoes",   "5. Limitações"],
+                  ["#c-medidas",      "5. Medidas de Adaptação"],
+                  ["#c-limitacoes",   "6. Limitações"],
                 ] as [string, string][]).map(([href, label]) => (
                   <li key={href}>
                     <a href={href} className="text-[11px] text-[#055071] font-medium hover:underline underline-offset-4 transition-colors duration-150 leading-snug block py-0.5">
@@ -641,6 +856,192 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
           </div>
         </Section>
         </>
+        ) : semCurva && expo ? (
+          <ExposicaoView expo={expo} mun={munClimadaAtivo} visao={cotaAtivo ? "cota" : "rp"} rp={rp} cota={cota} setAba={setAba} />
+        ) : cotaAtivo && dadosCotas && atualCota && cotaAtiva ? (
+        <>
+        <Section id="c-resumo" num="1" title={`Resumo: ${munClimadaAtivo}`}>
+          <Note type="warning">
+            <strong>Protótipo exploratório</strong>, não uma métrica oficial do painel. Mede{" "}
+            <strong>destruição de patrimônio</strong> (estoque), diferente da aba{" "}
+            <button onClick={() => setAba("dala")} className="underline underline-offset-2 font-bold">Danos Operacionais</button>{" "}
+            (fluxo, DaLA): os dois números não devem ser somados.{" "}
+            <strong>Calibração herdada de Porto Alegre</strong> (fator{" "}
+            {dadosCotas.premissas.poa_calibration_factor.toString().replace(".", ",")}), sem perda
+            observada para {munClimadaAtivo}. Ver <a href="#c-limitacoes" className="underline underline-offset-2">Limitações</a>.
+          </Note>
+          <Note type="info">
+            Aqui o cenário é a <strong>cota do rio</strong> (profundidade por pixel de ~5 m), não um
+            período de retorno: não há frequência associada a cada cota, então{" "}
+            <strong>não há risco anual esperado (EAI) nem projeção 2050</strong> para {munClimadaAtivo}.
+            Estas manchas por cota alimentam só o cálculo CLIMADA e não são cenários do mapa.
+            {munClimadaAtivo === "Eldorado do Sul" && (
+              <> Os rasters são os de <strong>Porto Alegre</strong> (cota do Guaíba), amostrados nos
+              pontos de Eldorado do Sul.</>
+            )}
+          </Note>
+          {munClimadaAtivo === "Porto Alegre" && totalRp10 > 0 && (
+            <Note type="warning">
+              <strong>Esta visão por cota não é comparável à visão por RP.</strong> No topo da série
+              (cota {dadosCotas.diagnostico.cota_mais_alta} m) o dano total é{" "}
+              {fmtBRL(totalCota(dadosCotas.resultados_por_cota[dadosCotas.diagnostico.cota_mais_alta], "dano_fisico_brl_poa"))},
+              bem abaixo do RP10 ({fmtBRL(totalRp10)}). São fontes de perigo diferentes e a causa da
+              diferença ainda não foi investigada: não somar nem misturar as duas visões.
+            </Note>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-5">
+            <div className="bg-white border border-[#b3cdd8] rounded-xl overflow-hidden shadow-sm">
+              <div className="px-4 py-3" style={{ backgroundColor: "#055071" }}>
+                <p className="text-[10px] font-black uppercase tracking-wider text-white/70 mb-0.5">{munClimadaAtivo} · cota {cotaAtiva} m</p>
+                <p className="text-2xl font-black text-white leading-none">{fmtBRL(totalCota(atualCota, "dano_fisico_brl_poa"))}</p>
+                <p className="text-[9px] text-white/60 font-mono mt-1">
+                  dano físico estimado (3 setores) · incerteza até {fmtBRL(totalCota(atualCota, "dano_fisico_brl_jrc_crua"))} (curva JRC crua)
+                </p>
+              </div>
+              <div className="px-4 pt-3 pb-1">
+                <div className="flex h-2 rounded-full overflow-hidden bg-slate-100">
+                  {climadaSetores.map((st) => (
+                    <div key={st} style={{ width: `${(atualCota[st].dano_fisico_brl_poa / (totalCota(atualCota, "dano_fisico_brl_poa") || 1)) * 100}%`, backgroundColor: SETOR_COLORS[st] }} />
+                  ))}
+                </div>
+              </div>
+              <div className="px-4 pb-4 pt-2 grid grid-cols-1 gap-y-1">
+                {climadaSetores.map((st) => (
+                  <KpiRow
+                    key={st}
+                    label={SETOR_LABEL[st]}
+                    value={fmtBRL(atualCota[st].dano_fisico_brl_poa)}
+                    sub={`${atualCota[st].exposicao_total_brl ? ((atualCota[st].dano_fisico_brl_poa / atualCota[st].exposicao_total_brl) * 100).toFixed(1) : "0.0"}% da exposição`}
+                    color={SETOR_COLORS[st]}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-white border border-[#b3cdd8] rounded-xl p-4 shadow-sm">
+              <p className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94] mb-2">Exposição total (patrimônio no raio de risco)</p>
+              <p className="text-2xl font-black text-slate-800 leading-none mb-3">
+                {fmtBRL(climadaSetores.reduce((sum, st) => sum + atualCota[st].exposicao_total_brl, 0))}
+              </p>
+              {climadaSetores.map((st) => (
+                <div key={st} className="flex items-center justify-between text-[11px] py-1 border-t border-slate-100 first:border-t-0">
+                  <span className="text-slate-500">{SETOR_LABEL[st]}: {atualCota[st].n_atingidos}/{atualCota[st].n_total} pontos atingidos</span>
+                  <span className="font-bold text-slate-700">prof. média {atualCota[st].profundidade_media_atingidos_m.toFixed(2)}m</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section id="c-curva" num="2" title="Dano por Cota">
+          <p>
+            Dano físico total por cota do rio, com as curvas calibradas pelo fator de Porto Alegre
+            (barras empilhadas por setor) e a curva JRC crua como limite superior da incerteza
+            (traço). O dano sobe em degraus: ver a limitação sobre coordenadas repetidas.
+          </p>
+          <div className="bg-white border border-[#b3cdd8] rounded-xl p-4 shadow-sm my-4">
+            <CotaBarChart
+              cotas={cotasDisponiveis}
+              resultados={dadosCotas.resultados_por_cota}
+              setores={climadaSetores}
+              maxTotal={maxTotalCota}
+              cotaAtiva={cotaAtiva}
+            />
+            <div className="flex gap-4 mt-3 flex-wrap">
+              {climadaSetores.map((st) => (
+                <div key={st} className="flex items-center gap-1.5 text-[11px] text-slate-600">
+                  <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: SETOR_COLORS[st] }} />
+                  {SETOR_LABEL[st]}
+                </div>
+              ))}
+              <div className="flex items-center gap-1.5 text-[11px] text-slate-600">
+                <div className="w-3 border-t-2 border-dashed border-slate-700" />
+                Total com curva JRC crua
+              </div>
+            </div>
+          </div>
+        </Section>
+
+        <Section id="c-tabela" num="3" title="Tabela por Cota">
+          <DataTable
+            rows={[
+              ["Cota (m)", "Empresas atingidas", "Escolas atingidas", "Unid. saúde atingidas", "Dano (fator POA)", "Dano (JRC crua)"],
+              ...cotasDisponiveis.map((c) => {
+                const r = dadosCotas.resultados_por_cota[c];
+                return [
+                  <span key="c" className={c === cotaAtiva ? "font-black text-amber-700" : "font-bold"}>{c}</span>,
+                  `${r.empresas.n_atingidos}/${r.empresas.n_total}`,
+                  `${r.educacao.n_atingidos}/${r.educacao.n_total}`,
+                  `${r.saude.n_atingidos}/${r.saude.n_total}`,
+                  fmtBRL(totalCota(r, "dano_fisico_brl_poa")),
+                  fmtBRL(totalCota(r, "dano_fisico_brl_jrc_crua")),
+                ];
+              }),
+            ]}
+          />
+        </Section>
+
+        <Section id="c-limitacoes" num="4" title="Limitações">
+          <Note type="warning">
+            Resultados de {munClimadaAtivo} são um <strong>protótipo</strong> e carregam as mesmas premissas
+            do de Porto Alegre por RP (valor de reposição, curvas JRC, conteúdo/equipamento; ver{" "}
+            <a href="/metodologia#dano-fisico" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 font-bold">metodologia ↗</a>),
+            mais as limitações específicas abaixo.
+          </Note>
+          <ul className="list-disc list-inside space-y-2 text-sm text-slate-700 mt-3">
+            <li>
+              <strong>Coordenadas repetidas na base oficial.</strong> Muitos estabelecimentos
+              (RAIS/CNES/Censo Escolar, geocodificados) compartilham o mesmo ponto, típico de
+              endereço incompleto ou geocode no centroide de rua/bairro. Em {munClimadaAtivo}:{" "}
+              {climadaSetores.map((st) => {
+                const r = dadosCotas.diagnostico.coordenadas_repetidas[st];
+                return `${SETOR_LABEL[st].toLowerCase()} ${r.n_pontos.toLocaleString("pt-BR")} em ${r.n_coordenadas_unicas.toLocaleString("pt-BR")} coordenadas (maior pilha: ${r.maior_pilha.toLocaleString("pt-BR")})`;
+              }).join("; ")}
+              . A base é mantida como reportada pelo governo, sem filtro: cada pilha entra ou sai da
+              mancha de uma vez e recebe a profundidade de um único pixel, o que gera degraus no
+              dano. Tratar como ordem de grandeza.
+            </li>
+            <li>
+              <strong>Calibração herdada de Porto Alegre.</strong> O fator{" "}
+              {dadosCotas.premissas.poa_calibration_factor.toString().replace(".", ",")} (Empresas e
+              Saúde) foi ancorado no evento de 2024 em Porto Alegre; não há
+              perda observada por cota. A curva JRC crua mostra o limite superior da incerteza
+              (≈2× o valor calibrado). A curva de Educação não é reescalada. A curva de Saúde é
+              sintetizada (ver Porto Alegre).
+            </li>
+            <li>
+              <strong>Sem risco anual esperado (EAI).</strong> Os rasters são indexados por cota,
+              sem período de retorno ou frequência. EAI exigiria a relação cota → probabilidade
+              (série histórica de cotas), ainda não disponível.
+            </li>
+            <li>
+              <strong>Origem dos rasters.</strong> {dadosCotas.premissas.raster_nota}
+            </li>
+            {foraRasterTotal > 0 && (
+              <li>
+                <strong>Pontos fora da grade do raster:</strong>{" "}
+                {climadaSetores.map((st) => `${SETOR_LABEL[st].toLowerCase()} ${dadosCotas.diagnostico.pontos_fora_do_raster[st]}/${dadosCotas.diagnostico.n_pontos[st]}`).join("; ")}.
+                Esses pontos entram com profundidade 0, o que subestima o dano em {munClimadaAtivo}.
+              </li>
+            )}
+            <li>
+              <strong>Pontos já molhados na cota mais baixa</strong> ({dadosCotas.diagnostico.cota_mais_baixa} m):{" "}
+              {climadaSetores.map((st) => `${SETOR_LABEL[st].toLowerCase()} ${dadosCotas.diagnostico.pontos_molhados_na_cota_mais_baixa[st]}`).join("; ")}.
+              Mantidos: cada cota é um cenário próprio.
+            </li>
+            <li>
+              <strong>Máximo acumulado entre cotas.</strong> Alguns rasters (notadamente Lajeado)
+              têm células que ficam mais rasas quando a cota sobe; aplicado o máximo por ponto
+              entre cotas (o dano não diminui com a cota).
+            </li>
+            <li>
+              <strong>Amostragem por pixel de ~5 m</strong> (vizinho mais próximo), mais fina que a
+              da visão por RP de Porto Alegre (~90 m), mas ainda sujeita a erro de geocodificação do ponto.
+            </li>
+          </ul>
+        </Section>
+        </>
         ) : dadosClimada && atualClimada && rpAtivo ? (
         <>
         {/* ══════════════════════════════════════════════════════════════════
@@ -656,12 +1057,43 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
             antes de usar qualquer valor abaixo para tomada de decisão.
           </Note>
           <Note type="info">
-            Disponível <strong>só para Porto Alegre</strong>: o cálculo depende de profundidade da
-            água por ponto (não apenas se o ponto foi atingido), e só Porto Alegre tem raster de
-            profundidade (produzido pelo exercício CLIMADA). Eldorado do Sul, Lajeado e Rio Grande
-            têm somente polígonos de extensão da mancha (atingido sim/não, sem profundidade), que
-            não permitem esse cálculo.
+            Disponível para <strong>Porto Alegre</strong> (RPs do estudo de risco de inundação de Porto Alegre (UNU-EHS)) e{" "}
+            <strong>Lajeado</strong> (RPs derivados das cotas do rio), ambos também por cota
+            (alternar nos seletores acima): o cálculo depende de profundidade da água por ponto
+            (não apenas se o ponto foi atingido). Eldorado do Sul e Rio Grande não estão
+            disponíveis nesta aba.
           </Note>
+          {dadosClimada.rp_por_cota && (
+            <>
+              <Note type="warning">
+                <strong>RPs de {munClimadaAtivo} derivados das cotas do rio</strong>, não de um
+                modelo de risco próprio: cada período de retorno foi convertido em cota (
+                {dadosClimada.rp_por_cota.frequencia.metodo}; série: {dadosClimada.rp_por_cota.frequencia.serie})
+                e a profundidade veio dos rasters por cota (cobertura{" "}
+                {dadosClimada.rp_por_cota.cota_cobertura_raster_m[0]} a {dadosClimada.rp_por_cota.cota_cobertura_raster_m[1]} m).
+                Datum: {dadosClimada.rp_por_cota.frequencia.datum}.
+                {dadosClimada.rp_por_cota.rps_acima_do_ultimo_raster.length > 0 && (
+                  <> {dadosClimada.rp_por_cota.rps_acima_do_ultimo_raster.join(" e ")} ficam acima do
+                  último raster e são <strong>extrapolados</strong>: os pontos já molhados ganham a
+                  diferença de cota, mas os que só molhariam acima do último raster continuam
+                  secos, então o dano desses RPs está subestimado.</>
+                )}{" "}
+                <strong>Herdados de Porto Alegre, como premissa:</strong> o fator de calibração das
+                curvas, o remapeamento de frequência 2025→2050 e o crescimento de 2% ao ano. Fonte da
+                frequência: {dadosClimada.rp_por_cota.frequencia.fonte}.
+              </Note>
+              <DataTable
+                rows={[
+                  ["Período de retorno", "Cota na régua (m)", "Cota no raster (m)"],
+                  ...rpsDisponiveis.map((r) => [
+                    r,
+                    dadosClimada.rp_por_cota!.rps[r].cota_regua_m.toFixed(2).replace(".", ","),
+                    dadosClimada.rp_por_cota!.rps[r].cota_raster_m.toFixed(2).replace(".", ","),
+                  ]),
+                ]}
+              />
+            </>
+          )}
 
           <Note type="info">
             <strong>O que é um Período de Retorno (RP)?</strong> É a magnitude estatística de um
@@ -678,7 +1110,7 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-5">
             <div className="bg-white border border-[#b3cdd8] rounded-xl overflow-hidden shadow-sm">
               <div className="px-4 py-3" style={{ backgroundColor: "#055071" }}>
-                <p className="text-[10px] font-black uppercase tracking-wider text-white/70 mb-0.5">Porto Alegre · {rpAtivo}</p>
+                <p className="text-[10px] font-black uppercase tracking-wider text-white/70 mb-0.5">{munClimadaAtivo} · {rpAtivo}</p>
                 <p className="text-2xl font-black text-white leading-none">{fmtBRL(totalAtualClimada)}</p>
                 <p className="text-[9px] text-white/60 font-mono mt-1">
                   dano físico estimado (3 setores) · {RP_PROBABILIDADE[rpAtivo]} de chance/ano de ocorrer
@@ -740,7 +1172,7 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
             </p>
             <div className="bg-white border border-[#b3cdd8] rounded-xl overflow-hidden shadow-sm mt-3">
               <div className="px-4 py-3" style={{ backgroundColor: "#055071" }}>
-                <p className="text-[10px] font-black uppercase tracking-wider text-white/70 mb-0.5">Porto Alegre · todos os setores</p>
+                <p className="text-[10px] font-black uppercase tracking-wider text-white/70 mb-0.5">{munClimadaAtivo} · todos os setores</p>
                 <p className="text-2xl font-black text-white leading-none">{fmtBRL(eai.total)} / ano</p>
                 <p className="text-[9px] text-white/60 font-mono mt-1">
                   risco anual esperado, integrado sobre {eai.rps_usados.length} período(s) de retorno ({eai.rps_usados[0]}..{eai.rps_usados[eai.rps_usados.length - 1]})
@@ -787,8 +1219,8 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
               estima como esse risco muda até 2050, decomposto em dois motores independentes: o{" "}
               <strong>crescimento econômico</strong> (mais patrimônio exposto, mesma lâmina d&apos;água)
               e a <strong>mudança climática</strong> (eventos ficam mais frequentes: a lâmina d&apos;água
-              de hoje passa a ocorrer com frequência maior). Replica a decomposição que o próprio
-              exercício CLIMADA destaca como resultado central (ver{" "}
+              de hoje passa a ocorrer com frequência maior). Segue a decomposição do
+              estudo de risco de inundação de Porto Alegre (UNU-EHS) (ver{" "}
               <a href="/metodologia#dano-fisico" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Metodologia</a>).
             </p>
 
@@ -846,7 +1278,7 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
                   ]} />
 
                   <Note type="info">
-                    Como não há raster de profundidade futuro (o exercício original também não tem),
+                    Como não há raster de profundidade futuro,
                     a lâmina d&apos;água de cada RP é mantida igual: o efeito de crescimento escala o
                     valor de reposição (mesma profundidade, patrimônio maior), e o efeito climático
                     só troca a frequência associada a essa mesma lâmina. Não é uma simulação de
@@ -911,7 +1343,72 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
             foi movida para /metodologia#dano-fisico; aqui ficam as limitações
             específicas destes resultados, como pedido)
         ══════════════════════════════════════════════════════════════════ */}
-        <Section id="c-limitacoes" num="5" title="Limitações">
+        {medidasMun && (
+        <Section id="c-medidas" num="5" title="Medidas de Adaptação">
+          <p>
+            Quanto do risco anual esperado de {munClimadaAtivo} cada medida evitaria, aplicando os
+            mecanismos de adaptação da metodologia CLIMADA, com parâmetros da literatura (fontes
+            abaixo da tabela), sobre a mesma profundidade por ponto e por RP usada acima. Ordenado pelo risco evitado
+            sem a cauda assumida do EAI.
+          </p>
+          {medidasMun.custo_beneficio_premissas && (
+            <Note type="warning">
+              <strong>Custo-benefício.</strong> Benefício = valor presente do risco evitado em{" "}
+              {medidasMun.custo_beneficio_premissas.horizonte[0]}–{medidasMun.custo_beneficio_premissas.horizonte[1]}, com desconto de{" "}
+              {(medidasMun.custo_beneficio_premissas.taxa_desconto * 100).toFixed(0)}% a.a. O B/C principal usa o risco{" "}
+              <strong>sem a cauda assumida</strong> (conservador); o valor &ldquo;com cauda&rdquo; infla
+              sobretudo os diques. Custos em dólar convertidos a{" "}
+              {medidasMun.custo_beneficio_premissas.cambio_brl_usd.toFixed(2).replace(".", ",")} R$/US$. O custo e a
+              fonte de cada medida estão listados abaixo da tabela.
+            </Note>
+          )}
+          <MedidasTable medidasMun={medidasMun} />
+          <p className="text-[11px] text-slate-500">
+            Risco sem medidas: {fmtBRL(medidasMun.base.eai_brl)}/ano hoje ({fmtBRL(medidasMun.base.eai_sem_cauda_brl)}/ano
+            sem a cauda assumida) e {fmtBRL(medidasMun.base.eai_2050_brl)}/ano em 2050.
+          </p>
+          <SubTitle>Como ler</SubTitle>
+          <ul className="list-disc list-inside space-y-2 text-sm text-slate-700">
+            <li>
+              <strong>Sem cauda assumida:</strong> o EAI do painel liga por uma reta &ldquo;evento
+              anual, dano zero&rdquo; ao RP10, e essa parte é premissa, não dado. Uma proteção
+              coletiva que zera o RP10 apaga essa cauda inteira, o que infla o benefício dela na
+              primeira coluna. A coluna &ldquo;sem cauda assumida&rdquo; conta só o que os RPs
+              calculados sustentam e é a comparação mais justa entre medidas.
+            </li>
+            <li>
+              <strong>Proteção coletiva (dique)</strong> entra como degrau: dano zero até o RP de
+              projeto e dano inteiro acima dele, sem falha nem galgamento. Em Porto Alegre o sistema
+              de proteção existente falhou em 2024, então esse benefício é um teto. O custo até
+              RP100 é o programa completo de proteção e drenagem; até RP20, só as estruturas (que
+              a obra menor dê proteção menor é premissa: a cota de projeto, 5,8 m, não tem RP).
+            </li>
+            <li>
+              <strong>Custos de vedação e estoque.</strong> A vedação (valor dos EUA) protege o
+              prédio, então é contada por coordenada atingida no RP500, uma aproximação de
+              edificação: onde a pilha de pontos é erro de geocodificação, prédios diferentes são
+              contados como um e o custo fica subestimado. O estoque usa o preço de mercado de
+              mezanino metálico no Sul do Brasil (R$ 380 a R$ 850 por m²) sobre 100% da área de cada
+              empresa atingida. Elevar toda a área é um teto de custo, porque a fração realmente
+              necessária não tem fonte; o B/C em âmbar indica que a medida só se paga na ponta
+              barata da faixa. O alerta usa o custo do sistema estadual inteiro, que também é teto.
+            </li>
+            <li>
+              <strong>Parâmetros:</strong> vêm da literatura (ver Fontes). A redução de alerta e de
+              estoque incide só sobre o conteúdo, convertida pela parcela de conteúdo do valor de
+              reposição (50% em Empresas, 33% em Educação, 56% em Saúde). Os estudos são da cheia
+              do Elba de 2002, na Alemanha, e o de estoque é de residências. As medidas não se
+              somam: aplicar duas juntas evita menos que a soma das duas.
+            </li>
+            <li>
+              <strong>Calibração:</strong> o valor em R$ herda toda a incerteza das curvas de dano;
+              a ordem entre as medidas é mais robusta que os valores.
+            </li>
+          </ul>
+        </Section>
+        )}
+
+        <Section id="c-limitacoes" num="6" title="Limitações">
           <Note type="warning">
             Estes números são um <strong>protótipo</strong> para explorar a viabilidade de aplicar a
             metodologia CLIMADA/CCDR (destruição de estoque) em cima dos nossos próprios dados
@@ -978,7 +1475,7 @@ export function DanosClient({ dados, dadosClimada }: { dados: DanosData; dadosCl
             </li>
             <li>
               <strong>Estabelecimentos industriais</strong> (CNAE 05-39, {dadosClimada.premissas.n_empresas_industria} de{" "}
-              {dadosClimada.premissas.n_empresas_total.toLocaleString("pt-BR")} empresas de Porto Alegre) usam custo
+              {dadosClimada.premissas.n_empresas_total.toLocaleString("pt-BR")} empresas de {munClimadaAtivo}) usam custo
               de construção e curva de dano próprios (categoria industrial); o restante (comércio,
               serviços, agropecuária e administração pública) segue todo sob o mesmo tratamento
               comercial genérico, mesmo cobrindo setores heterogêneos entre si.
@@ -1260,6 +1757,532 @@ function RpBarChart({ rpsDisponiveis, resultados, setores, maxTotal, rpAtivo }: 
         );
       })}
     </svg>
+  );
+}
+
+function CotaBarChart({ cotas, resultados, setores, maxTotal, cotaAtiva }: {
+  cotas: string[];
+  resultados: Record<string, Record<string, CotaSetor>>;
+  setores: string[];
+  maxTotal: number;
+  cotaAtiva: string;
+}) {
+  const barW = 26;
+  const gap = 8;
+  const chartH = 150;
+  const pL = 46;
+  const pB = 24;
+  const W = pL + cotas.length * (barW + gap) - gap + 10;
+  const fmtAxis = (val: number) => (val >= 1e9 ? `${(val / 1e9).toFixed(1)}bi` : val >= 1e6 ? `${(val / 1e6).toFixed(0)}mi` : "0");
+
+  return (
+    <svg viewBox={`0 0 ${W} ${chartH + pB}`} className="w-full overflow-visible">
+      {[0, 0.25, 0.5, 0.75, 1].map((p, i) => {
+        const y = chartH - p * chartH + 4;
+        return (
+          <g key={i}>
+            <line x1={pL - 4} y1={y} x2={W} y2={y} stroke="#e2eef3" strokeWidth={i === 0 ? 1.5 : 0.75} />
+            <text x={pL - 8} y={y + 3} textAnchor="end" fontSize="8" fill="#9ca3af">{fmtAxis(p * maxTotal)}</text>
+          </g>
+        );
+      })}
+      {cotas.map((c, i) => {
+        const d = resultados[c];
+        const x = pL + i * (barW + gap);
+        let yTop = chartH + 4;
+        const segs = setores.map((st) => {
+          const v = d[st].dano_fisico_brl_poa;
+          const h = Math.max((v / maxTotal) * chartH, v > 0 ? 1 : 0);
+          yTop -= h;
+          return { st, y: yTop, h };
+        });
+        const crua = setores.reduce((sum, k) => sum + d[k].dano_fisico_brl_jrc_crua, 0);
+        const yCrua = chartH + 4 - (crua / maxTotal) * chartH;
+        const ativa = c === cotaAtiva;
+        return (
+          <g key={c} opacity={ativa ? 1 : 0.6}>
+            {segs.map(({ st, y, h }) => (
+              <rect key={st} x={x} y={y} width={barW} height={h} fill={SETOR_COLORS[st]} />
+            ))}
+            <line x1={x - 2} x2={x + barW + 2} y1={yCrua} y2={yCrua} stroke="#334155" strokeWidth="1.5" strokeDasharray="3 2" />
+            {ativa && <rect x={x - 2} y={yCrua - 2} width={barW + 4} height={chartH + 4 - yCrua + 2} fill="none" stroke="#d97706" strokeWidth="2" rx="2" />}
+            <text x={x + barW / 2} y={chartH + 18} textAnchor="middle" fontSize="8" fill={ativa ? "#d97706" : "#9ca3af"} fontWeight="bold">
+              {c}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+// ─── CLIMADA sem curva de dano: valor exposto atingido (Lajeado) ───────────────
+
+const FAIXA_LABEL: [string, string][] = [
+  ["ate_0_5m", "≤ 0,5 m"], ["0_5_a_1m", "0,5–1 m"], ["1_a_2m", "1–2 m"], ["2_a_3m", "2–3 m"], ["acima_3m", "> 3 m"],
+];
+
+function ExposicaoView({ expo, mun, visao, rp, cota, setAba }: {
+  expo: ExposicaoMun; mun: string; visao: "rp" | "cota"; rp: string; cota: string; setAba: (a: "dala" | "climada") => void;
+}) {
+  const setores = ["empresas", "educacao", "saude"];
+  const soma = (r: Record<string, ExposicaoSetor>, k: "valor_exposto_atingido_brl" | "exposicao_total_brl") =>
+    setores.reduce((s, st) => s + r[st][k], 0);
+  const rpsLista = RP_ORDER.filter((r) => expo.resultados_por_rp[r]);
+  const rpAtivo = expo.resultados_por_rp[rp] ? rp : rpsLista[rpsLista.length - 1];
+  const cotasLista = Object.keys(expo.por_cota).sort((a, b) => parseFloat(a) - parseFloat(b));
+  const cotaAtiva = expo.por_cota[cota] ? cota : cotasLista[Math.floor(cotasLista.length / 2)];
+  const atual = visao === "rp" ? expo.resultados_por_rp[rpAtivo] : expo.por_cota[cotaAtiva];
+  const titulo = visao === "rp" ? `${mun} · ${rpAtivo}` : `${mun} · cota ${cotaAtiva} m`;
+  const acima = new Set(expo.rp_por_cota.rps_acima_do_ultimo_raster);
+  const total = soma(atual, "valor_exposto_atingido_brl");
+  const expTotal = soma(atual, "exposicao_total_brl");
+  const proj = expo.projecao_2050;
+
+  return (
+    <>
+      <Section id="c-resumo" num="1" title="Resumo">
+        <Note type="warning">
+          <strong>Aqui não há dano em R$.</strong> Sem curva de dano (JRC) não dá para converter
+          profundidade em fração destruída, e não há perda observada para calibrar. O indicador é o{" "}
+          <strong>valor exposto atingido</strong>: valor de reposição de tudo o que fica sob água
+          (profundidade &gt; 0). Ele é o <strong>teto</strong> do dano (equivale a perda total de
+          tudo que molha), não uma estimativa dele. Não somar com os Danos Operacionais (
+          <button onClick={() => setAba("dala")} className="underline underline-offset-2 font-bold">DaLA</button>
+          ) nem comparar com o dano de Porto Alegre.
+        </Note>
+        {visao === "rp" && acima.size > 0 && (
+          <Note type="info">
+            {Array.from(acima).join(" e ")} ficam acima do último raster de profundidade (
+            {expo.rp_por_cota.cota_cobertura_raster_m[1]} m): o valor é extrapolado e subestima o
+            que seria atingido por cotas maiores.
+          </Note>
+        )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-5">
+          <div className="bg-white border border-[#b3cdd8] rounded-xl overflow-hidden shadow-sm">
+            <div className="px-4 py-3" style={{ backgroundColor: "#055071" }}>
+              <p className="text-[10px] font-black uppercase tracking-wider text-white/70 mb-0.5">{titulo}</p>
+              <p className="text-2xl font-black text-white leading-none">{fmtBRL(total)}</p>
+              <p className="text-[9px] text-white/60 font-mono mt-1">
+                valor exposto atingido (3 setores) · {expTotal ? ((total / expTotal) * 100).toFixed(1) : "0,0"}% da exposição total · teto, não dano
+              </p>
+            </div>
+            <div className="px-4 pt-3 pb-1">
+              <div className="flex h-2 rounded-full overflow-hidden bg-slate-100">
+                {setores.map((st) => (
+                  <div key={st} style={{ width: `${(atual[st].valor_exposto_atingido_brl / (total || 1)) * 100}%`, backgroundColor: SETOR_COLORS[st] }} />
+                ))}
+              </div>
+            </div>
+            <div className="px-4 pb-4 pt-2 grid grid-cols-1 gap-y-1">
+              {setores.map((st) => (
+                <KpiRow
+                  key={st}
+                  label={SETOR_LABEL[st]}
+                  value={fmtBRL(atual[st].valor_exposto_atingido_brl)}
+                  sub={`${atual[st].exposicao_total_brl ? ((atual[st].valor_exposto_atingido_brl / atual[st].exposicao_total_brl) * 100).toFixed(1) : "0,0"}% do setor`}
+                  color={SETOR_COLORS[st]}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="bg-white border border-[#b3cdd8] rounded-xl p-4 shadow-sm">
+            <p className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94] mb-2">Exposição total (patrimônio no município)</p>
+            <p className="text-2xl font-black text-slate-800 leading-none mb-3">{fmtBRL(expTotal)}</p>
+            {setores.map((st) => (
+              <div key={st} className="flex items-center justify-between text-[11px] py-1 border-t border-slate-100 first:border-t-0">
+                <span className="text-slate-500">{SETOR_LABEL[st]}: {atual[st].n_atingidos}/{atual[st].n_total} pontos atingidos</span>
+                <span className="font-bold text-slate-700">prof. média {atual[st].profundidade_media_atingidos_m.toFixed(2)}m</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      {visao === "rp" ? (
+        <>
+          <Section id="c-faixas" num="2" title="Gravidade por faixa de profundidade">
+            <p>
+              Valor exposto atingido em {rpAtivo}, por faixa de profundidade da água. Mostra a gravidade
+              sem nenhuma premissa de curva: quanto mais valor nas faixas fundas, maior o dano
+              provável, mas o quanto exatamente depende de uma curva que não temos.
+            </p>
+            <DataTable
+              rows={[
+                ["Setor", ...FAIXA_LABEL.map(([, l]) => l), "Total atingido"],
+                ...setores.map((st) => [
+                  SETOR_LABEL[st],
+                  ...FAIXA_LABEL.map(([k]) => fmtBRL(atual[st].faixas_valor_brl[k] ?? 0)),
+                  fmtBRL(atual[st].valor_exposto_atingido_brl),
+                ]),
+              ]}
+            />
+          </Section>
+
+          <Section id="c-eai" num="3" title="Exposição atingida anual esperada">
+            <p>
+              As seções anteriores mostram o valor atingido por <em>um evento</em> de cada RP. A
+              exposição atingida anual esperada resume tudo num único número: quanto valor, <strong>em
+              média por ano</strong>, fica sob água, somando eventos frequentes e pequenos com raros e
+              grandes, ponderados pela probabilidade de cada um. É a mesma integral do risco anual
+              esperado (EAI), aplicada ao valor exposto em vez do dano: o teto do EAI.
+            </p>
+            <div className="bg-white border border-[#b3cdd8] rounded-xl overflow-hidden shadow-sm mt-3">
+              <div className="px-4 py-3" style={{ backgroundColor: "#055071" }}>
+                <p className="text-[10px] font-black uppercase tracking-wider text-white/70 mb-0.5">{mun} · todos os setores</p>
+                <p className="text-2xl font-black text-white leading-none">{fmtBRL(expo.eai_exposto.total)} / ano</p>
+                <p className="text-[9px] text-white/60 font-mono mt-1">
+                  exposição atingida anual esperada, integrada sobre {rpsLista.length} período(s) de retorno ({rpsLista[0]}..{rpsLista[rpsLista.length - 1]}) · sem a cauda assumida: {fmtBRL(expo.eai_exposto_sem_cauda_brl)}/ano
+                </p>
+              </div>
+              <div className="px-4 py-4 grid grid-cols-1 gap-y-1.5">
+                {setores.map((st) => {
+                  const valor = expo.eai_exposto[st as "empresas" | "educacao" | "saude"];
+                  return (
+                    <KpiRow
+                      key={st}
+                      label={SETOR_LABEL[st]}
+                      value={`${fmtBRL(valor)} / ano`}
+                      sub={`${((valor / expo.eai_exposto.total) * 100).toFixed(0)}% do total`}
+                      color={SETOR_COLORS[st]}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+            <p className="text-[13px]">
+              Regra do trapézio sobre a curva frequência de excedência × valor atingido, com
+              extrapolação linear a zero acima de RP10 e platô constante abaixo de RP500:
+            </p>
+            <MathBlock exprs={[
+              { label: "Frequência de excedência", tex: "f_i = \\dfrac{1}{RP_i}" },
+              { label: "Exposição anual esperada (aproximada)", tex: "\\text{EAI} \\approx \\sum_i \\dfrac{(f_i - f_{i+1})(L_i + L_{i+1})}{2}" },
+            ]} />
+            <p className="text-[11px] text-slate-500">
+              A cauda abaixo do RP10 é uma reta assumida até &ldquo;evento anual, nada atingido&rdquo; e
+              responde por boa parte do número; a versão sem ela é a que os RPs calculados sustentam.
+              Aproximação por pontos de RP interpolados: tratar como ordem de grandeza. Ver{" "}
+              <a href="/metodologia#dano-fisico" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Metodologia</a>.
+            </p>
+          </Section>
+
+          {proj && (
+            <Section id="c-projecao" num="4" title="Projeção 2025→2050">
+              <p>
+                As seções anteriores mostram a exposição de <strong>hoje</strong> (2025). Esta projeção
+                estima como ela muda até 2050, decomposta em dois motores independentes: o{" "}
+                <strong>crescimento econômico</strong> (mais patrimônio exposto, mesma lâmina d&apos;água)
+                e a <strong>mudança climática</strong> (a lâmina d&apos;água de hoje passa a ocorrer com
+                frequência maior). Segue a mesma decomposição de Porto Alegre.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-5">
+                <div className="bg-white border border-[#b3cdd8] rounded-xl overflow-hidden shadow-sm">
+                  <div className="px-4 py-3" style={{ backgroundColor: "#055071" }}>
+                    <p className="text-[10px] font-black uppercase tracking-wider text-white/70 mb-0.5">Exposição atingida anual esperada</p>
+                    <p className="text-2xl font-black text-white leading-none">
+                      {fmtBRL(proj.total.risco_2025_brl)} <span className="text-sm opacity-60">→</span> {fmtBRL(proj.total.risco_2050_brl)}
+                    </p>
+                    <p className="text-[9px] text-white/60 font-mono mt-1">2025 → 2050 · {proj.premissas.rps_usados.length} RPs com remapeamento oficial</p>
+                  </div>
+                  <div className="px-4 py-4 grid grid-cols-1 gap-y-1.5">
+                    <KpiRow label="Aumento total" value={`${fmtBRL(proj.total.aumento_total_brl)}/ano`} sub="2025→2050" color="#055071" />
+                    <KpiRow label="Por crescimento econômico" value={`${fmtBRL(proj.total.parcela_crescimento_brl)}/ano`} sub={`${(100 - proj.total.pct_climatico).toFixed(0)}% do aumento`} color="#2563eb" />
+                    <KpiRow label="Por mudança climática" value={`${fmtBRL(proj.total.parcela_clima_brl)}/ano`} sub={`${proj.total.pct_climatico.toFixed(0)}% do aumento`} color="#dc2626" />
+                  </div>
+                </div>
+                <div className="bg-white border border-[#b3cdd8] rounded-xl p-4 shadow-sm">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94] mb-2">Premissas</p>
+                  <div className="flex flex-col gap-1.5 text-[11px]">
+                    <div className="flex justify-between border-t border-slate-100 pt-1 first:border-t-0 first:pt-0">
+                      <span className="text-slate-500">Crescimento econômico</span>
+                      <span className="font-bold text-slate-700">{(proj.premissas.crescimento_anual * 100).toFixed(0)}%/ano · {proj.premissas.anos_projecao} anos (×{proj.premissas.fator_crescimento.toFixed(2)})</span>
+                    </div>
+                    <div className="flex justify-between border-t border-slate-100 pt-1">
+                      <span className="text-slate-500">RPs usados</span>
+                      <span className="font-bold text-slate-700">{proj.premissas.rps_usados.join(", ")}</span>
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-slate-400 mt-2 leading-relaxed">{proj.premissas.crescimento_fonte}. O remapeamento de frequência é o do Guaíba, aplicado ao Taquari como premissa.</p>
+                </div>
+              </div>
+              <SubTitle>Decomposição por setor</SubTitle>
+              <DataTable rows={[
+                ["Setor", "Exposição 2025", "Exposição 2050", "Crescimento", "Clima", "% climático"],
+                ...setores.map((st) => {
+                  const ps = proj.por_setor[st];
+                  return [SETOR_LABEL[st], fmtBRL(ps.risco_2025_brl), fmtBRL(ps.risco_2050_brl), fmtBRL(ps.parcela_crescimento_brl), fmtBRL(ps.parcela_clima_brl), `${ps.pct_climatico.toFixed(0)}%`];
+                }),
+              ]} />
+            </Section>
+          )}
+
+          <Section id="c-comparativo" num="5" title="Comparativo por Período de Retorno">
+            <p>
+              Quanto maior o período de retorno (RP), mais rara e mais severa a inundação modelada, e
+              maior a área atingida. O gráfico mostra o valor exposto atingido (3 setores) para cada RP.
+            </p>
+            <div className="bg-white border border-[#b3cdd8] rounded-xl p-5 shadow-sm mt-3">
+              <p className="text-[10px] text-slate-400 font-medium mb-2">
+                Cada barra soma o valor exposto atingido dos 3 setores para aquele RP, dividida por cor
+                (proporcional). O número no topo é o total; a barra com contorno âmbar é o RP
+                selecionado acima.{acima.size > 0 ? ` ${Array.from(acima).join(" e ")} estão acima do último raster (extrapolados).` : ""}
+              </p>
+              <RpBarChart
+                rpsDisponiveis={rpsLista}
+                resultados={Object.fromEntries(rpsLista.map((r) => [r, Object.fromEntries(setores.map((st) => [st, { dano_fisico_total_brl: expo.resultados_por_rp[r][st].valor_exposto_atingido_brl } as unknown as SetorResultado]))]))}
+                setores={setores}
+                maxTotal={Math.max(...rpsLista.map((r) => soma(expo.resultados_por_rp[r], "valor_exposto_atingido_brl")))}
+                rpAtivo={rpAtivo}
+              />
+              <div className="flex gap-4 flex-wrap mt-4 justify-center">
+                {setores.map((st) => (
+                  <div key={st} className="flex items-center gap-1.5">
+                    <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: SETOR_COLORS[st] }} />
+                    <span className="text-[10px] text-slate-500 font-medium">{SETOR_LABEL[st]}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <SubTitle>Tabela completa</SubTitle>
+            <DataTable rows={[
+              ["RP", "Cota na régua (m)", "Empresas", "Educação", "Saúde", "Total", "Exposição total"],
+              ...rpsLista.map((r) => {
+                const a = expo.resultados_por_rp[r];
+                return [
+                  <strong key="rp">{r}{acima.has(r) ? " *" : ""}</strong>,
+                  expo.rp_por_cota.rps[r].cota_regua_m.toFixed(2).replace(".", ","),
+                  fmtBRL(a.empresas.valor_exposto_atingido_brl),
+                  fmtBRL(a.educacao.valor_exposto_atingido_brl),
+                  fmtBRL(a.saude.valor_exposto_atingido_brl),
+                  <strong key="tot">{fmtBRL(soma(a, "valor_exposto_atingido_brl"))}</strong>,
+                  fmtBRL(soma(a, "exposicao_total_brl")),
+                ];
+              }),
+            ]} />
+            <p className="text-[11px] text-slate-500">* acima do último raster (extrapolado).</p>
+          </Section>
+
+          <Section id="c-medidas" num="6" title="Medidas de Adaptação">
+            <p>
+              Quanto da exposição atingida anual esperada cada medida evitaria. Só entram as medidas
+              cujo efeito não depende da curva de dano: proteção coletiva, vedação do imóvel (−45% do
+              valor atingido onde a profundidade é de até 1 m) e relocação. Ficam de
+              fora o <strong>alerta antecipado</strong> e o <strong>estoque elevado</strong>, que
+              atuam reduzindo a fração destruída (MDD) e portanto exigem a curva.
+            </p>
+            <Note type="warning">
+              <strong>Custo-benefício limitado ao que os dados sustentam.</strong> O benefício é em
+              valor <em>exposto</em> (teto, não dano), então todo B/C é um <strong>máximo</strong>. O
+              <strong> custo de equilíbrio</strong> é quanto a medida poderia custar e ainda se pagar,
+              mesmo supondo perda total do que molha (valor presente 2025–2050, desconto de 6% a.a.,
+              risco sem a cauda assumida). Os custos seguem as mesmas regras de Porto Alegre, aplicadas a
+              {mun}; o custo e a fonte de cada medida estão abaixo da tabela.
+            </Note>
+            <MedidasTable medidasMun={expo.medidas} exposicao />
+            <ul className="list-disc list-inside space-y-2 text-sm text-slate-700">
+              <li>
+                <strong>Proteção coletiva (dique)</strong> supõe nenhum alagamento até o RP de projeto,
+                sem falha nem galgamento: é um teto. Como zera o RP10, também apaga a cauda assumida do
+                EAI, por isso a coluna &ldquo;sem cauda assumida&rdquo; é a comparação mais justa.
+              </li>
+              <li>
+                Parâmetros da literatura (ver Fontes); relocação e diques são cenários de projeto. O
+                custo do dique é genérico: a proporção custo/exposição do programa de proteção de
+                Porto Alegre aplicada à exposição de {mun}, não um orçamento local. A vedação é contada
+                por coordenada atingida (aproximação de edificação). As medidas não se somam.
+              </li>
+            </ul>
+          </Section>
+        </>
+      ) : (
+        <Section id="c-tabela" num="2" title="Valor exposto atingido por cota do rio">
+          <p>
+            Valor exposto atingido em cada cota (rasters de 18,45 a 34,45 m, passo 1 m), com o máximo
+            acumulado entre cotas. Sem período de retorno associado a cada cota, não há EAI nesta visão.
+          </p>
+          <DataTable
+            rows={[
+              ["Cota (m)", "Empresas atingidas", "Escolas atingidas", "Unid. saúde atingidas", "Valor exposto atingido"],
+              ...cotasLista.map((c) => {
+                const r = expo.por_cota[c];
+                return [
+                  <span key="c" className={c === cotaAtiva ? "font-black text-amber-700" : "font-bold"}>{c}</span>,
+                  `${r.empresas.n_atingidos}/${r.empresas.n_total}`,
+                  `${r.educacao.n_atingidos}/${r.educacao.n_total}`,
+                  `${r.saude.n_atingidos}/${r.saude.n_total}`,
+                  fmtBRL(soma(r, "valor_exposto_atingido_brl")),
+                ];
+              }),
+            ]}
+          />
+        </Section>
+      )}
+
+      <Section id="c-limitacoes" num={visao === "rp" ? "7" : "3"} title="Limitações">
+        <Note type="warning">
+          Estes números são um <strong>protótipo</strong> para explorar a metodologia CLIMADA/CCDR em
+          cima dos nossos próprios dados (RAIS/Censo Escolar/CNES). Não substituem os Danos
+          Operacionais (DaLA) da aba principal; ver{" "}
+          <a href="/metodologia#dano-fisico" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 font-bold">metodologia completa ↗</a>:
+        </Note>
+        <ul className="list-disc list-inside space-y-2 text-sm text-slate-700 mt-3">
+          <li>
+            <strong>Exposição, não dano.</strong> Todo ponto com profundidade &gt; 0 conta com 100% do
+            seu valor de reposição. Não há curva JRC nem calibração para {mun}; o dano real fica entre
+            zero e este valor.
+          </li>
+          <li>
+            <strong>Valor de reposição é estimativa</strong> (CUB/RS × área por proxy: 9 m² por pessoa,
+            salas por matrícula; ver metodologia), não cadastro de valor de mercado.
+          </li>
+          <li>
+            <strong>Coordenada corrigida em um estabelecimento.</strong> O Hospital Bruno Born
+            (1.867 profissionais e 201 leitos) estava geocodificado na coordenada genérica do
+            centro, dentro da mancha; foi movido para o endereço real (Av. Benjamin Constant, 881,
+            coordenada do OpenStreetMap), que fica fora dela. É a única exceção à regra de manter
+            a base como reportada, porque sozinho ele respondia pela maior parte do valor atingido
+            de Saúde.
+          </li>
+          <li>
+            <strong>Coordenadas repetidas na base oficial.</strong> Em {mun}: empresas 3.443 em 649
+            coordenadas (maior pilha: 300), saúde 587 em 385 (maior: 86), educação 74 em 62. A base é
+            mantida como reportada; cada pilha entra ou sai da mancha de uma vez, o que gera degraus
+            no valor atingido.
+          </li>
+          <li>
+            <strong>Frequência (RP):</strong> Gumbel por L-momentos sobre a série de cotas máximas anuais
+            do SGB (1939–2023) mais 2024 provisório; o datum dos rasters (régua − 0,55 m) é hipótese não
+            confirmada pelo autor dos rasters.
+          </li>
+          <li>
+            <strong>Rasters não monotônicos entre cotas:</strong> aplicado o máximo acumulado por ponto.
+            Amostragem por pixel de ~5 m (vizinho mais próximo).
+          </li>
+          <li>
+            <strong>Projeção 2050</strong> herda de Porto Alegre o remapeamento de frequência e o
+            crescimento de 2%/ano, sem validação para o Taquari.
+          </li>
+        </ul>
+      </Section>
+    </>
+  );
+}
+
+function MedidasTable({ medidasMun, exposicao }: { medidasMun: MedidasMun; exposicao?: boolean }) {
+  const cb = !!medidasMun.custo_beneficio_premissas;
+  const fmt2 = (v: number | null | undefined) => (v === null || v === undefined ? "n/d" : v.toFixed(2).replace(".", ","));
+  const link = (txt?: string, url?: string | null) =>
+    url ? <a href={url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">{txt} ↗</a> : <span>{txt}</span>;
+  return (
+    <>
+    <div className="overflow-x-auto my-3 rounded-xl border border-[#b3cdd8] shadow-sm">
+      <table className="w-full text-[12px] border-collapse">
+        <thead>
+          <tr className="bg-[#055071] text-white">
+            <th className="text-left px-3 py-2.5 font-bold">Medida</th>
+            <th className="text-right px-3 py-2.5 font-bold">{exposicao ? "Exposição evitada / ano" : "Risco evitado / ano"}</th>
+            <th className="text-right px-3 py-2.5 font-bold">Sem cauda assumida</th>
+            <th className="text-right px-3 py-2.5 font-bold">Evitado em 2050 / ano</th>
+            {cb && (<>
+              <th className="text-right px-3 py-2.5 font-bold">Custo</th>
+              <th className="text-right px-3 py-2.5 font-bold">{exposicao ? "Custo de equilíbrio" : "Benefício (VP)"}</th>
+              <th className="text-right px-3 py-2.5 font-bold">{exposicao ? "B/C máx." : "B/C"}</th>
+            </>)}
+          </tr>
+        </thead>
+        <tbody>
+          {medidasMun.medidas.map((m, i) => (
+            <tr key={m.id} className="border-t border-[#b3cdd8]" style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f0f7fa" }}>
+              <td className="px-3 py-2 align-top">
+                <p className="font-bold text-slate-800">{m.nome}</p>
+                <p className="text-[10px] text-slate-500">{m.mecanismo}</p>
+                <div className="h-1.5 rounded-full bg-slate-100 mt-1.5 overflow-hidden">
+                  <div className="h-full bg-amber-500" style={{ width: `${Math.min(m.pct_evitado_sem_cauda, 100)}%` }} />
+                </div>
+                {(() => {
+                  const tot = Object.values(m.evitado_por_setor_brl).reduce((x, y) => x + y, 0);
+                  if (!(tot > 0)) return null;
+                  return (
+                    <div className="mt-1.5" title="Evitado por setor (EAI, com a cauda assumida)">
+                      <div className="flex h-1.5 rounded-full overflow-hidden bg-slate-100">
+                        {Object.keys(SETOR_LABEL).map((st) => (
+                          <div key={st} style={{ width: `${((m.evitado_por_setor_brl[st] ?? 0) / tot) * 100}%`, backgroundColor: SETOR_COLORS[st] }} />
+                        ))}
+                      </div>
+                      <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
+                        {Object.keys(SETOR_LABEL).filter((st) => (m.evitado_por_setor_brl[st] ?? 0) > 0).map((st) => (
+                          <span key={st} className="flex items-center gap-1 text-[10px] text-slate-500">
+                            <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: SETOR_COLORS[st] }} />
+                            {SETOR_LABEL[st]} {fmtBRL(m.evitado_por_setor_brl[st])}/ano
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
+              </td>
+              <td className="px-3 py-2 align-top text-right whitespace-nowrap">
+                <span className="font-bold text-slate-800">{fmtBRL(m.eai_evitado_brl)}</span>
+                <span className="block text-[10px] text-slate-500">{m.pct_evitado.toFixed(1).replace(".", ",")}% do EAI</span>
+              </td>
+              <td className="px-3 py-2 align-top text-right whitespace-nowrap">
+                <span className="font-bold text-slate-800">{fmtBRL(m.eai_evitado_sem_cauda_brl)}</span>
+                <span className="block text-[10px] text-slate-500">{m.pct_evitado_sem_cauda.toFixed(1).replace(".", ",")}%</span>
+              </td>
+              <td className="px-3 py-2 align-top text-right whitespace-nowrap font-bold text-slate-800">
+                {m.eai_2050_evitado_brl !== null ? fmtBRL(m.eai_2050_evitado_brl) : "n/d"}
+              </td>
+              {cb && m.custo_beneficio && (<>
+                <td className="px-3 py-2 align-top text-right whitespace-nowrap" title={m.custo_beneficio.custo_fonte}>
+                  <span className="font-bold text-slate-800">
+                    {m.custo_beneficio.custo_min_brl !== undefined ? `${fmtBRL(m.custo_beneficio.custo_min_brl)} a ` : ""}
+                    {m.custo_beneficio.custo_brl !== null ? fmtBRL(m.custo_beneficio.custo_brl) : "n/d"}
+                  </span>
+                  {m.custo_beneficio.setores_com_custo.length > 0 && m.custo_beneficio.setores_com_custo.length < 3 && (
+                    <span className="block text-[10px] text-slate-500">só {m.custo_beneficio.setores_com_custo.map((x) => SETOR_LABEL[x]).join(" e ")}</span>
+                  )}
+                </td>
+                <td className="px-3 py-2 align-top text-right whitespace-nowrap">
+                  <span className="font-bold text-slate-800">{fmtBRL(m.custo_beneficio.beneficio_vp_sem_cauda_brl)}</span>
+                  <span className="block text-[10px] text-slate-500">com cauda: {fmtBRL(m.custo_beneficio.beneficio_vp_brl)}</span>
+                </td>
+                <td className="px-3 py-2 align-top text-right whitespace-nowrap">
+                  {m.custo_beneficio.bc_sem_cauda_max !== undefined ? (
+                    <>
+                      {/* faixa de custo: o B/C vai do custo mais alto ao mais baixo */}
+                      <span className={`font-black ${(m.custo_beneficio.bc_sem_cauda ?? 0) >= 1 ? "text-[#2d7a2d]" : m.custo_beneficio.bc_sem_cauda_max >= 1 ? "text-amber-700" : "text-[#b23a2b]"}`}>
+                        {fmt2(m.custo_beneficio.bc_sem_cauda)} a {fmt2(m.custo_beneficio.bc_sem_cauda_max)}
+                      </span>
+                      <span className="block text-[10px] text-slate-500">com cauda: {fmt2(m.custo_beneficio.bc)} a {fmt2(m.custo_beneficio.bc_max)}</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className={`font-black ${(m.custo_beneficio.bc_sem_cauda ?? 0) >= 1 ? "text-[#2d7a2d]" : "text-[#b23a2b]"}`}>{fmt2(m.custo_beneficio.bc_sem_cauda)}</span>
+                      <span className="block text-[10px] text-slate-500">com cauda: {fmt2(m.custo_beneficio.bc)}</span>
+                    </>
+                  )}
+                </td>
+              </>)}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <div className="bg-white border border-[#b3cdd8] rounded-xl p-4 shadow-sm my-3">
+      <p className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94] mb-2">Fontes dos parâmetros e dos custos</p>
+      <ul className="flex flex-col gap-2 text-[11px] text-slate-600 leading-relaxed">
+        {medidasMun.medidas.map((m) => (
+          <li key={m.id}>
+            <span className="font-bold text-slate-800">{m.nome}.</span>{" "}
+            <span className="text-slate-500">Parâmetro:</span> {link(m.fonte, m.fonte_url)}.
+            {m.custo_beneficio && (<>
+              {" "}<span className="text-slate-500">Custo:</span> {m.custo_beneficio.custo_descricao ?? "n/d"} ({link(m.custo_beneficio.custo_fonte, m.custo_beneficio.custo_fonte_url)}).
+            </>)}
+          </li>
+        ))}
+      </ul>
+    </div>
+    </>
   );
 }
 

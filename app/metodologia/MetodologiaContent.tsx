@@ -11,7 +11,7 @@ const SETOR_COLORS: Record<string, string> = { empresas: "#055071", educacao: "#
 const PORTE_LABEL: Record<string, string> = {
   qtd_vinculos: "Nº de vínculos empregatícios",
   salas_equivalentes: "Salas de aula equivalentes (por matrícula e etapa)",
-  leitos_ou_profissionais: "Leitos (ou nº de profissionais, se 0 leitos)",
+  leitos_ou_profissionais: "Profissionais + leitos (pessoas que ocupam a unidade)",
 };
 function fmtBRLPreciso(v: number): string {
   return `R$ ${v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -143,12 +143,12 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             </li>
             <li>
               <strong>Climada - UNU/EHS (Porto Alegre)</strong>: mancha de risco hidrológico do
-              exercício de adaptação climática CLIMADA/UNU-EHS para o BID (independente da mancha
+              estudo de adaptação climática da UNU-EHS para o BID (independente da mancha
               ADA do MUP), a partir do raster de duração da inundação (dias) do evento real de
               maio/2024 usado na calibração do modelo. Vetorizado (pixels com duração {'>'} 0,
               suavizado por fechamento morfológico para remover ruído em escala de quadra) e
               passa pelo mesmo pipeline de sobreposição espacial dos demais cenários (Seção 2). O
-              exercício CLIMADA também modela profundidade máxima de água por período de retorno
+              estudo também modela profundidade máxima de água por período de retorno
               sintético (RP10 a RP500, de 10 a 500 anos); esses rasters ainda não entram como
               cenário aqui porque representam uma métrica de risco diferente (profundidade × função
               de dano × valor de reposição do ativo), não um polígono &ldquo;atingido sim/não&rdquo; como os
@@ -169,7 +169,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             ["Fonte",        "Período",                    "Municípios",                        "Método de mapeamento"],
             ["MUP / Gov. RS","Maio 2024",                  "Eldorado do Sul · Porto Alegre",    "Fusão de imagens SAR + registros de campo + nível hidrométrico"],
             ["LabModel",     "Maio 2024",                  "Lajeado (cotas 27 m e 30 m)",       "Modelagem hidráulica 2D (HEC-RAS)"],
-            ["CLIMADA",      "Maio 2024",                  "Porto Alegre",                      "Modelagem de risco hidrológico (exercício de adaptação BID/UNU-EHS)"],
+            ["CLIMADA",      "Maio 2024",                  "Porto Alegre",                      "Modelagem de risco hidrológico (estudo de adaptação BID/UNU-EHS)"],
             ["CIEX/FURG",    "Maio 2024 · Setembro 2023",  "Rio Grande",                        "Modelagem hidrológica e hidráulica costeira"],
           ]} />
           <SectionSources links={[

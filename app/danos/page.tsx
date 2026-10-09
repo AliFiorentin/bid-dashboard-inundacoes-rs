@@ -8,6 +8,6 @@ export const metadata: Metadata = {
 };
 
 export default function DanosPage() {
-  const { dados, dadosClimada } = getDanosPageData();
-  return <DanosClient dados={dados} dadosClimada={dadosClimada} />;
+  const { dados, dadosClimada, dadosClimadaMun, dadosCotas, dadosMedidas, dadosExposicao } = getDanosPageData();
+  return <DanosClient dados={dados} dadosClimada={dadosClimada} dadosClimadaMun={dadosClimadaMun} dadosCotas={dadosCotas} dadosMedidas={dadosMedidas} dadosExposicao={dadosExposicao} />;
 }

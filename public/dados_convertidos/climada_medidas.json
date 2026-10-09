@@ -1,0 +1,342 @@
+{
+  "Porto Alegre": {
+    "base": {
+      "eai_brl": 229041744.35,
+      "eai_sem_cauda_brl": 76298695.94,
+      "eai_2050_brl": 480784832.06,
+      "rps": [
+        "RP10",
+        "RP20",
+        "RP50",
+        "RP75",
+        "RP100",
+        "RP200",
+        "RP500"
+      ]
+    },
+    "medidas": [
+      {
+        "id": "dique_rp100",
+        "nome": "Proteção coletiva até RP100 (dique)",
+        "mecanismo": "dano zero em eventos de RP ≤ 100; dano inteiro acima",
+        "fonte": "Cenário de projeto (sem parâmetro empírico)",
+        "fonte_url": null,
+        "eai_evitado_brl": 211762141.19,
+        "pct_evitado": 92.5,
+        "eai_evitado_sem_cauda_brl": 59019092.77,
+        "pct_evitado_sem_cauda": 77.4,
+        "eai_2050_evitado_brl": 423751375.34,
+        "evitado_por_setor_brl": {
+          "empresas": 191212745.14,
+          "educacao": 15354329.33,
+          "saude": 5195066.72
+        },
+        "custo_beneficio": {
+          "custo_brl": 2300000000.0,
+          "custo_descricao": "R$ 2,3 bi do programa de proteção e drenagem (R$ 624 mi estruturas + R$ 1,1 bi casas de bombas + R$ 600 mi arroios e galerias), como proporção da exposição",
+          "custo_fonte": "Prefeitura de Porto Alegre, balanço de investimentos em prevenção e obras de proteção contra cheias",
+          "custo_fonte_url": "https://prefeitura.poa.br/gp/noticias/prefeitura-apresenta-balanco-de-investimentos-em-prevencao-e-obras-de-protecao-contra",
+          "setores_com_custo": [
+            "empresas",
+            "educacao",
+            "saude"
+          ],
+          "beneficio_vp_brl": 4010592935.34,
+          "beneficio_vp_sem_cauda_brl": 1544738866.78,
+          "bc": 1.74,
+          "bc_sem_cauda": 0.67
+        }
+      },
+      {
+        "id": "dique_rp20",
+        "nome": "Proteção coletiva até RP20 (dique/drenagem)",
+        "mecanismo": "dano zero em eventos de RP ≤ 20; dano inteiro acima",
+        "fonte": "Cenário de projeto (sem parâmetro empírico)",
+        "fonte_url": null,
+        "eai_evitado_brl": 174518789.61,
+        "pct_evitado": 76.2,
+        "eai_evitado_sem_cauda_brl": 21775741.2,
+        "pct_evitado_sem_cauda": 28.5,
+        "eai_2050_evitado_brl": 294198521.6,
+        "evitado_por_setor_brl": {
+          "empresas": 157888618.34,
+          "educacao": 12151960.31,
+          "saude": 4478210.96
+        },
+        "custo_beneficio": {
+          "custo_brl": 624000000.0,
+          "custo_descricao": "R$ 624 mi em melhorias das estruturas de proteção (diques, muro, comportas), como proporção da exposição",
+          "custo_fonte": "Prefeitura de Porto Alegre, balanço de investimentos em prevenção e obras de proteção contra cheias",
+          "custo_fonte_url": "https://prefeitura.poa.br/gp/noticias/prefeitura-apresenta-balanco-de-investimentos-em-prevencao-e-obras-de-protecao-contra",
+          "setores_com_custo": [
+            "empresas",
+            "educacao",
+            "saude"
+          ],
+          "beneficio_vp_brl": 3021836510.81,
+          "beneficio_vp_sem_cauda_brl": 555982442.24,
+          "bc": 4.84,
+          "bc_sem_cauda": 0.89
+        }
+      },
+      {
+        "id": "estoque",
+        "nome": "Estoque e equipamento elevados",
+        "mecanismo": "−48% no dano de conteúdo: dano × 0,76 (só Empresas)",
+        "fonte": "Kreibich et al. (2005), Flood loss reduction of private households due to building precautionary measures. Natural Hazards and Earth System Sciences 5, 117-126",
+        "fonte_url": "https://nhess.copernicus.org/articles/5/117/2005/",
+        "eai_evitado_brl": 49557768.18,
+        "pct_evitado": 21.6,
+        "eai_evitado_sem_cauda_brl": 16372677.13,
+        "pct_evitado_sem_cauda": 21.5,
+        "eai_2050_evitado_brl": 103735471.75,
+        "evitado_por_setor_brl": {
+          "empresas": 49557768.18,
+          "educacao": 0.0,
+          "saude": 0.0
+        },
+        "custo_beneficio": {
+          "custo_min_brl": 431997300.0,
+          "bc_max": 2.23,
+          "bc_sem_cauda_max": 0.99,
+          "custo_brl": 966309750.0,
+          "custo_descricao": "mezanino metálico instalado, R$ 380 a R$ 850 por m², sobre 100% da área de cada empresa atingida no RP500 (teto: supõe elevar toda a área)",
+          "custo_fonte": "Preços de mercado de mezanino metálico no Sul do Brasil (Estruturas Metálicas MLN; Mezanino para Lojas, SC/PR)",
+          "custo_fonte_url": "https://www.estruturasmetalicasmln.com.br/mezanino-metalico-preco",
+          "setores_com_custo": [
+            "empresas"
+          ],
+          "beneficio_vp_brl": 962101692.58,
+          "beneficio_vp_sem_cauda_brl": 426368036.37,
+          "bc": 1.0,
+          "bc_sem_cauda": 0.44
+        }
+      },
+      {
+        "id": "alerta",
+        "nome": "Sistema de alerta antecipado",
+        "mecanismo": "−28% no dano de conteúdo: dano × 0,86 (Empresas), 0,91 (Educação), 0,84 (Saúde)",
+        "fonte": "Kreibich et al. (2007), Flood precaution of companies and their ability to cope with the flood in August 2002 in Saxony, Germany. Water Resources Research 43, W03408",
+        "fonte_url": "https://agupubs.onlinelibrary.wiley.com/doi/abs/10.1029/2005WR004691",
+        "eai_evitado_brl": 31358297.92,
+        "pct_evitado": 13.7,
+        "eai_evitado_sem_cauda_brl": 10405994.77,
+        "pct_evitado_sem_cauda": 13.6,
+        "eai_2050_evitado_brl": 65737724.71,
+        "evitado_por_setor_brl": {
+          "empresas": 28908698.11,
+          "educacao": 1587510.47,
+          "saude": 862089.34
+        },
+        "custo_beneficio": {
+          "custo_brl": 47175000.0,
+          "custo_descricao": "R$ 47,175 mi, contrato do Plano Rio Grande para 130 estações hidrometeorológicas em 24 bacias (sistema estadual inteiro)",
+          "custo_fonte": "Defesa Civil do Rio Grande do Sul, estações de monitoramento hidrometeorológicas (Plano Rio Grande)",
+          "custo_fonte_url": "https://www.defesacivil.rs.gov.br/estacoes-de-monitoramento-hidrometeorologicas-ja-estao-instaladas-em-20-pontos",
+          "setores_com_custo": [
+            "empresas",
+            "educacao",
+            "saude"
+          ],
+          "beneficio_vp_brl": 609285615.82,
+          "beneficio_vp_sem_cauda_brl": 271035708.59,
+          "bc": 12.92,
+          "bc_sem_cauda": 5.75
+        }
+      },
+      {
+        "id": "protecao_imovel",
+        "nome": "Vedação do imóvel (barreiras)",
+        "mecanismo": "−45% do dano onde a profundidade é ≤ 1 m; sem efeito acima (3 setores)",
+        "fonte": "Kreibich et al. (2015), A review of damage-reducing measures to manage fluvial flood risks in a changing climate. Mitigation and Adaptation Strategies for Global Change 20, 967-989",
+        "fonte_url": "https://link.springer.com/article/10.1007/s11027-014-9629-5",
+        "eai_evitado_brl": 33772344.51,
+        "pct_evitado": 14.7,
+        "eai_evitado_sem_cauda_brl": 9529868.84,
+        "pct_evitado_sem_cauda": 12.5,
+        "eai_2050_evitado_brl": 67459320.8,
+        "evitado_por_setor_brl": {
+          "empresas": 30503623.63,
+          "educacao": 1962152.04,
+          "saude": 1306568.84
+        },
+        "custo_beneficio": {
+          "custo_brl": 355502844.0,
+          "custo_descricao": "US$ 45 mil por edificação (dry floodproofing), contando uma edificação por coordenada atingida no RP500",
+          "custo_fonte": "Aerts (2018), A Review of Cost Estimates for Flood Adaptation. Water 10(11), 1646",
+          "custo_fonte_url": "https://doi.org/10.3390/w10111646",
+          "setores_com_custo": [
+            "empresas",
+            "educacao",
+            "saude"
+          ],
+          "beneficio_vp_brl": 638992978.83,
+          "beneficio_vp_sem_cauda_brl": 247627166.28,
+          "bc": 1.8,
+          "bc_sem_cauda": 0.7
+        }
+      },
+      {
+        "id": "relocacao",
+        "nome": "Relocação parcial dos pontos mais profundos",
+        "mecanismo": "60% do valor dos pontos mais profundos no RP100 (0,5% de Empresas e Saúde, 4% de Educação)",
+        "fonte": "Cenário de projeto (sem parâmetro empírico)",
+        "fonte_url": null,
+        "eai_evitado_brl": 41473205.88,
+        "pct_evitado": 18.1,
+        "eai_evitado_sem_cauda_brl": 9005275.24,
+        "pct_evitado_sem_cauda": 11.8,
+        "eai_2050_evitado_brl": 77133006.4,
+        "evitado_por_setor_brl": {
+          "empresas": 31233657.69,
+          "educacao": 9387889.56,
+          "saude": 851658.63
+        },
+        "custo_beneficio": {
+          "custo_brl": 221643112.62,
+          "custo_descricao": "60% do valor de reposição dos pontos relocados (refazer o ativo em outro lugar)",
+          "custo_fonte": "Valor de reposição do próprio modelo (CUB/RS, Sinduscon-RS)",
+          "custo_fonte_url": null,
+          "setores_com_custo": [
+            "empresas",
+            "educacao",
+            "saude"
+          ],
+          "beneficio_vp_brl": 755297253.86,
+          "beneficio_vp_sem_cauda_brl": 231141296.01,
+          "bc": 3.41,
+          "bc_sem_cauda": 1.04
+        }
+      }
+    ],
+    "custo_beneficio_premissas": {
+      "cambio_brl_usd": 5.5556,
+      "taxa_desconto": 0.06,
+      "horizonte": [
+        2025,
+        2050
+      ],
+      "fonte_custos": "Prefeitura de Porto Alegre, Defesa Civil RS e Aerts (2018); ver custo_fonte de cada medida"
+    }
+  },
+  "Lajeado": {
+    "base": {
+      "eai_brl": 19465929.44,
+      "eai_sem_cauda_brl": 5507088.25,
+      "eai_2050_brl": 39995720.21,
+      "rps": [
+        "RP10",
+        "RP20",
+        "RP50",
+        "RP75",
+        "RP100",
+        "RP200",
+        "RP500"
+      ]
+    },
+    "medidas": [
+      {
+        "id": "dique_rp100",
+        "nome": "Proteção coletiva até RP100 (dique)",
+        "mecanismo": "dano zero em eventos de RP ≤ 100; dano inteiro acima",
+        "fonte": "Cenário de projeto (sem parâmetro empírico)",
+        "fonte_url": null,
+        "eai_evitado_brl": 17665159.35,
+        "pct_evitado": 90.7,
+        "eai_evitado_sem_cauda_brl": 3706318.15,
+        "pct_evitado_sem_cauda": 67.3,
+        "eai_2050_evitado_brl": 34086806.5,
+        "evitado_por_setor_brl": {
+          "empresas": 6982167.38,
+          "educacao": 8008758.05,
+          "saude": 2674233.92
+        }
+      },
+      {
+        "id": "dique_rp20",
+        "nome": "Proteção coletiva até RP20 (dique/drenagem)",
+        "mecanismo": "dano zero em eventos de RP ≤ 20; dano inteiro acima",
+        "fonte": "Cenário de projeto (sem parâmetro empírico)",
+        "fonte_url": null,
+        "eai_evitado_brl": 15597210.15,
+        "pct_evitado": 80.1,
+        "eai_evitado_sem_cauda_brl": 1638368.95,
+        "pct_evitado_sem_cauda": 29.8,
+        "eai_2050_evitado_brl": 25732243.43,
+        "evitado_por_setor_brl": {
+          "empresas": 5863680.46,
+          "educacao": 7326440.62,
+          "saude": 2407089.06
+        }
+      },
+      {
+        "id": "relocacao",
+        "nome": "Relocação parcial dos pontos mais profundos",
+        "mecanismo": "60% do valor dos pontos mais profundos no RP100 (0,5% de Empresas e Saúde, 4% de Educação)",
+        "fonte": "Cenário de projeto (sem parâmetro empírico)",
+        "fonte_url": null,
+        "eai_evitado_brl": 5429170.83,
+        "pct_evitado": 27.9,
+        "eai_evitado_sem_cauda_brl": 1013221.32,
+        "pct_evitado_sem_cauda": 18.4,
+        "eai_2050_evitado_brl": 9774192.77,
+        "evitado_por_setor_brl": {
+          "empresas": 529502.04,
+          "educacao": 4863602.05,
+          "saude": 36066.74
+        }
+      },
+      {
+        "id": "estoque",
+        "nome": "Estoque e equipamento elevados",
+        "mecanismo": "−48% no dano de conteúdo: dano × 0,76 (só Empresas)",
+        "fonte": "Kreibich et al. (2005), Flood loss reduction of private households due to building precautionary measures. Natural Hazards and Earth System Sciences 5, 117-126",
+        "fonte_url": "https://nhess.copernicus.org/articles/5/117/2005/",
+        "eai_evitado_brl": 1983394.55,
+        "pct_evitado": 10.2,
+        "eai_evitado_sem_cauda_brl": 729437.05,
+        "pct_evitado_sem_cauda": 13.2,
+        "eai_2050_evitado_brl": 4520619.13,
+        "evitado_por_setor_brl": {
+          "empresas": 1983394.55,
+          "educacao": 0.0,
+          "saude": 0.0
+        }
+      },
+      {
+        "id": "alerta",
+        "nome": "Sistema de alerta antecipado",
+        "mecanismo": "−28% no dano de conteúdo: dano × 0,86 (Empresas), 0,91 (Educação), 0,84 (Saúde)",
+        "fonte": "Kreibich et al. (2007), Flood precaution of companies and their ability to cope with the flood in August 2002 in Saxony, Germany. Water Resources Research 43, W03408",
+        "fonte_url": "https://agupubs.onlinelibrary.wiley.com/doi/abs/10.1029/2005WR004691",
+        "eai_evitado_brl": 2375071.09,
+        "pct_evitado": 12.2,
+        "eai_evitado_sem_cauda_brl": 694933.48,
+        "pct_evitado_sem_cauda": 12.6,
+        "eai_2050_evitado_brl": 4936954.87,
+        "evitado_por_setor_brl": {
+          "empresas": 1156980.15,
+          "educacao": 786613.54,
+          "saude": 431477.4
+        }
+      },
+      {
+        "id": "protecao_imovel",
+        "nome": "Vedação do imóvel (barreiras)",
+        "mecanismo": "−45% do dano onde a profundidade é ≤ 1 m; sem efeito acima (3 setores)",
+        "fonte": "Kreibich et al. (2015), A review of damage-reducing measures to manage fluvial flood risks in a changing climate. Mitigation and Adaptation Strategies for Global Change 20, 967-989",
+        "fonte_url": "https://link.springer.com/article/10.1007/s11027-014-9629-5",
+        "eai_evitado_brl": 384675.07,
+        "pct_evitado": 2.0,
+        "eai_evitado_sem_cauda_brl": 164032.31,
+        "pct_evitado_sem_cauda": 3.0,
+        "eai_2050_evitado_brl": 558794.56,
+        "evitado_por_setor_brl": {
+          "empresas": 343693.75,
+          "educacao": 20701.65,
+          "saude": 20279.67
+        }
+      }
+    ]
+  }
+}

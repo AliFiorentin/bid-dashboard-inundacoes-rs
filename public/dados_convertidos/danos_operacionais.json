@@ -20,9 +20,9 @@
       "empresas_vab": 21604522.07,
       "educacao_perdas": 1719989.39,
       "educacao_custo_adicional": 1719989.39,
-      "saude_producao": 7662817.55,
+      "saude_producao": 107352.79,
       "agricultura_perdas": 375330.0,
-      "total": 33082648.4
+      "total": 25527183.63
     },
     "Cenario 30m": {
       "dias_agudo": 30,
@@ -31,9 +31,9 @@
       "empresas_vab": 34850593.74,
       "educacao_perdas": 1797592.46,
       "educacao_custo_adicional": 1797592.46,
-      "saude_producao": 7690511.59,
+      "saude_producao": 135046.83,
       "agricultura_perdas": 415330.0,
-      "total": 46551620.25
+      "total": 38996155.48
     }
   },
   "Porto Alegre": {

@@ -1,0 +1,672 @@
+{
+  "municipio": "Porto Alegre",
+  "premissas": {
+    "calibracao": "fator de Porto Alegre (POA_CALIBRATION_FACTOR) herdado como premissa; sem perda observada por cota",
+    "poa_calibration_factor": 0.360351,
+    "sensibilidade": "jrc_crua = fator 1.0 (Educacao inalterada)",
+    "cummax_entre_cotas": true,
+    "eai": "nao calculado -- rasters sem periodo de retorno/frequencia",
+    "uso_dos_rasters": "so calculo CLIMADA; nao entram em cenarios do painel (manchas antigas = so visual)",
+    "raster_nota": "Rasters por cota do Guaiba, 1.75 a 6.00 m, passo 0,25 m (visao complementar aos RP10-RP500 do prototipo).",
+    "curvas_poa": {
+      "empresas": {
+        "depth": [
+          0.0,
+          0.05,
+          0.5,
+          1.0,
+          1.5,
+          2.0,
+          3.0
+        ],
+        "mdd": [
+          0.0,
+          0.0,
+          0.219814,
+          0.302695,
+          0.331523,
+          0.356747,
+          0.360351
+        ],
+        "porte_campo": "qtd_vinculos",
+        "fonte": "Curva JRC South America commerce, calibrada pelo CLIMADA com ancora no RP200",
+        "reposicao_fonte": "9 m2/vinculo x R$ 2,604.24/m2 (Sinduscon-RS, Precos e Custos da Construcao, CUB/RS dez/2024 (NBR 12.721/2006))"
+      },
+      "empresas_industria": {
+        "depth": [
+          0,
+          0.5,
+          1,
+          1.5,
+          2,
+          3,
+          4
+        ],
+        "mdd": [
+          0.0,
+          0.24143517,
+          0.32071238999999996,
+          0.34233345,
+          0.360351,
+          0.360351,
+          0.360351
+        ],
+        "porte_campo": "qtd_vinculos",
+        "fonte": "Curva JRC South America industry, reescalada pelo fator de Empresas (sem ancora observada propria)",
+        "reposicao_fonte": "9 m2/vinculo x R$ 1,301.56/m2 (GI, Sinduscon-RS, Precos e Custos da Construcao, CUB/RS dez/2024 (NBR 12.721/2006))"
+      },
+      "educacao": {
+        "depth": [
+          0.0,
+          0.05,
+          0.5,
+          1.0,
+          1.5,
+          2.0,
+          3.0,
+          4.0
+        ],
+        "mdd": [
+          0.0,
+          0.0,
+          0.491,
+          0.711,
+          0.842,
+          0.949,
+          0.984,
+          1.0
+        ],
+        "porte_campo": "salas_equivalentes",
+        "fonte": "Curva de dano para escolas calibrada pelo CLIMADA",
+        "reposicao_fonte": "853.20 m2 (projeto padrao FNDE, Planilha orcamentaria oficial FNDE, projeto padrao Escola 6 Salas (item Limpeza geral)) x R$ 2,995.52/m2 (Sinduscon-RS, Precos e Custos da Construcao, CUB/RS dez/2024 (NBR 12.721/2006))"
+      },
+      "saude": {
+        "depth": [
+          0,
+          0.5,
+          1,
+          1.5,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "mdd": [
+          0.0,
+          0.23062464,
+          0.311703615,
+          0.336928185,
+          0.35854924499999996,
+          0.360351,
+          0.360351,
+          0.360351,
+          0.360351
+        ],
+        "porte_campo": "leitos_ou_profissionais",
+        "fonte": "Sintetizada a partir das curvas JRC South America commerce e industry (Huizinga et al. 2017), reescalada pelo fator de Empresas",
+        "reposicao_fonte": "9 m2/pessoa (profissionais + leitos) x R$ 2,995.52/m2 (Sinduscon-RS, Precos e Custos da Construcao, CUB/RS dez/2024 (NBR 12.721/2006))"
+      }
+    }
+  },
+  "diagnostico": {
+    "pontos_molhados_na_cota_mais_baixa": {
+      "empresas": 189,
+      "educacao": 1,
+      "saude": 16
+    },
+    "pontos_fora_do_raster": {
+      "empresas": 0,
+      "educacao": 0,
+      "saude": 5
+    },
+    "n_pontos": {
+      "empresas": 39808,
+      "educacao": 938,
+      "saude": 7022
+    },
+    "coordenadas_repetidas": {
+      "empresas": {
+        "n_pontos": 39808,
+        "n_coordenadas_unicas": 6143,
+        "maior_pilha": 1474
+      },
+      "educacao": {
+        "n_pontos": 938,
+        "n_coordenadas_unicas": 811,
+        "maior_pilha": 54
+      },
+      "saude": {
+        "n_pontos": 7022,
+        "n_coordenadas_unicas": 6295,
+        "maior_pilha": 448
+      }
+    },
+    "cota_mais_baixa": "1.75",
+    "cota_mais_alta": "6.00"
+  },
+  "resultados_por_cota": {
+    "1.75": {
+      "empresas": {
+        "n_total": 39808,
+        "n_atingidos": 189,
+        "profundidade_media_atingidos_m": 0.911,
+        "profundidade_max_m": 2.999,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_brl_poa": 20303857.81,
+        "dano_fisico_brl_jrc_crua": 64409319.19
+      },
+      "educacao": {
+        "n_total": 938,
+        "n_atingidos": 1,
+        "profundidade_media_atingidos_m": 1.583,
+        "profundidade_max_m": 1.583,
+        "exposicao_total_brl": 2985481634.17,
+        "dano_fisico_brl_poa": 645475.49,
+        "dano_fisico_brl_jrc_crua": 645475.49
+      },
+      "saude": {
+        "n_total": 7022,
+        "n_atingidos": 16,
+        "profundidade_media_atingidos_m": 1.278,
+        "profundidade_max_m": 1.762,
+        "exposicao_total_brl": 5762146325.76,
+        "dano_fisico_brl_poa": 584449.5,
+        "dano_fisico_brl_jrc_crua": 1621889.5
+      }
+    },
+    "2.00": {
+      "empresas": {
+        "n_total": 39808,
+        "n_atingidos": 189,
+        "profundidade_media_atingidos_m": 0.914,
+        "profundidade_max_m": 2.999,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_brl_poa": 20596374.11,
+        "dano_fisico_brl_jrc_crua": 65221072.66
+      },
+      "educacao": {
+        "n_total": 938,
+        "n_atingidos": 1,
+        "profundidade_media_atingidos_m": 1.845,
+        "profundidade_max_m": 1.845,
+        "exposicao_total_brl": 2985481634.17,
+        "dano_fisico_brl_poa": 687547.39,
+        "dano_fisico_brl_jrc_crua": 687547.39
+      },
+      "saude": {
+        "n_total": 7022,
+        "n_atingidos": 16,
+        "profundidade_media_atingidos_m": 1.305,
+        "profundidade_max_m": 1.846,
+        "exposicao_total_brl": 5762146325.76,
+        "dano_fisico_brl_poa": 586491.3,
+        "dano_fisico_brl_jrc_crua": 1627555.64
+      }
+    },
+    "2.25": {
+      "empresas": {
+        "n_total": 39808,
+        "n_atingidos": 189,
+        "profundidade_media_atingidos_m": 0.918,
+        "profundidade_max_m": 2.999,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_brl_poa": 20787476.2,
+        "dano_fisico_brl_jrc_crua": 65751394.57
+      },
+      "educacao": {
+        "n_total": 938,
+        "n_atingidos": 1,
+        "profundidade_media_atingidos_m": 2.11,
+        "profundidade_max_m": 2.11,
+        "exposicao_total_brl": 2985481634.17,
+        "dano_fisico_brl_poa": 715353.02,
+        "dano_fisico_brl_jrc_crua": 715353.02
+      },
+      "saude": {
+        "n_total": 7022,
+        "n_atingidos": 16,
+        "profundidade_media_atingidos_m": 1.334,
+        "profundidade_max_m": 2.0,
+        "exposicao_total_brl": 5762146325.76,
+        "dano_fisico_brl_poa": 588572.74,
+        "dano_fisico_brl_jrc_crua": 1633331.78
+      }
+    },
+    "2.50": {
+      "empresas": {
+        "n_total": 39808,
+        "n_atingidos": 189,
+        "profundidade_media_atingidos_m": 0.922,
+        "profundidade_max_m": 2.999,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_brl_poa": 20855010.82,
+        "dano_fisico_brl_jrc_crua": 65938808.14
+      },
+      "educacao": {
+        "n_total": 938,
+        "n_atingidos": 1,
+        "profundidade_media_atingidos_m": 2.368,
+        "profundidade_max_m": 2.368,
+        "exposicao_total_brl": 2985481634.17,
+        "dano_fisico_brl_poa": 722138.32,
+        "dano_fisico_brl_jrc_crua": 722138.32
+      },
+      "saude": {
+        "n_total": 7022,
+        "n_atingidos": 16,
+        "profundidade_media_atingidos_m": 1.372,
+        "profundidade_max_m": 2.203,
+        "exposicao_total_brl": 5762146325.76,
+        "dano_fisico_brl_poa": 589275.99,
+        "dano_fisico_brl_jrc_crua": 1635283.35
+      }
+    },
+    "2.75": {
+      "empresas": {
+        "n_total": 39808,
+        "n_atingidos": 192,
+        "profundidade_media_atingidos_m": 0.914,
+        "profundidade_max_m": 2.999,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_brl_poa": 20960559.5,
+        "dano_fisico_brl_jrc_crua": 66284835.76
+      },
+      "educacao": {
+        "n_total": 938,
+        "n_atingidos": 1,
+        "profundidade_media_atingidos_m": 2.627,
+        "profundidade_max_m": 2.627,
+        "exposicao_total_brl": 2985481634.17,
+        "dano_fisico_brl_poa": 728957.9,
+        "dano_fisico_brl_jrc_crua": 728957.9
+      },
+      "saude": {
+        "n_total": 7022,
+        "n_atingidos": 16,
+        "profundidade_media_atingidos_m": 1.411,
+        "profundidade_max_m": 2.382,
+        "exposicao_total_brl": 5762146325.76,
+        "dano_fisico_brl_poa": 592240.42,
+        "dano_fisico_brl_jrc_crua": 1643509.85
+      }
+    },
+    "3.00": {
+      "empresas": {
+        "n_total": 39808,
+        "n_atingidos": 193,
+        "profundidade_media_atingidos_m": 0.916,
+        "profundidade_max_m": 2.999,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_brl_poa": 21119302.04,
+        "dano_fisico_brl_jrc_crua": 66696773.86
+      },
+      "educacao": {
+        "n_total": 938,
+        "n_atingidos": 1,
+        "profundidade_media_atingidos_m": 2.896,
+        "profundidade_max_m": 2.896,
+        "exposicao_total_brl": 2985481634.17,
+        "dano_fisico_brl_poa": 736002.11,
+        "dano_fisico_brl_jrc_crua": 736002.11
+      },
+      "saude": {
+        "n_total": 7022,
+        "n_atingidos": 18,
+        "profundidade_media_atingidos_m": 1.308,
+        "profundidade_max_m": 2.536,
+        "exposicao_total_brl": 5762146325.76,
+        "dano_fisico_brl_poa": 682387.05,
+        "dano_fisico_brl_jrc_crua": 1893673.25
+      }
+    },
+    "3.25": {
+      "empresas": {
+        "n_total": 39808,
+        "n_atingidos": 233,
+        "profundidade_media_atingidos_m": 0.798,
+        "profundidade_max_m": 2.999,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_brl_poa": 22856191.71,
+        "dano_fisico_brl_jrc_crua": 72386672.32
+      },
+      "educacao": {
+        "n_total": 938,
+        "n_atingidos": 1,
+        "profundidade_media_atingidos_m": 3.15,
+        "profundidade_max_m": 3.15,
+        "exposicao_total_brl": 2985481634.17,
+        "dano_fisico_brl_poa": 740550.82,
+        "dano_fisico_brl_jrc_crua": 740550.82
+      },
+      "saude": {
+        "n_total": 7022,
+        "n_atingidos": 18,
+        "profundidade_media_atingidos_m": 1.375,
+        "profundidade_max_m": 2.711,
+        "exposicao_total_brl": 5762146325.76,
+        "dano_fisico_brl_poa": 888993.18,
+        "dano_fisico_brl_jrc_crua": 2467020.16
+      }
+    },
+    "3.50": {
+      "empresas": {
+        "n_total": 39808,
+        "n_atingidos": 234,
+        "profundidade_media_atingidos_m": 0.843,
+        "profundidade_max_m": 2.999,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_brl_poa": 25572106.71,
+        "dano_fisico_brl_jrc_crua": 79213956.93
+      },
+      "educacao": {
+        "n_total": 938,
+        "n_atingidos": 1,
+        "profundidade_media_atingidos_m": 3.392,
+        "profundidade_max_m": 3.392,
+        "exposicao_total_brl": 2985481634.17,
+        "dano_fisico_brl_poa": 743454.0,
+        "dano_fisico_brl_jrc_crua": 743454.0
+      },
+      "saude": {
+        "n_total": 7022,
+        "n_atingidos": 20,
+        "profundidade_media_atingidos_m": 1.312,
+        "profundidade_max_m": 2.944,
+        "exposicao_total_brl": 5762146325.76,
+        "dano_fisico_brl_poa": 1078915.13,
+        "dano_fisico_brl_jrc_crua": 2994067.25
+      }
+    },
+    "3.75": {
+      "empresas": {
+        "n_total": 39808,
+        "n_atingidos": 238,
+        "profundidade_media_atingidos_m": 0.881,
+        "profundidade_max_m": 2.999,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_brl_poa": 27091134.17,
+        "dano_fisico_brl_jrc_crua": 83325705.43
+      },
+      "educacao": {
+        "n_total": 938,
+        "n_atingidos": 1,
+        "profundidade_media_atingidos_m": 3.663,
+        "profundidade_max_m": 3.663,
+        "exposicao_total_brl": 2985481634.17,
+        "dano_fisico_brl_poa": 746707.13,
+        "dano_fisico_brl_jrc_crua": 746707.13
+      },
+      "saude": {
+        "n_total": 7022,
+        "n_atingidos": 20,
+        "profundidade_media_atingidos_m": 1.396,
+        "profundidade_max_m": 3.104,
+        "exposicao_total_brl": 5762146325.76,
+        "dano_fisico_brl_poa": 1422215.65,
+        "dano_fisico_brl_jrc_crua": 3946750.94
+      }
+    },
+    "4.00": {
+      "empresas": {
+        "n_total": 39808,
+        "n_atingidos": 280,
+        "profundidade_media_atingidos_m": 0.807,
+        "profundidade_max_m": 3.138,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_brl_poa": 28705077.8,
+        "dano_fisico_brl_jrc_crua": 88824610.7
+      },
+      "educacao": {
+        "n_total": 938,
+        "n_atingidos": 1,
+        "profundidade_media_atingidos_m": 3.924,
+        "profundidade_max_m": 3.924,
+        "exposicao_total_brl": 2985481634.17,
+        "dano_fisico_brl_poa": 749845.3,
+        "dano_fisico_brl_jrc_crua": 749845.3
+      },
+      "saude": {
+        "n_total": 7022,
+        "n_atingidos": 22,
+        "profundidade_media_atingidos_m": 1.356,
+        "profundidade_max_m": 3.277,
+        "exposicao_total_brl": 5762146325.76,
+        "dano_fisico_brl_poa": 1755116.79,
+        "dano_fisico_brl_jrc_crua": 4870575.61
+      }
+    },
+    "4.25": {
+      "empresas": {
+        "n_total": 39808,
+        "n_atingidos": 287,
+        "profundidade_media_atingidos_m": 0.88,
+        "profundidade_max_m": 3.481,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_brl_poa": 32208172.97,
+        "dano_fisico_brl_jrc_crua": 98300376.58
+      },
+      "educacao": {
+        "n_total": 938,
+        "n_atingidos": 2,
+        "profundidade_media_atingidos_m": 2.124,
+        "profundidade_max_m": 4.168,
+        "exposicao_total_brl": 2985481634.17,
+        "dano_fisico_brl_poa": 842767.42,
+        "dano_fisico_brl_jrc_crua": 842767.42
+      },
+      "saude": {
+        "n_total": 7022,
+        "n_atingidos": 22,
+        "profundidade_media_atingidos_m": 1.486,
+        "profundidade_max_m": 3.598,
+        "exposicao_total_brl": 5762146325.76,
+        "dano_fisico_brl_poa": 2079180.99,
+        "dano_fisico_brl_jrc_crua": 5769877.12
+      }
+    },
+    "4.50": {
+      "empresas": {
+        "n_total": 39808,
+        "n_atingidos": 292,
+        "profundidade_media_atingidos_m": 0.945,
+        "profundidade_max_m": 3.636,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_brl_poa": 35349947.98,
+        "dano_fisico_brl_jrc_crua": 106500183.69
+      },
+      "educacao": {
+        "n_total": 938,
+        "n_atingidos": 3,
+        "profundidade_media_atingidos_m": 1.616,
+        "profundidade_max_m": 4.422,
+        "exposicao_total_brl": 2985481634.17,
+        "dano_fisico_brl_poa": 1713409.08,
+        "dano_fisico_brl_jrc_crua": 1713409.08
+      },
+      "saude": {
+        "n_total": 7022,
+        "n_atingidos": 23,
+        "profundidade_media_atingidos_m": 1.514,
+        "profundidade_max_m": 3.766,
+        "exposicao_total_brl": 5762146325.76,
+        "dano_fisico_brl_poa": 2277272.11,
+        "dano_fisico_brl_jrc_crua": 6319594.27
+      }
+    },
+    "4.75": {
+      "empresas": {
+        "n_total": 39808,
+        "n_atingidos": 303,
+        "profundidade_media_atingidos_m": 1.005,
+        "profundidade_max_m": 3.954,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_brl_poa": 37869085.26,
+        "dano_fisico_brl_jrc_crua": 113249906.33
+      },
+      "educacao": {
+        "n_total": 938,
+        "n_atingidos": 4,
+        "profundidade_media_atingidos_m": 1.446,
+        "profundidade_max_m": 4.666,
+        "exposicao_total_brl": 2985481634.17,
+        "dano_fisico_brl_poa": 3067420.16,
+        "dano_fisico_brl_jrc_crua": 3067420.16
+      },
+      "saude": {
+        "n_total": 7022,
+        "n_atingidos": 24,
+        "profundidade_media_atingidos_m": 1.581,
+        "profundidade_max_m": 4.067,
+        "exposicao_total_brl": 5762146325.76,
+        "dano_fisico_brl_poa": 2417390.09,
+        "dano_fisico_brl_jrc_crua": 6708431.76
+      }
+    },
+    "5.00": {
+      "empresas": {
+        "n_total": 39808,
+        "n_atingidos": 304,
+        "profundidade_media_atingidos_m": 1.089,
+        "profundidade_max_m": 4.098,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_brl_poa": 39455849.72,
+        "dano_fisico_brl_jrc_crua": 117613300.91
+      },
+      "educacao": {
+        "n_total": 938,
+        "n_atingidos": 4,
+        "profundidade_media_atingidos_m": 1.703,
+        "profundidade_max_m": 4.931,
+        "exposicao_total_brl": 2985481634.17,
+        "dano_fisico_brl_poa": 4229037.51,
+        "dano_fisico_brl_jrc_crua": 4229037.51
+      },
+      "saude": {
+        "n_total": 7022,
+        "n_atingidos": 25,
+        "profundidade_media_atingidos_m": 1.619,
+        "profundidade_max_m": 4.225,
+        "exposicao_total_brl": 5762146325.76,
+        "dano_fisico_brl_poa": 2522007.54,
+        "dano_fisico_brl_jrc_crua": 6998752.73
+      }
+    },
+    "5.25": {
+      "empresas": {
+        "n_total": 39808,
+        "n_atingidos": 309,
+        "profundidade_media_atingidos_m": 1.157,
+        "profundidade_max_m": 4.321,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_brl_poa": 40456239.48,
+        "dano_fisico_brl_jrc_crua": 120477000.87
+      },
+      "educacao": {
+        "n_total": 938,
+        "n_atingidos": 5,
+        "profundidade_media_atingidos_m": 1.592,
+        "profundidade_max_m": 5.186,
+        "exposicao_total_brl": 2985481634.17,
+        "dano_fisico_brl_poa": 5088676.07,
+        "dano_fisico_brl_jrc_crua": 5088676.07
+      },
+      "saude": {
+        "n_total": 7022,
+        "n_atingidos": 26,
+        "profundidade_media_atingidos_m": 1.662,
+        "profundidade_max_m": 4.393,
+        "exposicao_total_brl": 5762146325.76,
+        "dano_fisico_brl_poa": 2596259.16,
+        "dano_fisico_brl_jrc_crua": 7204806.31
+      }
+    },
+    "5.50": {
+      "empresas": {
+        "n_total": 39808,
+        "n_atingidos": 311,
+        "profundidade_media_atingidos_m": 1.246,
+        "profundidade_max_m": 4.599,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_brl_poa": 41215064.95,
+        "dano_fisico_brl_jrc_crua": 123232537.49
+      },
+      "educacao": {
+        "n_total": 938,
+        "n_atingidos": 6,
+        "profundidade_media_atingidos_m": 1.574,
+        "profundidade_max_m": 5.458,
+        "exposicao_total_brl": 2985481634.17,
+        "dano_fisico_brl_poa": 6816306.3,
+        "dano_fisico_brl_jrc_crua": 6816306.3
+      },
+      "saude": {
+        "n_total": 7022,
+        "n_atingidos": 27,
+        "profundidade_media_atingidos_m": 1.722,
+        "profundidade_max_m": 4.587,
+        "exposicao_total_brl": 5762146325.76,
+        "dano_fisico_brl_poa": 2674486.74,
+        "dano_fisico_brl_jrc_crua": 7421893.48
+      }
+    },
+    "5.75": {
+      "empresas": {
+        "n_total": 39808,
+        "n_atingidos": 384,
+        "profundidade_media_atingidos_m": 1.097,
+        "profundidade_max_m": 4.846,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_brl_poa": 42315288.05,
+        "dano_fisico_brl_jrc_crua": 126454625.51
+      },
+      "educacao": {
+        "n_total": 938,
+        "n_atingidos": 8,
+        "profundidade_media_atingidos_m": 1.639,
+        "profundidade_max_m": 5.702,
+        "exposicao_total_brl": 2985481634.17,
+        "dano_fisico_brl_poa": 13938727.0,
+        "dano_fisico_brl_jrc_crua": 13938727.0
+      },
+      "saude": {
+        "n_total": 7022,
+        "n_atingidos": 28,
+        "profundidade_media_atingidos_m": 1.777,
+        "profundidade_max_m": 4.77,
+        "exposicao_total_brl": 5762146325.76,
+        "dano_fisico_brl_poa": 2805616.88,
+        "dano_fisico_brl_jrc_crua": 7785789.09
+      }
+    },
+    "6.00": {
+      "empresas": {
+        "n_total": 39808,
+        "n_atingidos": 445,
+        "profundidade_media_atingidos_m": 1.198,
+        "profundidade_max_m": 5.113,
+        "exposicao_total_brl": 31401815080.5,
+        "dano_fisico_brl_poa": 55110551.58,
+        "dano_fisico_brl_jrc_crua": 161272233.76
+      },
+      "educacao": {
+        "n_total": 938,
+        "n_atingidos": 15,
+        "profundidade_media_atingidos_m": 1.384,
+        "profundidade_max_m": 5.968,
+        "exposicao_total_brl": 2985481634.17,
+        "dano_fisico_brl_poa": 23412218.51,
+        "dano_fisico_brl_jrc_crua": 23412218.51
+      },
+      "saude": {
+        "n_total": 7022,
+        "n_atingidos": 31,
+        "profundidade_media_atingidos_m": 1.777,
+        "profundidade_max_m": 4.98,
+        "exposicao_total_brl": 5762146325.76,
+        "dano_fisico_brl_poa": 3266270.96,
+        "dano_fisico_brl_jrc_crua": 9064137.34
+      }
+    }
+  }
+}
