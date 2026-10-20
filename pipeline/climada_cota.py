@@ -57,7 +57,8 @@ import rasterio
 from rasterio.windows import Window, from_bounds
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from config import DASH_DATA, DATA_PROCESSED
+from config import DASH_DATA, DATA_PROCESSED, DATA_RAW, MUNICIPIOS as MUNICIPIOS_CFG
+MUNICIPIOS_IBGE = {m: c["ibge7"] for m, c in MUNICIPIOS_CFG.items()}
 from common import load_geojson
 import climada_risco_prototipo as proto
 
@@ -80,6 +81,33 @@ MUNICIPIOS = {
     },
 }
 SETORES = ["empresas", "educacao", "saude"]
+
+# Pontos geocodificados FORA do municipio sao excluidos do calculo por cota (coordenada do
+# CNES/RAIS/Censo em outro lugar, ate ~100 km). Poligono: malha municipal do IBGE em
+# data/raw/ibge/{ibge7}.geojson. Contagem por municipio em EXCLUIDOS (vai nos JSONs).
+EXCLUIDOS: dict = {}
+
+
+def poligono_municipio(mun: str):
+    from shapely.geometry import shape
+    from shapely.ops import unary_union
+    ibge7 = MUNICIPIOS_IBGE[mun]
+    gj = json.load(open(DATA_RAW / "ibge" / f"{ibge7}.geojson", encoding="utf-8"))
+    return unary_union([shape(f["geometry"]) for f in gj["features"]])
+
+
+def filtrar_no_municipio(gjs: dict, mun: str) -> dict:
+    """Remove os pontos fora do poligono do municipio; registra a contagem em EXCLUIDOS[mun]."""
+    from shapely import contains_xy
+    poly = poligono_municipio(mun)
+    out, n_excl = {}, {}
+    for s, g in gjs.items():
+        xy = np.array([f["geometry"]["coordinates"][:2] for f in g["features"]], dtype=float)
+        dentro = contains_xy(poly, xy[:, 0], xy[:, 1])
+        out[s] = {**g, "features": [f for f, ok in zip(g["features"], dentro) if ok]}
+        n_excl[s] = int((~dentro).sum())
+    EXCLUIDOS[mun] = n_excl
+    return out
 
 
 def curvas(fator: float) -> dict:
@@ -155,6 +183,7 @@ def rodar(mun: str) -> None:
     for s, g in gjs.items():
         if not g:
             sys.exit(f'ERRO: BASE de {s} nao encontrada -- rode 06_geojson.py --mun "{mun}"')
+    gjs = filtrar_no_municipio(gjs, mun)
 
     coords = {s: np.array([f["geometry"]["coordinates"][:2] for f in g["features"]], dtype=float) for s, g in gjs.items()}
     is_ind = proto.classificar_empresas_industria(gjs["empresas"])
@@ -196,6 +225,7 @@ def rodar(mun: str) -> None:
         "pontos_molhados_na_cota_mais_baixa": {s: primeira[s] for s in SETORES},
         "pontos_fora_do_raster": fora,
         "n_pontos": {s: int(len(coords[s])) for s in SETORES},
+        "pontos_excluidos_fora_do_municipio": EXCLUIDOS[mun],
         "coordenadas_repetidas": {s: pilhas(coords[s]) for s in SETORES},
         "cota_mais_baixa": cotas[0].stem.split("_")[0],
         "cota_mais_alta": cotas[-1].stem.split("_")[0],

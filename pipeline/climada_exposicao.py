@@ -28,8 +28,14 @@ Nada aqui e' dano, calibracao ou perda: e' exposicao. Premissas herdadas de clim
 remapeamento 2050 e crescimento 2%/ano de Porto Alegre) e as limitacoes de coordenadas
 repetidas (pontos empilhados entram/saem juntos).
 
-Uso:  python pipeline/climada_exposicao.py
+Eldorado do Sul: SO a visao por cota (rasters do Guaiba/POA amostrados nos pontos do
+municipio). Sem RP/EAI/2050/medidas: a frequencia do Guaiba disponivel e' uma tabela
+defasada (sem 2024) e nao se usam premissas de Porto Alegre. Mesmo formato de saida, com
+os blocos por RP vazios.
+
+Uso:  python pipeline/climada_exposicao.py [--mun "Lajeado" | "Eldorado do Sul"]  (default: Lajeado)
 """
+import argparse
 import json
 import shutil
 import sys
@@ -93,8 +99,8 @@ def expostos(d: dict, medida: dict | None) -> dict:
     return out
 
 
-def por_cota(d: dict) -> dict:
-    cfg = cc.MUNICIPIOS[MUN]
+def por_cota(mun: str, d: dict) -> dict:
+    cfg = cc.MUNICIPIOS[mun]
     gjs, coords, is_ind, valores = d["gjs"], None, d["is_ind"], d["valores"]
     coords = {s: np.array([f["geometry"]["coordinates"][:2] for f in g["features"]], dtype=float) for s, g in gjs.items()}
     rasters = sorted(cfg["raster_dir"].glob("*_clip.tif"), key=lambda p: float(p.stem.split("_")[0]))
@@ -109,8 +115,45 @@ def por_cota(d: dict) -> dict:
     return out
 
 
+def main_cota(mun: str):
+    cfg = cc.MUNICIPIOS[mun]
+    gjs, _, is_ind, valores = rpc.carregar_pontos(cfg["slug"], mun, filtrar=True)
+    d = {"gjs": gjs, "is_ind": is_ind, "valores": valores}
+    cotas = por_cota(mun, d)
+    ks = sorted(cotas, key=float)
+    out = {
+        "municipio": mun,
+        "indicador": "valor exposto atingido (valor de reposicao dos pontos com profundidade > 0); NAO e' dano",
+        "pontos_excluidos_fora_do_municipio": cc.EXCLUIDOS.get(mun),
+        "premissas": {
+            "sem_curva": True,
+            "so_cota": True,
+            "leitura": "teto do dano: equivale a perda total de tudo que molha; sem curva JRC nem calibracao",
+            "raster_nota": cfg["raster_nota"],
+            "valor_reposicao": proto.montar_premissas(is_ind),
+        },
+        "rp_por_cota": {"frequencia": None, "rps": {}, "rps_acima_do_ultimo_raster": [], "cota_cobertura_raster_m": [float(ks[0]), float(ks[-1])]},
+        "resultados_por_rp": {},
+        "eai_exposto": {"empresas": 0, "educacao": 0, "saude": 0, "total": 0},
+        "eai_exposto_sem_cauda_brl": 0,
+        "projecao_2050": None,
+        "medidas": None,
+        "por_cota": cotas,
+    }
+    path = DATA_PROCESSED / f"climada_exposicao_{cfg['slug']}.json"
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(out, f, ensure_ascii=False, indent=2)
+    shutil.copyfile(path, DASH_DATA / path.name)
+    print(f"  Salvo: {path}\n  Copiado: {DASH_DATA / path.name}")
+
+
 def main():
-    d = rpc.profundidades_por_rp(MUN)
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--mun", default="Lajeado", choices=["Lajeado", "Eldorado do Sul", "Porto Alegre"])
+    mun = ap.parse_args().mun
+    if mun != "Lajeado":
+        return main_cota(mun)
+    d = rpc.profundidades_por_rp(MUN, filtrar=True)
     rps = list(d["depths"])
 
     resultados = {rp: {s: resumo_setor(d["depths"][rp][s], d["valores"][s]) for s in SETORES} for rp in rps}
@@ -165,6 +208,7 @@ def main():
     out = {
         "municipio": MUN,
         "indicador": "valor exposto atingido (valor de reposicao dos pontos com profundidade > 0); NAO e' dano",
+        "pontos_excluidos_fora_do_municipio": cc.EXCLUIDOS.get(MUN),
         "premissas": {
             "sem_curva": True,
             "leitura": "teto do dano: equivale a perda total de tudo que molha; sem curva JRC nem calibracao",
@@ -186,7 +230,7 @@ def main():
             "custo_beneficio_premissas": {"cambio_brl_usd": cm.CAMBIO_BRL_USD, "taxa_desconto": cm.TAXA_DESCONTO, "horizonte": [cm.ANO_INI, cm.ANO_FIM], "fonte_custos": "relocacao: 60% do valor de reposicao; diques: proporcao custo/exposicao de Porto Alegre; barreiras sem custo"},
             "medidas": medidas,
         },
-        "por_cota": por_cota(d),
+        "por_cota": por_cota(MUN, d),
     }
     path = DATA_PROCESSED / "climada_exposicao_lajeado.json"
     with open(path, "w", encoding="utf-8") as f:
