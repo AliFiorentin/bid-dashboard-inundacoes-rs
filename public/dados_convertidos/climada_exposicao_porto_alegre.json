@@ -1,0 +1,1009 @@
+{
+  "municipio": "Porto Alegre",
+  "indicador": "valor exposto atingido (valor de reposicao dos pontos com profundidade > 0); NAO e' dano",
+  "pontos_excluidos_fora_do_municipio": {
+    "empresas": 51,
+    "educacao": 2,
+    "saude": 14
+  },
+  "premissas": {
+    "sem_curva": true,
+    "so_cota": true,
+    "leitura": "teto do dano: equivale a perda total de tudo que molha; sem curva JRC nem calibracao",
+    "raster_nota": "Rasters por cota do Guaiba, 1.75 a 6.00 m, passo 0,25 m (visao complementar aos RP10-RP500 do prototipo).",
+    "valor_reposicao": {
+      "poa_calibration_factor": 0.360351,
+      "cub_comercial_rs": 2604.24,
+      "cub_institucional_rs": 2995.52,
+      "cub_industrial_rs": 1301.56,
+      "cub_fonte": "Sinduscon-RS, Precos e Custos da Construcao, CUB/RS dez/2024 (NBR 12.721/2006)",
+      "cnae_industria_fonte": "common.cnae_to_setor() -- CNAE 05-39 (industrias extrativas, transformacao, eletricidade/gas, agua/esgoto)",
+      "n_empresas_industria": 1870,
+      "n_empresas_total": 39757,
+      "area_m2_por_pessoa": 9.0,
+      "area_m2_por_pessoa_fonte": "Manual de Padrao de Ocupacao (Projeto Racionaliza, gov.br/gestao) -- teto adm. publica federal",
+      "area_escola_padrao_m2": 853.2,
+      "area_escola_padrao_fonte": "Planilha orcamentaria oficial FNDE, projeto padrao Escola 6 Salas (item Limpeza geral)",
+      "area_por_sala_m2": 142.2,
+      "area_por_sala_fonte": "Planilha orcamentaria FNDE, projeto padrao Escola 6 Salas: 853,20 m2 / 6 salas",
+      "turnos_padrao": 2,
+      "lotacao_infantil": 20,
+      "lotacao_fundamental": 32.2,
+      "lotacao_medio": 50,
+      "lotacao_fonte": "Infantil: CNE/CEB Resolucao 1/2024, Art. 6o-V (20 crianças de 4-5 anos/educador); Fundamental: media ponderada dos limites da rede estadual RS (25/30/35 conforme o ano); Medio/Profissional/EJA: Parecer CEEd/RS 580/2000 (50 alunos/turma)",
+      "valor_escola_padrao_brl": 3833666.5,
+      "conteudo_fonte": "Huizinga, de Moel & Szewczyk (2017), JRC105688, Table 3-26",
+      "multiplicador_empresas": 2.0,
+      "multiplicador_empresas_industria": 2.5,
+      "multiplicador_saude": 2.25,
+      "multiplicador_educacao": 1.5,
+      "curvas": {
+        "empresas": {
+          "depth": [
+            0.0,
+            0.05,
+            0.5,
+            1.0,
+            1.5,
+            2.0,
+            3.0
+          ],
+          "mdd": [
+            0.0,
+            0.0,
+            0.219814,
+            0.302695,
+            0.331523,
+            0.356747,
+            0.360351
+          ],
+          "porte_campo": "qtd_vinculos",
+          "fonte": "Curva JRC South America commerce, calibrada pelo CLIMADA com ancora no RP200",
+          "reposicao_fonte": "9 m2/vinculo x R$ 2,604.24/m2 (Sinduscon-RS, Precos e Custos da Construcao, CUB/RS dez/2024 (NBR 12.721/2006))"
+        },
+        "empresas_industria": {
+          "depth": [
+            0,
+            0.5,
+            1,
+            1.5,
+            2,
+            3,
+            4
+          ],
+          "mdd": [
+            0.0,
+            0.24143517,
+            0.32071238999999996,
+            0.34233345,
+            0.360351,
+            0.360351,
+            0.360351
+          ],
+          "porte_campo": "qtd_vinculos",
+          "fonte": "Curva JRC South America industry, reescalada pelo fator de Empresas (sem ancora observada propria)",
+          "reposicao_fonte": "9 m2/vinculo x R$ 1,301.56/m2 (GI, Sinduscon-RS, Precos e Custos da Construcao, CUB/RS dez/2024 (NBR 12.721/2006))"
+        },
+        "educacao": {
+          "depth": [
+            0.0,
+            0.05,
+            0.5,
+            1.0,
+            1.5,
+            2.0,
+            3.0,
+            4.0
+          ],
+          "mdd": [
+            0.0,
+            0.0,
+            0.491,
+            0.711,
+            0.842,
+            0.949,
+            0.984,
+            1.0
+          ],
+          "porte_campo": "salas_equivalentes",
+          "fonte": "Curva de dano para escolas calibrada pelo CLIMADA",
+          "reposicao_fonte": "853.20 m2 (projeto padrao FNDE, Planilha orcamentaria oficial FNDE, projeto padrao Escola 6 Salas (item Limpeza geral)) x R$ 2,995.52/m2 (Sinduscon-RS, Precos e Custos da Construcao, CUB/RS dez/2024 (NBR 12.721/2006))"
+        },
+        "saude": {
+          "depth": [
+            0,
+            0.5,
+            1,
+            1.5,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "mdd": [
+            0.0,
+            0.23062464,
+            0.311703615,
+            0.336928185,
+            0.35854924499999996,
+            0.360351,
+            0.360351,
+            0.360351,
+            0.360351
+          ],
+          "porte_campo": "leitos_ou_profissionais",
+          "fonte": "Sintetizada a partir das curvas JRC South America commerce e industry (Huizinga et al. 2017), reescalada pelo fator de Empresas",
+          "reposicao_fonte": "9 m2/pessoa (profissionais + leitos) x R$ 2,995.52/m2 (Sinduscon-RS, Precos e Custos da Construcao, CUB/RS dez/2024 (NBR 12.721/2006))"
+        }
+      }
+    }
+  },
+  "rp_por_cota": {
+    "frequencia": null,
+    "rps": {},
+    "rps_acima_do_ultimo_raster": [],
+    "cota_cobertura_raster_m": [
+      1.75,
+      6.0
+    ]
+  },
+  "resultados_por_rp": {},
+  "eai_exposto": {
+    "empresas": 0,
+    "educacao": 0,
+    "saude": 0,
+    "total": 0
+  },
+  "eai_exposto_sem_cauda_brl": 0,
+  "projecao_2050": null,
+  "medidas": null,
+  "por_cota": {
+    "1.75": {
+      "empresas": {
+        "n_total": 39757,
+        "n_atingidos": 189,
+        "valor_exposto_atingido_brl": 219109395.96,
+        "exposicao_total_brl": 31393424219.22,
+        "profundidade_media_atingidos_m": 0.911,
+        "profundidade_max_m": 2.999,
+        "faixas_valor_brl": {
+          "ate_0_5m": 207249687.0,
+          "0_5_a_1m": 1218784.32,
+          "1_a_2m": 8062727.04,
+          "2_a_3m": 2578197.6,
+          "acima_3m": 0.0
+        }
+      },
+      "educacao": {
+        "n_total": 936,
+        "n_atingidos": 1,
+        "valor_exposto_atingido_brl": 750759.69,
+        "exposicao_total_brl": 2982978142.8,
+        "profundidade_media_atingidos_m": 1.583,
+        "profundidade_max_m": 1.583,
+        "faixas_valor_brl": {
+          "ate_0_5m": 0.0,
+          "0_5_a_1m": 0.0,
+          "1_a_2m": 750759.69,
+          "2_a_3m": 0.0,
+          "acima_3m": 0.0
+        }
+      },
+      "saude": {
+        "n_total": 7008,
+        "n_atingidos": 14,
+        "valor_exposto_atingido_brl": 3154282.56,
+        "exposicao_total_brl": 5636945571.84,
+        "profundidade_media_atingidos_m": 1.22,
+        "profundidade_max_m": 1.762,
+        "faixas_valor_brl": {
+          "ate_0_5m": 2244393.36,
+          "0_5_a_1m": 0.0,
+          "1_a_2m": 909889.2,
+          "2_a_3m": 0.0,
+          "acima_3m": 0.0
+        }
+      }
+    },
+    "2.00": {
+      "empresas": {
+        "n_total": 39757,
+        "n_atingidos": 189,
+        "valor_exposto_atingido_brl": 219109395.96,
+        "exposicao_total_brl": 31393424219.22,
+        "profundidade_media_atingidos_m": 0.914,
+        "profundidade_max_m": 2.999,
+        "faixas_valor_brl": {
+          "ate_0_5m": 203764760.1,
+          "0_5_a_1m": 4703711.22,
+          "1_a_2m": 8062727.04,
+          "2_a_3m": 2578197.6,
+          "acima_3m": 0.0
+        }
+      },
+      "educacao": {
+        "n_total": 936,
+        "n_atingidos": 1,
+        "valor_exposto_atingido_brl": 750759.69,
+        "exposicao_total_brl": 2982978142.8,
+        "profundidade_media_atingidos_m": 1.845,
+        "profundidade_max_m": 1.845,
+        "faixas_valor_brl": {
+          "ate_0_5m": 0.0,
+          "0_5_a_1m": 0.0,
+          "1_a_2m": 750759.69,
+          "2_a_3m": 0.0,
+          "acima_3m": 0.0
+        }
+      },
+      "saude": {
+        "n_total": 7008,
+        "n_atingidos": 14,
+        "valor_exposto_atingido_brl": 3154282.56,
+        "exposicao_total_brl": 5636945571.84,
+        "profundidade_media_atingidos_m": 1.227,
+        "profundidade_max_m": 1.762,
+        "faixas_valor_brl": {
+          "ate_0_5m": 2244393.36,
+          "0_5_a_1m": 0.0,
+          "1_a_2m": 909889.2,
+          "2_a_3m": 0.0,
+          "acima_3m": 0.0
+        }
+      }
+    },
+    "2.25": {
+      "empresas": {
+        "n_total": 39757,
+        "n_atingidos": 189,
+        "valor_exposto_atingido_brl": 219109395.96,
+        "exposicao_total_brl": 31393424219.22,
+        "profundidade_media_atingidos_m": 0.918,
+        "profundidade_max_m": 2.999,
+        "faixas_valor_brl": {
+          "ate_0_5m": 203764760.1,
+          "0_5_a_1m": 3672432.18,
+          "1_a_2m": 9094006.08,
+          "2_a_3m": 2578197.6,
+          "acima_3m": 0.0
+        }
+      },
+      "educacao": {
+        "n_total": 936,
+        "n_atingidos": 1,
+        "valor_exposto_atingido_brl": 750759.69,
+        "exposicao_total_brl": 2982978142.8,
+        "profundidade_media_atingidos_m": 2.11,
+        "profundidade_max_m": 2.11,
+        "faixas_valor_brl": {
+          "ate_0_5m": 0.0,
+          "0_5_a_1m": 0.0,
+          "1_a_2m": 0.0,
+          "2_a_3m": 750759.69,
+          "acima_3m": 0.0
+        }
+      },
+      "saude": {
+        "n_total": 7008,
+        "n_atingidos": 14,
+        "valor_exposto_atingido_brl": 3154282.56,
+        "exposicao_total_brl": 5636945571.84,
+        "profundidade_media_atingidos_m": 1.238,
+        "profundidade_max_m": 1.762,
+        "faixas_valor_brl": {
+          "ate_0_5m": 2244393.36,
+          "0_5_a_1m": 0.0,
+          "1_a_2m": 909889.2,
+          "2_a_3m": 0.0,
+          "acima_3m": 0.0
+        }
+      }
+    },
+    "2.50": {
+      "empresas": {
+        "n_total": 39757,
+        "n_atingidos": 189,
+        "valor_exposto_atingido_brl": 219109395.96,
+        "exposicao_total_brl": 31393424219.22,
+        "profundidade_media_atingidos_m": 0.922,
+        "profundidade_max_m": 2.999,
+        "faixas_valor_brl": {
+          "ate_0_5m": 203764760.1,
+          "0_5_a_1m": 187505.28,
+          "1_a_2m": 12532056.66,
+          "2_a_3m": 2625073.92,
+          "acima_3m": 0.0
+        }
+      },
+      "educacao": {
+        "n_total": 936,
+        "n_atingidos": 1,
+        "valor_exposto_atingido_brl": 750759.69,
+        "exposicao_total_brl": 2982978142.8,
+        "profundidade_media_atingidos_m": 2.368,
+        "profundidade_max_m": 2.368,
+        "faixas_valor_brl": {
+          "ate_0_5m": 0.0,
+          "0_5_a_1m": 0.0,
+          "1_a_2m": 0.0,
+          "2_a_3m": 750759.69,
+          "acima_3m": 0.0
+        }
+      },
+      "saude": {
+        "n_total": 7008,
+        "n_atingidos": 14,
+        "valor_exposto_atingido_brl": 3154282.56,
+        "exposicao_total_brl": 5636945571.84,
+        "profundidade_media_atingidos_m": 1.253,
+        "profundidade_max_m": 1.762,
+        "faixas_valor_brl": {
+          "ate_0_5m": 2244393.36,
+          "0_5_a_1m": 0.0,
+          "1_a_2m": 909889.2,
+          "2_a_3m": 0.0,
+          "acima_3m": 0.0
+        }
+      }
+    },
+    "2.75": {
+      "empresas": {
+        "n_total": 39757,
+        "n_atingidos": 192,
+        "valor_exposto_atingido_brl": 220187551.32,
+        "exposicao_total_brl": 31393424219.22,
+        "profundidade_media_atingidos_m": 0.914,
+        "profundidade_max_m": 2.999,
+        "faixas_valor_brl": {
+          "ate_0_5m": 204842915.46,
+          "0_5_a_1m": 187505.28,
+          "1_a_2m": 12532056.66,
+          "2_a_3m": 2625073.92,
+          "acima_3m": 0.0
+        }
+      },
+      "educacao": {
+        "n_total": 936,
+        "n_atingidos": 1,
+        "valor_exposto_atingido_brl": 750759.69,
+        "exposicao_total_brl": 2982978142.8,
+        "profundidade_media_atingidos_m": 2.627,
+        "profundidade_max_m": 2.627,
+        "faixas_valor_brl": {
+          "ate_0_5m": 0.0,
+          "0_5_a_1m": 0.0,
+          "1_a_2m": 0.0,
+          "2_a_3m": 750759.69,
+          "acima_3m": 0.0
+        }
+      },
+      "saude": {
+        "n_total": 7008,
+        "n_atingidos": 14,
+        "valor_exposto_atingido_brl": 3154282.56,
+        "exposicao_total_brl": 5636945571.84,
+        "profundidade_media_atingidos_m": 1.272,
+        "profundidade_max_m": 1.762,
+        "faixas_valor_brl": {
+          "ate_0_5m": 2244393.36,
+          "0_5_a_1m": 0.0,
+          "1_a_2m": 909889.2,
+          "2_a_3m": 0.0,
+          "acima_3m": 0.0
+        }
+      }
+    },
+    "3.00": {
+      "empresas": {
+        "n_total": 39757,
+        "n_atingidos": 193,
+        "valor_exposto_atingido_brl": 220234427.64,
+        "exposicao_total_brl": 31393424219.22,
+        "profundidade_media_atingidos_m": 0.916,
+        "profundidade_max_m": 2.999,
+        "faixas_valor_brl": {
+          "ate_0_5m": 204889791.78,
+          "0_5_a_1m": 187505.28,
+          "1_a_2m": 12532056.66,
+          "2_a_3m": 2625073.92,
+          "acima_3m": 0.0
+        }
+      },
+      "educacao": {
+        "n_total": 936,
+        "n_atingidos": 1,
+        "valor_exposto_atingido_brl": 750759.69,
+        "exposicao_total_brl": 2982978142.8,
+        "profundidade_media_atingidos_m": 2.896,
+        "profundidade_max_m": 2.896,
+        "faixas_valor_brl": {
+          "ate_0_5m": 0.0,
+          "0_5_a_1m": 0.0,
+          "1_a_2m": 0.0,
+          "2_a_3m": 750759.69,
+          "acima_3m": 0.0
+        }
+      },
+      "saude": {
+        "n_total": 7008,
+        "n_atingidos": 16,
+        "valor_exposto_atingido_brl": 4913401.68,
+        "exposicao_total_brl": 5636945571.84,
+        "profundidade_media_atingidos_m": 1.154,
+        "profundidade_max_m": 1.861,
+        "faixas_valor_brl": {
+          "ate_0_5m": 3942853.2,
+          "0_5_a_1m": 60659.28,
+          "1_a_2m": 909889.2,
+          "2_a_3m": 0.0,
+          "acima_3m": 0.0
+        }
+      }
+    },
+    "3.25": {
+      "empresas": {
+        "n_total": 39757,
+        "n_atingidos": 232,
+        "valor_exposto_atingido_brl": 242494479.9,
+        "exposicao_total_brl": 31393424219.22,
+        "profundidade_media_atingidos_m": 0.801,
+        "profundidade_max_m": 2.999,
+        "faixas_valor_brl": {
+          "ate_0_5m": 226540451.88,
+          "0_5_a_1m": 796897.44,
+          "1_a_2m": 8015850.72,
+          "2_a_3m": 7141279.86,
+          "acima_3m": 0.0
+        }
+      },
+      "educacao": {
+        "n_total": 936,
+        "n_atingidos": 1,
+        "valor_exposto_atingido_brl": 750759.69,
+        "exposicao_total_brl": 2982978142.8,
+        "profundidade_media_atingidos_m": 3.15,
+        "profundidade_max_m": 3.15,
+        "faixas_valor_brl": {
+          "ate_0_5m": 0.0,
+          "0_5_a_1m": 0.0,
+          "1_a_2m": 0.0,
+          "2_a_3m": 0.0,
+          "acima_3m": 750759.69
+        }
+      },
+      "saude": {
+        "n_total": 7008,
+        "n_atingidos": 16,
+        "valor_exposto_atingido_brl": 4913401.68,
+        "exposicao_total_brl": 5636945571.84,
+        "profundidade_media_atingidos_m": 1.208,
+        "profundidade_max_m": 2.037,
+        "faixas_valor_brl": {
+          "ate_0_5m": 3821534.64,
+          "0_5_a_1m": 181977.84,
+          "1_a_2m": 849229.92,
+          "2_a_3m": 60659.28,
+          "acima_3m": 0.0
+        }
+      }
+    },
+    "3.50": {
+      "empresas": {
+        "n_total": 39757,
+        "n_atingidos": 233,
+        "valor_exposto_atingido_brl": 242588232.54,
+        "exposicao_total_brl": 31393424219.22,
+        "profundidade_media_atingidos_m": 0.845,
+        "profundidade_max_m": 2.999,
+        "faixas_valor_brl": {
+          "ate_0_5m": 226118565.0,
+          "0_5_a_1m": 1312536.96,
+          "1_a_2m": 8015850.72,
+          "2_a_3m": 7141279.86,
+          "acima_3m": 0.0
+        }
+      },
+      "educacao": {
+        "n_total": 936,
+        "n_atingidos": 1,
+        "valor_exposto_atingido_brl": 750759.69,
+        "exposicao_total_brl": 2982978142.8,
+        "profundidade_media_atingidos_m": 3.392,
+        "profundidade_max_m": 3.392,
+        "faixas_valor_brl": {
+          "ate_0_5m": 0.0,
+          "0_5_a_1m": 0.0,
+          "1_a_2m": 0.0,
+          "2_a_3m": 0.0,
+          "acima_3m": 750759.69
+        }
+      },
+      "saude": {
+        "n_total": 7008,
+        "n_atingidos": 18,
+        "valor_exposto_atingido_brl": 7157795.04,
+        "exposicao_total_brl": 5636945571.84,
+        "profundidade_media_atingidos_m": 1.13,
+        "profundidade_max_m": 2.27,
+        "faixas_valor_brl": {
+          "ate_0_5m": 4428127.44,
+          "0_5_a_1m": 1759119.12,
+          "1_a_2m": 909889.2,
+          "2_a_3m": 60659.28,
+          "acima_3m": 0.0
+        }
+      }
+    },
+    "3.75": {
+      "empresas": {
+        "n_total": 39757,
+        "n_atingidos": 237,
+        "valor_exposto_atingido_brl": 245289467.88,
+        "exposicao_total_brl": 31393424219.22,
+        "profundidade_media_atingidos_m": 0.882,
+        "profundidade_max_m": 2.999,
+        "faixas_valor_brl": {
+          "ate_0_5m": 206559748.08,
+          "0_5_a_1m": 22963197.06,
+          "1_a_2m": 8625242.88,
+          "2_a_3m": 7141279.86,
+          "acima_3m": 0.0
+        }
+      },
+      "educacao": {
+        "n_total": 936,
+        "n_atingidos": 1,
+        "valor_exposto_atingido_brl": 750759.69,
+        "exposicao_total_brl": 2982978142.8,
+        "profundidade_media_atingidos_m": 3.663,
+        "profundidade_max_m": 3.663,
+        "faixas_valor_brl": {
+          "ate_0_5m": 0.0,
+          "0_5_a_1m": 0.0,
+          "1_a_2m": 0.0,
+          "2_a_3m": 0.0,
+          "acima_3m": 750759.69
+        }
+      },
+      "saude": {
+        "n_total": 7008,
+        "n_atingidos": 18,
+        "valor_exposto_atingido_brl": 7157795.04,
+        "exposicao_total_brl": 5636945571.84,
+        "profundidade_media_atingidos_m": 1.206,
+        "profundidade_max_m": 2.43,
+        "faixas_valor_brl": {
+          "ate_0_5m": 4428127.44,
+          "0_5_a_1m": 1637800.56,
+          "1_a_2m": 1031207.76,
+          "2_a_3m": 60659.28,
+          "acima_3m": 0.0
+        }
+      }
+    },
+    "4.00": {
+      "empresas": {
+        "n_total": 39757,
+        "n_atingidos": 279,
+        "valor_exposto_atingido_brl": 264086872.2,
+        "exposicao_total_brl": 31393424219.22,
+        "profundidade_media_atingidos_m": 0.808,
+        "profundidade_max_m": 3.138,
+        "faixas_valor_brl": {
+          "ate_0_5m": 225263399.76,
+          "0_5_a_1m": 23010073.38,
+          "1_a_2m": 8672119.2,
+          "2_a_3m": 6063124.5,
+          "acima_3m": 1078155.36
+        }
+      },
+      "educacao": {
+        "n_total": 936,
+        "n_atingidos": 1,
+        "valor_exposto_atingido_brl": 750759.69,
+        "exposicao_total_brl": 2982978142.8,
+        "profundidade_media_atingidos_m": 3.924,
+        "profundidade_max_m": 3.924,
+        "faixas_valor_brl": {
+          "ate_0_5m": 0.0,
+          "0_5_a_1m": 0.0,
+          "1_a_2m": 0.0,
+          "2_a_3m": 0.0,
+          "acima_3m": 750759.69
+        }
+      },
+      "saude": {
+        "n_total": 7008,
+        "n_atingidos": 20,
+        "valor_exposto_atingido_brl": 8674277.04,
+        "exposicao_total_brl": 5636945571.84,
+        "profundidade_media_atingidos_m": 1.164,
+        "profundidade_max_m": 2.603,
+        "faixas_valor_brl": {
+          "ate_0_5m": 4610105.28,
+          "0_5_a_1m": 1334504.16,
+          "1_a_2m": 2669008.32,
+          "2_a_3m": 60659.28,
+          "acima_3m": 0.0
+        }
+      }
+    },
+    "4.25": {
+      "empresas": {
+        "n_total": 39757,
+        "n_atingidos": 286,
+        "valor_exposto_atingido_brl": 273415259.88,
+        "exposicao_total_brl": 31393424219.22,
+        "profundidade_media_atingidos_m": 0.88,
+        "profundidade_max_m": 3.481,
+        "faixas_valor_brl": {
+          "ate_0_5m": 232921831.14,
+          "0_5_a_1m": 2197289.7,
+          "1_a_2m": 31154859.18,
+          "2_a_3m": 2578197.6,
+          "acima_3m": 4563082.26
+        }
+      },
+      "educacao": {
+        "n_total": 936,
+        "n_atingidos": 2,
+        "valor_exposto_atingido_brl": 3606761.86,
+        "exposicao_total_brl": 2982978142.8,
+        "profundidade_media_atingidos_m": 2.124,
+        "profundidade_max_m": 4.168,
+        "faixas_valor_brl": {
+          "ate_0_5m": 2856002.17,
+          "0_5_a_1m": 0.0,
+          "1_a_2m": 0.0,
+          "2_a_3m": 0.0,
+          "acima_3m": 750759.69
+        }
+      },
+      "saude": {
+        "n_total": 7008,
+        "n_atingidos": 20,
+        "valor_exposto_atingido_brl": 8674277.04,
+        "exposicao_total_brl": 5636945571.84,
+        "profundidade_media_atingidos_m": 1.275,
+        "profundidade_max_m": 2.923,
+        "faixas_valor_brl": {
+          "ate_0_5m": 3700216.08,
+          "0_5_a_1m": 2244393.36,
+          "1_a_2m": 2669008.32,
+          "2_a_3m": 60659.28,
+          "acima_3m": 0.0
+        }
+      }
+    },
+    "4.50": {
+      "empresas": {
+        "n_total": 39757,
+        "n_atingidos": 291,
+        "valor_exposto_atingido_brl": 276180962.76,
+        "exposicao_total_brl": 31393424219.22,
+        "profundidade_media_atingidos_m": 0.944,
+        "profundidade_max_m": 3.636,
+        "faixas_valor_brl": {
+          "ate_0_5m": 215858850.66,
+          "0_5_a_1m": 20467360.62,
+          "1_a_2m": 32713471.62,
+          "2_a_3m": 2578197.6,
+          "acima_3m": 4563082.26
+        }
+      },
+      "educacao": {
+        "n_total": 936,
+        "n_atingidos": 3,
+        "valor_exposto_atingido_brl": 5295599.1,
+        "exposicao_total_brl": 2982978142.8,
+        "profundidade_media_atingidos_m": 1.616,
+        "profundidade_max_m": 4.422,
+        "faixas_valor_brl": {
+          "ate_0_5m": 4544839.41,
+          "0_5_a_1m": 0.0,
+          "1_a_2m": 0.0,
+          "2_a_3m": 0.0,
+          "acima_3m": 750759.69
+        }
+      },
+      "saude": {
+        "n_total": 7008,
+        "n_atingidos": 21,
+        "valor_exposto_atingido_brl": 8734936.32,
+        "exposicao_total_brl": 5636945571.84,
+        "profundidade_media_atingidos_m": 1.299,
+        "profundidade_max_m": 3.091,
+        "faixas_valor_brl": {
+          "ate_0_5m": 2244393.36,
+          "0_5_a_1m": 2426371.2,
+          "1_a_2m": 4003512.48,
+          "2_a_3m": 0.0,
+          "acima_3m": 60659.28
+        }
+      }
+    },
+    "4.75": {
+      "empresas": {
+        "n_total": 39757,
+        "n_atingidos": 302,
+        "valor_exposto_atingido_brl": 277962262.92,
+        "exposicao_total_brl": 31393424219.22,
+        "profundidade_media_atingidos_m": 1.004,
+        "profundidade_max_m": 3.954,
+        "faixas_valor_brl": {
+          "ate_0_5m": 208311763.14,
+          "0_5_a_1m": 29344576.32,
+          "1_a_2m": 32555251.44,
+          "2_a_3m": 3187589.76,
+          "acima_3m": 4563082.26
+        }
+      },
+      "educacao": {
+        "n_total": 936,
+        "n_atingidos": 3,
+        "valor_exposto_atingido_brl": 5295599.1,
+        "exposicao_total_brl": 2982978142.8,
+        "profundidade_media_atingidos_m": 1.87,
+        "profundidade_max_m": 4.666,
+        "faixas_valor_brl": {
+          "ate_0_5m": 1688837.24,
+          "0_5_a_1m": 2856002.17,
+          "1_a_2m": 0.0,
+          "2_a_3m": 0.0,
+          "acima_3m": 750759.69
+        }
+      },
+      "saude": {
+        "n_total": 7008,
+        "n_atingidos": 22,
+        "valor_exposto_atingido_brl": 8977573.44,
+        "exposicao_total_brl": 5636945571.84,
+        "profundidade_media_atingidos_m": 1.355,
+        "profundidade_max_m": 3.393,
+        "faixas_valor_brl": {
+          "ate_0_5m": 2487030.48,
+          "0_5_a_1m": 1516482.0,
+          "1_a_2m": 4731423.84,
+          "2_a_3m": 181977.84,
+          "acima_3m": 60659.28
+        }
+      }
+    },
+    "5.00": {
+      "empresas": {
+        "n_total": 39757,
+        "n_atingidos": 303,
+        "valor_exposto_atingido_brl": 278056015.56,
+        "exposicao_total_brl": 31393424219.22,
+        "profundidade_media_atingidos_m": 1.087,
+        "profundidade_max_m": 4.098,
+        "faixas_valor_brl": {
+          "ate_0_5m": 205639812.9,
+          "0_5_a_1m": 12281595.84,
+          "1_a_2m": 52337058.48,
+          "2_a_3m": 3234466.08,
+          "acima_3m": 4563082.26
+        }
+      },
+      "educacao": {
+        "n_total": 936,
+        "n_atingidos": 3,
+        "valor_exposto_atingido_brl": 5295599.1,
+        "exposicao_total_brl": 2982978142.8,
+        "profundidade_media_atingidos_m": 2.126,
+        "profundidade_max_m": 4.931,
+        "faixas_valor_brl": {
+          "ate_0_5m": 0.0,
+          "0_5_a_1m": 4544839.41,
+          "1_a_2m": 0.0,
+          "2_a_3m": 0.0,
+          "acima_3m": 750759.69
+        }
+      },
+      "saude": {
+        "n_total": 7008,
+        "n_atingidos": 23,
+        "valor_exposto_atingido_brl": 9038232.72,
+        "exposicao_total_brl": 5636945571.84,
+        "profundidade_media_atingidos_m": 1.392,
+        "profundidade_max_m": 3.551,
+        "faixas_valor_brl": {
+          "ate_0_5m": 2487030.48,
+          "0_5_a_1m": 60659.28,
+          "1_a_2m": 4610105.28,
+          "2_a_3m": 1819778.4,
+          "acima_3m": 60659.28
+        }
+      }
+    },
+    "5.25": {
+      "empresas": {
+        "n_total": 39757,
+        "n_atingidos": 308,
+        "valor_exposto_atingido_brl": 280587336.84,
+        "exposicao_total_brl": 31393424219.22,
+        "profundidade_media_atingidos_m": 1.156,
+        "profundidade_max_m": 4.321,
+        "faixas_valor_brl": {
+          "ate_0_5m": 206624215.62,
+          "0_5_a_1m": 4547003.04,
+          "1_a_2m": 39604593.06,
+          "2_a_3m": 25248442.86,
+          "acima_3m": 4563082.26
+        }
+      },
+      "educacao": {
+        "n_total": 936,
+        "n_atingidos": 4,
+        "valor_exposto_atingido_brl": 6648990.53,
+        "exposicao_total_brl": 2982978142.8,
+        "profundidade_media_atingidos_m": 1.817,
+        "profundidade_max_m": 5.186,
+        "faixas_valor_brl": {
+          "ate_0_5m": 1353391.43,
+          "0_5_a_1m": 1688837.24,
+          "1_a_2m": 2856002.17,
+          "2_a_3m": 0.0,
+          "acima_3m": 750759.69
+        }
+      },
+      "saude": {
+        "n_total": 7008,
+        "n_atingidos": 24,
+        "valor_exposto_atingido_brl": 9220210.56,
+        "exposicao_total_brl": 5636945571.84,
+        "profundidade_media_atingidos_m": 1.435,
+        "profundidade_max_m": 3.719,
+        "faixas_valor_brl": {
+          "ate_0_5m": 2426371.2,
+          "0_5_a_1m": 303296.4,
+          "1_a_2m": 4610105.28,
+          "2_a_3m": 1819778.4,
+          "acima_3m": 60659.28
+        }
+      }
+    },
+    "5.50": {
+      "empresas": {
+        "n_total": 39757,
+        "n_atingidos": 310,
+        "valor_exposto_atingido_brl": 292025158.92,
+        "exposicao_total_brl": 31393424219.22,
+        "profundidade_media_atingidos_m": 1.244,
+        "profundidade_max_m": 4.599,
+        "faixas_valor_brl": {
+          "ate_0_5m": 217733903.46,
+          "0_5_a_1m": 2859455.52,
+          "1_a_2m": 39592899.18,
+          "2_a_3m": 27275818.5,
+          "acima_3m": 4563082.26
+        }
+      },
+      "educacao": {
+        "n_total": 936,
+        "n_atingidos": 5,
+        "valor_exposto_atingido_brl": 14207881.55,
+        "exposicao_total_brl": 2982978142.8,
+        "profundidade_media_atingidos_m": 1.697,
+        "profundidade_max_m": 5.458,
+        "faixas_valor_brl": {
+          "ate_0_5m": 8912282.45,
+          "0_5_a_1m": 0.0,
+          "1_a_2m": 4544839.41,
+          "2_a_3m": 0.0,
+          "acima_3m": 750759.69
+        }
+      },
+      "saude": {
+        "n_total": 7008,
+        "n_atingidos": 25,
+        "valor_exposto_atingido_brl": 9948121.92,
+        "exposicao_total_brl": 5636945571.84,
+        "profundidade_media_atingidos_m": 1.492,
+        "profundidade_max_m": 3.913,
+        "faixas_valor_brl": {
+          "ate_0_5m": 3154282.56,
+          "0_5_a_1m": 242637.12,
+          "1_a_2m": 3336260.4,
+          "2_a_3m": 3154282.56,
+          "acima_3m": 60659.28
+        }
+      }
+    },
+    "5.75": {
+      "empresas": {
+        "n_total": 39757,
+        "n_atingidos": 383,
+        "valor_exposto_atingido_brl": 310996661.04,
+        "exposicao_total_brl": 31393424219.22,
+        "profundidade_media_atingidos_m": 1.094,
+        "profundidade_max_m": 4.846,
+        "faixas_valor_brl": {
+          "ate_0_5m": 235814755.5,
+          "0_5_a_1m": 1406289.6,
+          "1_a_2m": 41485543.2,
+          "2_a_3m": 27117598.32,
+          "acima_3m": 5172474.42
+        }
+      },
+      "educacao": {
+        "n_total": 936,
+        "n_atingidos": 7,
+        "valor_exposto_atingido_brl": 17152581.91,
+        "exposicao_total_brl": 2982978142.8,
+        "profundidade_media_atingidos_m": 1.703,
+        "profundidade_max_m": 5.702,
+        "faixas_valor_brl": {
+          "ate_0_5m": 0.0,
+          "0_5_a_1m": 4298091.78,
+          "1_a_2m": 12103730.44,
+          "2_a_3m": 0.0,
+          "acima_3m": 750759.69
+        }
+      },
+      "saude": {
+        "n_total": 7008,
+        "n_atingidos": 26,
+        "valor_exposto_atingido_brl": 10008781.2,
+        "exposicao_total_brl": 5636945571.84,
+        "profundidade_media_atingidos_m": 1.547,
+        "profundidade_max_m": 4.096,
+        "faixas_valor_brl": {
+          "ate_0_5m": 2972304.72,
+          "0_5_a_1m": 485274.24,
+          "1_a_2m": 2426371.2,
+          "2_a_3m": 3942853.2,
+          "acima_3m": 181977.84
+        }
+      }
+    },
+    "6.00": {
+      "empresas": {
+        "n_total": 39757,
+        "n_atingidos": 444,
+        "valor_exposto_atingido_brl": 334381644.18,
+        "exposicao_total_brl": 31393424219.22,
+        "profundidade_media_atingidos_m": 1.196,
+        "profundidade_max_m": 5.113,
+        "faixas_valor_brl": {
+          "ate_0_5m": 226516156.92,
+          "0_5_a_1m": 31834011.42,
+          "1_a_2m": 42241360.86,
+          "2_a_3m": 28570764.24,
+          "acima_3m": 5219350.74
+        }
+      },
+      "educacao": {
+        "n_total": 936,
+        "n_atingidos": 14,
+        "valor_exposto_atingido_brl": 33923563.19,
+        "exposicao_total_brl": 2982978142.8,
+        "profundidade_media_atingidos_m": 1.382,
+        "profundidade_max_m": 5.968,
+        "faixas_valor_brl": {
+          "ate_0_5m": 7001362.42,
+          "0_5_a_1m": 11123010.29,
+          "1_a_2m": 15048430.79,
+          "2_a_3m": 0.0,
+          "acima_3m": 750759.69
+        }
+      },
+      "saude": {
+        "n_total": 7008,
+        "n_atingidos": 29,
+        "valor_exposto_atingido_brl": 13041745.2,
+        "exposicao_total_brl": 5636945571.84,
+        "profundidade_media_atingidos_m": 1.556,
+        "profundidade_max_m": 4.306,
+        "faixas_valor_brl": {
+          "ate_0_5m": 4246149.6,
+          "0_5_a_1m": 2001756.24,
+          "1_a_2m": 2669008.32,
+          "2_a_3m": 2244393.36,
+          "acima_3m": 1880437.68
+        }
+      }
+    }
+  }
+}

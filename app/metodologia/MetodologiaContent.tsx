@@ -67,7 +67,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
                   ["#infraestrutura", "7. Infraestrutura"],
                   ["#edificacoes",    "8. Edificações"],
                   ["#danos",          "9. Danos Operacionais"],
-                  ["#dano-fisico",    "10. Dano Físico (CLIMADA)"],
+                  ["#dano-fisico",    "10. Dano Físico (Por Cota e CLIMADA)"],
                   ["#populacao",      "11. População Exposta"],
                   ["#fontes",         "12. Fontes e Referências"],
                 ] as [string, string][]).map(([href, label]) => (
@@ -923,7 +923,83 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             10. DANO FÍSICO — CLIMADA (PROTÓTIPO)
         ══════════════════════════════════════════════════════════════════════ */}
         {dadosClimada && (
-        <Section id="dano-fisico" num="10" title="Dano Físico: Metodologia CLIMADA (Protótipo)">
+        <Section id="dano-fisico" num="10" title="Dano Físico: Por Cota do Rio e Metodologia CLIMADA">
+          <SubTitle>Por Cota do Rio: Valor Exposto</SubTitle>
+          <Note type="info">
+            <strong>Exposição, não dano.</strong> A visão <em>Por cota</em> da aba Dano Físico mostra o que fica sob água
+            em cada cota do rio e o valor de reposição desses ativos (<em>valor exposto atingido</em>). É o{" "}
+            <strong>teto</strong> do dano (equivale a perda total de tudo que molha), não uma estimativa dele. Não usa o
+            modelo CLIMADA nem curva de dano, e não deve ser somado aos Danos Operacionais (Seção 9).
+          </Note>
+
+          <p>
+            Cada cota é um cenário independente, associado a um raster de profundidade da água. Como os rasters não têm
+            período de retorno, não há risco anual esperado (EAI) nem projeção 2050 nesta visão.
+          </p>
+          <DataTable rows={[
+            ["Município", "Rasters de profundidade", "Cotas", "Observação"],
+            ["Lajeado", "Rio Taquari", "18,45 a 34,45 m (passo 1 m)", "Altitude ortométrica; a régua do posto seria o raster + 0,55 m (hipótese do parecer do SGB, não confirmada pelo autor dos rasters)"],
+            ["Porto Alegre", "Guaíba", "1,75 a 6,00 m (passo 0,25 m)", "Mesmo raster dos dois municípios; a cota é o rótulo do raster, sem conversão para a régua"],
+            ["Eldorado do Sul", "Guaíba (mesmo de Porto Alegre)", "1,75 a 6,00 m (passo 0,25 m)", "A parte oeste do município fica fora da grade (profundidade 0, subestima)"],
+          ]} />
+
+          <SubTitle>Cálculo</SubTitle>
+          <DataTable rows={[
+            ["Etapa", "Descrição"],
+            ["1. Pontos", "Camadas BASE de empresas, escolas e unidades de saúde (as mesmas do painel). Pontos geocodificados fora do polígono do município (malha municipal do IBGE) são excluídos."],
+            ["2. Profundidade", "Amostragem do raster no pixel mais próximo do ponto (~5 m, EPSG:4326). Nodata e valores negativos viram 0."],
+            ["3. Máximo acumulado", "A profundidade de cada ponto é o máximo entre a cota e as cotas anteriores: a água de uma cota maior cobre pelo menos o que a menor cobria."],
+            ["4. Atingido", "O ponto é atingido quando a profundidade é maior que 0. Entra com 100% do valor, sem fração de dano."],
+            ["5. Agregação", "Soma dos valores de reposição e dos atributos dos pontos atingidos, por categoria e por cota."],
+          ]} />
+          <MathBlock exprs={[
+            { label: "Atingido na cota c", tex: "\\chi_i(c) = \\mathbf{1}\\left[\\max_{c' \\le c} h_i(c') > 0\\right]" },
+            { label: "Valor exposto atingido", tex: "VE(c) = \\sum_i V_i \\cdot \\chi_i(c)" },
+            { label: "Atributo ponderado", tex: "Q(c) = \\sum_i q_i \\cdot \\chi_i(c)" },
+          ]} />
+          <p className="text-sm text-[#3d7a94] mt-2">
+            <Math tex={"h_i(c)"} />: profundidade do ponto <em>i</em> no raster da cota <em>c</em>. <Math tex={"V_i"} />: valor
+            de reposição do ponto (seção &ldquo;Custo de reposição&rdquo; abaixo: CUB/RS × área por proxy de porte × fator de
+            conteúdo). <Math tex={"q_i"} />: atributo do ponto (empregados, massa salarial, leitos, matrículas etc.). O fator de
+            conteúdo vem de Huizinga et al. (2017), Tabela 3-26; a curva de dano (MDD), não.
+          </p>
+
+          <SubTitle>Indicadores por categoria</SubTitle>
+          <DataTable rows={[
+            ["Categoria", "Indicadores por cota", "Quebras"],
+            ["Empresas (RAIS 2023)", "Estabelecimentos, empregados, massa salarial, salário médio (massa ÷ empregados) e valor exposto", "Setor CNAE (mesmos rótulos do painel)"],
+            ["Saúde (CNES)", "Estabelecimentos, leitos, profissionais e valor exposto", "Categoria profissional (CBO) e tipo de unidade"],
+            ["Educação (Censo Escolar 2024)", "Escolas, matrículas, docentes e valor exposto", "Etapa de ensino e dependência administrativa"],
+            ["Agricultura (MapBiomas 2024)", "Área sob água (ha) e % da área da cultura", "Cultura. Sem valor em R$: não há valor de reposição para lavouras"],
+          ]} />
+          <p>
+            <strong>Agricultura.</strong> Os polígonos da cultura são rasterizados na grade do raster de profundidade e soma-se a
+            área dos pixels com água (a área de cada pixel é calculada pela latitude; máximo acumulado entre cotas). A área total
+            da cultura, usada no percentual, é a soma geodésica dos polígonos (elipsoide WGS84), independente da grade; a área fora
+            da grade conta como seca e subestima o atingido.
+          </p>
+
+          <SubTitle>Diferenças em relação à Sobreposição Espacial (Seção 2)</SubTitle>
+          <DataTable rows={[
+            ["Aspecto", "Sobreposição Espacial (Seção 2)", "Por Cota"],
+            ["Insumo", "Polígono vetorial da mancha do cenário", "Raster de profundidade por cota (~5 m)"],
+            ["Ponto atingido", "Ponto dentro da mancha (within)", "Profundidade > 0 no pixel mais próximo, com máximo acumulado entre cotas"],
+            ["Polígonos (agricultura)", "intersects + intersection(), área em UTM 22S (EPSG:32722)", "Rasterização na grade e soma da área dos pixels com água"],
+            ["Filtro por município", "Empresas e escolas dentro do município (IBGE)", "Empresas, escolas e unidades de saúde dentro do município (malha IBGE)"],
+          ]} />
+
+          <SubTitle>Limitações da visão por cota</SubTitle>
+          <ul className="list-disc list-inside space-y-2 text-sm text-slate-700">
+            <li><strong>Exposição, não dano:</strong> o dano real fica entre zero e o valor exposto.</li>
+            <li><strong>Coordenadas repetidas:</strong> muitos estabelecimentos compartilham o mesmo ponto, e a maior pilha de cada município reúne dezenas ou centenas de ruas e bairros, indicando que a geocodificação caiu num ponto padrão. A base é mantida como reportada: cada pilha entra de uma vez, com a profundidade de um único pixel, o que gera degraus no valor por cota.</li>
+            <li><strong>Valor de reposição estimado</strong> (CUB/RS × área por proxy de porte), não valor de mercado.</li>
+            <li><strong>Setores não disjuntos:</strong> empresas de saúde e educação (RAIS) também aparecem nas camadas CNES e Censo Escolar, então a soma dos três setores não é de ativos disjuntos.</li>
+            <li><strong>Pontos fora da grade do raster</strong> entram com profundidade 0 (subestima), principalmente em Eldorado do Sul.</li>
+            <li><strong>Pontos fora do município</strong> (coordenada do CNES, RAIS ou Censo em outro local) são excluídos do cálculo; a contagem aparece nas Limitações da aba.</li>
+            <li><strong>Pontos no leito do rio ou lago:</strong> na cota mais baixa já há pontos molhados; são mantidos, pois cada cota é um cenário.</li>
+          </ul>
+
+          <SubTitle>Por Período de Retorno: Metodologia CLIMADA</SubTitle>
           <Note type="info">
             <strong>Protótipo exploratório</strong>, não uma métrica oficial do painel. Mede{" "}
             <strong>destruição de patrimônio</strong> (estoque: prédio + equipamento), diferente

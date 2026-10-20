@@ -1,0 +1,3560 @@
+{
+ "municipio": "Lajeado",
+ "indicador": "o que fica sob agua (profundidade > 0, maximo acumulado entre cotas) em cada cota; sem curva de dano",
+ "ano_agricultura": 2024,
+ "area_agricola_total_ha": {
+  "Outras Lavouras Temporárias": 458.64,
+  "Soja": 972.62
+ },
+ "area_agricola_na_grade_ha": {
+  "Outras Lavouras Temporárias": 422.75,
+  "Soja": 960.02
+ },
+ "totais": {
+  "empresas": {
+   "n": 3438
+  },
+  "saude": {
+   "n": 587
+  },
+  "educacao": {
+   "n": 74
+  }
+ },
+ "pontos_excluidos_fora_do_municipio": {
+  "empresas": 5,
+  "educacao": 0,
+  "saude": 0
+ },
+ "maior_pilha": {
+  "empresas": {
+   "n_pontos": 300,
+   "lon": -51.9624046,
+   "lat": -29.4671522,
+   "ruas_distintas": 120,
+   "bairros_distintos": 24,
+   "valor_reposicao_brl": 274398759.72,
+   "cota_entrada": "33.45",
+   "valor_exposto_antes_brl": 71288247.78,
+   "valor_exposto_na_entrada_brl": 353913751.26
+  },
+  "saude": {
+   "n_pontos": 86,
+   "lon": -51.961,
+   "lat": -29.467,
+   "ruas_distintas": 48,
+   "bairros_distintos": 7,
+   "valor_reposicao_brl": 12435152.4,
+   "cota_entrada": "25.45",
+   "valor_exposto_antes_brl": 1395163.44,
+   "valor_exposto_na_entrada_brl": 13830315.84
+  },
+  "educacao": {
+   "n_pontos": 12,
+   "lon": -51.9624046,
+   "lat": -29.4671522,
+   "ruas_distintas": 12,
+   "bairros_distintos": 8,
+   "valor_reposicao_brl": 27800808.87,
+   "cota_entrada": "33.45",
+   "valor_exposto_antes_brl": 15837011.23,
+   "valor_exposto_na_entrada_brl": 43637820.1
+  }
+ },
+ "por_cota": {
+  "18.45": {
+   "empresas": {
+    "n": 5,
+    "empregados": 83,
+    "massa_salarial_brl": 188520.61,
+    "salario_medio_brl": 2271.33,
+    "valor_exposto_brl": 3327815.52,
+    "setores": [
+     {
+      "nome": "TRANSPORTE, ARMAZENAGEM E CORREIO",
+      "n": 1,
+      "valor_exposto_brl": 2156310.72,
+      "empregados": 46,
+      "massa_salarial_brl": 89059.61,
+      "salario_medio_brl": 1936.08
+     },
+     {
+      "nome": "INDUSTRIAS DE TRANSFORMACAO",
+      "n": 2,
+      "valor_exposto_brl": 937123.2,
+      "empregados": 32,
+      "massa_salarial_brl": 91429.0,
+      "salario_medio_brl": 2857.16
+     },
+     {
+      "nome": "AGRICULTURA, PECUARIA, PRODUCAO FLORESTAL, PESCA E AQUICULTURA",
+      "n": 1,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 6652.0,
+      "salario_medio_brl": 1663.0
+     },
+     {
+      "nome": "ARTES, CULTURA, ESPORTE E RECREACAO",
+      "n": 1,
+      "valor_exposto_brl": 46876.32,
+      "empregados": 1,
+      "massa_salarial_brl": 1380.0,
+      "salario_medio_brl": 1380.0
+     }
+    ]
+   },
+   "saude": {
+    "n": 1,
+    "leitos": 0,
+    "profissionais": 6,
+    "valor_exposto_brl": 363955.68,
+    "staff": {
+     "staff_medicos": 0,
+     "staff_enfermagem": 0,
+     "staff_odontologia": 0,
+     "staff_farmacia": 0,
+     "staff_diag_lab_imagem": 0,
+     "staff_acs_endemias": 0,
+     "staff_admin_gestao_apoio": 1,
+     "staff_servicos_gerais": 1,
+     "staff_transporte_urgencia": 0,
+     "staff_outros_superior_saude": 4,
+     "staff_outros": 0
+    },
+    "tipos": [
+     {
+      "nome": "Unidade de Reabilitacao",
+      "n": 1,
+      "valor_exposto_brl": 363955.68,
+      "leitos": 0,
+      "profissionais": 6
+     }
+    ]
+   },
+   "educacao": {
+    "n": 0,
+    "matriculas": 0,
+    "docentes": 0,
+    "valor_exposto_brl": 0.0,
+    "etapas": {
+     "infantil": 0,
+     "fundamental": 0,
+     "medio": 0,
+     "profissional": 0,
+     "eja": 0,
+     "especial": 0
+    },
+    "dependencias": []
+   },
+   "agricultura": {
+    "area_ha": 30.32,
+    "culturas": {
+     "Outras Lavouras Temporárias": 8.28,
+     "Soja": 22.04
+    }
+   }
+  },
+  "19.45": {
+   "empresas": {
+    "n": 5,
+    "empregados": 83,
+    "massa_salarial_brl": 188520.61,
+    "salario_medio_brl": 2271.33,
+    "valor_exposto_brl": 3327815.52,
+    "setores": [
+     {
+      "nome": "TRANSPORTE, ARMAZENAGEM E CORREIO",
+      "n": 1,
+      "valor_exposto_brl": 2156310.72,
+      "empregados": 46,
+      "massa_salarial_brl": 89059.61,
+      "salario_medio_brl": 1936.08
+     },
+     {
+      "nome": "INDUSTRIAS DE TRANSFORMACAO",
+      "n": 2,
+      "valor_exposto_brl": 937123.2,
+      "empregados": 32,
+      "massa_salarial_brl": 91429.0,
+      "salario_medio_brl": 2857.16
+     },
+     {
+      "nome": "AGRICULTURA, PECUARIA, PRODUCAO FLORESTAL, PESCA E AQUICULTURA",
+      "n": 1,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 6652.0,
+      "salario_medio_brl": 1663.0
+     },
+     {
+      "nome": "ARTES, CULTURA, ESPORTE E RECREACAO",
+      "n": 1,
+      "valor_exposto_brl": 46876.32,
+      "empregados": 1,
+      "massa_salarial_brl": 1380.0,
+      "salario_medio_brl": 1380.0
+     }
+    ]
+   },
+   "saude": {
+    "n": 2,
+    "leitos": 0,
+    "profissionais": 9,
+    "valor_exposto_brl": 545933.52,
+    "staff": {
+     "staff_medicos": 0,
+     "staff_enfermagem": 0,
+     "staff_odontologia": 0,
+     "staff_farmacia": 0,
+     "staff_diag_lab_imagem": 0,
+     "staff_acs_endemias": 0,
+     "staff_admin_gestao_apoio": 1,
+     "staff_servicos_gerais": 1,
+     "staff_transporte_urgencia": 0,
+     "staff_outros_superior_saude": 7,
+     "staff_outros": 0
+    },
+    "tipos": [
+     {
+      "nome": "Unidade de Reabilitacao",
+      "n": 1,
+      "valor_exposto_brl": 363955.68,
+      "leitos": 0,
+      "profissionais": 6
+     },
+     {
+      "nome": "Ambulatório",
+      "n": 1,
+      "valor_exposto_brl": 181977.84,
+      "leitos": 0,
+      "profissionais": 3
+     }
+    ]
+   },
+   "educacao": {
+    "n": 0,
+    "matriculas": 0,
+    "docentes": 0,
+    "valor_exposto_brl": 0.0,
+    "etapas": {
+     "infantil": 0,
+     "fundamental": 0,
+     "medio": 0,
+     "profissional": 0,
+     "eja": 0,
+     "especial": 0
+    },
+    "dependencias": []
+   },
+   "agricultura": {
+    "area_ha": 38.28,
+    "culturas": {
+     "Outras Lavouras Temporárias": 10.23,
+     "Soja": 28.05
+    }
+   }
+  },
+  "20.45": {
+   "empresas": {
+    "n": 5,
+    "empregados": 83,
+    "massa_salarial_brl": 188520.61,
+    "salario_medio_brl": 2271.33,
+    "valor_exposto_brl": 3327815.52,
+    "setores": [
+     {
+      "nome": "TRANSPORTE, ARMAZENAGEM E CORREIO",
+      "n": 1,
+      "valor_exposto_brl": 2156310.72,
+      "empregados": 46,
+      "massa_salarial_brl": 89059.61,
+      "salario_medio_brl": 1936.08
+     },
+     {
+      "nome": "INDUSTRIAS DE TRANSFORMACAO",
+      "n": 2,
+      "valor_exposto_brl": 937123.2,
+      "empregados": 32,
+      "massa_salarial_brl": 91429.0,
+      "salario_medio_brl": 2857.16
+     },
+     {
+      "nome": "AGRICULTURA, PECUARIA, PRODUCAO FLORESTAL, PESCA E AQUICULTURA",
+      "n": 1,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 6652.0,
+      "salario_medio_brl": 1663.0
+     },
+     {
+      "nome": "ARTES, CULTURA, ESPORTE E RECREACAO",
+      "n": 1,
+      "valor_exposto_brl": 46876.32,
+      "empregados": 1,
+      "massa_salarial_brl": 1380.0,
+      "salario_medio_brl": 1380.0
+     }
+    ]
+   },
+   "saude": {
+    "n": 2,
+    "leitos": 0,
+    "profissionais": 9,
+    "valor_exposto_brl": 545933.52,
+    "staff": {
+     "staff_medicos": 0,
+     "staff_enfermagem": 0,
+     "staff_odontologia": 0,
+     "staff_farmacia": 0,
+     "staff_diag_lab_imagem": 0,
+     "staff_acs_endemias": 0,
+     "staff_admin_gestao_apoio": 1,
+     "staff_servicos_gerais": 1,
+     "staff_transporte_urgencia": 0,
+     "staff_outros_superior_saude": 7,
+     "staff_outros": 0
+    },
+    "tipos": [
+     {
+      "nome": "Unidade de Reabilitacao",
+      "n": 1,
+      "valor_exposto_brl": 363955.68,
+      "leitos": 0,
+      "profissionais": 6
+     },
+     {
+      "nome": "Ambulatório",
+      "n": 1,
+      "valor_exposto_brl": 181977.84,
+      "leitos": 0,
+      "profissionais": 3
+     }
+    ]
+   },
+   "educacao": {
+    "n": 0,
+    "matriculas": 0,
+    "docentes": 0,
+    "valor_exposto_brl": 0.0,
+    "etapas": {
+     "infantil": 0,
+     "fundamental": 0,
+     "medio": 0,
+     "profissional": 0,
+     "eja": 0,
+     "especial": 0
+    },
+    "dependencias": []
+   },
+   "agricultura": {
+    "area_ha": 49.55,
+    "culturas": {
+     "Outras Lavouras Temporárias": 12.85,
+     "Soja": 36.7
+    }
+   }
+  },
+  "21.45": {
+   "empresas": {
+    "n": 13,
+    "empregados": 94,
+    "massa_salarial_brl": 210436.2,
+    "salario_medio_brl": 2238.68,
+    "valor_exposto_brl": 3825863.82,
+    "setores": [
+     {
+      "nome": "TRANSPORTE, ARMAZENAGEM E CORREIO",
+      "n": 1,
+      "valor_exposto_brl": 2156310.72,
+      "empregados": 46,
+      "massa_salarial_brl": 89059.61,
+      "salario_medio_brl": 1936.08
+     },
+     {
+      "nome": "INDUSTRIAS DE TRANSFORMACAO",
+      "n": 3,
+      "valor_exposto_brl": 966408.3,
+      "empregados": 33,
+      "massa_salarial_brl": 93539.8,
+      "salario_medio_brl": 2834.54
+     },
+     {
+      "nome": "COMERCIO; REPARACAO DE VEICULOS",
+      "n": 2,
+      "valor_exposto_brl": 234381.6,
+      "empregados": 5,
+      "massa_salarial_brl": 9476.0,
+      "salario_medio_brl": 1895.2
+     },
+     {
+      "nome": "AGRICULTURA, PECUARIA, PRODUCAO FLORESTAL, PESCA E AQUICULTURA",
+      "n": 1,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 6652.0,
+      "salario_medio_brl": 1663.0
+     },
+     {
+      "nome": "SAUDE HUMANA E SERVICOS SOCIAIS",
+      "n": 2,
+      "valor_exposto_brl": 93752.64,
+      "empregados": 2,
+      "massa_salarial_brl": 4487.0,
+      "salario_medio_brl": 2243.5
+     },
+     {
+      "nome": "ARTES, CULTURA, ESPORTE E RECREACAO",
+      "n": 1,
+      "valor_exposto_brl": 46876.32,
+      "empregados": 1,
+      "massa_salarial_brl": 1380.0,
+      "salario_medio_brl": 1380.0
+     },
+     {
+      "nome": "ATIVIDADES PROFISSIONAIS, CIENTIFICAS E TECNICAS",
+      "n": 1,
+      "valor_exposto_brl": 46876.32,
+      "empregados": 1,
+      "massa_salarial_brl": 2351.75,
+      "salario_medio_brl": 2351.75
+     },
+     {
+      "nome": "OUTRAS ATIVIDADES DE SERVICOS",
+      "n": 1,
+      "valor_exposto_brl": 46876.32,
+      "empregados": 1,
+      "massa_salarial_brl": 1496.56,
+      "salario_medio_brl": 1496.56
+     },
+     {
+      "nome": "CONSTRUCAO",
+      "n": 1,
+      "valor_exposto_brl": 46876.32,
+      "empregados": 1,
+      "massa_salarial_brl": 1993.48,
+      "salario_medio_brl": 1993.48
+     }
+    ]
+   },
+   "saude": {
+    "n": 3,
+    "leitos": 0,
+    "profissionais": 10,
+    "valor_exposto_brl": 606592.8,
+    "staff": {
+     "staff_medicos": 1,
+     "staff_enfermagem": 0,
+     "staff_odontologia": 0,
+     "staff_farmacia": 0,
+     "staff_diag_lab_imagem": 0,
+     "staff_acs_endemias": 0,
+     "staff_admin_gestao_apoio": 1,
+     "staff_servicos_gerais": 1,
+     "staff_transporte_urgencia": 0,
+     "staff_outros_superior_saude": 7,
+     "staff_outros": 0
+    },
+    "tipos": [
+     {
+      "nome": "Unidade de Reabilitacao",
+      "n": 1,
+      "valor_exposto_brl": 363955.68,
+      "leitos": 0,
+      "profissionais": 6
+     },
+     {
+      "nome": "Ambulatório",
+      "n": 2,
+      "valor_exposto_brl": 242637.12,
+      "leitos": 0,
+      "profissionais": 4
+     }
+    ]
+   },
+   "educacao": {
+    "n": 0,
+    "matriculas": 0,
+    "docentes": 0,
+    "valor_exposto_brl": 0.0,
+    "etapas": {
+     "infantil": 0,
+     "fundamental": 0,
+     "medio": 0,
+     "profissional": 0,
+     "eja": 0,
+     "especial": 0
+    },
+    "dependencias": []
+   },
+   "agricultura": {
+    "area_ha": 69.42,
+    "culturas": {
+     "Outras Lavouras Temporárias": 16.21,
+     "Soja": 53.21
+    }
+   }
+  },
+  "22.45": {
+   "empresas": {
+    "n": 30,
+    "empregados": 183,
+    "massa_salarial_brl": 387370.73,
+    "salario_medio_brl": 2116.78,
+    "valor_exposto_brl": 7874717.76,
+    "setores": [
+     {
+      "nome": "TRANSPORTE, ARMAZENAGEM E CORREIO",
+      "n": 1,
+      "valor_exposto_brl": 2156310.72,
+      "empregados": 46,
+      "massa_salarial_brl": 89059.61,
+      "salario_medio_brl": 1936.08
+     },
+     {
+      "nome": "COMERCIO; REPARACAO DE VEICULOS",
+      "n": 10,
+      "valor_exposto_brl": 1640671.2,
+      "empregados": 35,
+      "massa_salarial_brl": 71534.0,
+      "salario_medio_brl": 2043.83
+     },
+     {
+      "nome": "INDUSTRIAS DE TRANSFORMACAO",
+      "n": 4,
+      "valor_exposto_brl": 1171404.0,
+      "empregados": 40,
+      "massa_salarial_brl": 106405.8,
+      "salario_medio_brl": 2660.14
+     },
+     {
+      "nome": "ATIVIDADES ADMINISTRATIVAS E SERVICOS COMPLEMENTARES",
+      "n": 1,
+      "valor_exposto_brl": 937526.4,
+      "empregados": 20,
+      "massa_salarial_brl": 30396.67,
+      "salario_medio_brl": 1519.83
+     },
+     {
+      "nome": "ARTES, CULTURA, ESPORTE E RECREACAO",
+      "n": 3,
+      "valor_exposto_brl": 937526.4,
+      "empregados": 20,
+      "massa_salarial_brl": 46325.0,
+      "salario_medio_brl": 2316.25
+     },
+     {
+      "nome": "CONSTRUCAO",
+      "n": 2,
+      "valor_exposto_brl": 328134.24,
+      "empregados": 7,
+      "massa_salarial_brl": 16361.34,
+      "salario_medio_brl": 2337.33
+     },
+     {
+      "nome": "AGRICULTURA, PECUARIA, PRODUCAO FLORESTAL, PESCA E AQUICULTURA",
+      "n": 1,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 6652.0,
+      "salario_medio_brl": 1663.0
+     },
+     {
+      "nome": "ATIVIDADES IMOBILIARIAS",
+      "n": 1,
+      "valor_exposto_brl": 140628.96,
+      "empregados": 3,
+      "massa_salarial_brl": 5903.0,
+      "salario_medio_brl": 1967.67
+     },
+     {
+      "nome": "SAUDE HUMANA E SERVICOS SOCIAIS",
+      "n": 3,
+      "valor_exposto_brl": 140628.96,
+      "empregados": 3,
+      "massa_salarial_brl": 6309.0,
+      "salario_medio_brl": 2103.0
+     },
+     {
+      "nome": "ALOJAMENTO E ALIMENTACAO",
+      "n": 1,
+      "valor_exposto_brl": 93752.64,
+      "empregados": 2,
+      "massa_salarial_brl": 2576.0,
+      "salario_medio_brl": 1288.0
+     },
+     {
+      "nome": "ATIVIDADES PROFISSIONAIS, CIENTIFICAS E TECNICAS",
+      "n": 2,
+      "valor_exposto_brl": 93752.64,
+      "empregados": 2,
+      "massa_salarial_brl": 4351.75,
+      "salario_medio_brl": 2175.88
+     },
+     {
+      "nome": "OUTRAS ATIVIDADES DE SERVICOS",
+      "n": 1,
+      "valor_exposto_brl": 46876.32,
+      "empregados": 1,
+      "massa_salarial_brl": 1496.56,
+      "salario_medio_brl": 1496.56
+     }
+    ]
+   },
+   "saude": {
+    "n": 5,
+    "leitos": 0,
+    "profissionais": 12,
+    "valor_exposto_brl": 727911.36,
+    "staff": {
+     "staff_medicos": 2,
+     "staff_enfermagem": 0,
+     "staff_odontologia": 0,
+     "staff_farmacia": 0,
+     "staff_diag_lab_imagem": 0,
+     "staff_acs_endemias": 0,
+     "staff_admin_gestao_apoio": 1,
+     "staff_servicos_gerais": 1,
+     "staff_transporte_urgencia": 0,
+     "staff_outros_superior_saude": 8,
+     "staff_outros": 0
+    },
+    "tipos": [
+     {
+      "nome": "Ambulatório",
+      "n": 4,
+      "valor_exposto_brl": 363955.68,
+      "leitos": 0,
+      "profissionais": 6
+     },
+     {
+      "nome": "Unidade de Reabilitacao",
+      "n": 1,
+      "valor_exposto_brl": 363955.68,
+      "leitos": 0,
+      "profissionais": 6
+     }
+    ]
+   },
+   "educacao": {
+    "n": 0,
+    "matriculas": 0,
+    "docentes": 0,
+    "valor_exposto_brl": 0.0,
+    "etapas": {
+     "infantil": 0,
+     "fundamental": 0,
+     "medio": 0,
+     "profissional": 0,
+     "eja": 0,
+     "especial": 0
+    },
+    "dependencias": []
+   },
+   "agricultura": {
+    "area_ha": 101.61,
+    "culturas": {
+     "Outras Lavouras Temporárias": 21.5,
+     "Soja": 80.11
+    }
+   }
+  },
+  "23.45": {
+   "empresas": {
+    "n": 46,
+    "empregados": 219,
+    "massa_salarial_brl": 458987.01,
+    "salario_medio_brl": 2095.83,
+    "valor_exposto_brl": 9544674.06,
+    "setores": [
+     {
+      "nome": "COMERCIO; REPARACAO DE VEICULOS",
+      "n": 17,
+      "valor_exposto_brl": 2718826.56,
+      "empregados": 58,
+      "massa_salarial_brl": 118689.19,
+      "salario_medio_brl": 2046.37
+     },
+     {
+      "nome": "TRANSPORTE, ARMAZENAGEM E CORREIO",
+      "n": 2,
+      "valor_exposto_brl": 2203187.04,
+      "empregados": 47,
+      "massa_salarial_brl": 91531.2,
+      "salario_medio_brl": 1947.47
+     },
+     {
+      "nome": "INDUSTRIAS DE TRANSFORMACAO",
+      "n": 5,
+      "valor_exposto_brl": 1200689.1,
+      "empregados": 41,
+      "massa_salarial_brl": 107022.8,
+      "salario_medio_brl": 2610.31
+     },
+     {
+      "nome": "ATIVIDADES ADMINISTRATIVAS E SERVICOS COMPLEMENTARES",
+      "n": 1,
+      "valor_exposto_brl": 937526.4,
+      "empregados": 20,
+      "massa_salarial_brl": 30396.67,
+      "salario_medio_brl": 1519.83
+     },
+     {
+      "nome": "ARTES, CULTURA, ESPORTE E RECREACAO",
+      "n": 3,
+      "valor_exposto_brl": 937526.4,
+      "empregados": 20,
+      "massa_salarial_brl": 46325.0,
+      "salario_medio_brl": 2316.25
+     },
+     {
+      "nome": "CONSTRUCAO",
+      "n": 2,
+      "valor_exposto_brl": 328134.24,
+      "empregados": 7,
+      "massa_salarial_brl": 16361.34,
+      "salario_medio_brl": 2337.33
+     },
+     {
+      "nome": "OUTRAS ATIVIDADES DE SERVICOS",
+      "n": 3,
+      "valor_exposto_brl": 281257.92,
+      "empregados": 6,
+      "massa_salarial_brl": 12601.06,
+      "salario_medio_brl": 2100.18
+     },
+     {
+      "nome": "ATIVIDADES PROFISSIONAIS, CIENTIFICAS E TECNICAS",
+      "n": 5,
+      "valor_exposto_brl": 234381.6,
+      "empregados": 5,
+      "massa_salarial_brl": 9726.75,
+      "salario_medio_brl": 1945.35
+     },
+     {
+      "nome": "SAUDE HUMANA E SERVICOS SOCIAIS",
+      "n": 4,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 7839.0,
+      "salario_medio_brl": 1959.75
+     },
+     {
+      "nome": "ALOJAMENTO E ALIMENTACAO",
+      "n": 2,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 5939.0,
+      "salario_medio_brl": 1484.75
+     },
+     {
+      "nome": "AGRICULTURA, PECUARIA, PRODUCAO FLORESTAL, PESCA E AQUICULTURA",
+      "n": 1,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 6652.0,
+      "salario_medio_brl": 1663.0
+     },
+     {
+      "nome": "ATIVIDADES IMOBILIARIAS",
+      "n": 1,
+      "valor_exposto_brl": 140628.96,
+      "empregados": 3,
+      "massa_salarial_brl": 5903.0,
+      "salario_medio_brl": 1967.67
+     }
+    ]
+   },
+   "saude": {
+    "n": 15,
+    "leitos": 0,
+    "profissionais": 22,
+    "valor_exposto_brl": 1395163.44,
+    "staff": {
+     "staff_medicos": 8,
+     "staff_enfermagem": 0,
+     "staff_odontologia": 3,
+     "staff_farmacia": 0,
+     "staff_diag_lab_imagem": 0,
+     "staff_acs_endemias": 0,
+     "staff_admin_gestao_apoio": 1,
+     "staff_servicos_gerais": 1,
+     "staff_transporte_urgencia": 0,
+     "staff_outros_superior_saude": 8,
+     "staff_outros": 1
+    },
+    "tipos": [
+     {
+      "nome": "Ambulatório",
+      "n": 14,
+      "valor_exposto_brl": 1031207.76,
+      "leitos": 0,
+      "profissionais": 16
+     },
+     {
+      "nome": "Unidade de Reabilitacao",
+      "n": 1,
+      "valor_exposto_brl": 363955.68,
+      "leitos": 0,
+      "profissionais": 6
+     }
+    ]
+   },
+   "educacao": {
+    "n": 0,
+    "matriculas": 0,
+    "docentes": 0,
+    "valor_exposto_brl": 0.0,
+    "etapas": {
+     "infantil": 0,
+     "fundamental": 0,
+     "medio": 0,
+     "profissional": 0,
+     "eja": 0,
+     "especial": 0
+    },
+    "dependencias": []
+   },
+   "agricultura": {
+    "area_ha": 148.9,
+    "culturas": {
+     "Outras Lavouras Temporárias": 29.84,
+     "Soja": 119.06
+    }
+   }
+  },
+  "24.45": {
+   "empresas": {
+    "n": 68,
+    "empregados": 638,
+    "massa_salarial_brl": 1727773.45,
+    "salario_medio_brl": 2708.11,
+    "valor_exposto_brl": 29185852.14,
+    "setores": [
+     {
+      "nome": "EDUCACAO",
+      "n": 1,
+      "valor_exposto_brl": 9328387.68,
+      "empregados": 199,
+      "massa_salarial_brl": 703905.03,
+      "salario_medio_brl": 3537.21
+     },
+     {
+      "nome": "COMERCIO; REPARACAO DE VEICULOS",
+      "n": 23,
+      "valor_exposto_brl": 7968974.4,
+      "empregados": 170,
+      "massa_salarial_brl": 382886.1,
+      "salario_medio_brl": 2252.27
+     },
+     {
+      "nome": "CONSTRUCAO",
+      "n": 5,
+      "valor_exposto_brl": 2578197.6,
+      "empregados": 55,
+      "massa_salarial_brl": 162932.34,
+      "salario_medio_brl": 2962.41
+     },
+     {
+      "nome": "TRANSPORTE, ARMAZENAGEM E CORREIO",
+      "n": 2,
+      "valor_exposto_brl": 2203187.04,
+      "empregados": 47,
+      "massa_salarial_brl": 91531.2,
+      "salario_medio_brl": 1947.47
+     },
+     {
+      "nome": "ATIVIDADES ADMINISTRATIVAS E SERVICOS COMPLEMENTARES",
+      "n": 3,
+      "valor_exposto_brl": 1406289.6,
+      "empregados": 30,
+      "massa_salarial_brl": 52902.67,
+      "salario_medio_brl": 1763.42
+     },
+     {
+      "nome": "INDUSTRIAS DE TRANSFORMACAO",
+      "n": 5,
+      "valor_exposto_brl": 1200689.1,
+      "empregados": 41,
+      "massa_salarial_brl": 107022.8,
+      "salario_medio_brl": 2610.31
+     },
+     {
+      "nome": "ATIVIDADES PROFISSIONAIS, CIENTIFICAS E TECNICAS",
+      "n": 9,
+      "valor_exposto_brl": 1171908.0,
+      "empregados": 25,
+      "massa_salarial_brl": 74099.25,
+      "salario_medio_brl": 2963.97
+     },
+     {
+      "nome": "ARTES, CULTURA, ESPORTE E RECREACAO",
+      "n": 3,
+      "valor_exposto_brl": 937526.4,
+      "empregados": 20,
+      "massa_salarial_brl": 46325.0,
+      "salario_medio_brl": 2316.25
+     },
+     {
+      "nome": "ALOJAMENTO E ALIMENTACAO",
+      "n": 6,
+      "valor_exposto_brl": 703144.8,
+      "empregados": 15,
+      "massa_salarial_brl": 30455.0,
+      "salario_medio_brl": 2030.33
+     },
+     {
+      "nome": "INFORMACAO E COMUNICACAO",
+      "n": 1,
+      "valor_exposto_brl": 609392.16,
+      "empregados": 13,
+      "massa_salarial_brl": 31482.0,
+      "salario_medio_brl": 2421.69
+     },
+     {
+      "nome": "OUTRAS ATIVIDADES DE SERVICOS",
+      "n": 4,
+      "valor_exposto_brl": 562515.84,
+      "empregados": 12,
+      "massa_salarial_brl": 23838.06,
+      "salario_medio_brl": 1986.51
+     },
+     {
+      "nome": "SAUDE HUMANA E SERVICOS SOCIAIS",
+      "n": 4,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 7839.0,
+      "salario_medio_brl": 1959.75
+     },
+     {
+      "nome": "AGRICULTURA, PECUARIA, PRODUCAO FLORESTAL, PESCA E AQUICULTURA",
+      "n": 1,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 6652.0,
+      "salario_medio_brl": 1663.0
+     },
+     {
+      "nome": "ATIVIDADES IMOBILIARIAS",
+      "n": 1,
+      "valor_exposto_brl": 140628.96,
+      "empregados": 3,
+      "massa_salarial_brl": 5903.0,
+      "salario_medio_brl": 1967.67
+     }
+    ]
+   },
+   "saude": {
+    "n": 15,
+    "leitos": 0,
+    "profissionais": 22,
+    "valor_exposto_brl": 1395163.44,
+    "staff": {
+     "staff_medicos": 8,
+     "staff_enfermagem": 0,
+     "staff_odontologia": 3,
+     "staff_farmacia": 0,
+     "staff_diag_lab_imagem": 0,
+     "staff_acs_endemias": 0,
+     "staff_admin_gestao_apoio": 1,
+     "staff_servicos_gerais": 1,
+     "staff_transporte_urgencia": 0,
+     "staff_outros_superior_saude": 8,
+     "staff_outros": 1
+    },
+    "tipos": [
+     {
+      "nome": "Ambulatório",
+      "n": 14,
+      "valor_exposto_brl": 1031207.76,
+      "leitos": 0,
+      "profissionais": 16
+     },
+     {
+      "nome": "Unidade de Reabilitacao",
+      "n": 1,
+      "valor_exposto_brl": 363955.68,
+      "leitos": 0,
+      "profissionais": 6
+     }
+    ]
+   },
+   "educacao": {
+    "n": 1,
+    "matriculas": 1352,
+    "docentes": 76,
+    "valor_exposto_brl": 14868673.11,
+    "etapas": {
+     "infantil": 318,
+     "fundamental": 844,
+     "medio": 133,
+     "profissional": 0,
+     "eja": 0,
+     "especial": 57
+    },
+    "dependencias": [
+     {
+      "nome": "Privada",
+      "n": 1,
+      "valor_exposto_brl": 14868673.11,
+      "matriculas": 1352,
+      "docentes": 76
+     }
+    ]
+   },
+   "agricultura": {
+    "area_ha": 207.5,
+    "culturas": {
+     "Outras Lavouras Temporárias": 39.85,
+     "Soja": 167.65
+    }
+   }
+  },
+  "25.45": {
+   "empresas": {
+    "n": 68,
+    "empregados": 638,
+    "massa_salarial_brl": 1727773.45,
+    "salario_medio_brl": 2708.11,
+    "valor_exposto_brl": 29185852.14,
+    "setores": [
+     {
+      "nome": "EDUCACAO",
+      "n": 1,
+      "valor_exposto_brl": 9328387.68,
+      "empregados": 199,
+      "massa_salarial_brl": 703905.03,
+      "salario_medio_brl": 3537.21
+     },
+     {
+      "nome": "COMERCIO; REPARACAO DE VEICULOS",
+      "n": 23,
+      "valor_exposto_brl": 7968974.4,
+      "empregados": 170,
+      "massa_salarial_brl": 382886.1,
+      "salario_medio_brl": 2252.27
+     },
+     {
+      "nome": "CONSTRUCAO",
+      "n": 5,
+      "valor_exposto_brl": 2578197.6,
+      "empregados": 55,
+      "massa_salarial_brl": 162932.34,
+      "salario_medio_brl": 2962.41
+     },
+     {
+      "nome": "TRANSPORTE, ARMAZENAGEM E CORREIO",
+      "n": 2,
+      "valor_exposto_brl": 2203187.04,
+      "empregados": 47,
+      "massa_salarial_brl": 91531.2,
+      "salario_medio_brl": 1947.47
+     },
+     {
+      "nome": "ATIVIDADES ADMINISTRATIVAS E SERVICOS COMPLEMENTARES",
+      "n": 3,
+      "valor_exposto_brl": 1406289.6,
+      "empregados": 30,
+      "massa_salarial_brl": 52902.67,
+      "salario_medio_brl": 1763.42
+     },
+     {
+      "nome": "INDUSTRIAS DE TRANSFORMACAO",
+      "n": 5,
+      "valor_exposto_brl": 1200689.1,
+      "empregados": 41,
+      "massa_salarial_brl": 107022.8,
+      "salario_medio_brl": 2610.31
+     },
+     {
+      "nome": "ATIVIDADES PROFISSIONAIS, CIENTIFICAS E TECNICAS",
+      "n": 9,
+      "valor_exposto_brl": 1171908.0,
+      "empregados": 25,
+      "massa_salarial_brl": 74099.25,
+      "salario_medio_brl": 2963.97
+     },
+     {
+      "nome": "ARTES, CULTURA, ESPORTE E RECREACAO",
+      "n": 3,
+      "valor_exposto_brl": 937526.4,
+      "empregados": 20,
+      "massa_salarial_brl": 46325.0,
+      "salario_medio_brl": 2316.25
+     },
+     {
+      "nome": "ALOJAMENTO E ALIMENTACAO",
+      "n": 6,
+      "valor_exposto_brl": 703144.8,
+      "empregados": 15,
+      "massa_salarial_brl": 30455.0,
+      "salario_medio_brl": 2030.33
+     },
+     {
+      "nome": "INFORMACAO E COMUNICACAO",
+      "n": 1,
+      "valor_exposto_brl": 609392.16,
+      "empregados": 13,
+      "massa_salarial_brl": 31482.0,
+      "salario_medio_brl": 2421.69
+     },
+     {
+      "nome": "OUTRAS ATIVIDADES DE SERVICOS",
+      "n": 4,
+      "valor_exposto_brl": 562515.84,
+      "empregados": 12,
+      "massa_salarial_brl": 23838.06,
+      "salario_medio_brl": 1986.51
+     },
+     {
+      "nome": "SAUDE HUMANA E SERVICOS SOCIAIS",
+      "n": 4,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 7839.0,
+      "salario_medio_brl": 1959.75
+     },
+     {
+      "nome": "AGRICULTURA, PECUARIA, PRODUCAO FLORESTAL, PESCA E AQUICULTURA",
+      "n": 1,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 6652.0,
+      "salario_medio_brl": 1663.0
+     },
+     {
+      "nome": "ATIVIDADES IMOBILIARIAS",
+      "n": 1,
+      "valor_exposto_brl": 140628.96,
+      "empregados": 3,
+      "massa_salarial_brl": 5903.0,
+      "salario_medio_brl": 1967.67
+     }
+    ]
+   },
+   "saude": {
+    "n": 101,
+    "leitos": 0,
+    "profissionais": 219,
+    "valor_exposto_brl": 13830315.84,
+    "staff": {
+     "staff_medicos": 66,
+     "staff_enfermagem": 33,
+     "staff_odontologia": 27,
+     "staff_farmacia": 5,
+     "staff_diag_lab_imagem": 0,
+     "staff_acs_endemias": 4,
+     "staff_admin_gestao_apoio": 19,
+     "staff_servicos_gerais": 22,
+     "staff_transporte_urgencia": 0,
+     "staff_outros_superior_saude": 25,
+     "staff_outros": 18
+    },
+    "tipos": [
+     {
+      "nome": "Ambulatório",
+      "n": 84,
+      "valor_exposto_brl": 6793839.36,
+      "leitos": 0,
+      "profissionais": 109
+     },
+     {
+      "nome": "Unidade de Terapias Especiais",
+      "n": 1,
+      "valor_exposto_brl": 2426371.2,
+      "leitos": 0,
+      "profissionais": 40
+     },
+     {
+      "nome": "Unidade de Apoio Diagnostico",
+      "n": 8,
+      "valor_exposto_brl": 2305052.64,
+      "leitos": 0,
+      "profissionais": 37
+     },
+     {
+      "nome": "Unidade Básica de Saúde",
+      "n": 1,
+      "valor_exposto_brl": 1516482.0,
+      "leitos": 0,
+      "profissionais": 25
+     },
+     {
+      "nome": "Unidade de Reabilitacao",
+      "n": 2,
+      "valor_exposto_brl": 424614.96,
+      "leitos": 0,
+      "profissionais": 6
+     },
+     {
+      "nome": "Outros",
+      "n": 3,
+      "valor_exposto_brl": 181977.84,
+      "leitos": 0,
+      "profissionais": 0
+     },
+     {
+      "nome": "Casas de Apoio a Saude",
+      "n": 1,
+      "valor_exposto_brl": 121318.56,
+      "leitos": 0,
+      "profissionais": 2
+     },
+     {
+      "nome": "Laboratorio de Protese Dentaria",
+      "n": 1,
+      "valor_exposto_brl": 60659.28,
+      "leitos": 0,
+      "profissionais": 0
+     }
+    ]
+   },
+   "educacao": {
+    "n": 1,
+    "matriculas": 1352,
+    "docentes": 76,
+    "valor_exposto_brl": 14868673.11,
+    "etapas": {
+     "infantil": 318,
+     "fundamental": 844,
+     "medio": 133,
+     "profissional": 0,
+     "eja": 0,
+     "especial": 57
+    },
+    "dependencias": [
+     {
+      "nome": "Privada",
+      "n": 1,
+      "valor_exposto_brl": 14868673.11,
+      "matriculas": 1352,
+      "docentes": 76
+     }
+    ]
+   },
+   "agricultura": {
+    "area_ha": 291.78,
+    "culturas": {
+     "Outras Lavouras Temporárias": 50.99,
+     "Soja": 240.79
+    }
+   }
+  },
+  "26.45": {
+   "empresas": {
+    "n": 78,
+    "empregados": 759,
+    "massa_salarial_brl": 2117107.86,
+    "salario_medio_brl": 2789.34,
+    "valor_exposto_brl": 33221903.4,
+    "setores": [
+     {
+      "nome": "EDUCACAO",
+      "n": 1,
+      "valor_exposto_brl": 9328387.68,
+      "empregados": 199,
+      "massa_salarial_brl": 703905.03,
+      "salario_medio_brl": 3537.21
+     },
+     {
+      "nome": "COMERCIO; REPARACAO DE VEICULOS",
+      "n": 24,
+      "valor_exposto_brl": 8015850.72,
+      "empregados": 171,
+      "massa_salarial_brl": 388861.6,
+      "salario_medio_brl": 2274.04
+     },
+     {
+      "nome": "INDUSTRIAS DE TRANSFORMACAO",
+      "n": 7,
+      "valor_exposto_brl": 3660637.5,
+      "empregados": 125,
+      "massa_salarial_brl": 398745.01,
+      "salario_medio_brl": 3189.96
+     },
+     {
+      "nome": "CONSTRUCAO",
+      "n": 5,
+      "valor_exposto_brl": 2578197.6,
+      "empregados": 55,
+      "massa_salarial_brl": 162932.34,
+      "salario_medio_brl": 2962.41
+     },
+     {
+      "nome": "TRANSPORTE, ARMAZENAGEM E CORREIO",
+      "n": 3,
+      "valor_exposto_brl": 2296939.68,
+      "empregados": 49,
+      "massa_salarial_brl": 95297.2,
+      "salario_medio_brl": 1944.84
+     },
+     {
+      "nome": "ATIVIDADES ADMINISTRATIVAS E SERVICOS COMPLEMENTARES",
+      "n": 5,
+      "valor_exposto_brl": 1500042.24,
+      "empregados": 32,
+      "massa_salarial_brl": 55252.67,
+      "salario_medio_brl": 1726.65
+     },
+     {
+      "nome": "ATIVIDADES PROFISSIONAIS, CIENTIFICAS E TECNICAS",
+      "n": 10,
+      "valor_exposto_brl": 1218784.32,
+      "empregados": 26,
+      "massa_salarial_brl": 75199.25,
+      "salario_medio_brl": 2892.28
+     },
+     {
+      "nome": "OUTRAS ATIVIDADES DE SERVICOS",
+      "n": 5,
+      "valor_exposto_brl": 1171908.0,
+      "empregados": 25,
+      "massa_salarial_brl": 71599.76,
+      "salario_medio_brl": 2863.99
+     },
+     {
+      "nome": "ALOJAMENTO E ALIMENTACAO",
+      "n": 7,
+      "valor_exposto_brl": 1125031.68,
+      "empregados": 24,
+      "massa_salarial_brl": 50265.0,
+      "salario_medio_brl": 2094.38
+     },
+     {
+      "nome": "ARTES, CULTURA, ESPORTE E RECREACAO",
+      "n": 3,
+      "valor_exposto_brl": 937526.4,
+      "empregados": 20,
+      "massa_salarial_brl": 46325.0,
+      "salario_medio_brl": 2316.25
+     },
+     {
+      "nome": "INFORMACAO E COMUNICACAO",
+      "n": 1,
+      "valor_exposto_brl": 609392.16,
+      "empregados": 13,
+      "massa_salarial_brl": 31482.0,
+      "salario_medio_brl": 2421.69
+     },
+     {
+      "nome": "AGUA, ESGOTO, GESTAO DE RESIDUOS E DESCONTAMINACAO",
+      "n": 1,
+      "valor_exposto_brl": 263565.9,
+      "empregados": 9,
+      "massa_salarial_brl": 16849.0,
+      "salario_medio_brl": 1872.11
+     },
+     {
+      "nome": "SAUDE HUMANA E SERVICOS SOCIAIS",
+      "n": 4,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 7839.0,
+      "salario_medio_brl": 1959.75
+     },
+     {
+      "nome": "AGRICULTURA, PECUARIA, PRODUCAO FLORESTAL, PESCA E AQUICULTURA",
+      "n": 1,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 6652.0,
+      "salario_medio_brl": 1663.0
+     },
+     {
+      "nome": "ATIVIDADES IMOBILIARIAS",
+      "n": 1,
+      "valor_exposto_brl": 140628.96,
+      "empregados": 3,
+      "massa_salarial_brl": 5903.0,
+      "salario_medio_brl": 1967.67
+     }
+    ]
+   },
+   "saude": {
+    "n": 101,
+    "leitos": 0,
+    "profissionais": 219,
+    "valor_exposto_brl": 13830315.84,
+    "staff": {
+     "staff_medicos": 66,
+     "staff_enfermagem": 33,
+     "staff_odontologia": 27,
+     "staff_farmacia": 5,
+     "staff_diag_lab_imagem": 0,
+     "staff_acs_endemias": 4,
+     "staff_admin_gestao_apoio": 19,
+     "staff_servicos_gerais": 22,
+     "staff_transporte_urgencia": 0,
+     "staff_outros_superior_saude": 25,
+     "staff_outros": 18
+    },
+    "tipos": [
+     {
+      "nome": "Ambulatório",
+      "n": 84,
+      "valor_exposto_brl": 6793839.36,
+      "leitos": 0,
+      "profissionais": 109
+     },
+     {
+      "nome": "Unidade de Terapias Especiais",
+      "n": 1,
+      "valor_exposto_brl": 2426371.2,
+      "leitos": 0,
+      "profissionais": 40
+     },
+     {
+      "nome": "Unidade de Apoio Diagnostico",
+      "n": 8,
+      "valor_exposto_brl": 2305052.64,
+      "leitos": 0,
+      "profissionais": 37
+     },
+     {
+      "nome": "Unidade Básica de Saúde",
+      "n": 1,
+      "valor_exposto_brl": 1516482.0,
+      "leitos": 0,
+      "profissionais": 25
+     },
+     {
+      "nome": "Unidade de Reabilitacao",
+      "n": 2,
+      "valor_exposto_brl": 424614.96,
+      "leitos": 0,
+      "profissionais": 6
+     },
+     {
+      "nome": "Outros",
+      "n": 3,
+      "valor_exposto_brl": 181977.84,
+      "leitos": 0,
+      "profissionais": 0
+     },
+     {
+      "nome": "Casas de Apoio a Saude",
+      "n": 1,
+      "valor_exposto_brl": 121318.56,
+      "leitos": 0,
+      "profissionais": 2
+     },
+     {
+      "nome": "Laboratorio de Protese Dentaria",
+      "n": 1,
+      "valor_exposto_brl": 60659.28,
+      "leitos": 0,
+      "profissionais": 0
+     }
+    ]
+   },
+   "educacao": {
+    "n": 1,
+    "matriculas": 1352,
+    "docentes": 76,
+    "valor_exposto_brl": 14868673.11,
+    "etapas": {
+     "infantil": 318,
+     "fundamental": 844,
+     "medio": 133,
+     "profissional": 0,
+     "eja": 0,
+     "especial": 57
+    },
+    "dependencias": [
+     {
+      "nome": "Privada",
+      "n": 1,
+      "valor_exposto_brl": 14868673.11,
+      "matriculas": 1352,
+      "docentes": 76
+     }
+    ]
+   },
+   "agricultura": {
+    "area_ha": 329.32,
+    "culturas": {
+     "Outras Lavouras Temporárias": 57.98,
+     "Soja": 271.34
+    }
+   }
+  },
+  "27.45": {
+   "empresas": {
+    "n": 87,
+    "empregados": 893,
+    "massa_salarial_brl": 2480939.58,
+    "salario_medio_brl": 2778.21,
+    "valor_exposto_brl": 37779390.72,
+    "setores": [
+     {
+      "nome": "EDUCACAO",
+      "n": 1,
+      "valor_exposto_brl": 9328387.68,
+      "empregados": 199,
+      "massa_salarial_brl": 703905.03,
+      "salario_medio_brl": 3537.21
+     },
+     {
+      "nome": "COMERCIO; REPARACAO DE VEICULOS",
+      "n": 25,
+      "valor_exposto_brl": 9140882.4,
+      "empregados": 195,
+      "massa_salarial_brl": 443807.64,
+      "salario_medio_brl": 2275.94
+     },
+     {
+      "nome": "INDUSTRIAS DE TRANSFORMACAO",
+      "n": 9,
+      "valor_exposto_brl": 6442722.0,
+      "empregados": 220,
+      "massa_salarial_brl": 670635.86,
+      "salario_medio_brl": 3048.34
+     },
+     {
+      "nome": "CONSTRUCAO",
+      "n": 6,
+      "valor_exposto_brl": 2953208.16,
+      "empregados": 63,
+      "massa_salarial_brl": 185480.34,
+      "salario_medio_brl": 2944.13
+     },
+     {
+      "nome": "TRANSPORTE, ARMAZENAGEM E CORREIO",
+      "n": 3,
+      "valor_exposto_brl": 2296939.68,
+      "empregados": 49,
+      "massa_salarial_brl": 95297.2,
+      "salario_medio_brl": 1944.84
+     },
+     {
+      "nome": "ATIVIDADES ADMINISTRATIVAS E SERVICOS COMPLEMENTARES",
+      "n": 6,
+      "valor_exposto_brl": 1546918.56,
+      "empregados": 33,
+      "massa_salarial_brl": 56894.67,
+      "salario_medio_brl": 1724.08
+     },
+     {
+      "nome": "OUTRAS ATIVIDADES DE SERVICOS",
+      "n": 7,
+      "valor_exposto_brl": 1265660.64,
+      "empregados": 27,
+      "massa_salarial_brl": 75351.59,
+      "salario_medio_brl": 2790.8
+     },
+     {
+      "nome": "ATIVIDADES PROFISSIONAIS, CIENTIFICAS E TECNICAS",
+      "n": 10,
+      "valor_exposto_brl": 1218784.32,
+      "empregados": 26,
+      "massa_salarial_brl": 75199.25,
+      "salario_medio_brl": 2892.28
+     },
+     {
+      "nome": "ALOJAMENTO E ALIMENTACAO",
+      "n": 7,
+      "valor_exposto_brl": 1125031.68,
+      "empregados": 24,
+      "massa_salarial_brl": 50265.0,
+      "salario_medio_brl": 2094.38
+     },
+     {
+      "nome": "ARTES, CULTURA, ESPORTE E RECREACAO",
+      "n": 4,
+      "valor_exposto_brl": 984402.72,
+      "empregados": 21,
+      "massa_salarial_brl": 47713.0,
+      "salario_medio_brl": 2272.05
+     },
+     {
+      "nome": "INFORMACAO E COMUNICACAO",
+      "n": 1,
+      "valor_exposto_brl": 609392.16,
+      "empregados": 13,
+      "massa_salarial_brl": 31482.0,
+      "salario_medio_brl": 2421.69
+     },
+     {
+      "nome": "AGUA, ESGOTO, GESTAO DE RESIDUOS E DESCONTAMINACAO",
+      "n": 2,
+      "valor_exposto_brl": 351421.2,
+      "empregados": 12,
+      "massa_salarial_brl": 24514.0,
+      "salario_medio_brl": 2042.83
+     },
+     {
+      "nome": "SAUDE HUMANA E SERVICOS SOCIAIS",
+      "n": 4,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 7839.0,
+      "salario_medio_brl": 1959.75
+     },
+     {
+      "nome": "AGRICULTURA, PECUARIA, PRODUCAO FLORESTAL, PESCA E AQUICULTURA",
+      "n": 1,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 6652.0,
+      "salario_medio_brl": 1663.0
+     },
+     {
+      "nome": "ATIVIDADES IMOBILIARIAS",
+      "n": 1,
+      "valor_exposto_brl": 140628.96,
+      "empregados": 3,
+      "massa_salarial_brl": 5903.0,
+      "salario_medio_brl": 1967.67
+     }
+    ]
+   },
+   "saude": {
+    "n": 103,
+    "leitos": 0,
+    "profissionais": 243,
+    "valor_exposto_brl": 15286138.56,
+    "staff": {
+     "staff_medicos": 69,
+     "staff_enfermagem": 38,
+     "staff_odontologia": 27,
+     "staff_farmacia": 5,
+     "staff_diag_lab_imagem": 0,
+     "staff_acs_endemias": 4,
+     "staff_admin_gestao_apoio": 21,
+     "staff_servicos_gerais": 30,
+     "staff_transporte_urgencia": 0,
+     "staff_outros_superior_saude": 25,
+     "staff_outros": 24
+    },
+    "tipos": [
+     {
+      "nome": "Ambulatório",
+      "n": 85,
+      "valor_exposto_brl": 6854498.64,
+      "leitos": 0,
+      "profissionais": 110
+     },
+     {
+      "nome": "Unidade de Terapias Especiais",
+      "n": 1,
+      "valor_exposto_brl": 2426371.2,
+      "leitos": 0,
+      "profissionais": 40
+     },
+     {
+      "nome": "Unidade de Apoio Diagnostico",
+      "n": 8,
+      "valor_exposto_brl": 2305052.64,
+      "leitos": 0,
+      "profissionais": 37
+     },
+     {
+      "nome": "Unidade de Reabilitacao",
+      "n": 3,
+      "valor_exposto_brl": 1819778.4,
+      "leitos": 0,
+      "profissionais": 29
+     },
+     {
+      "nome": "Unidade Básica de Saúde",
+      "n": 1,
+      "valor_exposto_brl": 1516482.0,
+      "leitos": 0,
+      "profissionais": 25
+     },
+     {
+      "nome": "Outros",
+      "n": 3,
+      "valor_exposto_brl": 181977.84,
+      "leitos": 0,
+      "profissionais": 0
+     },
+     {
+      "nome": "Casas de Apoio a Saude",
+      "n": 1,
+      "valor_exposto_brl": 121318.56,
+      "leitos": 0,
+      "profissionais": 2
+     },
+     {
+      "nome": "Laboratorio de Protese Dentaria",
+      "n": 1,
+      "valor_exposto_brl": 60659.28,
+      "leitos": 0,
+      "profissionais": 0
+     }
+    ]
+   },
+   "educacao": {
+    "n": 1,
+    "matriculas": 1352,
+    "docentes": 76,
+    "valor_exposto_brl": 14868673.11,
+    "etapas": {
+     "infantil": 318,
+     "fundamental": 844,
+     "medio": 133,
+     "profissional": 0,
+     "eja": 0,
+     "especial": 57
+    },
+    "dependencias": [
+     {
+      "nome": "Privada",
+      "n": 1,
+      "valor_exposto_brl": 14868673.11,
+      "matriculas": 1352,
+      "docentes": 76
+     }
+    ]
+   },
+   "agricultura": {
+    "area_ha": 340.27,
+    "culturas": {
+     "Outras Lavouras Temporárias": 62.4,
+     "Soja": 277.87
+    }
+   }
+  },
+  "28.45": {
+   "empresas": {
+    "n": 94,
+    "empregados": 908,
+    "massa_salarial_brl": 2516653.84,
+    "salario_medio_brl": 2771.65,
+    "valor_exposto_brl": 38394579.42,
+    "setores": [
+     {
+      "nome": "EDUCACAO",
+      "n": 1,
+      "valor_exposto_brl": 9328387.68,
+      "empregados": 199,
+      "massa_salarial_brl": 703905.03,
+      "salario_medio_brl": 3537.21
+     },
+     {
+      "nome": "COMERCIO; REPARACAO DE VEICULOS",
+      "n": 26,
+      "valor_exposto_brl": 9187758.72,
+      "empregados": 196,
+      "massa_salarial_brl": 446033.11,
+      "salario_medio_brl": 2275.68
+     },
+     {
+      "nome": "INDUSTRIAS DE TRANSFORMACAO",
+      "n": 11,
+      "valor_exposto_brl": 6589147.5,
+      "empregados": 225,
+      "massa_salarial_brl": 685094.86,
+      "salario_medio_brl": 3044.87
+     },
+     {
+      "nome": "CONSTRUCAO",
+      "n": 7,
+      "valor_exposto_brl": 3046960.8,
+      "empregados": 65,
+      "massa_salarial_brl": 191051.34,
+      "salario_medio_brl": 2939.25
+     },
+     {
+      "nome": "TRANSPORTE, ARMAZENAGEM E CORREIO",
+      "n": 4,
+      "valor_exposto_brl": 2484444.96,
+      "empregados": 53,
+      "massa_salarial_brl": 103546.2,
+      "salario_medio_brl": 1953.7
+     },
+     {
+      "nome": "ATIVIDADES ADMINISTRATIVAS E SERVICOS COMPLEMENTARES",
+      "n": 8,
+      "valor_exposto_brl": 1687547.52,
+      "empregados": 36,
+      "massa_salarial_brl": 62104.46,
+      "salario_medio_brl": 1725.12
+     },
+     {
+      "nome": "OUTRAS ATIVIDADES DE SERVICOS",
+      "n": 7,
+      "valor_exposto_brl": 1265660.64,
+      "empregados": 27,
+      "massa_salarial_brl": 75351.59,
+      "salario_medio_brl": 2790.8
+     },
+     {
+      "nome": "ATIVIDADES PROFISSIONAIS, CIENTIFICAS E TECNICAS",
+      "n": 10,
+      "valor_exposto_brl": 1218784.32,
+      "empregados": 26,
+      "massa_salarial_brl": 75199.25,
+      "salario_medio_brl": 2892.28
+     },
+     {
+      "nome": "ALOJAMENTO E ALIMENTACAO",
+      "n": 7,
+      "valor_exposto_brl": 1125031.68,
+      "empregados": 24,
+      "massa_salarial_brl": 50265.0,
+      "salario_medio_brl": 2094.38
+     },
+     {
+      "nome": "ARTES, CULTURA, ESPORTE E RECREACAO",
+      "n": 4,
+      "valor_exposto_brl": 984402.72,
+      "empregados": 21,
+      "massa_salarial_brl": 47713.0,
+      "salario_medio_brl": 2272.05
+     },
+     {
+      "nome": "INFORMACAO E COMUNICACAO",
+      "n": 1,
+      "valor_exposto_brl": 609392.16,
+      "empregados": 13,
+      "massa_salarial_brl": 31482.0,
+      "salario_medio_brl": 2421.69
+     },
+     {
+      "nome": "AGUA, ESGOTO, GESTAO DE RESIDUOS E DESCONTAMINACAO",
+      "n": 2,
+      "valor_exposto_brl": 351421.2,
+      "empregados": 12,
+      "massa_salarial_brl": 24514.0,
+      "salario_medio_brl": 2042.83
+     },
+     {
+      "nome": "SAUDE HUMANA E SERVICOS SOCIAIS",
+      "n": 4,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 7839.0,
+      "salario_medio_brl": 1959.75
+     },
+     {
+      "nome": "AGRICULTURA, PECUARIA, PRODUCAO FLORESTAL, PESCA E AQUICULTURA",
+      "n": 1,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 6652.0,
+      "salario_medio_brl": 1663.0
+     },
+     {
+      "nome": "ATIVIDADES IMOBILIARIAS",
+      "n": 1,
+      "valor_exposto_brl": 140628.96,
+      "empregados": 3,
+      "massa_salarial_brl": 5903.0,
+      "salario_medio_brl": 1967.67
+     }
+    ]
+   },
+   "saude": {
+    "n": 104,
+    "leitos": 0,
+    "profissionais": 248,
+    "valor_exposto_brl": 15589434.96,
+    "staff": {
+     "staff_medicos": 70,
+     "staff_enfermagem": 40,
+     "staff_odontologia": 27,
+     "staff_farmacia": 5,
+     "staff_diag_lab_imagem": 0,
+     "staff_acs_endemias": 4,
+     "staff_admin_gestao_apoio": 22,
+     "staff_servicos_gerais": 30,
+     "staff_transporte_urgencia": 0,
+     "staff_outros_superior_saude": 26,
+     "staff_outros": 24
+    },
+    "tipos": [
+     {
+      "nome": "Ambulatório",
+      "n": 85,
+      "valor_exposto_brl": 6854498.64,
+      "leitos": 0,
+      "profissionais": 110
+     },
+     {
+      "nome": "Unidade de Terapias Especiais",
+      "n": 1,
+      "valor_exposto_brl": 2426371.2,
+      "leitos": 0,
+      "profissionais": 40
+     },
+     {
+      "nome": "Unidade de Apoio Diagnostico",
+      "n": 8,
+      "valor_exposto_brl": 2305052.64,
+      "leitos": 0,
+      "profissionais": 37
+     },
+     {
+      "nome": "Unidade de Reabilitacao",
+      "n": 3,
+      "valor_exposto_brl": 1819778.4,
+      "leitos": 0,
+      "profissionais": 29
+     },
+     {
+      "nome": "Unidade Básica de Saúde",
+      "n": 1,
+      "valor_exposto_brl": 1516482.0,
+      "leitos": 0,
+      "profissionais": 25
+     },
+     {
+      "nome": "Casas de Apoio a Saude",
+      "n": 2,
+      "valor_exposto_brl": 424614.96,
+      "leitos": 0,
+      "profissionais": 7
+     },
+     {
+      "nome": "Outros",
+      "n": 3,
+      "valor_exposto_brl": 181977.84,
+      "leitos": 0,
+      "profissionais": 0
+     },
+     {
+      "nome": "Laboratorio de Protese Dentaria",
+      "n": 1,
+      "valor_exposto_brl": 60659.28,
+      "leitos": 0,
+      "profissionais": 0
+     }
+    ]
+   },
+   "educacao": {
+    "n": 1,
+    "matriculas": 1352,
+    "docentes": 76,
+    "valor_exposto_brl": 14868673.11,
+    "etapas": {
+     "infantil": 318,
+     "fundamental": 844,
+     "medio": 133,
+     "profissional": 0,
+     "eja": 0,
+     "especial": 57
+    },
+    "dependencias": [
+     {
+      "nome": "Privada",
+      "n": 1,
+      "valor_exposto_brl": 14868673.11,
+      "matriculas": 1352,
+      "docentes": 76
+     }
+    ]
+   },
+   "agricultura": {
+    "area_ha": 350.16,
+    "culturas": {
+     "Outras Lavouras Temporárias": 67.59,
+     "Soja": 282.57
+    }
+   }
+  },
+  "29.45": {
+   "empresas": {
+    "n": 119,
+    "empregados": 1024,
+    "massa_salarial_brl": 2874412.87,
+    "salario_medio_brl": 2807.04,
+    "valor_exposto_brl": 43110992.52,
+    "setores": [
+     {
+      "nome": "COMERCIO; REPARACAO DE VEICULOS",
+      "n": 33,
+      "valor_exposto_brl": 9890903.52,
+      "empregados": 211,
+      "massa_salarial_brl": 476215.44,
+      "salario_medio_brl": 2256.95
+     },
+     {
+      "nome": "EDUCACAO",
+      "n": 1,
+      "valor_exposto_brl": 9328387.68,
+      "empregados": 199,
+      "massa_salarial_brl": 703905.03,
+      "salario_medio_brl": 3537.21
+     },
+     {
+      "nome": "INDUSTRIAS DE TRANSFORMACAO",
+      "n": 12,
+      "valor_exposto_brl": 6618432.6,
+      "empregados": 226,
+      "massa_salarial_brl": 687446.82,
+      "salario_medio_brl": 3041.8
+     },
+     {
+      "nome": "CONSTRUCAO",
+      "n": 10,
+      "valor_exposto_brl": 3187589.76,
+      "empregados": 68,
+      "massa_salarial_brl": 196885.71,
+      "salario_medio_brl": 2895.38
+     },
+     {
+      "nome": "TRANSPORTE, ARMAZENAGEM E CORREIO",
+      "n": 4,
+      "valor_exposto_brl": 2484444.96,
+      "empregados": 53,
+      "massa_salarial_brl": 103546.2,
+      "salario_medio_brl": 1953.7
+     },
+     {
+      "nome": "SAUDE HUMANA E SERVICOS SOCIAIS",
+      "n": 6,
+      "valor_exposto_brl": 2062558.08,
+      "empregados": 44,
+      "massa_salarial_brl": 164484.0,
+      "salario_medio_brl": 3738.27
+     },
+     {
+      "nome": "ATIVIDADES ADMINISTRATIVAS E SERVICOS COMPLEMENTARES",
+      "n": 11,
+      "valor_exposto_brl": 1875052.8,
+      "empregados": 40,
+      "massa_salarial_brl": 68486.46,
+      "salario_medio_brl": 1712.16
+     },
+     {
+      "nome": "AGUA, ESGOTO, GESTAO DE RESIDUOS E DESCONTAMINACAO",
+      "n": 3,
+      "valor_exposto_brl": 1522825.2,
+      "empregados": 52,
+      "massa_salarial_brl": 149305.16,
+      "salario_medio_brl": 2871.25
+     },
+     {
+      "nome": "ALOJAMENTO E ALIMENTACAO",
+      "n": 11,
+      "valor_exposto_brl": 1500042.24,
+      "empregados": 32,
+      "massa_salarial_brl": 64721.0,
+      "salario_medio_brl": 2022.53
+     },
+     {
+      "nome": "OUTRAS ATIVIDADES DE SERVICOS",
+      "n": 8,
+      "valor_exposto_brl": 1312536.96,
+      "empregados": 28,
+      "massa_salarial_brl": 76871.59,
+      "salario_medio_brl": 2745.41
+     },
+     {
+      "nome": "ATIVIDADES PROFISSIONAIS, CIENTIFICAS E TECNICAS",
+      "n": 11,
+      "valor_exposto_brl": 1265660.64,
+      "empregados": 27,
+      "massa_salarial_brl": 77474.25,
+      "salario_medio_brl": 2869.42
+     },
+     {
+      "nome": "ARTES, CULTURA, ESPORTE E RECREACAO",
+      "n": 4,
+      "valor_exposto_brl": 984402.72,
+      "empregados": 21,
+      "massa_salarial_brl": 47713.0,
+      "salario_medio_brl": 2272.05
+     },
+     {
+      "nome": "INFORMACAO E COMUNICACAO",
+      "n": 1,
+      "valor_exposto_brl": 609392.16,
+      "empregados": 13,
+      "massa_salarial_brl": 31482.0,
+      "salario_medio_brl": 2421.69
+     },
+     {
+      "nome": "ATIVIDADES IMOBILIARIAS",
+      "n": 2,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 7580.0,
+      "salario_medio_brl": 1895.0
+     },
+     {
+      "nome": "AGRICULTURA, PECUARIA, PRODUCAO FLORESTAL, PESCA E AQUICULTURA",
+      "n": 1,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 6652.0,
+      "salario_medio_brl": 1663.0
+     },
+     {
+      "nome": "ATIVIDADES FINANCEIRAS E SEGUROS",
+      "n": 1,
+      "valor_exposto_brl": 93752.64,
+      "empregados": 2,
+      "massa_salarial_brl": 11644.21,
+      "salario_medio_brl": 5822.1
+     }
+    ]
+   },
+   "saude": {
+    "n": 119,
+    "leitos": 0,
+    "profissionais": 270,
+    "valor_exposto_brl": 16984598.4,
+    "staff": {
+     "staff_medicos": 80,
+     "staff_enfermagem": 40,
+     "staff_odontologia": 29,
+     "staff_farmacia": 5,
+     "staff_diag_lab_imagem": 0,
+     "staff_acs_endemias": 4,
+     "staff_admin_gestao_apoio": 22,
+     "staff_servicos_gerais": 30,
+     "staff_transporte_urgencia": 0,
+     "staff_outros_superior_saude": 28,
+     "staff_outros": 32
+    },
+    "tipos": [
+     {
+      "nome": "Ambulatório",
+      "n": 99,
+      "valor_exposto_brl": 8189002.8,
+      "leitos": 0,
+      "profissionais": 131
+     },
+     {
+      "nome": "Unidade de Terapias Especiais",
+      "n": 1,
+      "valor_exposto_brl": 2426371.2,
+      "leitos": 0,
+      "profissionais": 40
+     },
+     {
+      "nome": "Unidade de Apoio Diagnostico",
+      "n": 9,
+      "valor_exposto_brl": 2365711.92,
+      "leitos": 0,
+      "profissionais": 38
+     },
+     {
+      "nome": "Unidade de Reabilitacao",
+      "n": 3,
+      "valor_exposto_brl": 1819778.4,
+      "leitos": 0,
+      "profissionais": 29
+     },
+     {
+      "nome": "Unidade Básica de Saúde",
+      "n": 1,
+      "valor_exposto_brl": 1516482.0,
+      "leitos": 0,
+      "profissionais": 25
+     },
+     {
+      "nome": "Casas de Apoio a Saude",
+      "n": 2,
+      "valor_exposto_brl": 424614.96,
+      "leitos": 0,
+      "profissionais": 7
+     },
+     {
+      "nome": "Outros",
+      "n": 3,
+      "valor_exposto_brl": 181977.84,
+      "leitos": 0,
+      "profissionais": 0
+     },
+     {
+      "nome": "Laboratorio de Protese Dentaria",
+      "n": 1,
+      "valor_exposto_brl": 60659.28,
+      "leitos": 0,
+      "profissionais": 0
+     }
+    ]
+   },
+   "educacao": {
+    "n": 1,
+    "matriculas": 1352,
+    "docentes": 76,
+    "valor_exposto_brl": 14868673.11,
+    "etapas": {
+     "infantil": 318,
+     "fundamental": 844,
+     "medio": 133,
+     "profissional": 0,
+     "eja": 0,
+     "especial": 57
+    },
+    "dependencias": [
+     {
+      "nome": "Privada",
+      "n": 1,
+      "valor_exposto_brl": 14868673.11,
+      "matriculas": 1352,
+      "docentes": 76
+     }
+    ]
+   },
+   "agricultura": {
+    "area_ha": 358.68,
+    "culturas": {
+     "Outras Lavouras Temporárias": 71.82,
+     "Soja": 286.86
+    }
+   }
+  },
+  "30.45": {
+   "empresas": {
+    "n": 121,
+    "empregados": 1030,
+    "massa_salarial_brl": 2883933.87,
+    "salario_medio_brl": 2799.94,
+    "valor_exposto_brl": 43392250.44,
+    "setores": [
+     {
+      "nome": "COMERCIO; REPARACAO DE VEICULOS",
+      "n": 35,
+      "valor_exposto_brl": 10172161.44,
+      "empregados": 217,
+      "massa_salarial_brl": 485736.44,
+      "salario_medio_brl": 2238.42
+     },
+     {
+      "nome": "EDUCACAO",
+      "n": 1,
+      "valor_exposto_brl": 9328387.68,
+      "empregados": 199,
+      "massa_salarial_brl": 703905.03,
+      "salario_medio_brl": 3537.21
+     },
+     {
+      "nome": "INDUSTRIAS DE TRANSFORMACAO",
+      "n": 12,
+      "valor_exposto_brl": 6618432.6,
+      "empregados": 226,
+      "massa_salarial_brl": 687446.82,
+      "salario_medio_brl": 3041.8
+     },
+     {
+      "nome": "CONSTRUCAO",
+      "n": 10,
+      "valor_exposto_brl": 3187589.76,
+      "empregados": 68,
+      "massa_salarial_brl": 196885.71,
+      "salario_medio_brl": 2895.38
+     },
+     {
+      "nome": "TRANSPORTE, ARMAZENAGEM E CORREIO",
+      "n": 4,
+      "valor_exposto_brl": 2484444.96,
+      "empregados": 53,
+      "massa_salarial_brl": 103546.2,
+      "salario_medio_brl": 1953.7
+     },
+     {
+      "nome": "SAUDE HUMANA E SERVICOS SOCIAIS",
+      "n": 6,
+      "valor_exposto_brl": 2062558.08,
+      "empregados": 44,
+      "massa_salarial_brl": 164484.0,
+      "salario_medio_brl": 3738.27
+     },
+     {
+      "nome": "ATIVIDADES ADMINISTRATIVAS E SERVICOS COMPLEMENTARES",
+      "n": 11,
+      "valor_exposto_brl": 1875052.8,
+      "empregados": 40,
+      "massa_salarial_brl": 68486.46,
+      "salario_medio_brl": 1712.16
+     },
+     {
+      "nome": "AGUA, ESGOTO, GESTAO DE RESIDUOS E DESCONTAMINACAO",
+      "n": 3,
+      "valor_exposto_brl": 1522825.2,
+      "empregados": 52,
+      "massa_salarial_brl": 149305.16,
+      "salario_medio_brl": 2871.25
+     },
+     {
+      "nome": "ALOJAMENTO E ALIMENTACAO",
+      "n": 11,
+      "valor_exposto_brl": 1500042.24,
+      "empregados": 32,
+      "massa_salarial_brl": 64721.0,
+      "salario_medio_brl": 2022.53
+     },
+     {
+      "nome": "OUTRAS ATIVIDADES DE SERVICOS",
+      "n": 8,
+      "valor_exposto_brl": 1312536.96,
+      "empregados": 28,
+      "massa_salarial_brl": 76871.59,
+      "salario_medio_brl": 2745.41
+     },
+     {
+      "nome": "ATIVIDADES PROFISSIONAIS, CIENTIFICAS E TECNICAS",
+      "n": 11,
+      "valor_exposto_brl": 1265660.64,
+      "empregados": 27,
+      "massa_salarial_brl": 77474.25,
+      "salario_medio_brl": 2869.42
+     },
+     {
+      "nome": "ARTES, CULTURA, ESPORTE E RECREACAO",
+      "n": 4,
+      "valor_exposto_brl": 984402.72,
+      "empregados": 21,
+      "massa_salarial_brl": 47713.0,
+      "salario_medio_brl": 2272.05
+     },
+     {
+      "nome": "INFORMACAO E COMUNICACAO",
+      "n": 1,
+      "valor_exposto_brl": 609392.16,
+      "empregados": 13,
+      "massa_salarial_brl": 31482.0,
+      "salario_medio_brl": 2421.69
+     },
+     {
+      "nome": "ATIVIDADES IMOBILIARIAS",
+      "n": 2,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 7580.0,
+      "salario_medio_brl": 1895.0
+     },
+     {
+      "nome": "AGRICULTURA, PECUARIA, PRODUCAO FLORESTAL, PESCA E AQUICULTURA",
+      "n": 1,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 6652.0,
+      "salario_medio_brl": 1663.0
+     },
+     {
+      "nome": "ATIVIDADES FINANCEIRAS E SEGUROS",
+      "n": 1,
+      "valor_exposto_brl": 93752.64,
+      "empregados": 2,
+      "massa_salarial_brl": 11644.21,
+      "salario_medio_brl": 5822.1
+     }
+    ]
+   },
+   "saude": {
+    "n": 122,
+    "leitos": 0,
+    "profissionais": 288,
+    "valor_exposto_brl": 18076465.44,
+    "staff": {
+     "staff_medicos": 83,
+     "staff_enfermagem": 43,
+     "staff_odontologia": 29,
+     "staff_farmacia": 7,
+     "staff_diag_lab_imagem": 0,
+     "staff_acs_endemias": 4,
+     "staff_admin_gestao_apoio": 28,
+     "staff_servicos_gerais": 33,
+     "staff_transporte_urgencia": 0,
+     "staff_outros_superior_saude": 29,
+     "staff_outros": 32
+    },
+    "tipos": [
+     {
+      "nome": "Ambulatório",
+      "n": 100,
+      "valor_exposto_brl": 8310321.36,
+      "leitos": 0,
+      "profissionais": 133
+     },
+     {
+      "nome": "Unidade de Terapias Especiais",
+      "n": 1,
+      "valor_exposto_brl": 2426371.2,
+      "leitos": 0,
+      "profissionais": 40
+     },
+     {
+      "nome": "Unidade de Apoio Diagnostico",
+      "n": 9,
+      "valor_exposto_brl": 2365711.92,
+      "leitos": 0,
+      "profissionais": 38
+     },
+     {
+      "nome": "Unidade de Reabilitacao",
+      "n": 3,
+      "valor_exposto_brl": 1819778.4,
+      "leitos": 0,
+      "profissionais": 29
+     },
+     {
+      "nome": "Unidade Básica de Saúde",
+      "n": 1,
+      "valor_exposto_brl": 1516482.0,
+      "leitos": 0,
+      "profissionais": 25
+     },
+     {
+      "nome": "Casas de Apoio a Saude",
+      "n": 3,
+      "valor_exposto_brl": 909889.2,
+      "leitos": 0,
+      "profissionais": 15
+     },
+     {
+      "nome": "Farmacia",
+      "n": 1,
+      "valor_exposto_brl": 485274.24,
+      "leitos": 0,
+      "profissionais": 8
+     },
+     {
+      "nome": "Outros",
+      "n": 3,
+      "valor_exposto_brl": 181977.84,
+      "leitos": 0,
+      "profissionais": 0
+     },
+     {
+      "nome": "Laboratorio de Protese Dentaria",
+      "n": 1,
+      "valor_exposto_brl": 60659.28,
+      "leitos": 0,
+      "profissionais": 0
+     }
+    ]
+   },
+   "educacao": {
+    "n": 1,
+    "matriculas": 1352,
+    "docentes": 76,
+    "valor_exposto_brl": 14868673.11,
+    "etapas": {
+     "infantil": 318,
+     "fundamental": 844,
+     "medio": 133,
+     "profissional": 0,
+     "eja": 0,
+     "especial": 57
+    },
+    "dependencias": [
+     {
+      "nome": "Privada",
+      "n": 1,
+      "valor_exposto_brl": 14868673.11,
+      "matriculas": 1352,
+      "docentes": 76
+     }
+    ]
+   },
+   "agricultura": {
+    "area_ha": 366.68,
+    "culturas": {
+     "Outras Lavouras Temporárias": 75.43,
+     "Soja": 291.25
+    }
+   }
+  },
+  "31.45": {
+   "empresas": {
+    "n": 163,
+    "empregados": 1247,
+    "massa_salarial_brl": 3685166.54,
+    "salario_medio_brl": 2955.23,
+    "valor_exposto_brl": 52245070.38,
+    "setores": [
+     {
+      "nome": "COMERCIO; REPARACAO DE VEICULOS",
+      "n": 46,
+      "valor_exposto_brl": 12281595.84,
+      "empregados": 262,
+      "massa_salarial_brl": 633295.44,
+      "salario_medio_brl": 2417.16
+     },
+     {
+      "nome": "EDUCACAO",
+      "n": 2,
+      "valor_exposto_brl": 9469016.64,
+      "empregados": 202,
+      "massa_salarial_brl": 709143.03,
+      "salario_medio_brl": 3510.61
+     },
+     {
+      "nome": "INDUSTRIAS DE TRANSFORMACAO",
+      "n": 19,
+      "valor_exposto_brl": 8785530.0,
+      "empregados": 300,
+      "massa_salarial_brl": 1006157.82,
+      "salario_medio_brl": 3353.86
+     },
+     {
+      "nome": "ATIVIDADES PROFISSIONAIS, CIENTIFICAS E TECNICAS",
+      "n": 15,
+      "valor_exposto_brl": 3515724.0,
+      "empregados": 75,
+      "massa_salarial_brl": 237024.25,
+      "salario_medio_brl": 3160.32
+     },
+     {
+      "nome": "CONSTRUCAO",
+      "n": 13,
+      "valor_exposto_brl": 3515724.0,
+      "empregados": 75,
+      "massa_salarial_brl": 212003.19,
+      "salario_medio_brl": 2826.71
+     },
+     {
+      "nome": "TRANSPORTE, ARMAZENAGEM E CORREIO",
+      "n": 5,
+      "valor_exposto_brl": 2578197.6,
+      "empregados": 55,
+      "massa_salarial_brl": 108989.2,
+      "salario_medio_brl": 1981.62
+     },
+     {
+      "nome": "SAUDE HUMANA E SERVICOS SOCIAIS",
+      "n": 8,
+      "valor_exposto_brl": 2390692.32,
+      "empregados": 51,
+      "massa_salarial_brl": 179037.0,
+      "salario_medio_brl": 3510.53
+     },
+     {
+      "nome": "ATIVIDADES ADMINISTRATIVAS E SERVICOS COMPLEMENTARES",
+      "n": 14,
+      "valor_exposto_brl": 2062558.08,
+      "empregados": 44,
+      "massa_salarial_brl": 73641.46,
+      "salario_medio_brl": 1673.67
+     },
+     {
+      "nome": "OUTRAS ATIVIDADES DE SERVICOS",
+      "n": 10,
+      "valor_exposto_brl": 1828176.48,
+      "empregados": 39,
+      "massa_salarial_brl": 117882.59,
+      "salario_medio_brl": 3022.63
+     },
+     {
+      "nome": "ALOJAMENTO E ALIMENTACAO",
+      "n": 15,
+      "valor_exposto_brl": 1734423.84,
+      "empregados": 37,
+      "massa_salarial_brl": 72748.11,
+      "salario_medio_brl": 1966.17
+     },
+     {
+      "nome": "AGUA, ESGOTO, GESTAO DE RESIDUOS E DESCONTAMINACAO",
+      "n": 4,
+      "valor_exposto_brl": 1552110.3,
+      "empregados": 53,
+      "massa_salarial_brl": 151925.24,
+      "salario_medio_brl": 2866.51
+     },
+     {
+      "nome": "ARTES, CULTURA, ESPORTE E RECREACAO",
+      "n": 4,
+      "valor_exposto_brl": 984402.72,
+      "empregados": 21,
+      "massa_salarial_brl": 47713.0,
+      "salario_medio_brl": 2272.05
+     },
+     {
+      "nome": "INFORMACAO E COMUNICACAO",
+      "n": 2,
+      "valor_exposto_brl": 750021.12,
+      "empregados": 16,
+      "massa_salarial_brl": 36805.0,
+      "salario_medio_brl": 2300.31
+     },
+     {
+      "nome": "ATIVIDADES IMOBILIARIAS",
+      "n": 3,
+      "valor_exposto_brl": 328134.24,
+      "empregados": 7,
+      "massa_salarial_brl": 12686.0,
+      "salario_medio_brl": 1812.29
+     },
+     {
+      "nome": "ATIVIDADES FINANCEIRAS E SEGUROS",
+      "n": 2,
+      "valor_exposto_brl": 281257.92,
+      "empregados": 6,
+      "massa_salarial_brl": 79463.21,
+      "salario_medio_brl": 13243.87
+     },
+     {
+      "nome": "AGRICULTURA, PECUARIA, PRODUCAO FLORESTAL, PESCA E AQUICULTURA",
+      "n": 1,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 6652.0,
+      "salario_medio_brl": 1663.0
+     }
+    ]
+   },
+   "saude": {
+    "n": 125,
+    "leitos": 0,
+    "profissionais": 306,
+    "valor_exposto_brl": 19168332.48,
+    "staff": {
+     "staff_medicos": 85,
+     "staff_enfermagem": 47,
+     "staff_odontologia": 29,
+     "staff_farmacia": 10,
+     "staff_diag_lab_imagem": 0,
+     "staff_acs_endemias": 4,
+     "staff_admin_gestao_apoio": 36,
+     "staff_servicos_gerais": 34,
+     "staff_transporte_urgencia": 0,
+     "staff_outros_superior_saude": 29,
+     "staff_outros": 32
+    },
+    "tipos": [
+     {
+      "nome": "Ambulatório",
+      "n": 101,
+      "valor_exposto_brl": 8370980.64,
+      "leitos": 0,
+      "profissionais": 134
+     },
+     {
+      "nome": "Unidade de Apoio Diagnostico",
+      "n": 10,
+      "valor_exposto_brl": 2669008.32,
+      "leitos": 0,
+      "profissionais": 43
+     },
+     {
+      "nome": "Unidade de Terapias Especiais",
+      "n": 1,
+      "valor_exposto_brl": 2426371.2,
+      "leitos": 0,
+      "profissionais": 40
+     },
+     {
+      "nome": "Unidade de Reabilitacao",
+      "n": 3,
+      "valor_exposto_brl": 1819778.4,
+      "leitos": 0,
+      "profissionais": 29
+     },
+     {
+      "nome": "Unidade Básica de Saúde",
+      "n": 1,
+      "valor_exposto_brl": 1516482.0,
+      "leitos": 0,
+      "profissionais": 25
+     },
+     {
+      "nome": "Farmacia",
+      "n": 2,
+      "valor_exposto_brl": 1213185.6,
+      "leitos": 0,
+      "profissionais": 20
+     },
+     {
+      "nome": "Casas de Apoio a Saude",
+      "n": 3,
+      "valor_exposto_brl": 909889.2,
+      "leitos": 0,
+      "profissionais": 15
+     },
+     {
+      "nome": "Outros",
+      "n": 3,
+      "valor_exposto_brl": 181977.84,
+      "leitos": 0,
+      "profissionais": 0
+     },
+     {
+      "nome": "Laboratorio de Protese Dentaria",
+      "n": 1,
+      "valor_exposto_brl": 60659.28,
+      "leitos": 0,
+      "profissionais": 0
+     }
+    ]
+   },
+   "educacao": {
+    "n": 1,
+    "matriculas": 1352,
+    "docentes": 76,
+    "valor_exposto_brl": 14868673.11,
+    "etapas": {
+     "infantil": 318,
+     "fundamental": 844,
+     "medio": 133,
+     "profissional": 0,
+     "eja": 0,
+     "especial": 57
+    },
+    "dependencias": [
+     {
+      "nome": "Privada",
+      "n": 1,
+      "valor_exposto_brl": 14868673.11,
+      "matriculas": 1352,
+      "docentes": 76
+     }
+    ]
+   },
+   "agricultura": {
+    "area_ha": 373.95,
+    "culturas": {
+     "Outras Lavouras Temporárias": 79.05,
+     "Soja": 294.9
+    }
+   }
+  },
+  "32.45": {
+   "empresas": {
+    "n": 230,
+    "empregados": 1663,
+    "massa_salarial_brl": 4799240.16,
+    "salario_medio_brl": 2885.89,
+    "valor_exposto_brl": 71288247.78,
+    "setores": [
+     {
+      "nome": "COMERCIO; REPARACAO DE VEICULOS",
+      "n": 56,
+      "valor_exposto_brl": 13687885.44,
+      "empregados": 292,
+      "massa_salarial_brl": 693778.2,
+      "salario_medio_brl": 2375.95
+     },
+     {
+      "nome": "EDUCACAO",
+      "n": 4,
+      "valor_exposto_brl": 9656521.92,
+      "empregados": 206,
+      "massa_salarial_brl": 719820.03,
+      "salario_medio_brl": 3494.27
+     },
+     {
+      "nome": "INDUSTRIAS DE TRANSFORMACAO",
+      "n": 26,
+      "valor_exposto_brl": 9546942.6,
+      "empregados": 326,
+      "massa_salarial_brl": 1063362.39,
+      "salario_medio_brl": 3261.85
+     },
+     {
+      "nome": "CONSTRUCAO",
+      "n": 19,
+      "valor_exposto_brl": 8156479.68,
+      "empregados": 174,
+      "massa_salarial_brl": 510197.01,
+      "salario_medio_brl": 2932.17
+     },
+     {
+      "nome": "ATIVIDADES ADMINISTRATIVAS E SERVICOS COMPLEMENTARES",
+      "n": 26,
+      "valor_exposto_brl": 7031448.0,
+      "empregados": 150,
+      "massa_salarial_brl": 261220.82,
+      "salario_medio_brl": 1741.47
+     },
+     {
+      "nome": "ATIVIDADES PROFISSIONAIS, CIENTIFICAS E TECNICAS",
+      "n": 25,
+      "valor_exposto_brl": 6750190.08,
+      "empregados": 144,
+      "massa_salarial_brl": 546420.25,
+      "salario_medio_brl": 3794.59
+     },
+     {
+      "nome": "SAUDE HUMANA E SERVICOS SOCIAIS",
+      "n": 17,
+      "valor_exposto_brl": 4453250.4,
+      "empregados": 95,
+      "massa_salarial_brl": 304045.32,
+      "salario_medio_brl": 3200.48
+     },
+     {
+      "nome": "ALOJAMENTO E ALIMENTACAO",
+      "n": 19,
+      "valor_exposto_brl": 2906331.84,
+      "empregados": 62,
+      "massa_salarial_brl": 109146.4,
+      "salario_medio_brl": 1760.43
+     },
+     {
+      "nome": "TRANSPORTE, ARMAZENAGEM E CORREIO",
+      "n": 5,
+      "valor_exposto_brl": 2578197.6,
+      "empregados": 55,
+      "massa_salarial_brl": 108989.2,
+      "salario_medio_brl": 1981.62
+     },
+     {
+      "nome": "OUTRAS ATIVIDADES DE SERVICOS",
+      "n": 14,
+      "valor_exposto_brl": 2015681.76,
+      "empregados": 43,
+      "massa_salarial_brl": 125733.59,
+      "salario_medio_brl": 2924.04
+     },
+     {
+      "nome": "AGUA, ESGOTO, GESTAO DE RESIDUOS E DESCONTAMINACAO",
+      "n": 4,
+      "valor_exposto_brl": 1552110.3,
+      "empregados": 53,
+      "massa_salarial_brl": 151925.24,
+      "salario_medio_brl": 2866.51
+     },
+     {
+      "nome": "ARTES, CULTURA, ESPORTE E RECREACAO",
+      "n": 4,
+      "valor_exposto_brl": 984402.72,
+      "empregados": 21,
+      "massa_salarial_brl": 47713.0,
+      "salario_medio_brl": 2272.05
+     },
+     {
+      "nome": "INFORMACAO E COMUNICACAO",
+      "n": 4,
+      "valor_exposto_brl": 890650.08,
+      "empregados": 19,
+      "massa_salarial_brl": 42102.5,
+      "salario_medio_brl": 2215.92
+     },
+     {
+      "nome": "ATIVIDADES FINANCEIRAS E SEGUROS",
+      "n": 3,
+      "valor_exposto_brl": 562515.84,
+      "empregados": 12,
+      "massa_salarial_brl": 95448.21,
+      "salario_medio_brl": 7954.02
+     },
+     {
+      "nome": "ATIVIDADES IMOBILIARIAS",
+      "n": 3,
+      "valor_exposto_brl": 328134.24,
+      "empregados": 7,
+      "massa_salarial_brl": 12686.0,
+      "salario_medio_brl": 1812.29
+     },
+     {
+      "nome": "AGRICULTURA, PECUARIA, PRODUCAO FLORESTAL, PESCA E AQUICULTURA",
+      "n": 1,
+      "valor_exposto_brl": 187505.28,
+      "empregados": 4,
+      "massa_salarial_brl": 6652.0,
+      "salario_medio_brl": 1663.0
+     }
+    ]
+   },
+   "saude": {
+    "n": 146,
+    "leitos": 0,
+    "profissionais": 347,
+    "valor_exposto_brl": 21716022.24,
+    "staff": {
+     "staff_medicos": 105,
+     "staff_enfermagem": 53,
+     "staff_odontologia": 32,
+     "staff_farmacia": 13,
+     "staff_diag_lab_imagem": 0,
+     "staff_acs_endemias": 5,
+     "staff_admin_gestao_apoio": 39,
+     "staff_servicos_gerais": 34,
+     "staff_transporte_urgencia": 0,
+     "staff_outros_superior_saude": 30,
+     "staff_outros": 36
+    },
+    "tipos": [
+     {
+      "nome": "Ambulatório",
+      "n": 120,
+      "valor_exposto_brl": 9887462.64,
+      "leitos": 0,
+      "profissionais": 159
+     },
+     {
+      "nome": "Unidade de Apoio Diagnostico",
+      "n": 11,
+      "valor_exposto_brl": 3639556.8,
+      "leitos": 0,
+      "profissionais": 59
+     },
+     {
+      "nome": "Unidade de Terapias Especiais",
+      "n": 1,
+      "valor_exposto_brl": 2426371.2,
+      "leitos": 0,
+      "profissionais": 40
+     },
+     {
+      "nome": "Unidade de Reabilitacao",
+      "n": 3,
+      "valor_exposto_brl": 1819778.4,
+      "leitos": 0,
+      "profissionais": 29
+     },
+     {
+      "nome": "Unidade Básica de Saúde",
+      "n": 1,
+      "valor_exposto_brl": 1516482.0,
+      "leitos": 0,
+      "profissionais": 25
+     },
+     {
+      "nome": "Farmacia",
+      "n": 2,
+      "valor_exposto_brl": 1213185.6,
+      "leitos": 0,
+      "profissionais": 20
+     },
+     {
+      "nome": "Casas de Apoio a Saude",
+      "n": 3,
+      "valor_exposto_brl": 909889.2,
+      "leitos": 0,
+      "profissionais": 15
+     },
+     {
+      "nome": "Outros",
+      "n": 4,
+      "valor_exposto_brl": 242637.12,
+      "leitos": 0,
+      "profissionais": 0
+     },
+     {
+      "nome": "Laboratorio de Protese Dentaria",
+      "n": 1,
+      "valor_exposto_brl": 60659.28,
+      "leitos": 0,
+      "profissionais": 0
+     }
+    ]
+   },
+   "educacao": {
+    "n": 2,
+    "matriculas": 1413,
+    "docentes": 80,
+    "valor_exposto_brl": 15837011.23,
+    "etapas": {
+     "infantil": 378,
+     "fundamental": 844,
+     "medio": 133,
+     "profissional": 0,
+     "eja": 0,
+     "especial": 58
+    },
+    "dependencias": [
+     {
+      "nome": "Privada",
+      "n": 2,
+      "valor_exposto_brl": 15837011.23,
+      "matriculas": 1413,
+      "docentes": 80
+     }
+    ]
+   },
+   "agricultura": {
+    "area_ha": 380.51,
+    "culturas": {
+     "Outras Lavouras Temporárias": 82.09,
+     "Soja": 298.42
+    }
+   }
+  },
+  "33.45": {
+   "empresas": {
+    "n": 576,
+    "empregados": 9194,
+    "massa_salarial_brl": 29552578.6,
+    "salario_medio_brl": 3214.33,
+    "valor_exposto_brl": 353913751.26,
+    "setores": [
+     {
+      "nome": "INDUSTRIAS DE TRANSFORMACAO",
+      "n": 80,
+      "valor_exposto_brl": 126306636.3,
+      "empregados": 4313,
+      "massa_salarial_brl": 15060955.36,
+      "salario_medio_brl": 3491.99
+     },
+     {
+      "nome": "COMERCIO; REPARACAO DE VEICULOS",
+      "n": 191,
+      "valor_exposto_brl": 112831302.24,
+      "empregados": 2407,
+      "massa_salarial_brl": 7493515.39,
+      "salario_medio_brl": 3113.22
+     },
+     {
+      "nome": "TRANSPORTE, ARMAZENAGEM E CORREIO",
+      "n": 24,
+      "valor_exposto_brl": 31594639.68,
+      "empregados": 674,
+      "massa_salarial_brl": 2025012.69,
+      "salario_medio_brl": 3004.47
+     },
+     {
+      "nome": "CONSTRUCAO",
+      "n": 45,
+      "valor_exposto_brl": 19594301.76,
+      "empregados": 418,
+      "massa_salarial_brl": 1224851.21,
+      "salario_medio_brl": 2930.27
+     },
+     {
+      "nome": "ATIVIDADES ADMINISTRATIVAS E SERVICOS COMPLEMENTARES",
+      "n": 41,
+      "valor_exposto_brl": 16594217.28,
+      "empregados": 354,
+      "massa_salarial_brl": 748338.87,
+      "salario_medio_brl": 2113.95
+     },
+     {
+      "nome": "ALOJAMENTO E ALIMENTACAO",
+      "n": 50,
+      "valor_exposto_brl": 10500295.68,
+      "empregados": 224,
+      "massa_salarial_brl": 415007.76,
+      "salario_medio_brl": 1852.71
+     },
+     {
+      "nome": "EDUCACAO",
+      "n": 7,
+      "valor_exposto_brl": 9844027.2,
+      "empregados": 210,
+      "massa_salarial_brl": 726842.7,
+      "salario_medio_brl": 3461.16
+     },
+     {
+      "nome": "ATIVIDADES PROFISSIONAIS, CIENTIFICAS E TECNICAS",
+      "n": 33,
+      "valor_exposto_brl": 7640840.16,
+      "empregados": 163,
+      "massa_salarial_brl": 597813.34,
+      "salario_medio_brl": 3667.57
+     },
+     {
+      "nome": "SAUDE HUMANA E SERVICOS SOCIAIS",
+      "n": 42,
+      "valor_exposto_brl": 6281426.88,
+      "empregados": 134,
+      "massa_salarial_brl": 378768.32,
+      "salario_medio_brl": 2826.63
+     },
+     {
+      "nome": "OUTRAS ATIVIDADES DE SERVICOS",
+      "n": 21,
+      "valor_exposto_brl": 2812579.2,
+      "empregados": 60,
+      "massa_salarial_brl": 155309.29,
+      "salario_medio_brl": 2588.49
+     },
+     {
+      "nome": "AGRICULTURA, PECUARIA, PRODUCAO FLORESTAL, PESCA E AQUICULTURA",
+      "n": 7,
+      "valor_exposto_brl": 2625073.92,
+      "empregados": 56,
+      "massa_salarial_brl": 146341.01,
+      "salario_medio_brl": 2613.23
+     },
+     {
+      "nome": "AGUA, ESGOTO, GESTAO DE RESIDUOS E DESCONTAMINACAO",
+      "n": 6,
+      "valor_exposto_brl": 1727820.9,
+      "empregados": 59,
+      "massa_salarial_brl": 162421.24,
+      "salario_medio_brl": 2752.9
+     },
+     {
+      "nome": "ATIVIDADES FINANCEIRAS E SEGUROS",
+      "n": 8,
+      "valor_exposto_brl": 1546918.56,
+      "empregados": 33,
+      "massa_salarial_brl": 177834.34,
+      "salario_medio_brl": 5388.92
+     },
+     {
+      "nome": "INFORMACAO E COMUNICACAO",
+      "n": 6,
+      "valor_exposto_brl": 1500042.24,
+      "empregados": 32,
+      "massa_salarial_brl": 79936.5,
+      "salario_medio_brl": 2498.02
+     },
+     {
+      "nome": "ARTES, CULTURA, ESPORTE E RECREACAO",
+      "n": 6,
+      "valor_exposto_brl": 1312536.96,
+      "empregados": 28,
+      "massa_salarial_brl": 57010.0,
+      "salario_medio_brl": 2036.07
+     },
+     {
+      "nome": "ATIVIDADES IMOBILIARIAS",
+      "n": 6,
+      "valor_exposto_brl": 468763.2,
+      "empregados": 10,
+      "massa_salarial_brl": 21287.0,
+      "salario_medio_brl": 2128.7
+     },
+     {
+      "nome": "ADMINISTRACAO PUBLICA, DEFESA E SEGURIDADE SOCIAL",
+      "n": 1,
+      "valor_exposto_brl": 421886.88,
+      "empregados": 9,
+      "massa_salarial_brl": 59756.58,
+      "salario_medio_brl": 6639.62
+     },
+     {
+      "nome": "INDUSTRIAS EXTRATIVAS",
+      "n": 1,
+      "valor_exposto_brl": 263565.9,
+      "empregados": 9,
+      "massa_salarial_brl": 20257.0,
+      "salario_medio_brl": 2250.78
+     },
+     {
+      "nome": "SERVICOS DOMESTICOS",
+      "n": 1,
+      "valor_exposto_brl": 46876.32,
+      "empregados": 1,
+      "massa_salarial_brl": 1320.0,
+      "salario_medio_brl": 1320.0
+     }
+    ]
+   },
+   "saude": {
+    "n": 156,
+    "leitos": 0,
+    "profissionais": 375,
+    "valor_exposto_brl": 23475141.36,
+    "staff": {
+     "staff_medicos": 108,
+     "staff_enfermagem": 53,
+     "staff_odontologia": 33,
+     "staff_farmacia": 14,
+     "staff_diag_lab_imagem": 0,
+     "staff_acs_endemias": 5,
+     "staff_admin_gestao_apoio": 46,
+     "staff_servicos_gerais": 41,
+     "staff_transporte_urgencia": 0,
+     "staff_outros_superior_saude": 33,
+     "staff_outros": 42
+    },
+    "tipos": [
+     {
+      "nome": "Ambulatório",
+      "n": 126,
+      "valor_exposto_brl": 10251418.32,
+      "leitos": 0,
+      "profissionais": 164
+     },
+     {
+      "nome": "Unidade de Apoio Diagnostico",
+      "n": 12,
+      "valor_exposto_brl": 4488786.72,
+      "leitos": 0,
+      "profissionais": 73
+     },
+     {
+      "nome": "Unidade de Terapias Especiais",
+      "n": 1,
+      "valor_exposto_brl": 2426371.2,
+      "leitos": 0,
+      "profissionais": 40
+     },
+     {
+      "nome": "Unidade de Reabilitacao",
+      "n": 5,
+      "valor_exposto_brl": 2244393.36,
+      "leitos": 0,
+      "profissionais": 36
+     },
+     {
+      "nome": "Unidade Básica de Saúde",
+      "n": 1,
+      "valor_exposto_brl": 1516482.0,
+      "leitos": 0,
+      "profissionais": 25
+     },
+     {
+      "nome": "Farmacia",
+      "n": 2,
+      "valor_exposto_brl": 1213185.6,
+      "leitos": 0,
+      "profissionais": 20
+     },
+     {
+      "nome": "Casas de Apoio a Saude",
+      "n": 3,
+      "valor_exposto_brl": 909889.2,
+      "leitos": 0,
+      "profissionais": 15
+     },
+     {
+      "nome": "Outros",
+      "n": 4,
+      "valor_exposto_brl": 242637.12,
+      "leitos": 0,
+      "profissionais": 0
+     },
+     {
+      "nome": "Unidade de Atencao Psicossocial",
+      "n": 1,
+      "valor_exposto_brl": 121318.56,
+      "leitos": 0,
+      "profissionais": 2
+     },
+     {
+      "nome": "Laboratorio de Protese Dentaria",
+      "n": 1,
+      "valor_exposto_brl": 60659.28,
+      "leitos": 0,
+      "profissionais": 0
+     }
+    ]
+   },
+   "educacao": {
+    "n": 14,
+    "matriculas": 4233,
+    "docentes": 265,
+    "valor_exposto_brl": 43637820.1,
+    "etapas": {
+     "infantil": 854,
+     "fundamental": 2043,
+     "medio": 1050,
+     "profissional": 60,
+     "eja": 51,
+     "especial": 175
+    },
+    "dependencias": [
+     {
+      "nome": "Privada",
+      "n": 4,
+      "valor_exposto_brl": 17987396.52,
+      "matriculas": 1548,
+      "docentes": 90
+     },
+     {
+      "nome": "Estadual",
+      "n": 6,
+      "valor_exposto_brl": 16727525.12,
+      "matriculas": 1990,
+      "docentes": 128
+     },
+     {
+      "nome": "Municipal",
+      "n": 4,
+      "valor_exposto_brl": 8922898.46,
+      "matriculas": 695,
+      "docentes": 47
+     }
+    ]
+   },
+   "agricultura": {
+    "area_ha": 387.43,
+    "culturas": {
+     "Outras Lavouras Temporárias": 86.04,
+     "Soja": 301.39
+    }
+   }
+  },
+  "34.45": {
+   "empresas": {
+    "n": 601,
+    "empregados": 9430,
+    "massa_salarial_brl": 30319702.31,
+    "salario_medio_brl": 3215.24,
+    "valor_exposto_brl": 364906197.9,
+    "setores": [
+     {
+      "nome": "INDUSTRIAS DE TRANSFORMACAO",
+      "n": 81,
+      "valor_exposto_brl": 126423776.7,
+      "empregados": 4317,
+      "massa_salarial_brl": 15067810.36,
+      "salario_medio_brl": 3490.34
+     },
+     {
+      "nome": "COMERCIO; REPARACAO DE VEICULOS",
+      "n": 195,
+      "valor_exposto_brl": 114096962.88,
+      "empregados": 2434,
+      "massa_salarial_brl": 7556964.34,
+      "salario_medio_brl": 3104.75
+     },
+     {
+      "nome": "TRANSPORTE, ARMAZENAGEM E CORREIO",
+      "n": 26,
+      "valor_exposto_brl": 32485289.76,
+      "empregados": 693,
+      "massa_salarial_brl": 2085255.51,
+      "salario_medio_brl": 3009.03
+     },
+     {
+      "nome": "CONSTRUCAO",
+      "n": 47,
+      "valor_exposto_brl": 19969312.32,
+      "empregados": 426,
+      "massa_salarial_brl": 1245489.72,
+      "salario_medio_brl": 2923.68
+     },
+     {
+      "nome": "ATIVIDADES ADMINISTRATIVAS E SERVICOS COMPLEMENTARES",
+      "n": 45,
+      "valor_exposto_brl": 17672372.64,
+      "empregados": 377,
+      "massa_salarial_brl": 782970.3,
+      "salario_medio_brl": 2076.84
+     },
+     {
+      "nome": "ALOJAMENTO E ALIMENTACAO",
+      "n": 51,
+      "valor_exposto_brl": 10640924.64,
+      "empregados": 227,
+      "massa_salarial_brl": 418406.76,
+      "salario_medio_brl": 1843.2
+     },
+     {
+      "nome": "EDUCACAO",
+      "n": 7,
+      "valor_exposto_brl": 9844027.2,
+      "empregados": 210,
+      "massa_salarial_brl": 726842.7,
+      "salario_medio_brl": 3461.16
+     },
+     {
+      "nome": "ATIVIDADES PROFISSIONAIS, CIENTIFICAS E TECNICAS",
+      "n": 38,
+      "valor_exposto_brl": 7968974.4,
+      "empregados": 170,
+      "massa_salarial_brl": 618226.34,
+      "salario_medio_brl": 3636.63
+     },
+     {
+      "nome": "AGRICULTURA, PECUARIA, PRODUCAO FLORESTAL, PESCA E AQUICULTURA",
+      "n": 8,
+      "valor_exposto_brl": 7125200.64,
+      "empregados": 152,
+      "massa_salarial_brl": 468814.01,
+      "salario_medio_brl": 3084.3
+     },
+     {
+      "nome": "SAUDE HUMANA E SERVICOS SOCIAIS",
+      "n": 43,
+      "valor_exposto_brl": 6328303.2,
+      "empregados": 135,
+      "massa_salarial_brl": 380694.32,
+      "salario_medio_brl": 2819.96
+     },
+     {
+      "nome": "OUTRAS ATIVIDADES DE SERVICOS",
+      "n": 21,
+      "valor_exposto_brl": 2812579.2,
+      "empregados": 60,
+      "massa_salarial_brl": 155309.29,
+      "salario_medio_brl": 2588.49
+     },
+     {
+      "nome": "ADMINISTRACAO PUBLICA, DEFESA E SEGURIDADE SOCIAL",
+      "n": 2,
+      "valor_exposto_brl": 2250063.36,
+      "empregados": 48,
+      "massa_salarial_brl": 268840.58,
+      "salario_medio_brl": 5600.85
+     },
+     {
+      "nome": "INFORMACAO E COMUNICACAO",
+      "n": 8,
+      "valor_exposto_brl": 1875052.8,
+      "empregados": 40,
+      "massa_salarial_brl": 102607.5,
+      "salario_medio_brl": 2565.19
+     },
+     {
+      "nome": "AGUA, ESGOTO, GESTAO DE RESIDUOS E DESCONTAMINACAO",
+      "n": 6,
+      "valor_exposto_brl": 1727820.9,
+      "empregados": 59,
+      "massa_salarial_brl": 162421.24,
+      "salario_medio_brl": 2752.9
+     },
+     {
+      "nome": "ATIVIDADES FINANCEIRAS E SEGUROS",
+      "n": 8,
+      "valor_exposto_brl": 1546918.56,
+      "empregados": 33,
+      "massa_salarial_brl": 177834.34,
+      "salario_medio_brl": 5388.92
+     },
+     {
+      "nome": "ARTES, CULTURA, ESPORTE E RECREACAO",
+      "n": 6,
+      "valor_exposto_brl": 1312536.96,
+      "empregados": 28,
+      "massa_salarial_brl": 57010.0,
+      "salario_medio_brl": 2036.07
+     },
+     {
+      "nome": "ATIVIDADES IMOBILIARIAS",
+      "n": 7,
+      "valor_exposto_brl": 515639.52,
+      "empregados": 11,
+      "massa_salarial_brl": 22628.0,
+      "salario_medio_brl": 2057.09
+     },
+     {
+      "nome": "INDUSTRIAS EXTRATIVAS",
+      "n": 1,
+      "valor_exposto_brl": 263565.9,
+      "empregados": 9,
+      "massa_salarial_brl": 20257.0,
+      "salario_medio_brl": 2250.78
+     },
+     {
+      "nome": "SERVICOS DOMESTICOS",
+      "n": 1,
+      "valor_exposto_brl": 46876.32,
+      "empregados": 1,
+      "massa_salarial_brl": 1320.0,
+      "salario_medio_brl": 1320.0
+     }
+    ]
+   },
+   "saude": {
+    "n": 161,
+    "leitos": 0,
+    "profissionais": 456,
+    "valor_exposto_brl": 28388543.04,
+    "staff": {
+     "staff_medicos": 119,
+     "staff_enfermagem": 90,
+     "staff_odontologia": 36,
+     "staff_farmacia": 14,
+     "staff_diag_lab_imagem": 0,
+     "staff_acs_endemias": 15,
+     "staff_admin_gestao_apoio": 59,
+     "staff_servicos_gerais": 43,
+     "staff_transporte_urgencia": 0,
+     "staff_outros_superior_saude": 35,
+     "staff_outros": 45
+    },
+    "tipos": [
+     {
+      "nome": "Ambulatório",
+      "n": 129,
+      "valor_exposto_brl": 10615374.0,
+      "leitos": 0,
+      "profissionais": 170
+     },
+     {
+      "nome": "Unidade Básica de Saúde",
+      "n": 3,
+      "valor_exposto_brl": 6065928.0,
+      "leitos": 0,
+      "profissionais": 100
+     },
+     {
+      "nome": "Unidade de Apoio Diagnostico",
+      "n": 12,
+      "valor_exposto_brl": 4488786.72,
+      "leitos": 0,
+      "profissionais": 73
+     },
+     {
+      "nome": "Unidade de Terapias Especiais",
+      "n": 1,
+      "valor_exposto_brl": 2426371.2,
+      "leitos": 0,
+      "profissionais": 40
+     },
+     {
+      "nome": "Unidade de Reabilitacao",
+      "n": 5,
+      "valor_exposto_brl": 2244393.36,
+      "leitos": 0,
+      "profissionais": 36
+     },
+     {
+      "nome": "Farmacia",
+      "n": 2,
+      "valor_exposto_brl": 1213185.6,
+      "leitos": 0,
+      "profissionais": 20
+     },
+     {
+      "nome": "Casas de Apoio a Saude",
+      "n": 3,
+      "valor_exposto_brl": 909889.2,
+      "leitos": 0,
+      "profissionais": 15
+     },
+     {
+      "nome": "Outros",
+      "n": 4,
+      "valor_exposto_brl": 242637.12,
+      "leitos": 0,
+      "profissionais": 0
+     },
+     {
+      "nome": "Unidade de Atencao Psicossocial",
+      "n": 1,
+      "valor_exposto_brl": 121318.56,
+      "leitos": 0,
+      "profissionais": 2
+     },
+     {
+      "nome": "Laboratorio de Protese Dentaria",
+      "n": 1,
+      "valor_exposto_brl": 60659.28,
+      "leitos": 0,
+      "profissionais": 0
+     }
+    ]
+   },
+   "educacao": {
+    "n": 14,
+    "matriculas": 4233,
+    "docentes": 265,
+    "valor_exposto_brl": 43637820.1,
+    "etapas": {
+     "infantil": 854,
+     "fundamental": 2043,
+     "medio": 1050,
+     "profissional": 60,
+     "eja": 51,
+     "especial": 175
+    },
+    "dependencias": [
+     {
+      "nome": "Privada",
+      "n": 4,
+      "valor_exposto_brl": 17987396.52,
+      "matriculas": 1548,
+      "docentes": 90
+     },
+     {
+      "nome": "Estadual",
+      "n": 6,
+      "valor_exposto_brl": 16727525.12,
+      "matriculas": 1990,
+      "docentes": 128
+     },
+     {
+      "nome": "Municipal",
+      "n": 4,
+      "valor_exposto_brl": 8922898.46,
+      "matriculas": 695,
+      "docentes": 47
+     }
+    ]
+   },
+   "agricultura": {
+    "area_ha": 393.72,
+    "culturas": {
+     "Outras Lavouras Temporárias": 89.01,
+     "Soja": 304.71
+    }
+   }
+  }
+ }
+}

@@ -37,10 +37,12 @@ export interface ManchaDuracaoClimada {
 import type { FeatureCollection } from "geojson";
 import type { MapRef, MapLayerMouseEvent } from "react-map-gl/maplibre";
 import * as XLSX from "xlsx";
+import { useCotaRaster } from "@/hooks/useCotaRaster";
+import type { DetalheCotaMun } from "@/lib/cotas-types";
 import {
   MUNICIPIOS, CENARIOS_CONFIG, INFRAESTRUTURA_CONFIG, MUNICIPIO_VIEW,
   AGRI_BOUNDS, AGRI_ANO_BASE, CENARIO_PERIODO, IMPACTO_AGRICOLA, INFRA_TAMANHOS_MB,
-  normalizeDep, PIORES_CENARIOS, CNAE_LABELS,
+  normalizeDep, PIORES_CENARIOS, CNAE_LABELS, COTAS_CENARIO, COTAS_MUNICIPIOS,
 } from "@/lib/constants";
 import {
   slugify, scenarioSlug, mergeGeoJSON,
@@ -135,6 +137,49 @@ export function useDashboard() {
   const [popData, setPopData] = useState<PopulacaoData | null>(null);
   const [areaData, setAreaData] = useState<AreaAtingidaData | null>(null);
   const [manchaDuracaoClimada, setManchaDuracaoClimada] = useState<ManchaDuracaoClimada | null>(null);
+
+  // Cenário "Todas as cotas": água avançando por cota + painel com os valores da cota atual.
+  const cotasAtivo = COTAS_MUNICIPIOS.includes(municipio) && cenario === COTAS_CENARIO;
+  const cotaRaster = useCotaRaster(cotasAtivo ? slugify(municipio) : null, { autoplay: true });
+  const [cotaDetalhe, setCotaDetalhe] = useState<DetalheCotaMun | null>(null);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCotaDetalhe(null);
+    if (!cotasAtivo) return;
+    const controller = new AbortController();
+    fetch(`/dados_convertidos/climada_cota_detalhe_${slugify(municipio)}.json`, { signal: controller.signal })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (!controller.signal.aborted) setCotaDetalhe(d); })
+      .catch(e => { if ((e as Error).name !== "AbortError") console.error(e); });
+    return () => controller.abort();
+  }, [cotasAtivo, municipio]);
+
+  // Cota pausada: as abas (Resumo, Empresas, Educação, Saúde, Agricultura) passam a mostrar o que
+  // está sob água naquela cota. Cada ponto das bases é amostrado no raster de cota de alagamento
+  // (alaga se o índice da 1ª cota molhada <= nº de cotas já atingidas). Em reprodução, volta ao total.
+  const cotaPausada = cotasAtivo && !cotaRaster.tocando && cotaRaster.cota !== null && cotaRaster.meta !== null;
+  const nCotasAtingidas = cotaRaster.meta && cotaRaster.cota !== null
+    ? cotaRaster.meta.cotas.filter(c => c <= cotaRaster.cota! + 1e-6).length
+    : 0;
+  const amostrarCota = cotaRaster.amostrar;
+  useEffect(() => {
+    if (!cotasAtivo) return;
+    const filtra = (fc: FeatureCollection | null): FeatureCollection | null => {
+      if (!fc || !Array.isArray(fc.features)) return null;
+      return { ...fc, features: fc.features.filter((f) => {
+        const g = f.geometry as { type: string; coordinates: number[] } | null;
+        if (!g || g.type !== "Point") return false;
+        const k = amostrarCota(g.coordinates[0], g.coordinates[1]);
+        return k > 0 && k <= nCotasAtingidas;
+      }) };
+    };
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setAtingidosEmpresas(cotaPausada ? filtra(baseEmpresas) : null);
+    setAtingidosEducacao(cotaPausada ? filtra(baseEducacao) : null);
+    setAtingidosSaude(cotaPausada ? filtra(baseSaude) : null);
+    const culturas = cotaDetalhe?.por_cota[Object.keys(cotaDetalhe.por_cota).filter(c => parseFloat(c) <= (cotaRaster.cota ?? 0) + 1e-6).sort((a, b) => parseFloat(a) - parseFloat(b)).pop() ?? ""]?.agricultura?.culturas;
+    setAtingidosAgriStats(cotaPausada ? (culturas ?? {}) : null);
+  }, [cotasAtivo, cotaPausada, nCotasAtingidas, amostrarCota, baseEmpresas, baseEducacao, baseSaude, cotaDetalhe]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [cursor, setCursor] = useState<string>("grab");
   const [popupInfo, setPopupInfo] = useState<{ lngLat: [number, number], properties: Record<string, unknown>, source: string } | null>(null);
@@ -456,7 +501,7 @@ export function useDashboard() {
 
   useEffect(() => {
     if (municipio === "Visão Geral RS") return; // managed by [municipio] effect
-    if (!cenario || cenario === "(nenhum)") {
+    if (!cenario || cenario === "(nenhum)" || cenario === COTAS_CENARIO) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setManchaCenario(null); setAtingidosEmpresas(null); setAtingidosEducacao(null); setAtingidosSaude(null);
       setAtingidosInfra(prev => Object.keys(prev).length === 0 ? prev : {});
@@ -512,7 +557,7 @@ export function useDashboard() {
   // de empresas/educacao/saude/agricultura pra nao re-buscar tudo isso toda
   // vez que cenario muda por causa so da infra.
   useEffect(() => {
-    if (municipio === "Visão Geral RS" || !cenario || cenario === "(nenhum)") return;
+    if (municipio === "Visão Geral RS" || !cenario || cenario === "(nenhum)" || cenario === COTAS_CENARIO) return;
 
     const cacheKey = `${municipio}::${cenario}`;
     const cache = infraAtingidosCacheRef.current[cacheKey] ?? (infraAtingidosCacheRef.current[cacheKey] = {});
@@ -604,7 +649,7 @@ export function useDashboard() {
   const toggleMenuInfra = () => { setCamadas(camadas.includes("Infraestrutura") ? camadas.filter(c => c !== "Infraestrutura") : [...camadas, "Infraestrutura"]); };
 
   const isVisaoGeral = renderMunicipio === "Visão Geral RS";
-  const isCenarioAtivo = isVisaoGeral ? true : (cenario !== "(nenhum)" && manchaCenario != null);
+  const isCenarioAtivo = isVisaoGeral ? true : ((cenario !== "(nenhum)" && manchaCenario != null) || cotaPausada);
 
   const showEmp = isCenarioAtivo ? atingidosEmpresas : baseEmpresas;
   const showEdu = isCenarioAtivo ? atingidosEducacao : baseEducacao;
@@ -964,6 +1009,7 @@ export function useDashboard() {
     rpDanoFisico, setRpDanoFisico,
     danoFisicoEmpresas, danoFisicoEducacao, danoFisicoSaude,
     manchaDuracaoClimada,
+    cotasAtivo, cotaRaster, cotaDetalhe,
     showListaEscolas, setShowListaEscolas,
     showListaHospitais, setShowListaHospitais,
     showListaUBS, setShowListaUBS,

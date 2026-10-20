@@ -102,8 +102,8 @@ export function WelcomeModal() {
                   <path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/>
                 </svg>
               }
-              title="Dano Físico (Protótipo)"
-              desc="Estimativa de dano físico a edificações e infraestrutura pela metodologia CLIMADA, disponível para Porto Alegre na aba “Dano Físico” da página de Danos."
+              title="Dano Físico"
+              desc="Exposição física por cota do rio (empresas, saúde, educação e agricultura) em Porto Alegre, Lajeado e Eldorado do Sul, na aba “Dano Físico” da página de Danos."
             />
             <FeatureItem
               icon={

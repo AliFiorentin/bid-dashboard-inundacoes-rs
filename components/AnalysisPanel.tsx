@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { Download, EyeOff, PanelLeft, LayoutDashboard, Building2, GraduationCap, HeartPulse, Sprout, Wrench, Users } from "lucide-react";
-import { Tabs } from "@/components/ui/tabs";
+import { Download, EyeOff, PanelLeft, LayoutDashboard, Building2, GraduationCap, HeartPulse, Sprout, Wrench, Users, Waves } from "lucide-react";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { AGRI_BOUNDS, INFRAESTRUTURA_CONFIG } from "@/lib/constants";
 import { ResumoTab } from "@/components/tabs/ResumoTab";
@@ -11,6 +11,8 @@ import { EducacaoTab } from "@/components/tabs/EducacaoTab";
 import { SaudeTab } from "@/components/tabs/SaudeTab";
 import { AgriculturaTab } from "@/components/AgriculturaTab";
 import { InfraTab } from "@/components/tabs/InfraTab";
+import { CotasPanel } from "@/components/tabs/CotasPanel";
+import { popAtingidaNaCota } from "@/hooks/useCotaRaster";
 import { findCenarioData } from "@/lib/geo-utils";
 import { MUNICIPIOS, PIORES_CENARIOS, cenarioLabel } from "@/lib/constants";
 import type { DashboardState } from "@/hooks/useDashboard";
@@ -46,11 +48,24 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
     showListaEixos, setShowListaEixos,
     popData,
     areaData,
+    cotasAtivo, cotaRaster, cotaDetalhe,
   } = dash;
+
+  // Cenário "Todas as cotas": abre na aba "Por cota"; ao sair do cenário volta ao Resumo.
+  React.useEffect(() => {
+    if (cotasAtivo) setTabAtiva("cotas");
+    else if (tabAtiva === "cotas") setTabAtiva("resumo");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cotasAtivo]);
 
   // Population KPI
   const popMunData = !isVisaoGeral && popData ? popData[municipio] ?? null : null;
   const popCenData = (() => {
+    if (popMunData && cotasAtivo) {
+      // Cenário "Todas as cotas": população atingida acompanha a cota do slider.
+      const atg = popAtingidaNaCota(cotaRaster.meta, cotaRaster.cota);
+      return atg === null ? null : { pop_atingida: atg, pct_atingida: popMunData.pop_total > 0 ? (100 * atg) / popMunData.pop_total : 0 };
+    }
     if (!popMunData || !cenario || cenario === "(nenhum)") return null;
     return findCenarioData(popMunData.cenarios, cenario);
   })();
@@ -88,12 +103,13 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
               </div>
             </h2>
             <p className="text-white/80 font-medium leading-tight" style={{ fontSize: "clamp(10px, 1.3vh, 12px)", marginTop: "clamp(1px, 0.3vh, 4px)" }}>
-              <strong className="text-white">{municipio}</strong> {mostraImpacto && (isVisaoGeral ? ` · Piores Cenários` : ` · ${cenarioLabel(cenario)}`)}
+              <strong className="text-white">{municipio}</strong> {(mostraImpacto || cotasAtivo) && (isVisaoGeral ? ` · Piores Cenários` : ` · ${cenarioLabel(cenario)}`)}
             </p>
           </div>
           <Tabs value={tabAtiva} className="w-full flex-1 flex flex-col overflow-hidden px-4 print:overflow-visible print:h-auto" style={{ paddingBlockStart: "clamp(0.35rem, 0.9vh, 0.75rem)" }}>
             <div className="flex flex-wrap shrink-0" style={{ gap: "clamp(0.2rem, 0.5vh, 0.375rem)", paddingBottom: "clamp(0.25rem, 0.7vh, 0.5rem)" }}>
               {([
+                ...(cotasAtivo ? [{ value: "cotas", label: "Por cota", icon: <Waves size={11} strokeWidth={2.5} /> }] : []),
                 { value: "resumo",   label: "Resumo",   icon: <LayoutDashboard size={11} strokeWidth={2.5} /> },
                 { value: "empresas", label: "Empresas", icon: <Building2     size={11} strokeWidth={2.5} /> },
                 { value: "educacao", label: "Educação", icon: <GraduationCap size={11} strokeWidth={2.5} /> },
@@ -164,6 +180,12 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
                   </div>
                 </div>
               </div>
+            )}
+
+            {cotasAtivo && (
+              <TabsContent value="cotas" className="flex-1 flex flex-col overflow-hidden mt-2">
+                <CotasPanel raster={cotaRaster} detalhe={cotaDetalhe} municipio={municipio} />
+              </TabsContent>
             )}
 
             <ResumoTab dash={{ municipio, cenario, mostraImpacto, isVisaoGeral, isCenarioAtivo, metricasEmp, metricasEdu, metricasSau, baseAgriStats, atingidosAgriStats, conabStats, allMunAgriStats, allMunAgriAtingidosStats, baseInfra, atingidosInfra, allMunInfraStats, areaData }} />

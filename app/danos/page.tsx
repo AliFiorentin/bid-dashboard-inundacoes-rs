@@ -4,7 +4,7 @@ import { getDanosPageData } from "./get-data";
 
 export const metadata: Metadata = {
   title: "Danos & Risco — Avaliação de Impactos Socioeconômicos RS",
-  description: "Estimativa de perdas econômicas operacionais (DaLA/CEPAL) e protótipo de dano físico estimado (CLIMADA) causados pelas enchentes no Rio Grande do Sul.",
+  description: "Estimativa de perdas econômicas operacionais (DaLA/CEPAL) e dano físico (exposição por cota e CLIMADA) causados pelas enchentes no Rio Grande do Sul.",
 };
 
 export default function DanosPage() {
