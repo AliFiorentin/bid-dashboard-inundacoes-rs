@@ -147,13 +147,15 @@ def profundidade_na_cota(alvo: float, niveis: list[float], profs: dict) -> tuple
     return out, {"lo": lo, "hi": hi, "w": round(w, 3)}
 
 
-def carregar_pontos(slug: str, mun: str) -> tuple[dict, dict, np.ndarray, dict]:
+def carregar_pontos(slug: str, mun: str, filtrar: bool = False) -> tuple[dict, dict, np.ndarray, dict]:
     """BASE dos 3 setores + coordenadas, mascara de industria e valor de reposicao por
     ponto (mesmas funcoes do prototipo). Compartilhado com climada_medidas.py."""
     gjs = {s: load_geojson(DASH_DATA / slug / f"{s}_BASE.geojson") for s in SETORES}
     for s, g in gjs.items():
         if not g:
             sys.exit(f'ERRO: BASE de {s} nao encontrada -- rode 06_geojson.py --mun "{mun}"')
+    if filtrar:  # exclui pontos geocodificados fora do municipio (ver climada_cota.filtrar_no_municipio)
+        gjs = cc.filtrar_no_municipio(gjs, mun)
     coords = {s: np.array([f["geometry"]["coordinates"][:2] for f in g["features"]], dtype=float) for s, g in gjs.items()}
     is_ind = proto.classificar_empresas_industria(gjs["empresas"])
     valores = {}
@@ -163,14 +165,14 @@ def carregar_pontos(slug: str, mun: str) -> tuple[dict, dict, np.ndarray, dict]:
     return gjs, coords, is_ind, valores
 
 
-def profundidades_por_rp(mun: str) -> dict:
+def profundidades_por_rp(mun: str, filtrar: bool = False) -> dict:
     """Profundidade por ponto em cada RP, derivada dos rasters por cota (passos 1 e 2 do
     docstring). Retorna gjs, valores, is_ind, depths {rp: {setor: array}} e os metadados."""
     cfg = cc.MUNICIPIOS[mun]
     rasters = sorted(cfg["raster_dir"].glob("*_clip.tif"), key=lambda p: float(p.stem.split("_")[0]))
     niveis = [float(p.stem.split("_")[0]) for p in rasters]
     cota_rp, meta_freq = COTA_POR_RP[mun]()
-    gjs, coords, is_ind, valores = carregar_pontos(cfg["slug"], mun)
+    gjs, coords, is_ind, valores = carregar_pontos(cfg["slug"], mun, filtrar)
 
     rps = list(proto.RPS)
     fora = [rp for rp in rps if cota_rp[rp][1] > niveis[-1]]  # extrapolados acima do ultimo raster
