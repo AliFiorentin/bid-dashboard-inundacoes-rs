@@ -114,12 +114,18 @@ export const MUNICIPIOS = [
   "Rio Grande",
 ]
 
+// Cenário especial "Todas as cotas": em vez de um polígono fixo, o mapa mostra a água
+// avançando cota a cota (slider/play) e o painel mostra os valores da cota atual
+// (pipeline/climada_cota_mapa.py e climada_cota_detalhe.py). Só municípios com rasters por cota.
+export const COTAS_CENARIO = "Todas as cotas"
+export const COTAS_MUNICIPIOS = ["Lajeado", "Porto Alegre", "Eldorado do Sul"]
+
 export const CENARIOS_CONFIG: Record<string, string[]> = {
-  "Eldorado do Sul": ["Cenário ADA"],
-  Lajeado: ["Cenário 27m", "Cenário 30m"],
+  "Eldorado do Sul": ["Cenário ADA", COTAS_CENARIO],
+  Lajeado: ["Cenário 27m", "Cenário 30m", COTAS_CENARIO],
   // "Climada Evento 2024" primeiro -- vira o cenário padrão de Porto Alegre
   // (cenariosDisp[0] em useDashboard.ts, quando não há permalink específico).
-  "Porto Alegre": ["Climada Evento 2024", "Cenário ADA"],
+  "Porto Alegre": ["Climada Evento 2024", "Cenário ADA", COTAS_CENARIO],
   "Rio Grande": ["Cenário Maio 2024", "Cenário Maio 2024 + 50%"],
 }
 
@@ -162,10 +168,10 @@ export const MUNICIPIO_VIEW: Record<
   { center: [number, number]; zoom: number; pitch?: number; bearing?: number }
 > = {
   "Visão Geral RS": { center: [-53.5, -29.8], zoom: 5.8 },
-  "Eldorado do Sul": { center: [-51.31029, -30.00382], zoom: 14.14 },
-  Lajeado: { center: [-51.96347, -29.46729], zoom: 13.92 },
-  "Porto Alegre": { center: [-51.22750, -30.04205], zoom: 15.08, pitch: 72, bearing: -8.8 },
-  "Rio Grande": { center: [-52.09086, -32.04344], zoom: 14.36 },
+  "Eldorado do Sul": { center: [-51.33511, -30.00367], zoom: 11.57, pitch: 65, bearing: -12 },
+  Lajeado: { center: [-51.95678, -29.45013], zoom: 12.57, pitch: 65, bearing: -12 },
+  "Porto Alegre": { center: [-51.21824, -30.04355], zoom: 12.56, pitch: 72, bearing: -8.8 },
+  "Rio Grande": { center: [-52.09554, -32.03596], zoom: 12.83, pitch: 65, bearing: -11.9 },
 }
 
 // ── Agricultura ──────────────────────────────────────────────────────────────

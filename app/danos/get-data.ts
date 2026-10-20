@@ -61,6 +61,23 @@ export function getDanosPageData(): { dados: DanosData; dadosClimada: ClimadaDat
     const p = join(process.cwd(), "public", "dados_convertidos", "climada_exposicao_lajeado.json");
     dadosExposicao["Lajeado"] = JSON.parse(readFileSync(p, "utf8"));
   } catch { /* graceful degradation */ }
+  // Eldorado do Sul e Porto Alegre: só a visão "Por Cota" (valor exposto, sem curva de dano).
+  for (const [mun, arq] of Object.entries({ "Eldorado do Sul": "climada_exposicao_eldorado_do_sul.json", "Porto Alegre": "climada_exposicao_porto_alegre.json" })) {
+    try {
+      const p = join(process.cwd(), "public", "dados_convertidos", arq);
+      dadosExposicao[mun] = JSON.parse(readFileSync(p, "utf8"));
+    } catch { /* graceful degradation */ }
+  }
+
+  // Indicadores do painel por categoria e por cota (pipeline/climada_cota_detalhe.py).
+  const slugs: Record<string, string> = { "Lajeado": "lajeado", "Eldorado do Sul": "eldorado_do_sul", "Porto Alegre": "porto_alegre" };
+  for (const [mun, slug] of Object.entries(slugs)) {
+    if (!dadosExposicao[mun]) continue;
+    try {
+      const p = join(process.cwd(), "public", "dados_convertidos", `climada_cota_detalhe_${slug}.json`);
+      dadosExposicao[mun].detalhe = JSON.parse(readFileSync(p, "utf8"));
+    } catch { /* graceful degradation */ }
+  }
 
   return { dados, dadosClimada, dadosClimadaMun, dadosCotas, dadosMedidas, dadosExposicao };
 }

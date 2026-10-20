@@ -111,7 +111,7 @@
   },
   "diagnostico": {
     "pontos_molhados_na_cota_mais_baixa": {
-      "empresas": 7,
+      "empresas": 5,
       "educacao": 0,
       "saude": 1
     },
@@ -121,14 +121,19 @@
       "saude": 0
     },
     "n_pontos": {
-      "empresas": 3443,
+      "empresas": 3438,
       "educacao": 74,
       "saude": 587
     },
+    "pontos_excluidos_fora_do_municipio": {
+      "empresas": 5,
+      "educacao": 0,
+      "saude": 0
+    },
     "coordenadas_repetidas": {
       "empresas": {
-        "n_pontos": 3443,
-        "n_coordenadas_unicas": 648,
+        "n_pontos": 3438,
+        "n_coordenadas_unicas": 646,
         "maior_pilha": 300
       },
       "educacao": {
@@ -148,13 +153,13 @@
   "resultados_por_cota": {
     "18.45": {
       "empresas": {
-        "n_total": 3443,
-        "n_atingidos": 7,
-        "profundidade_media_atingidos_m": 2.714,
-        "profundidade_max_m": 3.508,
-        "exposicao_total_brl": 1523690402.04,
-        "dano_fisico_brl_poa": 1261544.36,
-        "dano_fisico_brl_jrc_crua": 3500878.51
+        "n_total": 3438,
+        "n_atingidos": 5,
+        "profundidade_media_atingidos_m": 2.396,
+        "profundidade_max_m": 2.396,
+        "exposicao_total_brl": 1521529000.38,
+        "dano_fisico_brl_poa": 1193976.65,
+        "dano_fisico_brl_jrc_crua": 3313373.23
       },
       "educacao": {
         "n_total": 74,
@@ -177,13 +182,13 @@
     },
     "19.45": {
       "empresas": {
-        "n_total": 3443,
-        "n_atingidos": 7,
-        "profundidade_media_atingidos_m": 2.998,
-        "profundidade_max_m": 4.49,
-        "exposicao_total_brl": 1523690402.04,
-        "dano_fisico_brl_poa": 1261588.98,
-        "dano_fisico_brl_jrc_crua": 3501002.31
+        "n_total": 3438,
+        "n_atingidos": 5,
+        "profundidade_media_atingidos_m": 2.401,
+        "profundidade_max_m": 2.401,
+        "exposicao_total_brl": 1521529000.38,
+        "dano_fisico_brl_poa": 1194021.27,
+        "dano_fisico_brl_jrc_crua": 3313497.03
       },
       "educacao": {
         "n_total": 74,
@@ -206,13 +211,13 @@
     },
     "20.45": {
       "empresas": {
-        "n_total": 3443,
-        "n_atingidos": 7,
-        "profundidade_media_atingidos_m": 3.301,
-        "profundidade_max_m": 5.485,
-        "exposicao_total_brl": 1523690402.04,
-        "dano_fisico_brl_poa": 1261814.9,
-        "dano_fisico_brl_jrc_crua": 3501629.16
+        "n_total": 3438,
+        "n_atingidos": 5,
+        "profundidade_media_atingidos_m": 2.427,
+        "profundidade_max_m": 2.427,
+        "exposicao_total_brl": 1521529000.38,
+        "dano_fisico_brl_poa": 1194247.18,
+        "dano_fisico_brl_jrc_crua": 3314123.88
       },
       "educacao": {
         "n_total": 74,
@@ -235,13 +240,13 @@
     },
     "21.45": {
       "empresas": {
-        "n_total": 3443,
-        "n_atingidos": 15,
-        "profundidade_media_atingidos_m": 1.689,
-        "profundidade_max_m": 6.384,
-        "exposicao_total_brl": 1523690402.04,
-        "dano_fisico_brl_poa": 1266998.27,
-        "dano_fisico_brl_jrc_crua": 3533694.21
+        "n_total": 3438,
+        "n_atingidos": 13,
+        "profundidade_media_atingidos_m": 0.966,
+        "profundidade_max_m": 2.427,
+        "exposicao_total_brl": 1521529000.38,
+        "dano_fisico_brl_poa": 1199430.56,
+        "dano_fisico_brl_jrc_crua": 3346188.93
       },
       "educacao": {
         "n_total": 74,
@@ -264,13 +269,13 @@
     },
     "22.45": {
       "empresas": {
-        "n_total": 3443,
-        "n_atingidos": 32,
-        "profundidade_media_atingidos_m": 1.246,
-        "profundidade_max_m": 7.317,
-        "exposicao_total_brl": 1523690402.04,
-        "dano_fisico_brl_poa": 1822920.95,
-        "dano_fisico_brl_jrc_crua": 5197940.83
+        "n_total": 3438,
+        "n_atingidos": 30,
+        "profundidade_media_atingidos_m": 0.841,
+        "profundidade_max_m": 2.427,
+        "exposicao_total_brl": 1521529000.38,
+        "dano_fisico_brl_poa": 1755353.23,
+        "dano_fisico_brl_jrc_crua": 5010435.55
       },
       "educacao": {
         "n_total": 74,
@@ -293,13 +298,13 @@
     },
     "23.45": {
       "empresas": {
-        "n_total": 3443,
-        "n_atingidos": 48,
-        "profundidade_media_atingidos_m": 1.491,
-        "profundidade_max_m": 8.226,
-        "exposicao_total_brl": 1523690402.04,
-        "dano_fisico_brl_poa": 2941954.91,
-        "dano_fisico_brl_jrc_crua": 8204876.09
+        "n_total": 3438,
+        "n_atingidos": 46,
+        "profundidade_media_atingidos_m": 1.198,
+        "profundidade_max_m": 2.477,
+        "exposicao_total_brl": 1521529000.38,
+        "dano_fisico_brl_poa": 2874387.2,
+        "dano_fisico_brl_jrc_crua": 8017370.81
       },
       "educacao": {
         "n_total": 74,
@@ -322,13 +327,13 @@
     },
     "24.45": {
       "empresas": {
-        "n_total": 3443,
-        "n_atingidos": 70,
-        "profundidade_media_atingidos_m": 1.755,
-        "profundidade_max_m": 9.06,
-        "exposicao_total_brl": 1523690402.04,
-        "dano_fisico_brl_poa": 6511373.94,
-        "dano_fisico_brl_jrc_crua": 18605303.07
+        "n_total": 3438,
+        "n_atingidos": 68,
+        "profundidade_media_atingidos_m": 1.54,
+        "profundidade_max_m": 3.34,
+        "exposicao_total_brl": 1521529000.38,
+        "dano_fisico_brl_poa": 6443806.23,
+        "dano_fisico_brl_jrc_crua": 18417797.79
       },
       "educacao": {
         "n_total": 74,
@@ -351,13 +356,13 @@
     },
     "25.45": {
       "empresas": {
-        "n_total": 3443,
-        "n_atingidos": 70,
-        "profundidade_media_atingidos_m": 2.761,
-        "profundidade_max_m": 9.849,
-        "exposicao_total_brl": 1523690402.04,
-        "dano_fisico_brl_poa": 10026410.47,
-        "dano_fisico_brl_jrc_crua": 27824019.25
+        "n_total": 3438,
+        "n_atingidos": 68,
+        "profundidade_media_atingidos_m": 2.552,
+        "profundidade_max_m": 4.357,
+        "exposicao_total_brl": 1521529000.38,
+        "dano_fisico_brl_poa": 9958842.76,
+        "dano_fisico_brl_jrc_crua": 27636513.97
       },
       "educacao": {
         "n_total": 74,
@@ -380,13 +385,13 @@
     },
     "26.45": {
       "empresas": {
-        "n_total": 3443,
-        "n_atingidos": 80,
-        "profundidade_media_atingidos_m": 3.345,
-        "profundidade_max_m": 10.616,
-        "exposicao_total_brl": 1523690402.04,
-        "dano_fisico_brl_poa": 11214348.57,
-        "dano_fisico_brl_jrc_crua": 31138741.54
+        "n_total": 3438,
+        "n_atingidos": 78,
+        "profundidade_media_atingidos_m": 3.159,
+        "profundidade_max_m": 5.637,
+        "exposicao_total_brl": 1521529000.38,
+        "dano_fisico_brl_poa": 11146780.86,
+        "dano_fisico_brl_jrc_crua": 30951236.26
       },
       "educacao": {
         "n_total": 74,
@@ -409,13 +414,13 @@
     },
     "27.45": {
       "empresas": {
-        "n_total": 3443,
-        "n_atingidos": 89,
-        "profundidade_media_atingidos_m": 3.977,
-        "profundidade_max_m": 11.405,
-        "exposicao_total_brl": 1523690402.04,
-        "dano_fisico_brl_poa": 12818418.82,
-        "dano_fisico_brl_jrc_crua": 35592327.48
+        "n_total": 3438,
+        "n_atingidos": 87,
+        "profundidade_media_atingidos_m": 3.806,
+        "profundidade_max_m": 6.883,
+        "exposicao_total_brl": 1521529000.38,
+        "dano_fisico_brl_poa": 12750851.11,
+        "dano_fisico_brl_jrc_crua": 35404822.2
       },
       "educacao": {
         "n_total": 74,
@@ -438,13 +443,13 @@
     },
     "28.45": {
       "empresas": {
-        "n_total": 3443,
-        "n_atingidos": 96,
-        "profundidade_media_atingidos_m": 4.681,
-        "profundidade_max_m": 12.258,
-        "exposicao_total_brl": 1523690402.04,
-        "dano_fisico_brl_poa": 13686472.57,
-        "dano_fisico_brl_jrc_crua": 37983642.93
+        "n_total": 3438,
+        "n_atingidos": 94,
+        "profundidade_media_atingidos_m": 4.519,
+        "profundidade_max_m": 8.043,
+        "exposicao_total_brl": 1521529000.38,
+        "dano_fisico_brl_poa": 13618904.86,
+        "dano_fisico_brl_jrc_crua": 37796137.65
       },
       "educacao": {
         "n_total": 74,
@@ -467,13 +472,13 @@
     },
     "29.45": {
       "empresas": {
-        "n_total": 3443,
-        "n_atingidos": 121,
-        "profundidade_media_atingidos_m": 4.59,
-        "profundidade_max_m": 13.13,
-        "exposicao_total_brl": 1523690402.04,
-        "dano_fisico_brl_poa": 14721695.78,
-        "dano_fisico_brl_jrc_crua": 40915478.41
+        "n_total": 3438,
+        "n_atingidos": 119,
+        "profundidade_media_atingidos_m": 4.447,
+        "profundidade_max_m": 9.189,
+        "exposicao_total_brl": 1521529000.38,
+        "dano_fisico_brl_poa": 14654128.07,
+        "dano_fisico_brl_jrc_crua": 40727973.13
       },
       "educacao": {
         "n_total": 74,
@@ -496,13 +501,13 @@
     },
     "30.45": {
       "empresas": {
-        "n_total": 3443,
-        "n_atingidos": 123,
-        "profundidade_media_atingidos_m": 5.541,
-        "profundidade_max_m": 14.026,
-        "exposicao_total_brl": 1523690402.04,
-        "dano_fisico_brl_poa": 15519017.18,
-        "dano_fisico_brl_jrc_crua": 43067355.25
+        "n_total": 3438,
+        "n_atingidos": 121,
+        "profundidade_media_atingidos_m": 5.4,
+        "profundidade_max_m": 10.309,
+        "exposicao_total_brl": 1521529000.38,
+        "dano_fisico_brl_poa": 15451449.47,
+        "dano_fisico_brl_jrc_crua": 42879849.97
       },
       "educacao": {
         "n_total": 74,
@@ -525,13 +530,13 @@
     },
     "31.45": {
       "empresas": {
-        "n_total": 3443,
-        "n_atingidos": 165,
-        "profundidade_media_atingidos_m": 5.072,
-        "profundidade_max_m": 14.962,
-        "exposicao_total_brl": 1523690402.04,
-        "dano_fisico_brl_poa": 17573204.94,
-        "dano_fisico_brl_jrc_crua": 48779033.28
+        "n_total": 3438,
+        "n_atingidos": 163,
+        "profundidade_media_atingidos_m": 4.951,
+        "profundidade_max_m": 11.42,
+        "exposicao_total_brl": 1521529000.38,
+        "dano_fisico_brl_poa": 17505637.23,
+        "dano_fisico_brl_jrc_crua": 48591528.0
       },
       "educacao": {
         "n_total": 74,
@@ -554,13 +559,13 @@
     },
     "32.45": {
       "empresas": {
-        "n_total": 3443,
-        "n_atingidos": 232,
-        "profundidade_media_atingidos_m": 4.563,
-        "profundidade_max_m": 15.909,
-        "exposicao_total_brl": 1523690402.04,
-        "dano_fisico_brl_poa": 23765975.37,
-        "dano_fisico_brl_jrc_crua": 65972325.37
+        "n_total": 3438,
+        "n_atingidos": 230,
+        "profundidade_media_atingidos_m": 4.464,
+        "profundidade_max_m": 12.487,
+        "exposicao_total_brl": 1521529000.38,
+        "dano_fisico_brl_poa": 23698407.66,
+        "dano_fisico_brl_jrc_crua": 65784820.09
       },
       "educacao": {
         "n_total": 74,
@@ -583,13 +588,13 @@
     },
     "33.45": {
       "empresas": {
-        "n_total": 3443,
-        "n_atingidos": 578,
-        "profundidade_media_atingidos_m": 2.439,
-        "profundidade_max_m": 16.842,
-        "exposicao_total_brl": 1523690402.04,
-        "dano_fisico_brl_poa": 68087850.09,
-        "dano_fisico_brl_jrc_crua": 192514014.06
+        "n_total": 3438,
+        "n_atingidos": 576,
+        "profundidade_media_atingidos_m": 2.389,
+        "profundidade_max_m": 13.524,
+        "exposicao_total_brl": 1521529000.38,
+        "dano_fisico_brl_poa": 68020282.38,
+        "dano_fisico_brl_jrc_crua": 192326508.78
       },
       "educacao": {
         "n_total": 74,
@@ -612,13 +617,13 @@
     },
     "34.45": {
       "empresas": {
-        "n_total": 3443,
-        "n_atingidos": 603,
-        "profundidade_media_atingidos_m": 3.292,
-        "profundidade_max_m": 17.78,
-        "exposicao_total_brl": 1523690402.04,
-        "dano_fisico_brl_poa": 119682780.0,
-        "dano_fisico_brl_jrc_crua": 332425640.07
+        "n_total": 3438,
+        "n_atingidos": 601,
+        "profundidade_media_atingidos_m": 3.243,
+        "profundidade_max_m": 14.556,
+        "exposicao_total_brl": 1521529000.38,
+        "dano_fisico_brl_poa": 119615212.28,
+        "dano_fisico_brl_jrc_crua": 332238134.79
       },
       "educacao": {
         "n_total": 74,

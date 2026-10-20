@@ -15,6 +15,8 @@ import { AnalysisPanel } from "@/components/AnalysisPanel";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { FiltersPanel } from "@/components/FiltersPanel";
 import { WelcomeModal } from "@/components/WelcomeModal";
+import { CotaControle } from "@/components/CotaControle";
+import { COR_ALAGADO, COR_FRENTE } from "@/hooks/useCotaRaster";
 
 export default function Dashboard() {
   const dash = useDashboard();
@@ -33,6 +35,7 @@ export default function Dashboard() {
     popData,
     showDanoFisico, rpDanoFisico, renderMunicipio,
     manchaDuracaoClimada,
+    cotasAtivo, cotaRaster, headerBottom,
   } = dash;
 
   const mostraDuracaoClimada = renderMunicipio === "Porto Alegre" && cenario === MANCHA_DURACAO_CENARIO;
@@ -98,9 +101,20 @@ export default function Dashboard() {
           items-end pra alinhar a base mesmo quando a Legenda expande e fica
           mais alta que o Copyright). */}
       <div
-        className={`absolute bottom-4 z-10 print:hidden flex items-end gap-3 transition-[left] duration-300 ${showPainelAnalise ? "left-[440px]" : "left-4"}`}
+        className={`absolute bottom-4 z-10 print:hidden flex items-end gap-3 transition-[left] duration-300 ${showPainelAnalise ? (cotasAtivo ? "left-[504px]" : "left-[440px]") : (cotasAtivo ? "left-[96px]" : "left-4")}`}
         style={{ transitionTimingFunction: "var(--ease-out)" }}
       >
+        <div
+          className="px-3 py-1 rounded-xl select-none leading-none text-center shrink-0 pointer-events-none"
+          style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}
+        >
+          <span className="text-[9px] font-black uppercase tracking-wider" style={{ color: "#055071" }}>© GPEa - Grupo de Pesquisa em Economia Azul</span>
+          <span className="text-[9px]" style={{ color: "#055071" }}> | Alisson Tallys Geraldo Fiorentin</span>
+        </div>
+      </div>
+
+      {/* Legenda: canto direito, acima da logo GPEa e dos controles do mapa. */}
+      <div className="absolute right-[10px] bottom-[106px] z-10 print:hidden w-[194px] max-h-[calc(100vh-250px)] flex flex-col justify-end">
         <div
           className="rounded-xl overflow-hidden"
           style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}
@@ -141,6 +155,12 @@ export default function Dashboard() {
               {camadas.includes("Infraestrutura") && infraAtivas.map(nome => (
                 <LegendItem key={`infra-${nome}`} cor={INFRA_COLORS[nome] ?? COLORS.infra} label={nome} area={["Quadras","Terrenos"].includes(nome)} />
               ))}
+              {cotasAtivo && showMancha && (
+                <>
+                  <LegendItem cor={`rgb(${COR_ALAGADO})`} label="Área alagada" area />
+                  <LegendItem cor={`rgb(${COR_FRENTE})`} label="Frente de avanço" area />
+                </>
+              )}
               {manchaCenario && !isVisaoGeral && showMancha && mostraDuracaoClimada && manchaDuracaoClimada ? (
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-2">
@@ -177,15 +197,16 @@ export default function Dashboard() {
             </div>
           )}
         </div>
-
-        <div
-          className="px-3 py-1 rounded-xl select-none leading-none text-center shrink-0 pointer-events-none"
-          style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}
-        >
-          <span className="text-[9px] font-black uppercase tracking-wider" style={{ color: "#055071" }}>© GPEa - Grupo de Pesquisa em Economia Azul</span>
-          <span className="text-[9px]" style={{ color: "#055071" }}> | Alisson Tallys Geraldo Fiorentin</span>
-        </div>
       </div>
+
+      {cotasAtivo && cotaRaster.cota !== null && (
+        <div
+          className={`absolute z-10 print:hidden w-[68px] rounded-xl px-2 py-3 transition-[left] duration-300 ${showPainelAnalise ? "left-[424px]" : "left-4"}`}
+          style={{ top: headerBottom, bottom: 6, backgroundColor: "rgba(255,255,255,0.8)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}
+        >
+          <CotaControle raster={cotaRaster} vertical className="h-full" />
+        </div>
+      )}
 
       <WelcomeModal />
 

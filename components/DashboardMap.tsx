@@ -72,6 +72,7 @@ export function DashboardMap({ dash }: Props) {
     danoFisicoEducacao,
     danoFisicoSaude,
     manchaDuracaoClimada,
+    cotasAtivo, cotaRaster,
     cameraVeioDoLink,
   } = dash
 
@@ -437,6 +438,18 @@ export function DashboardMap({ dash }: Props) {
               beforeId="anchor-mancha"
               type="raster"
               paint={{ "raster-opacity": 0.85, "raster-resampling": "linear" }}
+            />
+          </Source>
+        )}
+
+        {/* Cenário "Todas as cotas": água avançando conforme o slider (hooks/useCotaRaster). */}
+        {cotasAtivo && !isTransitioning && showMancha && cotaRaster.url && cotaRaster.meta && (
+          <Source id="cota-img" type="image" url={cotaRaster.url} coordinates={cotaRaster.meta.coordinates}>
+            <Layer
+              id="cota-raster"
+              beforeId="anchor-mancha"
+              type="raster"
+              paint={{ "raster-opacity": 0.82, "raster-fade-duration": 0 }}
             />
           </Source>
         )}

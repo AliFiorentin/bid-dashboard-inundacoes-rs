@@ -11,6 +11,8 @@ interface FiltersPanelProps {
   dash: DashboardState;
 }
 
+interface Chip { id: string; label: string; cor: string; on: boolean; toggle: () => void }
+
 export function FiltersPanel({ dash }: FiltersPanelProps) {
   const {
     municipio,
@@ -30,119 +32,55 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
 
   const temPopulacao = camadas.includes("População") && !isVisaoGeral;
   const showPanel = temCamadaTabular && !isVisaoGeral;
+  const [abertoFiltros, setAbertoFiltros] = React.useState(false);
+  const nFiltros = [filtroSetor !== "(todos)", filtroDep !== "(todas)", filtroTipo !== "(todas)"].filter(Boolean).length;
+
+  // Camadas viram chips pequenos (cor + ligado/desligado) em grade de 2 colunas, no lugar de um
+  // rótulo + botão de largura total para cada uma. Os filtros de dados (selects) ficam recolhidos.
+  const camadasMapa: (Chip & { mostrar: boolean })[] = [
+    { id: "mancha", label: "Mancha", cor: COLORS.cenario, on: showMancha, toggle: () => setShowMancha(p => !p), mostrar: isCenarioAtivo && !isVisaoGeral },
+    { id: "dano", label: "Dano físico", cor: "#d97706", on: showDanoFisico, toggle: () => setShowDanoFisico(p => !p), mostrar: municipio === DANO_FISICO_MUNICIPIO },
+  ];
+  const chipsMapa = camadasMapa.filter(c => c.mostrar);
+  const heatmaps: Chip[] = [
+    { id: "pop", label: "População", cor: "#9333ea", on: temPopulacao, toggle: () => toggleCamada("População") },
+    { id: "emp", label: "Empresas", cor: "#1d4ed8", on: dash.showHeatmapEmpresas, toggle: () => dash.setShowHeatmapEmpresas(p => !p) },
+    { id: "sau", label: "Saúde", cor: "#b91c1c", on: dash.showHeatmapSaude, toggle: () => dash.setShowHeatmapSaude(p => !p) },
+    { id: "edu", label: "Educação", cor: "#15803d", on: dash.showHeatmapEducacao, toggle: () => dash.setShowHeatmapEducacao(p => !p) },
+  ];
+  const chip = (c: Chip) => (
+    <button
+      key={c.id}
+      onClick={c.toggle}
+      aria-pressed={c.on}
+      className="h-6 min-w-0 flex items-center gap-1 px-1.5 rounded-full text-[9px] font-bold border transition-colors duration-150"
+      style={{
+        backgroundColor: c.on ? `${c.cor}20` : "transparent",
+        borderColor: c.on ? c.cor : "#cbd5e1",
+        color: c.on ? c.cor : "#64748b",
+      }}
+    >
+      <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: c.on ? c.cor : "#cbd5e1" }} />
+      <span className="truncate">{c.label}</span>
+    </button>
+  );
+  const titulo = (txt: string) => <div className="text-[8px] font-black text-slate-500 uppercase tracking-wider">{txt}</div>;
 
   return (
     <>
       {showFiltros && showPanel && (
-        <div className="print:hidden absolute top-[100px] right-4 flex flex-col gap-2 p-2.5 rounded-xl z-10 w-40 max-h-[calc(100vh-130px)] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-thumb]:rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}>
-          <div className="flex justify-between items-center mb-0.5 border-b border-slate-200/60 pb-1.5">
+        <div className="print:hidden absolute top-[100px] right-4 flex flex-col gap-1.5 p-2 rounded-xl z-10 w-44 max-h-[calc(100vh-130px)] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-thumb]:rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}>
+          <div className="flex justify-between items-center border-b border-slate-200/60 pb-1">
             <span className="text-[9px] font-black text-slate-700 uppercase tracking-wider">Filtros de Mapa</span>
-            <button onClick={() => setShowFiltros(false)} className="text-slate-400 hover:text-slate-600 font-black text-xs px-1">✖</button>
+            <button onClick={() => setShowFiltros(false)} className="text-slate-400 hover:text-slate-600 font-black text-xs px-1" aria-label="Fechar filtros">✖</button>
           </div>
 
-          {camadas.includes("Empresas") && (
-            <div className="flex flex-col gap-1 w-full overflow-hidden shrink-0">
-              <label className="text-[9px] font-bold text-blue-700 uppercase tracking-wider">Setor (Empresas)</label>
-              <Select value={filtroSetor} onValueChange={setFiltroSetor}>
-                <SelectTrigger className="h-7 border-blue-200/60 bg-blue-50/50 text-[10px] w-full [&>span]:truncate">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="(todos)">(todos)</SelectItem>
-                  {setoresUnicos.map((s: string) => <SelectItem key={s} value={s}>{CNAE_LABELS[s] ?? s}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-          {camadas.includes("Educação") && (
-            <div className="flex flex-col gap-1 w-full overflow-hidden shrink-0">
-              <label className="text-[9px] font-bold text-green-700 uppercase tracking-wider">Dependência (Escolas)</label>
-              <Select value={filtroDep} onValueChange={setFiltroDep}>
-                <SelectTrigger className="h-7 border-green-200/60 bg-green-50/50 text-[10px] w-full [&>span]:truncate">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="(todas)">(todas)</SelectItem>
-                  {depsUnicas.map((s: string) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-          {camadas.includes("Saúde") && (
-            <div className="flex flex-col gap-1 w-full overflow-hidden shrink-0">
-              <label className="text-[9px] font-bold text-red-700 uppercase tracking-wider">Unidade (Saúde)</label>
-              <Select value={filtroTipo} onValueChange={setFiltroTipo}>
-                <SelectTrigger className="h-7 border-red-200/60 bg-red-50/50 text-[10px] w-full [&>span]:truncate">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="(todas)">(todas)</SelectItem>
-                  {tiposUnicos.map((s: string) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-
-          {camadas.includes("Infraestrutura") && infraAtivas.length > 0 && (
-            <div className="flex flex-col gap-1 w-full overflow-hidden shrink-0">
-              <label className="text-[9px] font-bold text-orange-700 uppercase tracking-wider">Infraestrutura</label>
-              <DropdownMenu>
-                <DropdownMenuTrigger className="h-7 border-orange-200/60 bg-orange-50/50 text-[10px] w-full flex justify-between items-center px-2 rounded transition-colors">
-                  <span className="truncate">
-                    {infraAtivas.length === 0 ? "Nenhuma selecionada" : `${infraAtivas.length} selecionada(s)`}
-                  </span>
-                  <span className="text-[8px] opacity-70">▼</span>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-40" align="end">
-                  {infraAtivas.map((infraNome) => (
-                    <DropdownMenuCheckboxItem
-                      key={infraNome}
-                      checked={true}
-                      onCheckedChange={() => toggleInfra(infraNome)}
-                      className="text-[10px] hover:bg-slate-100"
-                    >
-                      {infraNome}
-                    </DropdownMenuCheckboxItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          )}
-
-          {isCenarioAtivo && !isVisaoGeral && (
-            <div className="flex flex-col gap-1 w-full shrink-0">
-              <label className="text-[9px] font-bold uppercase tracking-wider" style={{ color: COLORS.cenario }}>Mancha de Inundação</label>
-              <button
-                onClick={() => setShowMancha(p => !p)}
-                className="h-7 w-full rounded text-[10px] font-bold border transition-colors duration-150"
-                style={{
-                  backgroundColor: showMancha ? `${COLORS.cenario}20` : "transparent",
-                  borderColor: showMancha ? COLORS.cenario : "#cbd5e1",
-                  color: showMancha ? COLORS.cenario : "#64748b",
-                }}
-              >
-                {showMancha ? "Visível" : "Oculta"}
-              </button>
-            </div>
-          )}
-
-          {/* Dano Físico (CLIMADA, protótipo) -- só existe para Porto Alegre */}
-          {municipio === DANO_FISICO_MUNICIPIO && (
-            <div className="flex flex-col gap-1 w-full shrink-0">
-              <label className="text-[9px] font-bold text-amber-700 uppercase tracking-wider">Dano Físico (CLIMADA)</label>
-              <button
-                onClick={() => setShowDanoFisico(p => !p)}
-                className="h-7 w-full rounded text-[10px] font-bold border transition-colors duration-150"
-                style={{
-                  backgroundColor: showDanoFisico ? "#d9770620" : "transparent",
-                  borderColor: showDanoFisico ? "#d97706" : "#cbd5e1",
-                  color: showDanoFisico ? "#d97706" : "#64748b",
-                }}
-              >
-                {showDanoFisico ? "Visível (protótipo)" : "Oculto"}
-              </button>
-              {showDanoFisico && (
-                <div className="flex flex-wrap gap-1 mt-0.5">
+          {chipsMapa.length > 0 && (
+            <div className="flex flex-col gap-1">
+              {titulo("Camadas")}
+              <div className="grid grid-cols-2 gap-1">{chipsMapa.map(chip)}</div>
+              {showDanoFisico && municipio === DANO_FISICO_MUNICIPIO && (
+                <div className="flex flex-wrap gap-1">
                   {DANO_FISICO_RPS.map((rp) => (
                     <button
                       key={rp}
@@ -162,75 +100,89 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
             </div>
           )}
 
-          {/* Heatmap de População */}
-          {!isVisaoGeral && (
-            <div className="flex flex-col gap-1 w-full shrink-0">
-              <label className="text-[9px] font-bold text-purple-700 uppercase tracking-wider">Heatmap População</label>
-              <button
-                onClick={() => toggleCamada("População")}
-                className="h-7 w-full rounded text-[10px] font-bold border transition-colors duration-150"
-                style={{
-                  backgroundColor: temPopulacao ? "#9333ea20" : "transparent",
-                  borderColor: temPopulacao ? "#9333ea" : "#cbd5e1",
-                  color: temPopulacao ? "#9333ea" : "#64748b",
-                }}
-              >
-                {temPopulacao ? "Visível" : "Oculto"}
-              </button>
-            </div>
-          )}
+          <div className="flex flex-col gap-1">
+            {titulo("Heatmaps")}
+            <div className="grid grid-cols-2 gap-1">{heatmaps.map(chip)}</div>
+          </div>
 
-          {/* Heatmap Empresas */}
-          {!isVisaoGeral && (
-            <div className="flex flex-col gap-1 w-full shrink-0">
-              <label className="text-[9px] font-bold text-blue-700 uppercase tracking-wider">Heatmap Empresas</label>
-              <button
-                onClick={() => dash.setShowHeatmapEmpresas(p => !p)}
-                className="h-7 w-full rounded text-[10px] font-bold border transition-colors duration-150"
-                style={{
-                  backgroundColor: dash.showHeatmapEmpresas ? "#1d4ed820" : "transparent",
-                  borderColor: dash.showHeatmapEmpresas ? "#1d4ed8" : "#cbd5e1",
-                  color: dash.showHeatmapEmpresas ? "#1d4ed8" : "#64748b",
-                }}
-              >
-                {dash.showHeatmapEmpresas ? "Visível" : "Oculto"}
-              </button>
-            </div>
-          )}
+          <div className="flex flex-col gap-1 border-t border-slate-200/60 pt-1">
+            <button
+              onClick={() => setAbertoFiltros(v => !v)}
+              aria-expanded={abertoFiltros}
+              className="flex items-center justify-between text-[8px] font-black text-slate-500 uppercase tracking-wider"
+            >
+              <span>Filtrar dados{nFiltros > 0 && <span className="ml-1 rounded-full bg-[#055071] text-white px-1.5 py-px">{nFiltros}</span>}</span>
+              <span className="opacity-70">{abertoFiltros ? "▲" : "▼"}</span>
+            </button>
+            {abertoFiltros && (
+              <>
+                {camadas.includes("Empresas") && (
+                  <div className="flex flex-col gap-0.5 w-full overflow-hidden shrink-0">
+                    <label className="text-[8px] font-bold text-blue-700 uppercase tracking-wider">Setor (empresas)</label>
+                    <Select value={filtroSetor} onValueChange={setFiltroSetor}>
+                      <SelectTrigger className="h-6 border-blue-200/60 bg-blue-50/50 text-[10px] w-full [&>span]:truncate">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="(todos)">(todos)</SelectItem>
+                        {setoresUnicos.map((s: string) => <SelectItem key={s} value={s}>{CNAE_LABELS[s] ?? s}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+                {camadas.includes("Educação") && (
+                  <div className="flex flex-col gap-0.5 w-full overflow-hidden shrink-0">
+                    <label className="text-[8px] font-bold text-green-700 uppercase tracking-wider">Dependência (escolas)</label>
+                    <Select value={filtroDep} onValueChange={setFiltroDep}>
+                      <SelectTrigger className="h-6 border-green-200/60 bg-green-50/50 text-[10px] w-full [&>span]:truncate">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="(todas)">(todas)</SelectItem>
+                        {depsUnicas.map((s: string) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+                {camadas.includes("Saúde") && (
+                  <div className="flex flex-col gap-0.5 w-full overflow-hidden shrink-0">
+                    <label className="text-[8px] font-bold text-red-700 uppercase tracking-wider">Unidade (saúde)</label>
+                    <Select value={filtroTipo} onValueChange={setFiltroTipo}>
+                      <SelectTrigger className="h-6 border-red-200/60 bg-red-50/50 text-[10px] w-full [&>span]:truncate">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="(todas)">(todas)</SelectItem>
+                        {tiposUnicos.map((s: string) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
 
-          {/* Heatmap Saúde */}
-          {!isVisaoGeral && (
-            <div className="flex flex-col gap-1 w-full shrink-0">
-              <label className="text-[9px] font-bold text-red-700 uppercase tracking-wider">Heatmap Saúde</label>
-              <button
-                onClick={() => dash.setShowHeatmapSaude(p => !p)}
-                className="h-7 w-full rounded text-[10px] font-bold border transition-colors duration-150"
-                style={{
-                  backgroundColor: dash.showHeatmapSaude ? "#b91c1c20" : "transparent",
-                  borderColor: dash.showHeatmapSaude ? "#b91c1c" : "#cbd5e1",
-                  color: dash.showHeatmapSaude ? "#b91c1c" : "#64748b",
-                }}
-              >
-                {dash.showHeatmapSaude ? "Visível" : "Oculto"}
-              </button>
-            </div>
-          )}
-
-          {/* Heatmap Educação */}
-          {!isVisaoGeral && (
-            <div className="flex flex-col gap-1 w-full shrink-0">
-              <label className="text-[9px] font-bold text-green-700 uppercase tracking-wider">Heatmap Educação</label>
-              <button
-                onClick={() => dash.setShowHeatmapEducacao(p => !p)}
-                className="h-7 w-full rounded text-[10px] font-bold border transition-colors duration-150"
-                style={{
-                  backgroundColor: dash.showHeatmapEducacao ? "#15803d20" : "transparent",
-                  borderColor: dash.showHeatmapEducacao ? "#15803d" : "#cbd5e1",
-                  color: dash.showHeatmapEducacao ? "#15803d" : "#64748b",
-                }}
-              >
-                {dash.showHeatmapEducacao ? "Visível" : "Oculto"}
-              </button>
+          {camadas.includes("Infraestrutura") && infraAtivas.length > 0 && (
+            <div className="flex flex-col gap-0.5 w-full overflow-hidden shrink-0">
+              <label className="text-[8px] font-bold text-orange-700 uppercase tracking-wider">Infraestrutura</label>
+              <DropdownMenu>
+                <DropdownMenuTrigger className="h-6 border-orange-200/60 bg-orange-50/50 text-[10px] w-full flex justify-between items-center px-2 rounded transition-colors">
+                  <span className="truncate">{`${infraAtivas.length} selecionada(s)`}</span>
+                  <span className="text-[8px] opacity-70">▼</span>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-40" align="end">
+                  {infraAtivas.map((infraNome) => (
+                    <DropdownMenuCheckboxItem
+                      key={infraNome}
+                      checked={true}
+                      onCheckedChange={() => toggleInfra(infraNome)}
+                      className="text-[10px] hover:bg-slate-100"
+                    >
+                      {infraNome}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           )}
         </div>
