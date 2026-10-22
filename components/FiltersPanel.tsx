@@ -25,7 +25,7 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
     showMancha, setShowMancha,
     showDanoFisico, setShowDanoFisico,
     rpDanoFisico, setRpDanoFisico,
-    isVisaoGeral, isCenarioAtivo, temCamadaTabular,
+    isVisaoGeral, isCenarioAtivo, temCamadaTabular, cotasAtivo,
     setoresUnicos, depsUnicas, tiposUnicos,
     toggleInfra, toggleCamada,
   } = dash;
@@ -38,7 +38,7 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
   // Camadas viram chips pequenos (cor + ligado/desligado) em grade de 2 colunas, no lugar de um
   // rótulo + botão de largura total para cada uma. Os filtros de dados (selects) ficam recolhidos.
   const camadasMapa: (Chip & { mostrar: boolean })[] = [
-    { id: "mancha", label: "Mancha", cor: COLORS.cenario, on: showMancha, toggle: () => setShowMancha(p => !p), mostrar: isCenarioAtivo && !isVisaoGeral },
+    { id: "mancha", label: "Mancha", cor: COLORS.cenario, on: showMancha, toggle: () => setShowMancha(p => !p), mostrar: (isCenarioAtivo && !isVisaoGeral) || cotasAtivo },
     { id: "dano", label: "Dano físico", cor: "#d97706", on: showDanoFisico, toggle: () => setShowDanoFisico(p => !p), mostrar: municipio === DANO_FISICO_MUNICIPIO },
   ];
   const chipsMapa = camadasMapa.filter(c => c.mostrar);

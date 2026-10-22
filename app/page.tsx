@@ -63,13 +63,13 @@ export default function Dashboard() {
         </div>
         <div className="flex items-center gap-3 mt-2">
           <div className="relative h-11 w-20">
-            <Image src="/GPEA.webp" alt="GPEa" fill className="object-contain" />
+            <Image src="/GPEA.webp" alt="GPEa" fill sizes="80px" className="object-contain" />
           </div>
           <div className="relative h-11 w-20">
-            <Image src="/CIEX2.webp" alt="CIEX" fill className="object-contain" />
+            <Image src="/CIEX2.webp" alt="CIEX" fill sizes="80px" className="object-contain" />
           </div>
           <div className="relative h-11 w-20">
-            <Image src="/IPH.webp" alt="IPH" fill className="object-contain rounded-sm" />
+            <Image src="/IPH.webp" alt="IPH" fill sizes="80px" className="object-contain rounded-sm" />
           </div>
         </div>
       </div>
