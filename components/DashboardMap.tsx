@@ -350,6 +350,9 @@ export function DashboardMap({ dash }: Props) {
             non-existing layer"). Sem source, a âncora só depende do estilo
             estar carregado e é criada junto das demais, na ordem do JSX. */}
         <Layer id="anchor-mancha" type="background" paint={{ "background-opacity": 0 }} />
+        {/* Ordem: mancha < agricultura < água por cota ("Todas as cotas") < infraestrutura/prédios < pontos. */}
+        <Layer id="anchor-agua" type="background" paint={{ "background-opacity": 0 }} />
+        <Layer id="anchor-infra" type="background" paint={{ "background-opacity": 0 }} />
         <Layer id="anchor-buildings" type="background" paint={{ "background-opacity": 0 }} />
         <Layer id="anchor-pts" type="background" paint={{ "background-opacity": 0 }} />
 
@@ -447,7 +450,7 @@ export function DashboardMap({ dash }: Props) {
           <Source id="cota-img" type="image" url={cotaRaster.url} coordinates={cotaRaster.meta.coordinates}>
             <Layer
               id="cota-raster"
-              beforeId="anchor-mancha"
+              beforeId="anchor-infra"
               type="raster"
               paint={{ "raster-opacity": 0.82, "raster-fade-duration": 0 }}
             />
@@ -489,7 +492,7 @@ export function DashboardMap({ dash }: Props) {
               >
                 <Layer
                   id="agricultura-fill"
-                  beforeId="anchor-buildings"
+                  beforeId="anchor-agua"
                   type="fill"
                   paint={{
                     "fill-color": AGRI_FILL_COLOR,

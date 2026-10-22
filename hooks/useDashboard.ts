@@ -36,7 +36,6 @@ export interface ManchaDuracaoClimada {
 }
 import type { FeatureCollection } from "geojson";
 import type { MapRef, MapLayerMouseEvent } from "react-map-gl/maplibre";
-import * as XLSX from "xlsx";
 import { useCotaRaster } from "@/hooks/useCotaRaster";
 import type { DetalheCotaMun } from "@/lib/cotas-types";
 import {
@@ -632,7 +631,6 @@ export function useDashboard() {
     });
 
     return () => controller.abort();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [municipio]);
 
   const toggleCamada = (camada: string) => { setCamadas(prev => prev.includes(camada) ? prev.filter(c => c !== camada) : [...prev, camada]); setPopupInfo(null); };
@@ -651,9 +649,12 @@ export function useDashboard() {
   const isVisaoGeral = renderMunicipio === "Visão Geral RS";
   const isCenarioAtivo = isVisaoGeral ? true : ((cenario !== "(nenhum)" && manchaCenario != null) || cotaPausada);
 
-  const showEmp = isCenarioAtivo ? atingidosEmpresas : baseEmpresas;
-  const showEdu = isCenarioAtivo ? atingidosEducacao : baseEducacao;
-  const showSau = isCenarioAtivo ? atingidosSaude : baseSaude;
+  // "Todas as cotas" em reprodução: a água avança sozinha, então os pontos (e seus clusters) ficam
+  // ocultos para não se sobreporem à mancha em transição; ao pausar, aparecem só os atingidos.
+  const cotasTocando = cotasAtivo && cotaRaster.tocando;
+  const showEmp = cotasTocando ? null : isCenarioAtivo ? atingidosEmpresas : baseEmpresas;
+  const showEdu = cotasTocando ? null : isCenarioAtivo ? atingidosEducacao : baseEducacao;
+  const showSau = cotasTocando ? null : isCenarioAtivo ? atingidosSaude : baseSaude;
 
   const isTransitioning = municipio !== renderMunicipio;
 
@@ -825,7 +826,8 @@ export function useDashboard() {
       .map(([dep, base]) => ({ dep, base, atg: atgAcc[dep] ?? 0 }));
   }, [baseEducacao, atingidosEducacao]);
 
-  const exportarExcel = useCallback(() => {
+  const exportarExcel = useCallback(async () => {
+    const XLSX = await import("xlsx"); // ~500 KB: carregado só ao clicar em "Baixar"
     const workbook = XLSX.utils.book_new();
     const adicionarAba = (dadosGeograficos: FeatureCollection | null | undefined, nomeDaAba: string) => {
       if (dadosGeograficos && Array.isArray(dadosGeograficos.features) && dadosGeograficos.features.length > 0) {

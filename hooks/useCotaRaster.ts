@@ -59,14 +59,19 @@ export function useCotaRaster(slug: string | null, opts: { cotaInicial?: string;
   const canvas = useRef<HTMLCanvasElement | null>(null)
   const ultima = useRef<number | null>(null)
   const pendente = useRef(false)
+  const urlAtual = useRef<string | null>(null)
 
   const passo = meta ? passoDe(meta) : 1
   const minimo = meta ? meta.cotas[0] - passo : 0
   const maximo = meta ? meta.cotas[meta.cotas.length - 1] : 0
 
   useEffect(() => {
+    // Reiniciar o estado quando o slug muda é intencional (o raster é outro).
+    /* eslint-disable react-hooks/set-state-in-effect */
     setMeta(null); setErro(false); setUrl(null); setCotaState(null); setTocando(false)
     idx.current = null; canvas.current = null; ultima.current = null
+    /* eslint-enable react-hooks/set-state-in-effect */
+    if (urlAtual.current) { URL.revokeObjectURL(urlAtual.current); urlAtual.current = null }
     if (!slug) return
     let vivo = true
     ;(async () => {
@@ -95,7 +100,10 @@ export function useCotaRaster(slug: string | null, opts: { cotaInicial?: string;
         if (vivo) setErro(true)
       }
     })()
-    return () => { vivo = false }
+    return () => {
+      vivo = false
+      if (urlAtual.current) { URL.revokeObjectURL(urlAtual.current); urlAtual.current = null }
+    }
   }, [slug]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const amostrar = useCallback((lon: number, lat: number) => {
@@ -172,7 +180,10 @@ export function useCotaRaster(slug: string | null, opts: { cotaInicial?: string;
       cv.toBlob((b) => {
         if (!b) return
         const novo = URL.createObjectURL(b)
-        setUrl((antigo) => { if (antigo) setTimeout(() => URL.revokeObjectURL(antigo), 3000); return novo })
+        const antigo = urlAtual.current
+        urlAtual.current = novo
+        setUrl(novo)
+        if (antigo) setTimeout(() => URL.revokeObjectURL(antigo), 3000)
       })
     })
   }, [cota, meta, tabela, passo])

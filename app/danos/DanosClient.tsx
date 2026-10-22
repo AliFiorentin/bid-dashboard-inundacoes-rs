@@ -299,6 +299,8 @@ export function DanosClient({ dados, dadosClimada: climadaPA, dadosClimadaMun, d
   // Deep-link opcional: /danos?aba=climada abre direto na aba CLIMADA (ex.: botão do header do mapa).
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    // Ler a URL só é possível após a hidratação, então o setState no efeito é intencional.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (params.get("aba") === "climada" && (climadaPA || Object.keys(cotasPorMun).length)) setAba("climada");
   }, [climadaPA, cotasPorMun]);
 
