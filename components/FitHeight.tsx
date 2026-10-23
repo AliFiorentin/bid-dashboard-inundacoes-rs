@@ -27,7 +27,7 @@ export function FitHeight({ children, min = 0.55, max = 1.25, className }: Props
     if (!o || !i) return;
     const medir = () => {
       // Celular/tablet (bottom sheet baixo): sem encolher, o conteudo rola.
-      if (!window.matchMedia("(min-width: 1024px)").matches) {
+      if (!window.matchMedia("(min-width: 1024px), (pointer: fine)").matches) {
         setEscala(prev => (prev === 1 ? prev : 1));
         setRolavel(true);
         return;
@@ -47,7 +47,7 @@ export function FitHeight({ children, min = 0.55, max = 1.25, className }: Props
   }, [min, max]);
 
   return (
-    <div ref={outer} tabIndex={rolavel ? 0 : undefined} className={`flex-1 min-h-0 overflow-hidden max-lg:overflow-y-auto ${className ?? ""}`}>
+    <div ref={outer} tabIndex={rolavel ? 0 : undefined} className={`flex-1 min-h-0 overflow-hidden movel:overflow-y-auto ${className ?? ""}`}>
       <div ref={inner} style={{ transform: `scale(${escala})`, transformOrigin: "top left", width: `${100 / escala}%` }}>
         {children}
       </div>

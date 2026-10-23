@@ -41,7 +41,7 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
   } = dash;
 
   return (
-    <header ref={headerRef} className="dash-header absolute top-1.5 left-2 right-2 lg:left-3 lg:right-3 flex flex-wrap items-center z-20 rounded-xl" style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 4px 24px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)", paddingInline: "0.625rem", paddingBlock: "0.25rem", gap: SECTION_GAP }}>
+    <header ref={headerRef} className="dash-header absolute top-1.5 left-2 right-2 desk:left-3 desk:right-3 flex flex-wrap items-center z-20 rounded-xl" style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 4px 24px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)", paddingInline: "0.625rem", paddingBlock: "0.25rem", gap: SECTION_GAP }}>
       <div className="flex items-center border-r border-slate-200/60 shrink-0" style={{ gap: LOGO_GAP, paddingRight: SECTION_GAP }}>
         {/* Caixa fixa igual para as 4 logos: BID/GPEA são bem mais largas que
             altas e CIEX/IPH mais quadradas/altas -- só igualar a altura (como
@@ -62,7 +62,7 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
         <div className="relative shrink-0" style={{ height: LOGO_H, width: LOGO_W }}>
           <Image src="/IPH.webp" alt="IPH Logo" fill className="object-contain rounded-sm" onError={(e) => (e.currentTarget.style.display = 'none')} />
         </div>
-        <div className="max-lg:sr-only flex flex-col justify-center min-w-0" style={{ paddingLeft: LOGO_GAP, maxWidth: "clamp(130px, 15vw, 260px)" }}>
+        <div className="movel:sr-only flex flex-col justify-center min-w-0" style={{ paddingLeft: LOGO_GAP, maxWidth: "clamp(130px, 15vw, 260px)" }}>
           {/* Sem whitespace-nowrap de propósito: com titulo curto o texto cabe
               numa linha; em telas mais estreitas ele quebra em 2 linhas em vez
               de forçar o header inteiro (selects/botões) pra baixo -- essa
@@ -71,10 +71,10 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
           <span className="text-slate-500 font-medium tracking-wider uppercase whitespace-nowrap" style={{ fontSize: SUBTITLE_SIZE }}>Painel de Monitoramento</span>
         </div>
       </div>
-      <div className="flex flex-row lg:flex-col gap-1.5 lg:gap-0.5 shrink-0 mr-auto">
+      <div className="flex flex-row desk:flex-col gap-1.5 desk:gap-0.5 shrink-0 mr-auto">
         <Link
           href="/danos"
-          className="h-11 lg:h-5 px-2 rounded-md text-[11px] lg:text-[10px] font-bold border border-slate-200/80 bg-white/70 text-slate-500 hover:bg-slate-100 hover:text-slate-700 hover:border-slate-300 transition-colors duration-150 flex items-center gap-1 shrink-0"
+          className="h-11 desk:h-5 px-2 rounded-md text-[11px] desk:text-[10px] font-bold border border-slate-200/80 bg-white/70 text-slate-500 hover:bg-slate-100 hover:text-slate-700 hover:border-slate-300 transition-colors duration-150 flex items-center gap-1 shrink-0"
           title="Ver danos operacionais estimados"
         >
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
@@ -82,7 +82,7 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
         </Link>
         <Link
           href="/metodologia"
-          className="h-11 lg:h-5 px-2 rounded-md text-[11px] lg:text-[10px] font-bold border border-slate-200/80 bg-white/70 text-slate-500 hover:bg-slate-100 hover:text-slate-700 hover:border-slate-300 transition-colors duration-150 flex items-center gap-1 shrink-0"
+          className="h-11 desk:h-5 px-2 rounded-md text-[11px] desk:text-[10px] font-bold border border-slate-200/80 bg-white/70 text-slate-500 hover:bg-slate-100 hover:text-slate-700 hover:border-slate-300 transition-colors duration-150 flex items-center gap-1 shrink-0"
           title="Ver metodologia de cálculo"
         >
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
@@ -90,8 +90,8 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
         </Link>
       </div>
 
-      <div className="flex items-center max-lg:w-full" style={{ gap: SELECT_GAP }}>
-        <div className="flex flex-col gap-0 shrink-0 max-lg:flex-1 max-lg:min-w-0" style={{ width: "var(--sel1-w)" }}>
+      <div className="flex items-center movel:w-full" style={{ gap: SELECT_GAP }}>
+        <div className="flex flex-col gap-0 shrink-0 movel:flex-1 movel:min-w-0" style={{ width: "var(--sel1-w)" }}>
           <label className="font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap" style={{ fontSize: SELECT_LABEL_SIZE }}>Município</label>
           <Select value={municipio} onValueChange={setMunicipio}>
             <SelectTrigger aria-label="Município" className="bg-slate-50/80 w-full min-w-0" style={{ height: SELECT_H, fontSize: SELECT_TRIGGER_SIZE }}><SelectValue /></SelectTrigger>
@@ -102,7 +102,7 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
           </Select>
         </div>
 
-        <div className="flex flex-col gap-0 lg:border-r border-slate-200/60 shrink-0 max-lg:flex-1 max-lg:min-w-0" style={{ width: "var(--sel2-w)", paddingRight: "var(--sel-pr)" }}>
+        <div className="flex flex-col gap-0 desk:border-r border-slate-200/60 shrink-0 movel:flex-1 movel:min-w-0" style={{ width: "var(--sel2-w)", paddingRight: "var(--sel-pr)" }}>
           <label className="font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap" style={{ fontSize: SELECT_LABEL_SIZE }}>Cenário de Inundação</label>
           <Select value={cenario} onValueChange={setCenario} disabled={isVisaoGeral}>
             <SelectTrigger aria-label="Cenário de inundação" className="bg-slate-50/80 w-full min-w-0" style={{ height: SELECT_H, fontSize: SELECT_TRIGGER_SIZE }}><SelectValue placeholder={isVisaoGeral ? "Piores Cenários" : "(nenhum)"} /></SelectTrigger>
@@ -114,7 +114,7 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
         </div>
       </div>
 
-      <div className="flex items-center max-lg:w-full max-lg:overflow-x-auto max-lg:[scrollbar-width:none]" style={{ gap: "var(--layer-gap)" }}>
+      <div className="flex items-center movel:w-full movel:overflow-x-auto movel:[scrollbar-width:none] max-xl:desk:w-full max-xl:desk:justify-between max-xl:desk:border-t max-xl:desk:border-slate-200/60 max-xl:desk:mt-1 max-xl:desk:pt-1" style={{ gap: "var(--layer-gap)" }}>
         {([
           { camada: "Empresas", icon: <Building2 size={10} strokeWidth={2.5} /> },
           { camada: "Educação", icon: <GraduationCap size={10} strokeWidth={2.5} /> },
@@ -126,7 +126,7 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
             variant={camadas.includes(camada) ? "default" : "outline"}
             size="xs"
             onClick={() => toggleCamada(camada)}
-            className="font-black gap-0.5 shrink-0"
+            className="font-black gap-0.5 shrink-0 max-xl:desk:flex-1"
             style={{ fontSize: BTN_SIZE, height: BTN_H, paddingInline: "var(--btn-px)" }}
           >
             {icon}{camada}
@@ -138,7 +138,7 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
             <Button
               variant={camadas.includes("Infraestrutura") && infraAtivas.length > 0 ? "default" : "outline"}
               size="xs"
-              className="font-black gap-1 shrink-0"
+              className="font-black gap-1 shrink-0 max-xl:desk:flex-1"
               style={{ fontSize: BTN_SIZE, height: BTN_H, paddingInline: "var(--btn-px)" }}
             >
               <Wrench size={11} strokeWidth={2.5} />Infraestrutura {infraAtivas.length > 0 && `(${infraAtivas.length})`}

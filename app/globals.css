@@ -5,6 +5,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Layout do Dashboard: "desk" = layout de desktop (painel lateral); "movel" = tablet/celular (bottom sheet).
+   Quem usa mouse (pointer: fine) SEMPRE recebe o layout de desktop, mesmo com a janela estreita
+   (a largura minima e' forcada abaixo, com rolagem horizontal); o layout movel e' so' para aparelhos de toque
+   com tela < 1024 px. "telefone" = toque e < 768 px (aviso "acesse pelo computador"). */
+@custom-variant desk (@media (min-width: 64rem), (pointer: fine));
+@custom-variant movel (@media (max-width: 63.99rem) and (pointer: coarse));
+@custom-variant telefone (@media (max-width: 47.99rem) and (pointer: coarse));
+
 @theme inline {
     --font-heading: var(--font-sans);
     --font-sans: var(--font-sans);
@@ -238,7 +246,7 @@
   --sel2-w: 155px;
   --sel-pr: 0px;
 }
-@media (min-width: 1024px) {
+@media (min-width: 1024px), (pointer: fine) {
   .dash-header {
     --logo-h: clamp(20px, 1.7vw, 28px);
     --logo-w: clamp(40px, 3.4vw, 56px);
@@ -260,6 +268,13 @@
 
 /* Mapa no celular/tablet: o zoom por pinça substitui os botões +/- do NavigationControl, e a barra
    de câmera (3D/girar/inclinar) já cobre a bússola; assim nada disputa o canto com a legenda. */
-@media (max-width: 1023.98px) {
+@media (max-width: 1023.98px) and (pointer: coarse) {
   .maplibregl-ctrl-bottom-right .maplibregl-ctrl-group { display: none; }
+}
+
+/* Janela de desktop (mouse) mais estreita que 1024 px: mantem o layout de desktop com largura minima de
+   1024 px e rolagem horizontal, em vez de trocar para o layout de tablet. */
+@media (pointer: fine) and (max-width: 1023.98px) {
+  html { overflow-x: auto; }
+  .dash-root { width: 1024px; }
 }
