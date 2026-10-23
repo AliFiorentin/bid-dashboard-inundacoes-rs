@@ -1,6 +1,6 @@
 // Saída de pipeline/climada_cota_detalhe.py (climada_cota_detalhe_{slug}.json): o que fica sob
 // água em cada cota do rio, por categoria.
-export interface DetalheGrupoCota {
+interface DetalheGrupoCota {
   nome: string; n: number; valor_exposto_brl: number
   empregados?: number; massa_salarial_brl?: number; salario_medio_brl?: number
   leitos?: number; profissionais?: number; matriculas?: number; docentes?: number

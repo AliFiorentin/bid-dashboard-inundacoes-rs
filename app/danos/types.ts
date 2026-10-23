@@ -26,7 +26,7 @@ export interface SetorResultado {
   fonte_curva: string;
   porte_campo: string;
 }
-export interface CurvaInfo {
+interface CurvaInfo {
   depth: number[];
   mdd: number[];
   porte_campo: string;
@@ -40,7 +40,7 @@ export interface EaiAnualEsperado {
   total: number;
   rps_usados: string[];
 }
-export interface ProjecaoSetor {
+interface ProjecaoSetor {
   risco_2025_brl: number;
   risco_2050_brl: number;
   aumento_total_brl: number;
@@ -48,7 +48,7 @@ export interface ProjecaoSetor {
   parcela_clima_brl: number;
   pct_climatico: number;
 }
-export interface Projecao2050 {
+interface Projecao2050 {
   premissas: {
     crescimento_anual: number;
     anos_projecao: number;
@@ -61,7 +61,7 @@ export interface Projecao2050 {
   por_setor: Record<string, ProjecaoSetor>;
   total: ProjecaoSetor;
 }
-export interface RpPorCota {
+interface RpPorCota {
   frequencia: { metodo: string; serie: string; fonte: string; datum: string };
   rps: Record<string, { cota_regua_m: number; cota_raster_m: number }>;
   rps_acima_do_ultimo_raster: string[];
@@ -133,7 +133,7 @@ export interface CotasData {
 }
 
 // ─── Tipos — medidas de adaptação (climada_medidas.py) ─────────────────────────
-export interface MedidaResultado {
+interface MedidaResultado {
   id: string;
   nome: string;
   mecanismo: string;
@@ -193,7 +193,7 @@ export interface ExposicaoMun {
 }
 
 // ─── Tipos — indicadores do painel por categoria e por cota (climada_cota_detalhe.py) ──
-export interface DetalheGrupo { nome: string; n: number; valor_exposto_brl: number; empregados?: number; massa_salarial_brl?: number; salario_medio_brl?: number; leitos?: number; profissionais?: number; matriculas?: number; docentes?: number }
+interface DetalheGrupo { nome: string; n: number; valor_exposto_brl: number; empregados?: number; massa_salarial_brl?: number; salario_medio_brl?: number; leitos?: number; profissionais?: number; matriculas?: number; docentes?: number }
 export interface DetalheCota {
   ano_agricultura: number;
   area_agricola_total_ha: Record<string, number>;

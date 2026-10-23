@@ -1,13 +1,13 @@
 import type { FeatureCollection } from "geojson";
 
-export interface PopulacaoMunData {
+interface PopulacaoMunData {
   pop_total: number;
   coordinates: [[number, number], [number, number], [number, number], [number, number]];
   cenarios: Record<string, { pop_atingida: number; pct_atingida: number }>;
 }
 export type PopulacaoData = Record<string, PopulacaoMunData>;
 
-export interface AreaAtingidaMunData {
+interface AreaAtingidaMunData {
   area_km2: number;
   cenarios: Record<string, { area_atingida_km2: number; pct_atingida: number }>;
 }
@@ -31,7 +31,7 @@ export interface InfraPainelMetricas {
   fossa?: number;
   condominio?: number;
 }
-export interface InfraPainelEntry {
+interface InfraPainelEntry {
   base: InfraPainelMetricas;
   cenarios: Record<string, InfraPainelMetricas>;
   /** Acumulado por cota-raster ("Todas as cotas"), indice i = cota i+1. */

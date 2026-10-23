@@ -284,7 +284,7 @@ export const STAFF_COLS = [
   "staff_transporte_urgencia",
 ]
 
-export const DEP_LABELS: Record<string, string> = {
+const DEP_LABELS: Record<string, string> = {
   "1": "Federal",
   "2": "Estadual",
   "3": "Municipal",
@@ -314,7 +314,7 @@ export const STAFF_LABELS: Record<string, string> = {
 // usuário; nunca troque a chave interna só para "renomear" um cenário --
 // quebraria o casamento com os arquivos *_ATINGIDOS_<slug>.geojson já
 // publicados pelo pipeline.
-export const CENARIO_DISPLAY_LABEL: Record<string, string> = {
+const CENARIO_DISPLAY_LABEL: Record<string, string> = {
   "Climada Evento 2024": "Climada - UNU/EHS",
 }
 export const cenarioLabel = (cen: string): string => CENARIO_DISPLAY_LABEL[cen] ?? cen
@@ -341,7 +341,6 @@ export const AREA_VISAO_GERAL_CENARIO = "ADA Estadual"
 // extensão da mancha (atingido sim/não), sem lâmina d'água por ponto.
 export const DANO_FISICO_MUNICIPIO = "Porto Alegre"
 export const DANO_FISICO_RPS = ["RP10", "RP20", "RP50", "RP75", "RP100", "RP200", "RP500"] as const
-export const DANO_FISICO_SETORES = ["empresas", "educacao", "saude"] as const
 
 // Rampa de cor por "% do valor de reposição destruído" (0-100), usada no
 // circle-color (interpolate) da camada -- do cinza (sem dano) ao vermelho

@@ -14,11 +14,6 @@ import { useDanoFisico } from "@/hooks/dashboard/useDanoFisico";
 import { useDashboardDerived } from "@/hooks/dashboard/useDashboardDerived";
 import { useMapInteraction } from "@/hooks/dashboard/useMapInteraction";
 
-export type {
-  PopulacaoMunData, PopulacaoData, AreaAtingidaMunData, AreaAtingidaData,
-  InfraStatsEntry, InfraPainelMetricas, InfraPainelEntry, InfraPainel, DanoFisicoIndice, ManchaDuracaoClimada,
-} from "@/hooks/dashboard/types";
-
 /**
  * Estado central do dashboard. Orquestra os hooks de `hooks/dashboard/`:
  * seleção (município/cenário/camadas) mora aqui; carga de dados, permalink,
