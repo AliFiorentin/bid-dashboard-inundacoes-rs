@@ -15,7 +15,7 @@ interface Chip { id: string; label: string; cor: string; on: boolean; toggle: ()
 
 export function FiltersPanel({ dash }: FiltersPanelProps) {
   const {
-    municipio,
+    municipio, cenario,
     camadas,
     infraAtivas,
     filtroSetor, setFiltroSetor,
@@ -37,6 +37,15 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
   // que a pessoa interaja com ele antes.
   const interagiu = React.useRef(false);
   const jaRecolheu = React.useRef(false);
+  // Trocar de município ou cenário reabre o popover (e rearma o recolhimento automático).
+  const primeiraSelecao = React.useRef(true);
+  React.useEffect(() => {
+    if (primeiraSelecao.current) { primeiraSelecao.current = false; return; }
+    if (window.matchMedia("(min-width: 1024px)").matches) return;
+    interagiu.current = false;
+    jaRecolheu.current = false;
+    setShowFiltros(true);
+  }, [municipio, cenario, setShowFiltros]);
   const visivel = showFiltros && showPanel;
   React.useEffect(() => {
     if (!visivel || jaRecolheu.current || window.matchMedia("(min-width: 1024px)").matches) return;
