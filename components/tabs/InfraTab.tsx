@@ -21,13 +21,14 @@ interface Props {
     | "mostraImpacto"
     | "isCenarioAtivo"
     | "infraPainel"
-    | "infraCenarioSlug"
+    | "infraAtg"
     | "allMunInfraStats"
     | "showListaLogradouros"
     | "setShowListaLogradouros"
     | "showListaEixos"
     | "setShowListaEixos"
     | "areaData"
+    | "areaCotaKm2"
   >;
 }
 
@@ -39,13 +40,14 @@ export function InfraTab({ dash }: Props) {
     mostraImpacto,
     isCenarioAtivo,
     infraPainel,
-    infraCenarioSlug,
+    infraAtg,
     allMunInfraStats,
     showListaLogradouros,
     setShowListaLogradouros,
     showListaEixos,
     setShowListaEixos,
     areaData,
+    areaCotaKm2,
   } = dash;
 
   // ── Visão Geral RS ─────────────────────────────────────────────────────────
@@ -206,13 +208,13 @@ export function InfraTab({ dash }: Props) {
       style={{ scrollbarColor: `${C.border} transparent` }}
     >
       <div className="flex flex-col gap-5 pb-2">
-        <AreaAtingidaSection dash={{ municipio, cenario, mostraImpacto, areaData }} />
+        <AreaAtingidaSection dash={{ municipio, cenario, mostraImpacto, areaData, areaCotaKm2 }} />
 
         {todosTipos.includes("Logradouros") && (
           <LogradourosSection
             dash={{
               infraPainel,
-              infraCenarioSlug,
+              infraAtg,
               mostraImpacto,
               isCenarioAtivo,
               showListaLogradouros,
@@ -223,13 +225,13 @@ export function InfraTab({ dash }: Props) {
 
         {todosTipos.includes("Quadras") && (
           <QuadrasSection
-            dash={{ infraPainel, infraCenarioSlug, mostraImpacto }}
+            dash={{ infraPainel, infraAtg, mostraImpacto }}
           />
         )}
 
         {todosTipos.includes("Terrenos") && (
           <TerrenosSection
-            dash={{ infraPainel, infraCenarioSlug, mostraImpacto }}
+            dash={{ infraPainel, infraAtg, mostraImpacto }}
           />
         )}
 
@@ -241,7 +243,7 @@ export function InfraTab({ dash }: Props) {
               infraNome={infraNome}
               dash={{
                 infraPainel,
-                infraCenarioSlug,
+                infraAtg,
                 mostraImpacto,
                 showListaEixos,
                 setShowListaEixos,

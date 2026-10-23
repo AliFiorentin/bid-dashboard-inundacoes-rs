@@ -13,7 +13,7 @@ interface Props {
   dash: Pick<
     DashboardState,
     | "infraPainel"
-    | "infraCenarioSlug"
+    | "infraAtg"
     | "mostraImpacto"
     | "showListaEixos"
     | "setShowListaEixos"
@@ -21,11 +21,11 @@ interface Props {
 }
 
 export function GenericInfraSection({ infraNome, dash }: Props) {
-  const { infraPainel, infraCenarioSlug, mostraImpacto, showListaEixos, setShowListaEixos } = dash;
+  const { infraPainel, infraAtg, mostraImpacto, showListaEixos, setShowListaEixos } = dash;
 
   const entry    = infraPainel?.[infraNome];
   const base     = entry?.base;
-  const atingido = entry?.cenarios[infraCenarioSlug];
+  const atingido = infraAtg[infraNome];
   const totalBase = base?.count ?? 0;
   const totalAtg  = atingido?.count ?? 0;
   const cor = INFRA_COLORS[infraNome] ?? "#f59e0b";

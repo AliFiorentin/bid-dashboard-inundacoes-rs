@@ -10,15 +10,15 @@ import type { DashboardState } from "@/hooks/useDashboard";
 const PANEL_HDR = { background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)" } as const;
 
 interface Props {
-  dash: Pick<DashboardState, "infraPainel" | "infraCenarioSlug" | "mostraImpacto">;
+  dash: Pick<DashboardState, "infraPainel" | "infraAtg" | "mostraImpacto">;
 }
 
 export function TerrenosSection({ dash }: Props) {
-  const { infraPainel, infraCenarioSlug, mostraImpacto } = dash;
+  const { infraPainel, infraAtg, mostraImpacto } = dash;
 
   const entry = infraPainel?.["Terrenos"];
   const base = entry?.base;
-  const atg = entry?.cenarios[infraCenarioSlug];
+  const atg = infraAtg["Terrenos"];
 
   const total = base?.count ?? 0;
   const totalAtg = atg?.count ?? 0;

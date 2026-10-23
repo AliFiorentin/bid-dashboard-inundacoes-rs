@@ -42,7 +42,7 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
     showListaAmbulat, setShowListaAmbulat,
     baseAgriStats, atingidosAgriStats, conabStats,
     allMunAgriStats, allMunAgriAtingidosStats,
-    infraPainel, infraCenarioSlug,
+    infraPainel, infraAtg, areaCotaKm2,
     allMunInfraStats,
     showListaLogradouros, setShowListaLogradouros,
     showListaEixos, setShowListaEixos,
@@ -188,7 +188,7 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
               </TabsContent>
             )}
 
-            <ResumoTab dash={{ municipio, cenario, mostraImpacto, isVisaoGeral, isCenarioAtivo, metricasEmp, metricasEdu, metricasSau, baseAgriStats, atingidosAgriStats, conabStats, allMunAgriStats, allMunAgriAtingidosStats, infraPainel, infraCenarioSlug, allMunInfraStats, areaData }} />
+            <ResumoTab dash={{ municipio, cenario, mostraImpacto, isVisaoGeral, isCenarioAtivo, metricasEmp, metricasEdu, metricasSau, baseAgriStats, atingidosAgriStats, conabStats, allMunAgriStats, allMunAgriAtingidosStats, infraPainel, infraAtg, allMunInfraStats, areaData, areaCotaKm2 }} />
 
             <EmpresasTab dash={{ setoresChart, setoresEmpregadosChart, metricasEmp, mostraImpacto }} />
 
@@ -212,7 +212,7 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
             )}
 
             {(isVisaoGeral || (INFRAESTRUTURA_CONFIG[municipio]?.length ?? 0) > 0) && (
-              <InfraTab dash={{ municipio, cenario, isVisaoGeral, mostraImpacto, isCenarioAtivo, infraPainel, infraCenarioSlug, allMunInfraStats, showListaLogradouros, setShowListaLogradouros, showListaEixos, setShowListaEixos, areaData }} />
+              <InfraTab dash={{ municipio, cenario, isVisaoGeral, mostraImpacto, isCenarioAtivo, infraPainel, infraAtg, allMunInfraStats, showListaLogradouros, setShowListaLogradouros, showListaEixos, setShowListaEixos, areaData, areaCotaKm2 }} />
             )}
 
           </Tabs>

@@ -7,15 +7,15 @@ import { KPIRow } from "@/components/KPIRow";
 import type { DashboardState } from "@/hooks/useDashboard";
 
 interface Props {
-  dash: Pick<DashboardState, "infraPainel" | "infraCenarioSlug" | "mostraImpacto">;
+  dash: Pick<DashboardState, "infraPainel" | "infraAtg" | "mostraImpacto">;
 }
 
 export function QuadrasSection({ dash }: Props) {
-  const { infraPainel, infraCenarioSlug, mostraImpacto } = dash;
+  const { infraPainel, infraAtg, mostraImpacto } = dash;
 
   const entry = infraPainel?.["Quadras"];
   const base = entry?.base;
-  const atg = entry?.cenarios[infraCenarioSlug];
+  const atg = infraAtg["Quadras"];
   const total = base?.count ?? 0;
   const totalAtg = atg?.count ?? 0;
   const cor = INFRA_COLORS["Quadras"];

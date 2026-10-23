@@ -13,7 +13,7 @@ interface Props {
   dash: Pick<
     DashboardState,
     | "infraPainel"
-    | "infraCenarioSlug"
+    | "infraAtg"
     | "mostraImpacto"
     | "isCenarioAtivo"
     | "showListaLogradouros"
@@ -22,11 +22,11 @@ interface Props {
 }
 
 export function LogradourosSection({ dash }: Props) {
-  const { infraPainel, infraCenarioSlug, mostraImpacto, showListaLogradouros, setShowListaLogradouros } = dash;
+  const { infraPainel, infraAtg, mostraImpacto, showListaLogradouros, setShowListaLogradouros } = dash;
 
   const entry = infraPainel?.["Logradouros"];
   const base = entry?.base;
-  const atg = entry?.cenarios[infraCenarioSlug];
+  const atg = infraAtg["Logradouros"];
 
   const segBase = base?.count ?? 0;
   const segAtg = atg?.count ?? 0;

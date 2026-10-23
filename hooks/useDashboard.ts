@@ -34,6 +34,8 @@ export interface InfraPainelMetricas {
 export interface InfraPainelEntry {
   base: InfraPainelMetricas;
   cenarios: Record<string, InfraPainelMetricas>;
+  /** Acumulado por cota-raster ("Todas as cotas"), indice i = cota i+1. */
+  por_cota?: InfraPainelMetricas[];
 }
 export type InfraPainel = Record<string, InfraPainelEntry>;
 
@@ -811,7 +813,22 @@ export function useDashboard() {
     }
   }, [camadas, isVisaoGeral, tabAtiva, municipio]);
 
-  const infraCenarioSlug = scenarioSlug(municipio, cenario);
+  // Metricas de infra "atingidas" por tipo: da cota-raster pausada (Todas as cotas) ou do cenario.
+  const infraAtg = useMemo(() => {
+    const out: Record<string, InfraPainelMetricas | undefined> = {};
+    if (!infraPainel) return out;
+    const slugCen = scenarioSlug(municipio, cenario);
+    Object.entries(infraPainel).forEach(([tipo, e]) => {
+      out[tipo] = cotaPausada
+        ? (nCotasAtingidas === 0 ? { count: 0 } : e.por_cota?.[nCotasAtingidas - 1])
+        : e.cenarios[slugCen];
+    });
+    return out;
+  }, [infraPainel, municipio, cenario, cotaPausada, nCotasAtingidas]);
+  // Area (km2) sob agua na cota pausada; null fora desse modo.
+  const areaCotaKm2 = cotaPausada && cotaRaster.meta?.area_por_cota_km2
+    ? (nCotasAtingidas === 0 ? 0 : cotaRaster.meta.area_por_cota_km2[nCotasAtingidas - 1] ?? 0)
+    : null;
   const possuiInfra = INFRAESTRUTURA_CONFIG[municipio] && INFRAESTRUTURA_CONFIG[municipio].length > 0;
   const mostraImpacto = isVisaoGeral || isCenarioAtivo;
   const temCamadaTabular = camadas.includes("Empresas") || camadas.includes("Educação") || camadas.includes("Saúde") || camadas.includes("Agricultura") || camadas.includes("Infraestrutura") || camadas.includes("População");
@@ -1048,7 +1065,7 @@ export function useDashboard() {
     showLegenda, setShowLegenda,
     is3D, setIs3D,
     isLoading,
-    baseEmpresas, baseEducacao, baseSaude, baseInfra, infraPainel, infraCenarioSlug,
+    baseEmpresas, baseEducacao, baseSaude, baseInfra, infraPainel, infraAtg, areaCotaKm2,
     atingidosEmpresas, atingidosEducacao, atingidosSaude, atingidosInfra,
     manchaCenario, manchaRS, limitePA,
     baseAgriStats, atingidosAgriStats, conabStats,

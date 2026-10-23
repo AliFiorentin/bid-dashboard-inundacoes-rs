@@ -40,9 +40,10 @@ interface Props {
     | "allMunAgriStats"
     | "allMunAgriAtingidosStats"
     | "infraPainel"
-    | "infraCenarioSlug"
+    | "infraAtg"
     | "allMunInfraStats"
     | "areaData"
+    | "areaCotaKm2"
   >;
 }
 
@@ -103,8 +104,8 @@ export function ResumoTab({ dash }: Props) {
     metricasEmp, metricasEdu, metricasSau,
     baseAgriStats, atingidosAgriStats, conabStats,
     allMunAgriStats, allMunAgriAtingidosStats,
-    infraPainel, infraCenarioSlug, allMunInfraStats,
-    areaData,
+    infraPainel, infraAtg, allMunInfraStats,
+    areaData, areaCotaKm2,
   } = dash;
 
   const somaValores = (rec: Record<string, number> | undefined) =>
@@ -151,7 +152,7 @@ export function ResumoTab({ dash }: Props) {
     : (infraPainel?.["Edificações"]?.base.count ?? 0);
   const edifAtg = isVisaoGeral
     ? MUNICIPIOS.reduce((s, mun) => s + (allMunInfraStats?.[mun]?.["Edificações"]?.count_atingido ?? 0), 0)
-    : (infraPainel?.["Edificações"]?.cenarios[infraCenarioSlug]?.count ?? 0);
+    : (infraAtg["Edificações"]?.count ?? 0);
 
   // ── Área Atingida: território do município x extensão da mancha ────────────
   // Na Visão Geral usa o próprio cenário do RS (mancha estadual única "ADA
@@ -160,7 +161,7 @@ export function ResumoTab({ dash }: Props) {
   const areaBase = isVisaoGeral
     ? (areaData?.[AREA_VISAO_GERAL_LABEL]?.area_km2 ?? 0)
     : (areaData?.[municipio]?.area_km2 ?? 0);
-  const areaAtg = isVisaoGeral
+  const areaAtg = areaCotaKm2 != null ? areaCotaKm2 : isVisaoGeral
     ? (findCenarioData(areaData?.[AREA_VISAO_GERAL_LABEL]?.cenarios ?? {}, AREA_VISAO_GERAL_CENARIO)?.area_atingida_km2 ?? 0)
     : (isCenarioAtivo ? findCenarioData(areaData?.[municipio]?.cenarios ?? {}, cenario)?.area_atingida_km2 ?? 0 : 0);
 
