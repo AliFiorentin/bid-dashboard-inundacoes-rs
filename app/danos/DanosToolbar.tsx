@@ -52,7 +52,7 @@ export function DanosToolbar({ ctx }: { ctx: DanosCtx }) {
                   <button
                     key={d}
                     onClick={() => setDias(d)}
-                    className={`px-3 py-1 rounded-full text-[11px] font-black border transition-all duration-150 ${
+                    className={`px-3 py-1 max-lg:min-h-11 rounded-full text-[11px] font-black border transition-all duration-150 ${
                       dias === d
                         ? "bg-[#055071] text-white border-[#055071] shadow-sm"
                         : "bg-white text-slate-600 border-slate-200 hover:border-[#055071] hover:text-[#055071]"

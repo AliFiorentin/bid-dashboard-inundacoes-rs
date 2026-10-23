@@ -12,6 +12,11 @@ interface Args {
   setIs3D: (v: boolean) => void;
 }
 
+// Painel lateral só existe a partir de lg (1024px); abaixo disso é bottom sheet e o
+// mapa já é redimensionado para ficar acima dele (sem padding).
+const PADDING_PAINEL = 412;
+const painelLateral = () => window.matchMedia("(min-width: 1024px)").matches;
+
 /** Enquadramento do mapa: flyTo na troca de município, padding do painel e posição do header. */
 export function useMapCamera({ mapRef, headerRef, municipio, showPainelAnalise, permalinkView, setIs3D }: Args) {
   const [headerBottom, setHeaderBottom] = useState(82);
@@ -36,7 +41,7 @@ export function useMapCamera({ mapRef, headerRef, municipio, showPainelAnalise, 
       if (primeiraVez && permalinkView) return;
 
       const isVg = municipio === "Visão Geral RS";
-      const padLeft = showPainelAnalise ? 412 : 0;
+      const padLeft = showPainelAnalise && painelLateral() ? PADDING_PAINEL : 0;
       map.flyTo({
         center: view.center,
         zoom: view.zoom,
@@ -57,7 +62,7 @@ export function useMapCamera({ mapRef, headerRef, municipio, showPainelAnalise, 
   useEffect(() => {
     const map = mapRef.current?.getMap();
     if (!map) return;
-    map.easeTo({ padding: { left: showPainelAnalise ? 412 : 0, top: 0, right: 0, bottom: 0 }, duration: 400 });
+    map.easeTo({ padding: { left: showPainelAnalise && painelLateral() ? PADDING_PAINEL : 0, top: 0, right: 0, bottom: 0 }, duration: 400 });
   }, [showPainelAnalise, mapRef]);
 
   useEffect(() => {

@@ -24,7 +24,6 @@ interface AnalysisPanelProps {
 export function AnalysisPanel({ dash }: AnalysisPanelProps) {
   const {
     showPainelAnalise, setShowPainelAnalise,
-    headerBottom,
     exportarExcel,
     municipio, cenario,
     mostraImpacto, isVisaoGeral,
@@ -89,15 +88,19 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
   return (
     <>
       {showPainelAnalise && (
-        <div className="hidden lg:flex absolute left-3 bottom-1.5 w-[400px] flex-col rounded-xl overflow-hidden z-20 print:flex print:static print:w-full print:shadow-none print:max-h-none print:h-auto print:overflow-visible print:border-slate-200" style={{ top: headerBottom, backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)", animation: "panelSlideIn 320ms var(--ease-drawer) both" }}>
-          <div className="shrink-0 rounded-t-xl" style={{ background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)", paddingInline: "0.75rem", paddingBlockStart: "clamp(0.4rem, 1.2vh, 0.75rem)", paddingBlockEnd: "clamp(0.25rem, 0.8vh, 0.5rem)" }}>
+        <div
+          role="region"
+          aria-label="Painel de análise"
+          className="flex absolute inset-x-0 bottom-0 h-[var(--sheet-h)] rounded-t-2xl lg:inset-x-auto lg:left-3 lg:bottom-1.5 lg:top-[var(--hb)] lg:h-auto lg:w-[400px] lg:rounded-xl flex-col overflow-hidden z-20 print:flex print:static print:w-full print:h-auto print:shadow-none print:max-h-none print:overflow-visible print:border-slate-200"
+          style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)", animation: "panelSlideIn 320ms var(--ease-drawer) both" }}>
+          <div className="shrink-0 rounded-t-2xl lg:rounded-t-xl" style={{ background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)", paddingInline: "0.75rem", paddingBlockStart: "clamp(0.4rem, 1.2vh, 0.75rem)", paddingBlockEnd: "clamp(0.25rem, 0.8vh, 0.5rem)" }}>
             <h2 className="font-black text-white tracking-tight flex items-center justify-between" style={{ fontSize: "clamp(12px, 1.7vh, 16px)" }}>
               Painel
               <div className="flex gap-1">
-                <Button variant="outline" size="xs" onClick={exportarExcel} className="text-[9px] font-bold border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
+                <Button variant="outline" size="xs" onClick={exportarExcel} className="max-lg:h-11 max-lg:text-xs text-[9px] font-bold border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
                   <Download size={10} strokeWidth={2.5} />Baixar
                 </Button>
-                <Button variant="outline" size="xs" onClick={() => setShowPainelAnalise(false)} className="text-[9px] font-bold border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white print:hidden">
+                <Button variant="outline" size="xs" onClick={() => setShowPainelAnalise(false)} className="max-lg:h-11 max-lg:text-xs text-[9px] font-bold border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white print:hidden">
                   <EyeOff size={10} strokeWidth={2.5} />Ocultar
                 </Button>
               </div>
@@ -107,7 +110,7 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
             </p>
           </div>
           <Tabs value={tabAtiva} className="w-full flex-1 flex flex-col overflow-hidden px-4 print:overflow-visible print:h-auto" style={{ paddingBlockStart: "clamp(0.35rem, 0.9vh, 0.75rem)" }}>
-            <div className="flex flex-wrap shrink-0" style={{ gap: "clamp(0.2rem, 0.5vh, 0.375rem)", paddingBottom: "clamp(0.25rem, 0.7vh, 0.5rem)" }}>
+            <div className="flex flex-nowrap overflow-x-auto max-lg:[scrollbar-width:none] lg:flex-wrap lg:overflow-visible shrink-0" style={{ gap: "clamp(0.2rem, 0.5vh, 0.375rem)", paddingBottom: "clamp(0.25rem, 0.7vh, 0.5rem)" }}>
               {([
                 ...(cotasAtivo ? [{ value: "cotas", label: "Por cota", icon: <Waves size={11} strokeWidth={2.5} /> }] : []),
                 { value: "resumo",   label: "Resumo",   icon: <LayoutDashboard size={11} strokeWidth={2.5} /> },
@@ -126,7 +129,7 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
                   variant={tabAtiva === value ? "default" : "outline"}
                   size="xs"
                   onClick={() => setTabAtiva(value)}
-                  className="rounded-full text-[10px] font-bold"
+                  className="rounded-full text-xs lg:text-[10px] font-bold shrink-0 max-lg:h-11 max-lg:px-3"
                 >
                   {icon}{label}
                 </Button>
@@ -224,8 +227,8 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
           variant="outline"
           size="sm"
           onClick={() => setShowPainelAnalise(true)}
-          className="hidden lg:flex absolute left-4 z-20 rounded-2xl text-xs font-black shadow-lg"
-          style={{ top: headerBottom, backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}
+          className="flex absolute inset-x-2 bottom-2 h-11 lg:inset-x-auto lg:bottom-auto lg:h-7 lg:left-4 lg:top-[var(--hb)] z-20 rounded-2xl text-xs font-black shadow-lg"
+          style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}
         >
           <PanelLeft size={12} strokeWidth={2.5} />Abrir Painel de Análise
         </Button>

@@ -53,7 +53,7 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
       key={c.id}
       onClick={c.toggle}
       aria-pressed={c.on}
-      className="h-6 min-w-0 flex items-center gap-1 px-1.5 rounded-full text-[9px] font-bold border transition-colors duration-150"
+      className="h-6 max-lg:h-11 min-w-0 flex items-center gap-1 px-1.5 rounded-full text-[9px] max-lg:text-[11px] font-bold border transition-colors duration-150"
       style={{
         backgroundColor: c.on ? `${c.cor}20` : "transparent",
         borderColor: c.on ? c.cor : "#cbd5e1",
@@ -69,10 +69,10 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
   return (
     <>
       {showFiltros && showPanel && (
-        <div className="print:hidden absolute top-[100px] right-4 flex flex-col gap-1.5 p-2 rounded-xl z-10 w-44 max-h-[calc(100vh-130px)] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-thumb]:rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}>
+        <div className="print:hidden absolute top-[var(--hb)] lg:top-[100px] right-2 lg:right-4 flex flex-col gap-1.5 p-2 rounded-xl z-10 w-56 lg:w-44 max-h-[calc(100dvh-var(--hb)-var(--dock)-8px)] lg:max-h-[calc(100vh-130px)] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-thumb]:rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}>
           <div className="flex justify-between items-center border-b border-slate-200/60 pb-1">
             <span className="text-[9px] font-black text-slate-700 uppercase tracking-wider">Filtros de Mapa</span>
-            <button onClick={() => setShowFiltros(false)} className="text-slate-500 hover:text-slate-600 font-black text-xs px-1" aria-label="Fechar filtros">✖</button>
+            <button onClick={() => setShowFiltros(false)} className="text-slate-500 hover:text-slate-600 font-black text-xs px-1 max-lg:min-h-11 max-lg:min-w-11" aria-label="Fechar filtros">✖</button>
           </div>
 
           {chipsMapa.length > 0 && (
@@ -85,7 +85,7 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
                     <button
                       key={rp}
                       onClick={() => setRpDanoFisico(rp)}
-                      className="px-1.5 py-0.5 rounded text-[9px] font-bold border transition-colors duration-150"
+                      className="px-1.5 py-0.5 max-lg:min-h-11 max-lg:px-3 rounded text-[9px] max-lg:text-[11px] font-bold border transition-colors duration-150"
                       style={{
                         backgroundColor: rpDanoFisico === rp ? "#d97706" : "transparent",
                         borderColor: rpDanoFisico === rp ? "#d97706" : "#cbd5e1",
@@ -109,7 +109,7 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
             <button
               onClick={() => setAbertoFiltros(v => !v)}
               aria-expanded={abertoFiltros}
-              className="flex items-center justify-between text-[8px] font-black text-slate-500 uppercase tracking-wider"
+              className="flex items-center justify-between text-[8px] max-lg:text-[10px] max-lg:min-h-11 font-black text-slate-500 uppercase tracking-wider"
             >
               <span>Filtrar dados{nFiltros > 0 && <span className="ml-1 rounded-full bg-[#055071] text-white px-1.5 py-px">{nFiltros}</span>}</span>
               <span className="opacity-70">{abertoFiltros ? "▲" : "▼"}</span>
@@ -120,7 +120,7 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
                   <div className="flex flex-col gap-0.5 w-full overflow-hidden shrink-0">
                     <label className="text-[8px] font-bold text-blue-700 uppercase tracking-wider">Setor (empresas)</label>
                     <Select value={filtroSetor} onValueChange={setFiltroSetor}>
-                      <SelectTrigger className="h-6 border-blue-200/60 bg-blue-50/50 text-[10px] w-full [&>span]:truncate">
+                      <SelectTrigger className="h-6 max-lg:h-11 border-blue-200/60 bg-blue-50/50 text-[10px] w-full [&>span]:truncate">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -134,7 +134,7 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
                   <div className="flex flex-col gap-0.5 w-full overflow-hidden shrink-0">
                     <label className="text-[8px] font-bold text-green-700 uppercase tracking-wider">Dependência (escolas)</label>
                     <Select value={filtroDep} onValueChange={setFiltroDep}>
-                      <SelectTrigger className="h-6 border-green-200/60 bg-green-50/50 text-[10px] w-full [&>span]:truncate">
+                      <SelectTrigger className="h-6 max-lg:h-11 border-green-200/60 bg-green-50/50 text-[10px] w-full [&>span]:truncate">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -148,7 +148,7 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
                   <div className="flex flex-col gap-0.5 w-full overflow-hidden shrink-0">
                     <label className="text-[8px] font-bold text-red-700 uppercase tracking-wider">Unidade (saúde)</label>
                     <Select value={filtroTipo} onValueChange={setFiltroTipo}>
-                      <SelectTrigger className="h-6 border-red-200/60 bg-red-50/50 text-[10px] w-full [&>span]:truncate">
+                      <SelectTrigger className="h-6 max-lg:h-11 border-red-200/60 bg-red-50/50 text-[10px] w-full [&>span]:truncate">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -166,7 +166,7 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
             <div className="flex flex-col gap-0.5 w-full overflow-hidden shrink-0">
               <label className="text-[8px] font-bold text-orange-700 uppercase tracking-wider">Infraestrutura</label>
               <DropdownMenu>
-                <DropdownMenuTrigger className="h-6 border-orange-200/60 bg-orange-50/50 text-[10px] w-full flex justify-between items-center px-2 rounded transition-colors">
+                <DropdownMenuTrigger className="h-6 max-lg:h-11 border-orange-200/60 bg-orange-50/50 text-[10px] w-full flex justify-between items-center px-2 rounded transition-colors">
                   <span className="truncate">{`${infraAtivas.length} selecionada(s)`}</span>
                   <span className="text-[8px] opacity-70">▼</span>
                 </DropdownMenuTrigger>
@@ -191,10 +191,10 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
       {!showFiltros && showPanel && (
         <button
           onClick={() => setShowFiltros(true)}
-          className="absolute top-[90px] right-4 text-slate-800 text-xs font-black px-4 py-2 rounded-xl z-20 transition-[opacity,transform] duration-150 active:scale-[0.97] flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-1"
+          className="absolute top-[var(--hb)] lg:top-[90px] right-2 lg:right-4 text-slate-800 text-xs font-black px-4 py-2 max-lg:min-h-11 rounded-xl z-20 transition-[opacity,transform] duration-150 active:scale-[0.97] flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-1"
           style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}
         >
-          <SlidersHorizontal size={12} strokeWidth={2.5} />Mostrar Filtros
+          <SlidersHorizontal size={12} strokeWidth={2.5} /><span className="lg:hidden">Filtros</span><span className="max-lg:hidden">Mostrar Filtros</span>
         </button>
       )}
     </>

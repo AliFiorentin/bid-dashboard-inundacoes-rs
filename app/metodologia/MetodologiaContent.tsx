@@ -26,8 +26,8 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
         <div className="max-w-[1200px] mx-auto flex items-start justify-between gap-6">
           <div className="min-w-0">
             <div className="flex items-center gap-2 mb-5 print:hidden">
-              <Link href="/" className="text-[10px] font-bold text-white/95 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">← Dashboard</Link>
-              <Link href="/danos" className="text-[10px] font-bold text-white/95 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">Danos Operacionais →</Link>
+              <Link href="/" className="text-[10px] max-lg:text-xs max-lg:min-h-11 font-bold text-white/95 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">← Dashboard</Link>
+              <Link href="/danos" className="text-[10px] max-lg:text-xs max-lg:min-h-11 font-bold text-white/95 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">Danos Operacionais →</Link>
             </div>
             <p className="text-[11px] uppercase tracking-[0.18em] font-semibold opacity-85 mb-2">
               BID · GPEA · FURG
