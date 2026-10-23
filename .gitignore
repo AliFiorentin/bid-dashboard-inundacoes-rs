@@ -16,3 +16,6 @@ mapas/
 P4_Modelagem_Socioeconomica_Espacializada_C0.docx
 P3 Relatório de fechamento de contrato_FINAL.pdf
 Referencias e Artigos/
+
+# Shapefiles de Rio Grande sem uso pelo Dashboard (copia local mantida)
+data/raw/manchas/rio_grande/*.dbf

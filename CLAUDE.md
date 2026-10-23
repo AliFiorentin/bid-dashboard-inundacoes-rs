@@ -44,13 +44,13 @@ python pipeline/11_area_atingida.py     # municipal area + flooded area per scen
 ```bash
 python pipeline/climada_cota.py          # physical damage per cota (CLIMADA methodology) -> climada_cota_{slug}.json
 python pipeline/climada_cota_detalhe.py  # per-category indicators per cota -> climada_cota_detalhe_{slug}.json
-python pipeline/climada_cota_mapa.py     # cota_mapa.webp (first-wet cota index per pixel) + cota_mapa.json (incl. WorldPop population per cota)
+python pipeline/climada_cota_mapa.py     # (regenerating it resets cota_mapa.json: re-run 10_infra_stats.py afterwards, it adds area_por_cota_km2) cota_mapa.webp (first-wet cota index per pixel) + cota_mapa.json (incl. WorldPop population per cota)
 python pipeline/climada_rp_por_cota.py   # RP -> cota conversion (RP views); climada_exposicao.py = exposure without damage curve
 ```
 
 Python dependencies: `pip install -r pipeline/requirements.txt` (`geobr` and `openpyxl` are unpinned).
 
-**Warning:** the depth rasters (`Downloads/Lajeado_WGS84/Profundidade_WGS84/*_clip.tif`, `Downloads/POA_WGS84/Profundidade_WGS84/*_clip.tif`, ~1.3 GB each for POA) are NOT in the repo and were no longer found in `Downloads` on 2026-10-22 — the cota scripts cannot be re-run until they are restored. The Dashboard keeps working because the generated outputs are committed.
+**Depth rasters:** `Downloads/Lajeado_WGS84/Profundidade_WGS84/*_clip.tif` and `Downloads/POA_WGS84/Profundidade_WGS84/*_clip.tif` (~1.3 GB each for POA) are NOT in the repo. Archives: `G:\Meu Drive\Projetos\BID\Lajeado_WGS84.rar` and `POA_WGS84.rar` (extract with `tar -xf <rar> -C Downloads <Pasta>/Profundidade_WGS84`). Regenerating `cota_mapa.webp` from them reproduces the committed image exactly (checked 2026-10-23).
 
 ## Architecture
 
