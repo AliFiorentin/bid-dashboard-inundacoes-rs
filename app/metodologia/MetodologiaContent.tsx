@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import katex from "katex";
 import { HeaderLogos } from "@/components/HeaderLogos";
-import type { ClimadaData } from "@/app/danos/DanosClient";
+import type { ClimadaData } from "@/app/danos/types";
 
 // ─── Constantes visuais — Dano Físico (CLIMADA) ────────────────────────────────
 const SETOR_LABEL: Record<string, string> = { empresas: "Empresas", educacao: "Educação", saude: "Saúde" };
