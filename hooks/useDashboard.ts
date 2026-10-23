@@ -6,7 +6,7 @@ import { exportarExcel as exportarExcelArquivo } from "@/lib/exportar-excel";
 import type { InfraFC, InfraPainelMetricas, PopupInfo } from "@/hooks/dashboard/types";
 import { usePermalink } from "@/hooks/dashboard/usePermalink";
 import { useMapCamera } from "@/hooks/dashboard/useMapCamera";
-import { useCotas, useCotaFiltro } from "@/hooks/dashboard/useCotas";
+import { useCotas, useCotaFiltro, useBaseDentroDoMunicipio } from "@/hooks/dashboard/useCotas";
 import { useStaticData } from "@/hooks/dashboard/useStaticData";
 import { useScenarioData } from "@/hooks/dashboard/useScenarioData";
 import { useInfraData } from "@/hooks/dashboard/useInfraData";
@@ -133,15 +133,19 @@ export function useDashboard() {
   // "Todas as cotas" em reprodução: a água avança sozinha, então os pontos (e seus clusters) ficam
   // ocultos para não se sobreporem à mancha em transição; ao pausar, aparecem só os atingidos.
   const cotasTocando = cotasAtivo && cotaRaster.tocando;
-  const showEmp = cotasTocando ? null : isCenarioAtivo ? atingidosEmpresas : baseEmpresas;
-  const showEdu = cotasTocando ? null : isCenarioAtivo ? atingidosEducacao : baseEducacao;
-  const showSau = cotasTocando ? null : isCenarioAtivo ? atingidosSaude : baseSaude;
+  // Em "Todas as cotas" a base exclui os pontos fora do município, como a aba "Por cota" (totais iguais).
+  const baseEmpMun = useBaseDentroDoMunicipio(cotas, "empresas", baseEmpresas);
+  const baseEduMun = useBaseDentroDoMunicipio(cotas, "educacao", baseEducacao);
+  const baseSauMun = useBaseDentroDoMunicipio(cotas, "saude", baseSaude);
+  const showEmp = cotasTocando ? null : isCenarioAtivo ? atingidosEmpresas : baseEmpMun;
+  const showEdu = cotasTocando ? null : isCenarioAtivo ? atingidosEducacao : baseEduMun;
+  const showSau = cotasTocando ? null : isCenarioAtivo ? atingidosSaude : baseSauMun;
 
   const isTransitioning = municipio !== renderMunicipio;
 
   const derived = useDashboardDerived({
     isTransitioning, showEmp, showEdu, showSau, filtroSetor, filtroDep, filtroTipo,
-    baseEmpresas, baseEducacao, baseSaude, atingidosEmpresas, atingidosEducacao, atingidosSaude,
+    baseEmpresas: baseEmpMun, baseEducacao: baseEduMun, baseSaude: baseSauMun, atingidosEmpresas, atingidosEducacao, atingidosSaude,
   });
   const { renderEmp, renderEdu, renderSau } = derived;
 
