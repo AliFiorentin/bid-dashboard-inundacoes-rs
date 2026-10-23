@@ -594,7 +594,7 @@ export function useDashboard() {
 
     setInfraPainel(null);
     const controller = new AbortController();
-    fetch(`/dados_convertidos/${slugify(municipio)}/infraestrutura_painel.json?v=1`, { signal: controller.signal })
+    fetch(`/dados_convertidos/${slugify(municipio)}/infraestrutura_painel.json?v=2`, { signal: controller.signal })
       .then(r => r.ok ? r.json() : null)
       .then((d: InfraPainel | null) => {
         if (d && !controller.signal.aborted) {
