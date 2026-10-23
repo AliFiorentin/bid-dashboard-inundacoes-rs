@@ -1,0 +1,4 @@
+# Finais de linha: texto sempre LF no repositorio e na copia de trabalho
+* text=auto eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
