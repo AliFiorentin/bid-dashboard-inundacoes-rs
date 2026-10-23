@@ -33,6 +33,19 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
   const temPopulacao = camadas.includes("População") && !isVisaoGeral;
   const showPanel = temCamadaTabular && !isVisaoGeral;
   const [abertoFiltros, setAbertoFiltros] = React.useState(false);
+  // Celular/tablet: o popover nasce aberto (descobribilidade) e se recolhe sozinho uma vez, a menos
+  // que a pessoa interaja com ele antes.
+  const interagiu = React.useRef(false);
+  const jaRecolheu = React.useRef(false);
+  const visivel = showFiltros && showPanel;
+  React.useEffect(() => {
+    if (!visivel || jaRecolheu.current || window.matchMedia("(min-width: 1024px)").matches) return;
+    const t = setTimeout(() => {
+      jaRecolheu.current = true;
+      if (!interagiu.current) setShowFiltros(false);
+    }, 6000);
+    return () => clearTimeout(t);
+  }, [visivel, setShowFiltros]);
   const nFiltros = [filtroSetor !== "(todos)", filtroDep !== "(todas)", filtroTipo !== "(todas)"].filter(Boolean).length;
 
   // Camadas viram chips pequenos (cor + ligado/desligado) em grade de 2 colunas, no lugar de um
@@ -69,7 +82,7 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
   return (
     <>
       {showFiltros && showPanel && (
-        <div className="print:hidden absolute top-[var(--hb)] lg:top-[100px] right-2 lg:right-4 flex flex-col gap-1.5 p-2 rounded-xl z-10 w-56 lg:w-44 max-h-[calc(100dvh-var(--hb)-var(--dock)-8px)] lg:max-h-[calc(100vh-130px)] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-thumb]:rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}>
+        <div onPointerDown={() => { interagiu.current = true; }} className="print:hidden absolute top-[var(--hb)] lg:top-[100px] right-2 lg:right-4 flex flex-col gap-1.5 p-2 rounded-xl z-10 w-56 lg:w-44 max-h-[calc(100dvh-var(--hb)-var(--dock)-8px)] lg:max-h-[calc(100vh-130px)] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-thumb]:rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}>
           <div className="flex justify-between items-center border-b border-slate-200/60 pb-1">
             <span className="text-[9px] font-black text-slate-700 uppercase tracking-wider">Filtros de Mapa</span>
             <button onClick={() => setShowFiltros(false)} className="text-slate-500 hover:text-slate-600 font-black text-xs px-1 max-lg:min-h-11 max-lg:min-w-11" aria-label="Fechar filtros">✖</button>
