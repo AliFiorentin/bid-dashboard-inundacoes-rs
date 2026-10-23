@@ -16,6 +16,8 @@ export interface CotaMeta {
   /** Habitantes (WorldPop) sob água, acumulados por cota (pipeline/climada_cota_mapa.py). */
   pop_por_cota?: number[]
   pop_grade?: number
+  /** Area (km2) sob agua acumulada por cota (pipeline/10_infra_stats.py). */
+  area_por_cota_km2?: number[]
 }
 
 export const COR_FRENTE: [number, number, number] = [96, 200, 240]

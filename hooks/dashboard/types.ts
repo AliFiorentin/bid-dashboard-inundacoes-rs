@@ -13,6 +13,32 @@ export interface AreaAtingidaMunData {
 }
 export type AreaAtingidaData = Record<string, AreaAtingidaMunData>;
 
+// Metricas do Painel por tipo de infra (BASE e cada cenario) -- ver
+// pipeline/10_infra_stats.py (infraestrutura_painel.json).
+export interface InfraPainelMetricas {
+  count: number;
+  area_m2?: number;
+  rotas?: number;
+  km?: number;
+  ruas_unicas?: number;
+  ruas?: string[];
+  drenagem?: number;
+  iluminacao?: number;
+  agua?: number;
+  coleta_lix?: number;
+  esgoto_plu?: number;
+  esgoto_cloacal?: number;
+  fossa?: number;
+  condominio?: number;
+}
+export interface InfraPainelEntry {
+  base: InfraPainelMetricas;
+  cenarios: Record<string, InfraPainelMetricas>;
+  /** Acumulado por cota-raster ("Todas as cotas"), indice i = cota i+1. */
+  por_cota?: InfraPainelMetricas[];
+}
+export type InfraPainel = Record<string, InfraPainelEntry>;
+
 export interface InfraStatsEntry {
   count_base: number;
   count_atingido: number;

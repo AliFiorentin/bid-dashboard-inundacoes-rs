@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import type { MapRef } from "react-map-gl/maplibre";
 import { INFRAESTRUTURA_CONFIG, INFRA_TAMANHOS_MB } from "@/lib/constants";
-import { countRuasUnicas, getRuasListPOA, countRuasUnicasPOA, getRotas, getLen } from "@/lib/geo-utils";
+import { scenarioSlug, countRuasUnicas, getRuasListPOA, countRuasUnicasPOA, getRotas, getLen } from "@/lib/geo-utils";
 import { exportarExcel as exportarExcelArquivo } from "@/lib/exportar-excel";
-import type { InfraFC, PopupInfo } from "@/hooks/dashboard/types";
+import type { InfraFC, InfraPainelMetricas, PopupInfo } from "@/hooks/dashboard/types";
 import { usePermalink } from "@/hooks/dashboard/usePermalink";
 import { useMapCamera } from "@/hooks/dashboard/useMapCamera";
 import { useCotas, useCotaFiltro } from "@/hooks/dashboard/useCotas";
@@ -16,7 +16,7 @@ import { useMapInteraction } from "@/hooks/dashboard/useMapInteraction";
 
 export type {
   PopulacaoMunData, PopulacaoData, AreaAtingidaMunData, AreaAtingidaData,
-  InfraStatsEntry, DanoFisicoIndice, ManchaDuracaoClimada,
+  InfraStatsEntry, InfraPainelMetricas, InfraPainelEntry, InfraPainel, DanoFisicoIndice, ManchaDuracaoClimada,
 } from "@/hooks/dashboard/types";
 
 /**
@@ -80,7 +80,7 @@ export function useDashboard() {
     useMapCamera({ mapRef, headerRef, municipio, showPainelAnalise, permalinkView, setIs3D });
 
   const cotas = useCotas(municipio, cenario);
-  const { cotasAtivo, cotaRaster, cotaDetalhe, cotaPausada } = cotas;
+  const { cotasAtivo, cotaRaster, cotaDetalhe, cotaPausada, nCotasAtingidas } = cotas;
 
   const { popData, areaData, manchaDuracaoClimada } = useStaticData();
 
@@ -105,7 +105,7 @@ export function useDashboard() {
     setAtingidosAgriStats: scenario.setAtingidosAgriStats,
   });
 
-  useInfraData({ municipio, cenario, setBaseInfra, setAtingidosInfra, setIsLoading });
+  const { infraPainel } = useInfraData({ municipio, cenario, infraAtivas, setBaseInfra, setAtingidosInfra, setIsLoading });
 
   const dano = useDanoFisico({ municipio, renderMunicipio, baseEmpresas, baseEducacao, baseSaude });
 
@@ -156,6 +156,22 @@ export function useDashboard() {
     }
   }, [camadas, isVisaoGeral, tabAtiva, municipio]);
 
+  // Metricas de infra "atingidas" por tipo: da cota-raster (Todas as cotas) ou do cenario.
+  const infraAtg = useMemo(() => {
+    const out: Record<string, InfraPainelMetricas | undefined> = {};
+    if (!infraPainel) return out;
+    const slugCen = scenarioSlug(municipio, cenario);
+    Object.entries(infraPainel).forEach(([tipo, e]) => {
+      out[tipo] = cotaPausada
+        ? (nCotasAtingidas === 0 ? { count: 0 } : e.por_cota?.[nCotasAtingidas - 1])
+        : e.cenarios[slugCen];
+    });
+    return out;
+  }, [infraPainel, municipio, cenario, cotaPausada, nCotasAtingidas]);
+  // Area (km2) sob agua na cota atual; null fora desse modo.
+  const areaCotaKm2 = cotaPausada && cotaRaster.meta?.area_por_cota_km2
+    ? (nCotasAtingidas === 0 ? 0 : cotaRaster.meta.area_por_cota_km2[nCotasAtingidas - 1] ?? 0)
+    : null;
   const possuiInfra = INFRAESTRUTURA_CONFIG[municipio] && INFRAESTRUTURA_CONFIG[municipio].length > 0;
   const mostraImpacto = isVisaoGeral || isCenarioAtivo;
   const temCamadaTabular = camadas.includes("Empresas") || camadas.includes("Educação") || camadas.includes("Saúde") || camadas.includes("Agricultura") || camadas.includes("Infraestrutura") || camadas.includes("População");
@@ -191,7 +207,7 @@ export function useDashboard() {
     showLegenda, setShowLegenda,
     is3D, setIs3D,
     isLoading,
-    baseEmpresas, baseEducacao, baseSaude, baseInfra,
+    baseEmpresas, baseEducacao, baseSaude, baseInfra, infraPainel, infraAtg, areaCotaKm2,
     atingidosEmpresas, atingidosEducacao, atingidosSaude, atingidosInfra,
     manchaCenario, manchaRS, limitePA,
     baseAgriStats, atingidosAgriStats, conabStats,

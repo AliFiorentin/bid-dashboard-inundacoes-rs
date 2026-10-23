@@ -6,18 +6,21 @@ import type { DashboardState } from "@/hooks/useDashboard";
 const COR_AREA = "#0891b2";
 
 interface Props {
-  dash: Pick<DashboardState, "municipio" | "cenario" | "mostraImpacto" | "areaData">;
+  dash: Pick<DashboardState, "municipio" | "cenario" | "mostraImpacto" | "areaData" | "areaCotaKm2">;
 }
 
 export function AreaAtingidaSection({ dash }: Props) {
-  const { municipio, cenario, mostraImpacto, areaData } = dash;
+  const { municipio, cenario, mostraImpacto, areaData, areaCotaKm2 } = dash;
 
   const munData = areaData?.[municipio];
   if (!munData) return null;
 
-  const cenData = mostraImpacto && cenario !== "(nenhum)"
-    ? findCenarioData(munData.cenarios, cenario)
-    : null;
+  // "Todas as cotas" pausada: area sob agua vem do raster da cota (areaCotaKm2).
+  const cenData = areaCotaKm2 != null
+    ? { area_atingida_km2: areaCotaKm2 }
+    : mostraImpacto && cenario !== "(nenhum)"
+      ? findCenarioData(munData.cenarios, cenario)
+      : null;
 
   return (
     <KPIRow

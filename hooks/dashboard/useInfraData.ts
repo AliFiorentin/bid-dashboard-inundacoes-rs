@@ -1,13 +1,14 @@
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import type { FeatureCollection } from "geojson";
 import { INFRAESTRUTURA_CONFIG, COTAS_CENARIO } from "@/lib/constants";
 import { slugify, scenarioSlug } from "@/lib/geo-utils";
-import type { InfraFC } from "./types";
+import type { InfraFC, InfraPainel } from "./types";
 
 interface Args {
   municipio: string;
   cenario: string;
+  infraAtivas: string[];
   setBaseInfra: Dispatch<SetStateAction<InfraFC>>;
   setAtingidosInfra: Dispatch<SetStateAction<InfraFC>>;
   setIsLoading: (v: boolean) => void;
@@ -21,28 +22,61 @@ interface Args {
  * estados, e este hook precisa ser declarado DEPOIS dele para que o
  * re-preenchimento a partir do cache aconteça por último no mesmo commit.
  */
-export function useInfraData({ municipio, cenario, setBaseInfra, setAtingidosInfra, setIsLoading }: Args) {
+export function useInfraData({ municipio, cenario, infraAtivas, setBaseInfra, setAtingidosInfra, setIsLoading }: Args) {
   // Cache em memoria (dura so' a sessao da aba) dos dados de infraestrutura ja
   // baixados, por municipio (base) e por municipio+cenario (atingidos) --
   // evita rebaixar os mesmos ~400MB (Porto Alegre) toda vez que o usuario
   // volta a um municipio ja visitado nesta sessao.
   const infraBaseCacheRef = useRef<Record<string, Record<string, FeatureCollection>>>({});
   const infraAtingidosCacheRef = useRef<Record<string, Record<string, FeatureCollection>>>({});
+  const infraPainelCacheRef = useRef<Record<string, InfraPainel>>({});
+  const [infraPainel, setInfraPainel] = useState<InfraPainel | null>(null);
 
-  // Pre-carrega ATINGIDOS de TODOS os tipos de infra do municipio (leves e
-  // pesados, marcados ou nao em infraAtivas) -- as metricas do Painel devem
-  // aparecer mesmo sem nenhuma camada marcada no mapa (infraAtivas so
-  // controla o que desenha no mapa, ver DashboardMap.tsx). Efeito separado do
-  // de empresas/educacao/saude/agricultura pra nao re-buscar tudo isso toda
-  // vez que cenario muda por causa so da infra.
+  // As metricas do Painel (abas Resumo e Infraestrutura) vem de um JSON leve
+  // pre-calculado por municipio e cenario (pipeline/10_infra_stats.py ->
+  // infraestrutura_painel.json), entao nenhum GeoJSON de infra e' baixado so'
+  // para mostrar numeros. Os GeoJSONs (pesados: ~400MB em Porto Alegre) so'
+  // sao buscados quando o tipo e' ligado no mapa (infraAtivas), nos dois
+  // efeitos abaixo.
+  useEffect(() => {
+    if (municipio === "Visão Geral RS" || (INFRAESTRUTURA_CONFIG[municipio]?.length ?? 0) === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setInfraPainel(null);
+      return;
+    }
+    const cached = infraPainelCacheRef.current[municipio];
+    if (cached) { setInfraPainel(cached); return; }
+
+    setInfraPainel(null);
+    const controller = new AbortController();
+    fetch(`/dados_convertidos/${slugify(municipio)}/infraestrutura_painel.json?v=2`, { signal: controller.signal })
+      .then(r => r.ok ? r.json() : null)
+      .then((d: InfraPainel | null) => {
+        if (d && !controller.signal.aborted) {
+          infraPainelCacheRef.current[municipio] = d;
+          setInfraPainel(d);
+        }
+      })
+      .catch(e => { if ((e as Error).name !== 'AbortError') console.error(e); });
+    return () => controller.abort();
+  }, [municipio]);
+
+  // Baixa o ATINGIDOS do cenario so' dos tipos ligados no mapa.
   useEffect(() => {
     if (municipio === "Visão Geral RS" || !cenario || cenario === "(nenhum)" || cenario === COTAS_CENARIO) return;
 
     const cacheKey = `${municipio}::${cenario}`;
     const cache = infraAtingidosCacheRef.current[cacheKey] ?? (infraAtingidosCacheRef.current[cacheKey] = {});
-    if (Object.keys(cache).length > 0) setAtingidosInfra(prev => ({ ...cache, ...prev }));
+    const cacheados = infraAtivas.filter(infra => cache[infra]);
+    if (cacheados.length > 0) {
+      setAtingidosInfra(prev => {
+        const novo = { ...prev };
+        cacheados.forEach(infra => { novo[infra] = cache[infra]; });
+        return novo;
+      });
+    }
 
-    const tipos = (INFRAESTRUTURA_CONFIG[municipio] || []).filter(infra => !cache[infra]);
+    const tipos = infraAtivas.filter(infra => !cache[infra]);
     if (tipos.length === 0) return;
 
     const controller = new AbortController();
@@ -64,27 +98,23 @@ export function useInfraData({ municipio, cenario, setBaseInfra, setAtingidosInf
     });
 
     return () => controller.abort();
-  }, [municipio, cenario]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [municipio, cenario, infraAtivas]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Pre-carrega BASE de TODOS os tipos de infra do municipio (leves e
-  // pesados), independente de estarem marcados em infraAtivas -- mesma logica
-  // do efeito acima, so que para o total (nao filtrado por cenario). Isso
-  // baixa todos os arquivos de infra do municipio de uma vez (para Porto
-  // Alegre, ~400MB+ somados) -- aceito de proposito para que o Painel mostre
-  // a metrica de qualquer camada sem exigir selecao previa; INFRA_TAMANHOS_MB
-  // continua usado so para o aviso de confirmacao antes de desenhar a camada
-  // no MAPA (toggleInfra), que e' a parte cara de renderizar, nao de baixar.
+  // Baixa o BASE so' dos tipos ligados no mapa (infraAtivas).
   useEffect(() => {
-    const tipos = INFRAESTRUTURA_CONFIG[municipio] || [];
-    if (municipio === "Visão Geral RS" || tipos.length === 0) {
-      setBaseInfra(prev => Object.keys(prev).length === 0 ? prev : {});
-      return;
-    }
+    if (municipio === "Visão Geral RS" || infraAtivas.length === 0) return;
 
     const cache = infraBaseCacheRef.current[municipio] ?? (infraBaseCacheRef.current[municipio] = {});
-    if (Object.keys(cache).length > 0) setBaseInfra(prev => ({ ...cache, ...prev }));
+    const cacheados = infraAtivas.filter(infra => cache[infra]);
+    if (cacheados.length > 0) {
+      setBaseInfra(prev => {
+        const novo = { ...prev };
+        cacheados.forEach(infra => { novo[infra] = cache[infra]; });
+        return novo;
+      });
+    }
 
-    const toLoad = tipos.filter(infra => !cache[infra]);
+    const toLoad = infraAtivas.filter(infra => !cache[infra]);
     if (toLoad.length === 0) return;
 
     const controller = new AbortController();
@@ -109,6 +139,8 @@ export function useInfraData({ municipio, cenario, setBaseInfra, setAtingidosInf
       setIsLoading(false);
     });
 
-    return () => controller.abort();
-  }, [municipio]); // eslint-disable-line react-hooks/exhaustive-deps
+    return () => { controller.abort(); setIsLoading(false); };
+  }, [municipio, infraAtivas]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return { infraPainel };
 }

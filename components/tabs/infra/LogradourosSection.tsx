@@ -1,8 +1,7 @@
 ﻿import React from "react";
-import type { Feature } from "geojson";
 import { ChevronDown } from "lucide-react";
 import { INFRA_COLORS, PANEL_CARD_BG } from "@/lib/constants";
-import { compactoBr, calcPct, countFlag, countRuasUnicas } from "@/lib/geo-utils";
+import { compactoBr, calcPct } from "@/lib/geo-utils";
 import { KPICard } from "@/components/KPICard";
 import { BarServico } from "@/components/ui/BarServico";
 import { cn } from "@/lib/utils";
@@ -13,8 +12,8 @@ const PANEL_HDR = { background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100
 interface Props {
   dash: Pick<
     DashboardState,
-    | "baseInfra"
-    | "atingidosInfra"
+    | "infraPainel"
+    | "infraAtg"
     | "mostraImpacto"
     | "isCenarioAtivo"
     | "showListaLogradouros"
@@ -23,37 +22,23 @@ interface Props {
 }
 
 export function LogradourosSection({ dash }: Props) {
-  const { baseInfra, atingidosInfra, mostraImpacto, showListaLogradouros, setShowListaLogradouros } = dash;
+  const { infraPainel, infraAtg, mostraImpacto, showListaLogradouros, setShowListaLogradouros } = dash;
 
-  const base = baseInfra["Logradouros"];
-  const atg = atingidosInfra["Logradouros"];
-  const baseF = base?.features ?? [];
-  const atgF = atg?.features ?? [];
+  const entry = infraPainel?.["Logradouros"];
+  const base = entry?.base;
+  const atg = infraAtg["Logradouros"];
 
-  const segBase = baseF.length;
-  const segAtg = atgF.length;
-  const ruasBase = countRuasUnicas(baseF);
-  const ruasAtg = countRuasUnicas(atgF);
-  const drenBase = countFlag(baseF, "drenagem");
-  const drenAtg = countFlag(atgF, "drenagem");
-  const ilumBase = countFlag(baseF, "iluminacao");
-  const ilumAtg = countFlag(atgF, "iluminacao");
+  const segBase = base?.count ?? 0;
+  const segAtg = atg?.count ?? 0;
+  const ruasBase = base?.ruas_unicas ?? 0;
+  const ruasAtg = atg?.ruas_unicas ?? 0;
+  const drenBase = base?.drenagem ?? 0;
+  const drenAtg = atg?.drenagem ?? 0;
+  const ilumBase = base?.iluminacao ?? 0;
+  const ilumAtg = atg?.iluminacao ?? 0;
   const cor = INFRA_COLORS["Logradouros"];
 
-  const listaRuas = (() => {
-    if (!mostraImpacto) return [];
-    const seen = new Set<string>();
-    const lista: string[] = [];
-    atgF.forEach((f: Feature) => {
-      const props = f.properties as Record<string, unknown>;
-      const tipo = String(props?.tipo ?? "").trim().toUpperCase();
-      const nome = String(props?.nome ?? "").trim().toUpperCase();
-      const label = [tipo, nome].filter(Boolean).join(" ");
-      if (label && !seen.has(label)) { seen.add(label); lista.push(label); }
-    });
-    lista.sort((a, b) => a.localeCompare(b, "pt-BR"));
-    return lista;
-  })();
+  const listaRuas = mostraImpacto ? [...(atg?.ruas ?? [])].sort((a, b) => a.localeCompare(b, "pt-BR")) : [];
 
   return (
     <div>
