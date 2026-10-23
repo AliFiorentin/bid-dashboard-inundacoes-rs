@@ -184,7 +184,8 @@ export function useDashboard() {
   // Cota pausada: as abas (Resumo, Empresas, Educação, Saúde, Agricultura) passam a mostrar o que
   // está sob água naquela cota. Cada ponto das bases é amostrado no raster de cota de alagamento
   // (alaga se o índice da 1ª cota molhada <= nº de cotas já atingidas). Em reprodução, volta ao total.
-  const cotaPausada = cotasAtivo && !cotaRaster.tocando && cotaRaster.cota !== null && cotaRaster.meta !== null;
+  // Nome histórico: vale também em reprodução -- as abas acompanham a cota do slider enquanto a água avança.
+  const cotaPausada = cotasAtivo && cotaRaster.cota !== null && cotaRaster.meta !== null;
   const nCotasAtingidas = cotaRaster.meta && cotaRaster.cota !== null
     ? cotaRaster.meta.cotas.filter(c => c <= cotaRaster.cota! + 1e-6).length
     : 0;
