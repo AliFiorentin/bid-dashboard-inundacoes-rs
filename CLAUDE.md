@@ -31,7 +31,6 @@ python pipeline/09_populacao.py         # WorldPop-derived exposed-population KP
 
 Validation/QA tooling lives in `pipeline/validation/` (`check_bases.py`, `check_geojson.py`) and is run ad hoc, not as part of the numbered sequence; `check_logic.md` there records the methodology review findings per script. Narrative methodology docs live in `pipeline/docs/` (`07_danos_metodologia.md`, `comparativo_ccdr_dala.md`).
 
-The Dashboard can also be run as a container via the root `docker-compose.yml` (`docker compose up`), separate from `Dashboard BID`'s own dev workflow.
 
 Further scripts (also independent of the 01–07 chain):
 
