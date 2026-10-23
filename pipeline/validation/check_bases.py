@@ -541,7 +541,7 @@ def check_agricultura() -> None:
                 warn(f"Erro ao processar GeoJSON {geojson_path.name}: {e}")
 
     if any_area_flag:
-        fail(f"Agricultura: diferença >= 20% entre área CSV e área UTM — verificar compute_pixel_area_ha")
+        fail("Agricultura: diferença >= 20% entre área CSV e área UTM — verificar compute_pixel_area_ha")
     else:
         ok("Agricultura: diferenças de área dentro de ±20% (limiar metodológico pixel-counting vs UTM)")
 

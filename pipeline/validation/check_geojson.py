@@ -218,7 +218,7 @@ def check_v1_existencia() -> None:
     # Arquivo raiz RS (WARN — ainda não existe)
     rs_path = DASH_DATA / "mancha_rs_enchente_2024.geojson"
     if rs_path.exists():
-        ok(f"mancha_rs_enchente_2024.geojson existe")
+        ok("mancha_rs_enchente_2024.geojson existe")
     else:
         warn("mancha_rs_enchente_2024.geojson NÃO existe (será gerado na Task 3)")
 
