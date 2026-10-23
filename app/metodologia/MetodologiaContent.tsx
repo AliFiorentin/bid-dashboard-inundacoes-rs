@@ -174,7 +174,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           ]} />
           <SectionSources links={[
             ["MUP: Mapa Único do Plano Rio Grande (Gov. RS)", "https://mup.rs.gov.br/"],
-            ["CIEX/FURG: Centro Interinstitucional de Observação e Previsão de Eventos Extremos", "https://ciex.furg.br"],
+            ["CIEX/FURG: Centro Interinstitucional de Observação e Previsão de Eventos Extremos", "https://ciex.org.br/"],
             ["CLIMADA: plataforma de modelagem de risco climático (ETH Zürich)", "https://climada-python.readthedocs.io/"],
             ["CEPAL (2024): Avaliação dos Efeitos e Impactos das Inundações no RS", "https://www.cepal.org/pt-br/publicacoes/81035-avaliacao-efeitos-impactos-inundacoes-rio-grande-sul-novembro-2024"],
           ]} />
@@ -277,7 +277,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           <p>
             O painel quantifica a <strong>exposição física dos estabelecimentos do setor formal</strong>{" "}
             dentro de cada mancha de inundação, com base na{" "}
-            <ExtLink href="https://www.gov.br/trabalho-e-emprego/pt-br/assuntos/estatisticas-trabalho/rais">
+            <ExtLink href="https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/acoes-e-programas/programas-projetos-acoes-obras-e-atividades/estatisticas-trabalho/rais/rais-2025/rais-2025">
               RAIS: Relação Anual de Informações Sociais (MTE)
             </ExtLink>,
             ano-base 2023. Cada estabelecimento é georreferenciado a partir do endereço
@@ -358,7 +358,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             ["OpenStreetMap / Nominatim",  "—",                   "Geocodificação de endereços (instância local)"],
           ]} />
           <SectionSources links={[
-            ["RAIS: Microdados MTE", "https://www.gov.br/trabalho-e-emprego/pt-br/assuntos/estatisticas-trabalho/rais"],
+            ["RAIS: Microdados MTE", "https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/acoes-e-programas/programas-projetos-acoes-obras-e-atividades/estatisticas-trabalho/rais/rais-2025/rais-2025"],
             ["Nominatim: OpenStreetMap Geocoder", "https://nominatim.org"],
           ]} />
         </Section>
@@ -379,7 +379,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           <SubTitle>Mapeamento de uso do solo: MapBiomas Coleção 10</SubTitle>
           <p>
             O{" "}
-            <ExtLink href="https://brasil.mapbiomas.org/colecoes-mapbiomas-1/">
+            <ExtLink href="https://brasil.mapbiomas.org/downloads/mapas-para-download-geotiff/">
               MapBiomas Coleção 10
             </ExtLink>{" "}
             fornece rasters anuais de uso e cobertura do solo com resolução de 30 m. Para cada
@@ -444,7 +444,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             ["CONAB (Preços Mínimos)",     "2024",                "Base para calibração dos coeficientes R$/ha"],
           ]} />
           <SectionSources links={[
-            ["MapBiomas: Coleção 10", "https://brasil.mapbiomas.org/colecoes-mapbiomas-1/"],
+            ["MapBiomas: Coleção 10", "https://brasil.mapbiomas.org/downloads/mapas-para-download-geotiff/"],
             ["MapBiomas: Códigos da legenda da Coleção 10", "https://brasil.mapbiomas.org/wp-content/uploads/sites/4/2025/08/Legenda-Colecao-10-Legend-Code.pdf"],
             ["CONAB: Preços Mínimos 2024", "https://www.conab.gov.br/politica-agricola/precos-minimos"],
           ]} />
@@ -912,7 +912,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             ["LDB: Lei nº 9.394/1996, Art. 24", "https://www.planalto.gov.br/ccivil_03/leis/l9394.htm"],
             ["Portaria Interministerial MEC/MF nº 9, 28/08/2024 (VAAT-MIN FUNDEB 2024)", "https://www.fnde.gov.br"],
             ["CONAB: Preços Mínimos 2024", "https://www.conab.gov.br/politica-agricola/precos-minimos"],
-            ["MapBiomas: Coleção 10", "https://brasil.mapbiomas.org/colecoes-mapbiomas-1/"],
+            ["MapBiomas: Coleção 10", "https://brasil.mapbiomas.org/downloads/mapas-para-download-geotiff/"],
             ["FNDE: FUNDEB 2024", "https://www.fnde.gov.br"],
             ["DataSUS: Produção Hospitalar SIH/SUS", "https://datasus.saude.gov.br/acesso-a-informacao/producao-hospitalar-sih-sus"],
             ["DataSUS: Produção Ambulatorial SIA/SUS", "https://datasus.saude.gov.br/acesso-a-informacao/producao-ambulatorial-sia-sus"],
@@ -1287,7 +1287,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
               <RefItem href="https://mup.rs.gov.br/"
                 label="MUP: Mapa Único do Plano Rio Grande (Gov. RS)"
                 desc="Plataforma geoespacial oficial do RS com delimitação das áreas inundadas em 2024. Fonte das manchas ADA de Eldorado do Sul e Porto Alegre." />
-              <RefItem href="https://ciex.furg.br"
+              <RefItem href="https://ciex.org.br/"
                 label="CIEX/FURG: Centro Interinstitucional de Observação e Previsão de Eventos Extremos"
                 desc="Modelagem hidrológica e hidráulica costeira para Rio Grande: manchas de Maio 2024, Maio 2024 + 50% e Setembro 2023." />
               <RefItem href="https://www.cepal.org/pt-br/publicacoes/81035-avaliacao-efeitos-impactos-inundacoes-rio-grande-sul-novembro-2024"
@@ -1299,7 +1299,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             </RefBlock>
 
             <RefBlock title="Dados Socioeconômicos">
-              <RefItem href="https://www.gov.br/trabalho-e-emprego/pt-br/assuntos/estatisticas-trabalho/rais"
+              <RefItem href="https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/acoes-e-programas/programas-projetos-acoes-obras-e-atividades/estatisticas-trabalho/rais/rais-2025/rais-2025"
                 label="RAIS: Relação Anual de Informações Sociais (MTE, 2023)"
                 desc="Microdados de vínculos ativos, estabelecimentos, CNAE, remuneração e endereços. Base para mapeamento de empresas atingidas e estimativa de VAB." />
               <RefItem href="https://www.gov.br/inep/pt-br/areas-de-atuacao/pesquisas-estatisticas-e-indicadores/censo-escolar"
@@ -1320,7 +1320,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             </RefBlock>
 
             <RefBlock title="Dados Agrícolas">
-              <RefItem href="https://brasil.mapbiomas.org/colecoes-mapbiomas-1/"
+              <RefItem href="https://brasil.mapbiomas.org/downloads/mapas-para-download-geotiff/"
                 label="MapBiomas: Coleção 10"
                 desc="Mapeamento anual de uso e cobertura do solo no Brasil em raster de 30 m, fonte da área cultivada. Anos 2023 e 2024 utilizados conforme o período do cenário. Classes: Soja (39), Arroz (40), Outras Lavouras Temporárias (41, 20 e 62)." />
               <RefItem href="https://www.conab.gov.br/politica-agricola/precos-minimos"
