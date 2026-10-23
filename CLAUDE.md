@@ -33,6 +33,26 @@ Validation/QA tooling lives in `pipeline/validation/` (`check_bases.py`, `check_
 
 The Dashboard can also be run as a container via the root `docker-compose.yml` (`docker compose up`), separate from `Dashboard BID`'s own dev workflow.
 
+Further scripts (also independent of the 01–07 chain):
+
+```bash
+python pipeline/10_infra_stats.py       # infraestrutura_stats.json + infraestrutura_painel.json per municipality (Painel metrics for BASE and each scenario; lets the Dashboard skip downloading ~640 MB of infra GeoJSON)
+python pipeline/11_area_atingida.py     # municipal area + flooded area per scenario -> area_atingida.json
+```
+
+**"Todas as cotas" scenario (Lajeado, Eldorado do Sul, Porto Alegre)** — river-level (cota) rasters feed an animated map + slider in the Dashboard. Run in this order (they need the depth rasters, see below):
+
+```bash
+python pipeline/climada_cota.py          # physical damage per cota (CLIMADA methodology) -> climada_cota_{slug}.json
+python pipeline/climada_cota_detalhe.py  # per-category indicators per cota -> climada_cota_detalhe_{slug}.json
+python pipeline/climada_cota_mapa.py     # cota_mapa.webp (first-wet cota index per pixel) + cota_mapa.json (incl. WorldPop population per cota)
+python pipeline/climada_rp_por_cota.py   # RP -> cota conversion (RP views); climada_exposicao.py = exposure without damage curve
+```
+
+Python dependencies: `pip install -r pipeline/requirements.txt` (`geobr` and `openpyxl` are unpinned).
+
+**Warning:** the depth rasters (`Downloads/Lajeado_WGS84/Profundidade_WGS84/*_clip.tif`, `Downloads/POA_WGS84/Profundidade_WGS84/*_clip.tif`, ~1.3 GB each for POA) are NOT in the repo and were no longer found in `Downloads` on 2026-10-22 — the cota scripts cannot be re-run until they are restored. The Dashboard keeps working because the generated outputs are committed.
+
 ## Architecture
 
 `pipeline/config.py` is the single source of truth for all paths, IBGE codes, flood scenarios, salary tables, CNAE mappings, and domain constants. `pipeline/common.py` provides shared utilities (coordinate validation, CNPJ formatting, Brazilian numeric parsing, GeoJSON conversion, point-in-polygon intersection via Shapely/GeoPandas). Every pipeline script does `sys.path.insert(0, str(Path(__file__).parent))` then `from config import ...` / `from common import ...` — both modules live alongside the numbered scripts in `pipeline/`, not at the repo root.
