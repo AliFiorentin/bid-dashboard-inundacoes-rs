@@ -135,7 +135,7 @@ export function DashboardMap({ dash }: Props) {
   // Alegre tem 64 polígonos, 14 deles menores que uma célula de 80×80 m.
 
   return (
-    <div className="absolute inset-0 z-0">
+    <div className="absolute inset-x-0 top-0 bottom-[var(--dock)] lg:bottom-0 z-0">
       <Map
         ref={mapRef}
         initialViewState={dash.initialViewState}

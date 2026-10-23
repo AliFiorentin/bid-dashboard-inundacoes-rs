@@ -38,12 +38,23 @@ export default function Dashboard() {
     cotasAtivo, cotaRaster, headerBottom,
   } = dash;
 
+  // Abaixo de lg o painel é um bottom sheet: o mapa termina acima dele (e acima do controle de
+  // cota, quando houver), e a legenda/controles se ancoram em --dock. No desktop nada disso é usado.
+  const temCotaBarra = cotasAtivo && cotaRaster.cota !== null;
+  const alturaSheet = showPainelAnalise ? (cotasAtivo ? "45dvh" : "50dvh") : "60px";
+  const alturaCotaBarra = temCotaBarra ? "72px" : "0px";
+  const varsMovel = {
+    "--hb": `${headerBottom}px`,
+    "--sheet-h": alturaSheet,
+    "--dock": `calc(${alturaSheet} + ${alturaCotaBarra})`,
+  } as React.CSSProperties;
+
   const mostraDuracaoClimada = renderMunicipio === "Porto Alegre" && cenario === MANCHA_DURACAO_CENARIO;
 
   return (
-    <main className="relative w-screen h-screen font-sans overflow-hidden bg-slate-100 text-slate-900 print:overflow-visible print:h-auto print:w-full">
+    <main className="relative w-screen h-screen max-lg:h-dvh font-sans overflow-hidden bg-slate-100 text-slate-900 print:overflow-visible print:h-auto print:w-full" style={varsMovel}>
 
-      <div className="lg:hidden fixed inset-0 z-[100] flex flex-col items-center justify-center gap-6 px-8 text-center bg-white">
+      <div className="md:hidden fixed inset-0 z-[100] flex flex-col items-center justify-center gap-6 px-8 text-center bg-white">
         <Image src="/BID.webp" alt="BID" width={160} height={64} className="h-12 w-auto object-contain" />
         <div className="flex flex-col gap-2">
           <h1 className="text-xl font-black leading-tight" style={{ color: "#055071" }}>Avaliação de Impactos Socioeconômicos</h1>
@@ -101,7 +112,7 @@ export default function Dashboard() {
           items-end pra alinhar a base mesmo quando a Legenda expande e fica
           mais alta que o Copyright). */}
       <div
-        className={`absolute bottom-4 z-10 print:hidden flex items-end gap-3 transition-[left] duration-300 ${showPainelAnalise ? (cotasAtivo ? "left-[504px]" : "left-[440px]") : (cotasAtivo ? "left-[96px]" : "left-4")}`}
+        className={`absolute bottom-4 z-10 print:hidden max-lg:hidden flex items-end gap-3 transition-[left] duration-300 ${showPainelAnalise ? (cotasAtivo ? "left-[504px]" : "left-[440px]") : (cotasAtivo ? "left-[96px]" : "left-4")}`}
         style={{ transitionTimingFunction: "var(--ease-out)" }}
       >
         <div
@@ -114,14 +125,14 @@ export default function Dashboard() {
       </div>
 
       {/* Legenda: canto direito, acima da logo GPEa e dos controles do mapa. */}
-      <div className="absolute right-[10px] bottom-[106px] z-10 print:hidden w-[194px] max-h-[calc(100vh-250px)] flex flex-col justify-end">
+      <div className="absolute right-2 lg:right-[10px] bottom-[calc(var(--dock)+62px)] lg:bottom-[106px] z-10 print:hidden w-[194px] max-h-[calc(100dvh-var(--dock)-var(--hb)-80px)] lg:max-h-[calc(100vh-250px)] flex flex-col justify-end">
         <div
           className="rounded-xl overflow-hidden"
           style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}
         >
           <button
             onClick={() => setShowLegenda(p => !p)}
-            className="w-full flex items-center justify-between gap-3 px-2.5 py-2"
+            className="w-full flex items-center justify-between gap-3 px-2.5 py-2 max-lg:min-h-11"
             style={{ background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)" }}
           >
             <span className="text-[9px] font-black uppercase tracking-wider text-white">Legenda</span>
@@ -201,10 +212,20 @@ export default function Dashboard() {
 
       {cotasAtivo && cotaRaster.cota !== null && (
         <div
-          className={`absolute z-10 print:hidden w-[68px] rounded-xl px-2 py-3 transition-[left] duration-300 ${showPainelAnalise ? "left-[424px]" : "left-4"}`}
+          className={`max-lg:hidden absolute z-10 print:hidden w-[68px] rounded-xl px-2 py-3 transition-[left] duration-300 ${showPainelAnalise ? "left-[424px]" : "left-4"}`}
           style={{ top: headerBottom, bottom: 6, backgroundColor: "rgba(255,255,255,0.8)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}
         >
           <CotaControle raster={cotaRaster} vertical className="h-full" />
+        </div>
+      )}
+
+      {/* Celular/tablet: controle de cota horizontal acima do bottom sheet. */}
+      {temCotaBarra && (
+        <div
+          className="lg:hidden absolute inset-x-2 z-10 print:hidden rounded-xl px-3 py-2"
+          style={{ bottom: "calc(var(--sheet-h) + 4px)", backgroundColor: "rgba(255,255,255,0.88)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}
+        >
+          <CotaControle raster={cotaRaster} />
         </div>
       )}
 
