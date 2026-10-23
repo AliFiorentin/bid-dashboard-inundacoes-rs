@@ -52,7 +52,7 @@ export function TotaisBarChart({
         return (
           <g key={i}>
             <line x1={pL - 4} y1={y} x2={W} y2={y} stroke="#e2eef3" strokeWidth={i === 0 ? 1.5 : 0.75} />
-            <text x={pL - 8} y={y + 3} textAnchor="end" fontSize="8" fill="#9ca3af">
+            <text x={pL - 8} y={y + 3} textAnchor="end" fontSize="8" fill="#6b7280">
               {val >= 1e9 ? `${(val / 1e9).toFixed(1)}bi` : val >= 1e6 ? `${(val / 1e6).toFixed(0)}mi` : "0"}
             </text>
           </g>
@@ -73,7 +73,7 @@ export function TotaisBarChart({
             <text x={x + barW / 2} y={chartH + 16} textAnchor="middle" fontSize="7.5" fill="#374151" fontWeight="bold">
               {mun.split(" ")[0]}
             </text>
-            <text x={x + barW / 2} y={chartH + 26} textAnchor="middle" fontSize="6" fill="#9ca3af">
+            <text x={x + barW / 2} y={chartH + 26} textAnchor="middle" fontSize="6" fill="#6b7280">
               {label}
             </text>
           </g>
@@ -118,7 +118,7 @@ export function SensibChart({
           return (
             <g key={i}>
               <line x1={pL - 4} y1={y} x2={W} y2={y} stroke="#e2eef3" strokeWidth={i === 0 ? 1.5 : 0.75} />
-              <text x={pL - 8} y={y + 3} textAnchor="end" fontSize="7.5" fill="#9ca3af">
+              <text x={pL - 8} y={y + 3} textAnchor="end" fontSize="7.5" fill="#6b7280">
                 {val >= 1e9 ? `${(val / 1e9).toFixed(1)}bi` : val >= 1e6 ? `${(val / 1e6).toFixed(0)}mi` : "0"}
               </text>
             </g>
@@ -209,7 +209,7 @@ export function RpBarChart({ rpsDisponiveis, resultados, setores, maxTotal, rpAt
         return (
           <g key={i}>
             <line x1={pL - 4} y1={y} x2={W} y2={y} stroke="#e2eef3" strokeWidth={i === 0 ? 1.5 : 0.75} />
-            <text x={pL - 8} y={y + 3} textAnchor="end" fontSize="8" fill="#9ca3af">
+            <text x={pL - 8} y={y + 3} textAnchor="end" fontSize="8" fill="#6b7280">
               {val >= 1e9 ? `${(val / 1e9).toFixed(1)}bi` : val >= 1e6 ? `${(val / 1e6).toFixed(0)}mi` : "0"}
             </text>
           </g>
@@ -235,7 +235,7 @@ export function RpBarChart({ rpsDisponiveis, resultados, setores, maxTotal, rpAt
             <text x={x + barW / 2} y={yTop - 5} textAnchor="middle" fontSize="8" fill="#374151" fontWeight="bold">
               {total >= 1e9 ? `${(total / 1e9).toFixed(1)}bi` : `${(total / 1e6).toFixed(0)}mi`}
             </text>
-            <text x={x + barW / 2} y={chartH + 18} textAnchor="middle" fontSize="9" fill={r === rpAtivo ? "#d97706" : "#9ca3af"} fontWeight="bold">
+            <text x={x + barW / 2} y={chartH + 18} textAnchor="middle" fontSize="9" fill={r === rpAtivo ? "#b45309" : "#6b7280"} fontWeight="bold">
               {r}
             </text>
           </g>
@@ -267,7 +267,7 @@ export function CotaBarChart({ cotas, resultados, setores, maxTotal, cotaAtiva }
         return (
           <g key={i}>
             <line x1={pL - 4} y1={y} x2={W} y2={y} stroke="#e2eef3" strokeWidth={i === 0 ? 1.5 : 0.75} />
-            <text x={pL - 8} y={y + 3} textAnchor="end" fontSize="8" fill="#9ca3af">{fmtAxis(p * maxTotal)}</text>
+            <text x={pL - 8} y={y + 3} textAnchor="end" fontSize="8" fill="#6b7280">{fmtAxis(p * maxTotal)}</text>
           </g>
         );
       })}
@@ -291,7 +291,7 @@ export function CotaBarChart({ cotas, resultados, setores, maxTotal, cotaAtiva }
             ))}
             <line x1={x - 2} x2={x + barW + 2} y1={yCrua} y2={yCrua} stroke="#334155" strokeWidth="1.5" strokeDasharray="3 2" />
             {ativa && <rect x={x - 2} y={yCrua - 2} width={barW + 4} height={chartH + 4 - yCrua + 2} fill="none" stroke="#d97706" strokeWidth="2" rx="2" />}
-            <text x={x + barW / 2} y={chartH + 18} textAnchor="middle" fontSize="8" fill={ativa ? "#d97706" : "#9ca3af"} fontWeight="bold">
+            <text x={x + barW / 2} y={chartH + 18} textAnchor="middle" fontSize="8" fill={ativa ? "#b45309" : "#6b7280"} fontWeight="bold">
               {c}
             </text>
           </g>

@@ -1443,11 +1443,11 @@ function CurvasChart({ curvas }: { curvas: Record<string, ClimadaData["premissas
       {[0, 0.25, 0.5, 0.75, 1].map((p, i) => (
         <g key={i}>
           <line x1={pL} y1={yOf(p)} x2={W - pR} y2={yOf(p)} stroke="#e2eef3" strokeWidth={i === 0 ? 1.5 : 0.75} />
-          <text x={pL - 6} y={yOf(p) + 3} textAnchor="end" fontSize="8" fill="#9ca3af">{round(p * 100)}%</text>
+          <text x={pL - 6} y={yOf(p) + 3} textAnchor="end" fontSize="8" fill="#6b7280">{round(p * 100)}%</text>
         </g>
       ))}
       {[0, 1, 2, 3, 4].map((d) => (
-        <text key={d} x={xOf(d)} y={H - pB + 12} textAnchor="middle" fontSize="8" fill="#9ca3af">{d}m</text>
+        <text key={d} x={xOf(d)} y={H - pB + 12} textAnchor="middle" fontSize="8" fill="#6b7280">{d}m</text>
       ))}
       {Object.entries(curvas).map(([setor, c]) => {
         const lastMdd = c.mdd[c.mdd.length - 1];
@@ -1457,8 +1457,8 @@ function CurvasChart({ curvas }: { curvas: Record<string, ClimadaData["premissas
         const pts = depths.map((d, i) => `${xOf(d)},${yOf(mdds[i])}`).join(" ");
         return <polyline key={setor} points={pts} fill="none" stroke={SETOR_COLORS[setor]} strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />;
       })}
-      <text x={pL} y={H - 2} fontSize="8" fill="#9ca3af">Profundidade da água</text>
-      <text x={W - pR} y={12} textAnchor="end" fontSize="8" fill="#9ca3af">MDD (% do valor destruído)</text>
+      <text x={pL} y={H - 2} fontSize="8" fill="#6b7280">Profundidade da água</text>
+      <text x={W - pR} y={12} textAnchor="end" fontSize="8" fill="#6b7280">MDD (% do valor destruído)</text>
     </svg>
   );
 }
