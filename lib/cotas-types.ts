@@ -11,6 +11,14 @@ export interface DetalheCotaValores {
   educacao: { n: number; matriculas: number; docentes: number; valor_exposto_brl: number; dependencias: DetalheGrupoCota[] }
   agricultura?: { area_ha: number; culturas: Record<string, number> }
 }
+/** Saída de pipeline/climada_cota_pontos.py (cota_pontos.json): cota de entrada de cada ponto das bases. */
+export interface CotaPontos {
+  cotas: number[]
+  /** nº de pontos de cada BASE (valida o alinhamento com {setor}_BASE.geojson) */
+  n: Record<string, number>
+  /** por ponto, na ordem da BASE: k>=1 índice da 1ª cota molhada, 0 nunca molhado, -1 fora do município */
+  idx: Record<string, number[]>
+}
 export interface DetalheCotaMun {
   municipio: string
   totais: Record<string, { n: number }>

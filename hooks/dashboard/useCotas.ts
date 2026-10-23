@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import type { FeatureCollection } from "geojson";
 import { useCotaRaster } from "@/hooks/useCotaRaster";
-import type { DetalheCotaMun } from "@/lib/cotas-types";
+import type { CotaPontos, DetalheCotaMun } from "@/lib/cotas-types";
 import { COTAS_CENARIO, COTAS_MUNICIPIOS } from "@/lib/constants";
 import { slugify } from "@/lib/geo-utils";
 
@@ -35,6 +35,19 @@ export function useCotas(municipio: string, cenario: string) {
     return () => clearTimeout(t);
   }, [cotaUrl]);
   const [cotaDetalhe, setCotaDetalhe] = useState<DetalheCotaMun | null>(null);
+  // Cota de entrada de cada ponto (5 m, igual à aba "Por cota"); sem ele cai na amostragem do raster reduzido.
+  const [cotaPontos, setCotaPontos] = useState<CotaPontos | null>(null);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCotaPontos(null);
+    if (!cotasAtivo) return;
+    const controller = new AbortController();
+    fetch(`/dados_convertidos/${slugify(municipio)}/cota_pontos.json`, { signal: controller.signal })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (!controller.signal.aborted) setCotaPontos(d); })
+      .catch(e => { if ((e as Error).name !== "AbortError") console.error(e); });
+    return () => controller.abort();
+  }, [cotasAtivo, municipio]);
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setCotaDetalhe(null);
@@ -56,7 +69,29 @@ export function useCotas(municipio: string, cenario: string) {
     ? cotaRaster.meta.cotas.filter(c => c <= cotaRaster.cota! + 1e-6).length
     : 0;
 
-  return { cotasAtivo, cotaRaster, cotaDetalhe, cotaPausada, nCotasAtingidas };
+  return { cotasAtivo, cotaRaster, cotaDetalhe, cotaPontos, cotaPausada, nCotasAtingidas };
+}
+
+type Setor = "empresas" | "educacao" | "saude";
+
+/** Índices por ponto de um setor, só se alinhados com a BASE carregada (mesmo nº de pontos). */
+function idxDoSetor(pontos: CotaPontos | null, setor: Setor, fc: FeatureCollection | null): number[] | null {
+  const idx = pontos?.idx[setor];
+  if (!idx || !fc || !Array.isArray(fc.features) || idx.length !== fc.features.length) return null;
+  return idx;
+}
+
+/**
+ * Base do setor SEM os pontos geocodificados fora do município (os mesmos que a aba "Por cota" exclui),
+ * para os totais ("de N") baterem entre as abas. Fora do cenário "Todas as cotas" devolve a base inteira.
+ */
+export function useBaseDentroDoMunicipio(cotas: { cotasAtivo: boolean; cotaPontos: CotaPontos | null }, setor: Setor, base: FeatureCollection | null) {
+  const { cotasAtivo, cotaPontos } = cotas;
+  return useMemo(() => {
+    const idx = cotasAtivo ? idxDoSetor(cotaPontos, setor, base) : null;
+    if (!idx || !base) return base;
+    return { ...base, features: base.features.filter((_, i) => idx[i] >= 0) };
+  }, [cotasAtivo, cotaPontos, setor, base]);
 }
 
 type Cotas = ReturnType<typeof useCotas>;
@@ -77,23 +112,27 @@ export function useCotaFiltro({
   cotas, baseEmpresas, baseEducacao, baseSaude,
   setAtingidosEmpresas, setAtingidosEducacao, setAtingidosSaude, setAtingidosAgriStats,
 }: FiltroArgs) {
-  const { cotasAtivo, cotaRaster, cotaDetalhe, cotaPausada, nCotasAtingidas } = cotas;
+  const { cotasAtivo, cotaRaster, cotaDetalhe, cotaPontos, cotaPausada, nCotasAtingidas } = cotas;
   const amostrarCota = cotaRaster.amostrar;
   useEffect(() => {
     if (!cotasAtivo) return;
-    const filtra = (fc: FeatureCollection | null): FeatureCollection | null => {
+    // Atingido na cota j: 1 <= k <= j, com k = cota de entrada do ponto (cota_pontos.json, 5 m, igual à
+    // aba "Por cota"). Sem esse arquivo (ou desalinhado com a BASE), cai na amostragem do raster reduzido.
+    const filtra = (fc: FeatureCollection | null, setor: Setor): FeatureCollection | null => {
       if (!fc || !Array.isArray(fc.features)) return null;
-      return { ...fc, features: fc.features.filter((f) => {
+      const idx = idxDoSetor(cotaPontos, setor, fc);
+      return { ...fc, features: fc.features.filter((f, i) => {
+        if (idx) return idx[i] > 0 && idx[i] <= nCotasAtingidas;
         const g = f.geometry as { type: string; coordinates: number[] } | null;
         if (!g || g.type !== "Point") return false;
         const k = amostrarCota(g.coordinates[0], g.coordinates[1]);
         return k > 0 && k <= nCotasAtingidas;
       }) };
     };
-    setAtingidosEmpresas(cotaPausada ? filtra(baseEmpresas) : null);
-    setAtingidosEducacao(cotaPausada ? filtra(baseEducacao) : null);
-    setAtingidosSaude(cotaPausada ? filtra(baseSaude) : null);
+    setAtingidosEmpresas(cotaPausada ? filtra(baseEmpresas, "empresas") : null);
+    setAtingidosEducacao(cotaPausada ? filtra(baseEducacao, "educacao") : null);
+    setAtingidosSaude(cotaPausada ? filtra(baseSaude, "saude") : null);
     const culturas = cotaDetalhe?.por_cota[Object.keys(cotaDetalhe.por_cota).filter(c => parseFloat(c) <= (cotaRaster.cota ?? 0) + 1e-6).sort((a, b) => parseFloat(a) - parseFloat(b)).pop() ?? ""]?.agricultura?.culturas;
     setAtingidosAgriStats(cotaPausada ? (culturas ?? {}) : null);
-  }, [cotasAtivo, cotaPausada, nCotasAtingidas, amostrarCota, baseEmpresas, baseEducacao, baseSaude, cotaDetalhe]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [cotasAtivo, cotaPausada, nCotasAtingidas, amostrarCota, baseEmpresas, baseEducacao, baseSaude, cotaDetalhe, cotaPontos]); // eslint-disable-line react-hooks/exhaustive-deps
 }
