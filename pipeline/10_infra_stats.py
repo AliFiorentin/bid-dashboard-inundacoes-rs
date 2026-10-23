@@ -24,8 +24,13 @@ infraestrutura do Dashboard mudarem.
 """
 import argparse
 import json
+import math
 import sys
 from pathlib import Path
+
+import numpy as np
+from PIL import Image
+from shapely.geometry import shape
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -183,6 +188,61 @@ def _metricas(tipo: str, feats: list, com_lista: bool = False) -> dict:
     return m
 
 
+
+# ── "Todas as cotas" (raster cota_mapa.webp, ver climada_cota_mapa.py) ──────────
+def _grade_cota(slug: str):
+    """(meta, primeira): indice (1..N) da 1a cota molhada por pixel (0 = nunca), ou None."""
+    d = DASH_DATA / slug
+    if not (d / "cota_mapa.json").exists() or not (d / "cota_mapa.webp").exists():
+        return None
+    meta = json.loads((d / "cota_mapa.json").read_text(encoding="utf-8"))
+    rgba = np.asarray(Image.open(d / "cota_mapa.webp").convert("RGBA"))
+    primeira = np.where(rgba[..., 3] > 0, rgba[..., 0], 0).astype(np.uint8)
+    return meta, primeira
+
+
+def _area_por_cota_km2(meta: dict, primeira: np.ndarray) -> list[float]:
+    """Area (km2) sob agua acumulada por cota: soma da area geodesica aproximada dos pixels molhados."""
+    w_, s_, e_, n_ = meta["bounds"]
+    h, w = primeira.shape
+    dx, dy = (e_ - w_) / w, (n_ - s_) / h
+    lat = n_ - (np.arange(h) + 0.5) * dy
+    area_px = dx * 111.320 * np.cos(np.radians(lat)) * dy * 110.574  # km2 por pixel, por linha
+    por_idx = np.bincount(primeira.ravel(), weights=np.repeat(area_px, w), minlength=len(meta["cotas"]) + 1)
+    return [round(float(v), 3) for v in np.cumsum(por_idx[1:])]
+
+
+def _ponto_amostra(geom: dict):
+    """Coordenada que representa a feicao no raster: o ponto, o centroide (poligono) ou o meio da linha."""
+    t = geom.get("type")
+    if t == "Point":
+        return geom["coordinates"][0], geom["coordinates"][1]
+    g = shape(geom)
+    if t in ("LineString", "MultiLineString"):
+        pt = g.interpolate(0.5, normalized=True) if t == "LineString" else g.representative_point()
+    else:
+        pt = g.centroid if g.centroid.within(g) else g.representative_point()
+    return pt.x, pt.y
+
+
+def _indice_cota(feats: list, meta: dict, primeira: np.ndarray) -> np.ndarray:
+    """Indice (0..N) da 1a cota que molha cada feicao; mesma amostragem do navegador (useCotaRaster.amostrar)."""
+    w_, s_, e_, n_ = meta["bounds"]
+    h, w = primeira.shape
+    ks = np.zeros(len(feats), dtype=np.uint8)
+    for i, f in enumerate(feats):
+        geom = f.get("geometry")
+        if not geom:
+            continue
+        lon, lat = _ponto_amostra(geom)
+        if lon < w_ or lon >= e_ or lat <= s_ or lat > n_:
+            continue
+        col = int(math.floor((lon - w_) / (e_ - w_) * w))
+        row = int(math.floor((n_ - lat) / (n_ - s_) * h))
+        ks[i] = primeira[row, col]
+    return ks
+
+
 def _features(path: Path) -> list:
     if not path.exists():
         return []
@@ -190,13 +250,21 @@ def _features(path: Path) -> list:
         return json.load(f).get("features", [])
 
 
-def gerar_painel(slug: str, tipos: list[str]) -> dict:
-    """{tipo: {base: metricas, cenarios: {cen_slug: metricas}}} para o municipio."""
+def gerar_painel(slug: str, tipos: list[str], grade_cota=None) -> dict:
+    """{tipo: {base, cenarios: {cen_slug: metricas}, por_cota: [metricas acumuladas por cota]}} para o municipio."""
     cen_dir = DASH_DATA / slug / "cenarios"
     out: dict = {}
     for tipo in tipos:
         tipo_slug = slugify(tipo)
-        entry: dict = {"base": _metricas(tipo, _features(DASH_DATA / slug / "infraestrutura" / f"{tipo_slug}_BASE.geojson")), "cenarios": {}}
+        base_feats = _features(DASH_DATA / slug / "infraestrutura" / f"{tipo_slug}_BASE.geojson")
+        entry: dict = {"base": _metricas(tipo, base_feats), "cenarios": {}}
+        if grade_cota is not None:
+            meta, primeira = grade_cota
+            ks = _indice_cota(base_feats, meta, primeira)
+            entry["por_cota"] = [
+                _metricas(tipo, [f for f, k in zip(base_feats, ks) if 0 < k <= i])
+                for i in range(1, len(meta["cotas"]) + 1)
+            ]
         prefixo = f"infra_{tipo_slug}_ATINGIDOS_"
         for p in sorted(cen_dir.glob(f"{prefixo}*.geojson")):
             cen_slug = p.stem[len(prefixo):]
@@ -251,7 +319,13 @@ def main():
             json.dump(stats, f, ensure_ascii=False, indent=2)
         print(f"  -> {slug}/infraestrutura_stats.json")
 
-        painel = gerar_painel(slug, tipos)
+        grade_cota = _grade_cota(slug)
+        if grade_cota is not None:
+            meta, primeira = grade_cota
+            meta["area_por_cota_km2"] = _area_por_cota_km2(meta, primeira)
+            (DASH_DATA / slug / "cota_mapa.json").write_text(json.dumps(meta), encoding="utf-8")
+            print(f"  [cotas] area atingida na ultima cota: {meta['area_por_cota_km2'][-1]:,.1f} km2")
+        painel = gerar_painel(slug, tipos, grade_cota)
         painel_path = DASH_DATA / slug / "infraestrutura_painel.json"
         with open(painel_path, "w", encoding="utf-8") as f:
             json.dump(painel, f, ensure_ascii=False, separators=(",", ":"))
