@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Building2, GraduationCap, HeartPulse, Sprout, Coins } from "lucide-react";
+import { FitHeight } from "@/components/FitHeight";
 import type { CotaRaster } from "@/hooks/useCotaRaster";
 import type { DetalheCotaMun, DetalheCotaValores } from "@/lib/cotas-types";
 
@@ -57,7 +58,7 @@ export function CotasPanel({ raster, detalhe, municipio }: Props) {
   );
 
   return (
-    <div className="flex-1 min-h-0 overflow-y-auto pb-2 flex flex-col gap-2 print:overflow-visible">
+    <FitHeight className="pb-2"><div className="flex flex-col gap-2">
       <div className="rounded-lg px-3 py-2 text-white flex flex-col flex-[1.2] min-h-[120px]" style={{ background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)" }}>
         <div className="text-[9px] uppercase tracking-wider font-bold text-white/80">Valor exposto atingido · cota {fmtCota(cota)} m</div>
         <div className="text-2xl font-black tabular-nums leading-tight">{fmtBRL(total)}</div>
@@ -102,6 +103,6 @@ export function CotasPanel({ raster, detalhe, municipio }: Props) {
           </div>
         </div>
       )}
-    </div>
+    </div></FitHeight>
   );
 }

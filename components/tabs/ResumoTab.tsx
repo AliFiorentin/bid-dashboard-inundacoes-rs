@@ -1,6 +1,7 @@
 import type React from "react";
 import { Users, Building2, GraduationCap, HeartPulse, Stethoscope, Wrench, DollarSign, Sprout, Map } from "lucide-react";
 import { TabsContent } from "@/components/ui/tabs";
+import { FitHeight } from "@/components/FitHeight";
 import { DonutChart } from "@/components/ui/donut-chart";
 import { COLORS, MUNICIPIOS, PIORES_CENARIOS, CENARIO_PERIODO, IMPACTO_AGRICOLA, PANEL_CARD_BG, C, AREA_VISAO_GERAL_LABEL, AREA_VISAO_GERAL_CENARIO } from "@/lib/constants";
 import { compactoBr, scenarioSlug, findCenarioData } from "@/lib/geo-utils";
@@ -173,7 +174,8 @@ export function ResumoTab({ dash }: Props) {
   const agriPct = agriBase > 0 ? (agriAtg / agriBase) * 100 : 0;
 
   return (
-    <TabsContent value="resumo" className="flex-1 overflow-y-auto mt-4 pr-2 pb-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-thumb]:rounded-full">
+    <TabsContent value="resumo" className="flex-1 flex flex-col overflow-hidden mt-4 pb-2">
+      <FitHeight>
       <div className="grid grid-cols-2" style={{ gap: CARD_GAP }}>
         <MiniStatCard
           icon={<Users strokeWidth={2.5} className="w-[45%] h-[45%]" />}
@@ -294,6 +296,7 @@ export function ResumoTab({ dash }: Props) {
       <p className="italic text-muted-foreground" style={{ fontSize: FONT_LABEL, marginTop: CARD_GAP }}>
         Resumo das principais métricas por camada — veja o detalhamento em cada aba.
       </p>
+      </FitHeight>
     </TabsContent>
   );
 }
