@@ -25,7 +25,7 @@ from collections import defaultdict
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from config import MUNICIPIOS, DATA_PROCESSED, DASH_DATA
+from config import DATA_PROCESSED
 
 # ── Caminhos ──────────────────────────────────────────────────────────────────
 ICMS_MUNIC  = Path(r"C:\Users\Alisson Fiorentin\Downloads\Arrecadação por Município e por Corede.csv")
@@ -230,7 +230,7 @@ def print_relatorio(resultados: dict) -> None:
     print(f"\n{sep}")
     print("  VALIDAÇÃO CRUZADA — ICMS MUNICIPAL vs. ESTIMATIVA DaLA")
     print(f"  Taxa ICMS efetiva RS usada: {TAXA_ICMS_EFETIVA_RS*100:.1f}%")
-    print(f"  Baseline: média mensal 2021-2023")
+    print("  Baseline: média mensal 2021-2023")
     print(sep)
 
     for mun, res in resultados["municipios"].items():
@@ -254,12 +254,12 @@ def print_relatorio(resultados: dict) -> None:
         print(f"  Tendência YoY maio (2021→2023): {ic['yoy_tendencia_maio']:+.1f}%/ano")
 
         # Anomalias mensais 2024
-        print(f"  Anomalia mensal 2024 (vs. baseline):")
+        print("  Anomalia mensal 2024 (vs. baseline):")
         anos_str = "  " + "  ".join(f"[{m:02d}]{ic['anomalia_pct_por_mes'][m]:+5.1f}%" for m in MESES_ANALISE)
         print(anos_str)
 
         # Cruzamento DaLA
-        print(f"\n  -- Cruzamento com DaLA --")
+        print("\n  -- Cruzamento com DaLA --")
         print(f"  VAB perdido (DaLA)  : {fmt_brl(cx['vab_dala'])}")
         print(f"  Total DaLA          : {fmt_brl(cx['total_dala'])}")
         print(f"  ICMS implicado      : {fmt_brl(cx['icms_implicado_taxa'])}  (VAB × {TAXA_ICMS_EFETIVA_RS*100:.1f}%)")
@@ -269,9 +269,9 @@ def print_relatorio(resultados: dict) -> None:
             if cx["razao_maio"] > 5:
                 print(f"    -> Nossa estimativa e {cx['razao_maio']:.1f}x o sinal ICMS (esperado: ICMS nao cobre servicos ISS)")
             elif cx["razao_maio"] < 0.5:
-                print(f"    [!] ICMS caiu mais do que implica nosso VAB loss -> possivel subestimacao")
+                print("    [!] ICMS caiu mais do que implica nosso VAB loss -> possivel subestimacao")
             else:
-                print(f"    [OK] Consistente -- nossa estimativa dentro da ordem de magnitude do sinal ICMS")
+                print("    [OK] Consistente -- nossa estimativa dentro da ordem de magnitude do sinal ICMS")
 
     # CNAE: top quedas
     print(f"\n{sep}")
@@ -284,7 +284,7 @@ def print_relatorio(resultados: dict) -> None:
               f"{r['icms_maio_obs']/1e6:>9.1f}  {r['icms_maio_esperado']/1e6:>9.1f}  {r['delta_pct']:>6.1f}%")
 
     # CNAE: top altas (recuperação / contrapartida)
-    print(f"\n  TOP 5 CLASSES COM MAIOR ALTA (setor de reconstrução/emergência?):")
+    print("\n  TOP 5 CLASSES COM MAIOR ALTA (setor de reconstrução/emergência?):")
     for r in sorted(resultados["cnae_top_quedas"], key=lambda x: -x["delta"])[:5]:
         print(f"    {r['cod_classe']}: {r['nome_classe'][:50]}  {r['delta_pct']:+.1f}%")
 

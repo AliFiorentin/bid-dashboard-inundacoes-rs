@@ -228,7 +228,7 @@ def main():
     except Exception as e:
         print(f"  ERRO: Nominatim nao acessivel em {NOMINATIM_URL}")
         print(f"  {e}")
-        print(f"  Suba o container: docker start nominatim")
+        print("  Suba o container: docker start nominatim")
         sys.exit(1)
 
     # Load data
@@ -263,7 +263,7 @@ def main():
         print(f"  Enderecos: {len(all_addrs):,} unicos, {len(new_addrs):,} novos")
 
         if not new_addrs:
-            print(f"  Tudo em cache!")
+            print("  Tudo em cache!")
         else:
             # Load boundary for validation
             boundary = load_municipio_boundary(ibge7)
