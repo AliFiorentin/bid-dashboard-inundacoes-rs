@@ -20,7 +20,7 @@ import pandas as pd
 # ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
-BASE = Path("D:/Projetos/BID")
+BASE = Path(__file__).resolve().parent.parent.parent
 DATA_BASES = BASE / "data" / "processed" / "bases"
 
 MUNICIPIOS_VALIDOS = ["Eldorado do Sul", "Lajeado", "Porto Alegre", "Rio Grande"]

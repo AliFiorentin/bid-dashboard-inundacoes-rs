@@ -36,7 +36,7 @@ import geopandas as gpd
 
 from common import fix_polygon_geometry, save_geojson, clean_polygon_geom
 
-DASH_DATA = Path("D:/Projetos/BID/Dashboard BID/public/dados_convertidos")
+DASH_DATA = Path(__file__).resolve().parent.parent / "Dashboard BID" / "public" / "dados_convertidos"
 EQUAL_AREA_CRS = "EPSG:5880"
 
 MIN_AREA_M2 = 2.0
