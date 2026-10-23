@@ -29,7 +29,7 @@ import pandas as pd
 # ---------------------------------------------------------------------------
 # Configuração
 # ---------------------------------------------------------------------------
-BASE = Path("D:/Projetos/BID")
+BASE = Path(__file__).resolve().parent.parent.parent
 DASH_DATA = BASE / "Dashboard BID" / "public" / "dados_convertidos"
 DATA_BASES = BASE / "data" / "processed" / "bases"
 DATA_RAW = BASE / "data" / "raw"

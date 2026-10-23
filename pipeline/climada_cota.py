@@ -57,16 +57,16 @@ import rasterio
 from rasterio.windows import Window, from_bounds
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from config import DASH_DATA, DATA_PROCESSED, DATA_RAW, MUNICIPIOS as MUNICIPIOS_CFG
+from config import DASH_DATA, DATA_PROCESSED, DATA_RAW, RASTERS_DIR, MUNICIPIOS as MUNICIPIOS_CFG
 MUNICIPIOS_IBGE = {m: c["ibge7"] for m, c in MUNICIPIOS_CFG.items()}
 from common import load_geojson
 import climada_risco_prototipo as proto
 
-POA_RASTERS = Path(r"C:\Users\Alisson Fiorentin\Downloads\POA_WGS84\Profundidade_WGS84")
+POA_RASTERS = RASTERS_DIR / "POA_WGS84" / "Profundidade_WGS84"
 MUNICIPIOS = {
     "Lajeado": {
         "slug": "lajeado",
-        "raster_dir": Path(r"C:\Users\Alisson Fiorentin\Downloads\Lajeado_WGS84\Profundidade_WGS84"),
+        "raster_dir": RASTERS_DIR / "Lajeado_WGS84" / "Profundidade_WGS84",
         "raster_nota": "Rasters de Lajeado (Taquari), 18.45 a 34.45 m, passo 1 m.",
     },
     "Eldorado do Sul": {

@@ -1,0 +1,19 @@
+name: Pipeline
+on:
+  push:
+    branches: [master]
+  pull_request:
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true   # Dashboard BID: os testes validam as saidas commitadas la
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install numpy pandas pillow pytest ruff
+      - run: python -m compileall -q pipeline
+      - run: ruff check pipeline --select F,E9
+      - run: python -m pytest pipeline/tests -q

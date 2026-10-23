@@ -25,11 +25,11 @@ from collections import defaultdict
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from config import DATA_PROCESSED
+from config import DATA_PROCESSED, ICMS_DIR
 
 # ── Caminhos ──────────────────────────────────────────────────────────────────
-ICMS_MUNIC  = Path(r"C:\Users\Alisson Fiorentin\Downloads\Arrecadação por Município e por Corede.csv")
-ICMS_CNAE   = Path(r"C:\Users\Alisson Fiorentin\Downloads\Arrecadação de ICMS por CNAE - Classe.csv")
+ICMS_MUNIC  = ICMS_DIR / "Arrecadação por Município e por Corede.csv"
+ICMS_CNAE   = ICMS_DIR / "Arrecadação de ICMS por CNAE - Classe.csv"
 DANOS_JSON  = DATA_PROCESSED / "danos_operacionais.json"
 OUT_JSON    = DATA_PROCESSED / "icms_validacao.json"
 

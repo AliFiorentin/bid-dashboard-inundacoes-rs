@@ -4,6 +4,7 @@ Configuracao centralizada do pipeline BID.
 Todos os caminhos, codigos IBGE, cenarios e constantes em um unico lugar.
 """
 
+import os
 from pathlib import Path
 
 # --- Diretorios raiz ---
@@ -14,8 +15,19 @@ DATA_PROCESSED = BASE / "data" / "processed"
 DASH_DATA = BASE / "Dashboard BID" / "public" / "dados_convertidos"
 
 # --- Fontes externas ---
-RAIS_PARQUET = Path("D:/RAIS/data/rais_db/vinculos/ano=2023/uf=43/RAIS_VINC_ID_SUL.parquet")
-CENSO_ESCOLAR_DIR = Path("D:/Censo Escolar 2024 - Microdados")
+# Fora do repositorio. Cada caminho pode ser trocado por variavel de ambiente, para rodar em outra
+# maquina (o padrao e' o caminho usado na maquina original):
+#   BID_RAIS_PARQUET, BID_RAIS_ESTAB_PARQUET, BID_CENSO_ESCOLAR_DIR
+#   BID_RASTERS_DIR  -> pasta que contem Lajeado_WGS84/ e POA_WGS84/ (rasters de profundidade por cota)
+#   BID_ICMS_DIR     -> pasta com os CSVs de ICMS da SEFAZ-RS (08_icms_validacao.py)
+def _env_path(nome: str, padrao) -> Path:
+    return Path(os.environ.get(nome, str(padrao)))
+
+
+RASTERS_DIR = _env_path("BID_RASTERS_DIR", Path.home() / "Downloads")
+ICMS_DIR = _env_path("BID_ICMS_DIR", Path.home() / "Downloads")
+RAIS_PARQUET = _env_path("BID_RAIS_PARQUET", "D:/RAIS/data/rais_db/vinculos/ano=2023/uf=43/RAIS_VINC_ID_SUL.parquet")
+CENSO_ESCOLAR_DIR = _env_path("BID_CENSO_ESCOLAR_DIR", "D:/Censo Escolar 2024 - Microdados")
 CENSO_ESCOLAR_CSV = CENSO_ESCOLAR_DIR / "dados" / "microdados_ed_basica_2024.csv"
 
 CNES_ZIP = Path(r"D:\CNES 042024.ZIP")
@@ -49,7 +61,7 @@ RAIS_VINC_COLS = [
     "cnpj_cei", "cnae20_classe", "cbo_2002",
 ]
 
-RAIS_ESTAB_PARQUET = Path("D:/RAIS/data/rais_db/estabelecimentos/ano=2023/uf=43/Estb2023ID.parquet")
+RAIS_ESTAB_PARQUET = _env_path("BID_RAIS_ESTAB_PARQUET", "D:/RAIS/data/rais_db/estabelecimentos/ano=2023/uf=43/Estb2023ID.parquet")
 RAIS_ESTAB_COLS = [
     "cnpj_cei", "municipio", "cep_estab",
     "nome_logradouro", "numero_logradouro", "nome_bairro", "cnae20_classe",
