@@ -46,7 +46,7 @@ export function MapControls({ dash }: { dash: DashboardState }) {
           largura/altura do PNG (1024x339, razão ~3.02) são fixas e a caixa
           centraliza via flex -- não tem como "cortar": o navegador so'
           desenha a imagem inteira, do tamanho exato pedido. */}
-      <div className="pointer-events-none absolute right-[48px] bottom-[45px] z-10 print:hidden max-lg:hidden">
+      <div className="pointer-events-none absolute right-[48px] bottom-[45px] z-10 print:hidden movel:hidden">
         <div
           className="flex h-[52px] w-[156px] items-center justify-center rounded-md bg-white/90 shadow-sm"
           style={{ border: "2px solid rgba(0,0,0,0.1)" }}
@@ -72,10 +72,10 @@ export function MapControls({ dash }: { dash: DashboardState }) {
           Todos aparecem sempre, inclusive em 2D: o toggle 3D precisa estar lá
           para dar como voltar, e girar/inclinar funciona igual sem o terreno
           ligado — esconder os botões só tirava controle sem motivo. */}
-      <div className="absolute right-2 lg:right-[48px] bottom-[10px] z-10 flex flex-row gap-1 print:hidden">
+      <div className="absolute right-2 desk:right-[48px] bottom-[10px] z-10 flex flex-row gap-1 print:hidden">
         <button
           onClick={() => setIs3D((v) => !v)}
-          className="flex h-11 w-11 lg:h-7 lg:w-7 items-center justify-center rounded-md text-xs lg:text-[10px] font-black transition-colors duration-150"
+          className="flex h-11 w-11 desk:h-7 desk:w-7 items-center justify-center rounded-md text-xs desk:text-[10px] font-black transition-colors duration-150"
           style={{
             backgroundColor: is3D ? COLORS.cenario : "#ffffff",
             color: is3D ? "#ffffff" : "#333333",
@@ -95,7 +95,7 @@ export function MapControls({ dash }: { dash: DashboardState }) {
             key={c.rotulo}
             onClick={() => ajustarCamera(c.db, c.dp)}
             title={c.titulo}
-            className="flex h-11 w-11 lg:h-7 lg:w-7 items-center justify-center rounded-md text-sm lg:text-[11px] font-black text-[#333333] transition-colors duration-150 hover:bg-slate-100"
+            className="flex h-11 w-11 desk:h-7 desk:w-7 items-center justify-center rounded-md text-sm desk:text-[11px] font-black text-[#333333] transition-colors duration-150 hover:bg-slate-100"
             style={{
               backgroundColor: "#ffffff",
               border: "2px solid rgba(0,0,0,0.1)",

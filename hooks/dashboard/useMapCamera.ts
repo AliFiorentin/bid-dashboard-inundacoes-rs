@@ -15,7 +15,7 @@ interface Args {
 // Painel lateral só existe a partir de lg (1024px); abaixo disso é bottom sheet e o
 // mapa já é redimensionado para ficar acima dele (sem padding).
 const PADDING_PAINEL = 412;
-const painelLateral = () => window.matchMedia("(min-width: 1024px)").matches;
+const painelLateral = () => window.matchMedia("(min-width: 1024px), (pointer: fine)").matches;
 
 /** Enquadramento do mapa: flyTo na troca de município, padding do painel e posição do header. */
 export function useMapCamera({ mapRef, headerRef, municipio, showPainelAnalise, permalinkView, setIs3D }: Args) {

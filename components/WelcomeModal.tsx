@@ -16,13 +16,13 @@ export function WelcomeModal() {
       onClick={(e) => { if (e.target === e.currentTarget) setOpen(false); }}
     >
       <div
-        className="relative w-full max-w-[480px] rounded-2xl overflow-hidden max-lg:overflow-y-auto max-lg:max-h-[calc(100dvh-2rem)] shadow-2xl"
+        className="relative w-full max-w-[480px] rounded-2xl overflow-hidden movel:overflow-y-auto movel:max-h-[calc(100dvh-2rem)] shadow-2xl"
         style={{ backgroundColor: "rgba(255,255,255,0.97)", border: "0.5px solid rgba(255,255,255,0.7)", boxShadow: "0 24px 64px rgba(0,0,0,0.28), 0 4px 16px rgba(0,0,0,0.12)" }}
       >
         {/* Fechar */}
         <button
           onClick={() => setOpen(false)}
-          className="absolute top-1 right-1 lg:top-3 lg:right-3 z-10 w-11 h-11 lg:w-7 lg:h-7 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/20 transition-colors duration-150"
+          className="absolute top-1 right-1 desk:top-3 desk:right-3 z-10 w-11 h-11 desk:w-7 desk:h-7 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/20 transition-colors duration-150"
           aria-label="Fechar"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">

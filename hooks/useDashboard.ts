@@ -44,7 +44,7 @@ export function useDashboard() {
   // Abaixo de lg o painel de análise vira bottom sheet e nasce recolhido para o mapa ocupar a
   // tela (os filtros nascem abertos e se recolhem sozinhos, ver FiltersPanel).
   useEffect(() => {
-    if (!window.matchMedia("(min-width: 1024px)").matches) {
+    if (!window.matchMedia("(min-width: 1024px), (pointer: fine)").matches) {
       // Só no mount: ler o viewport no useState quebraria a hidratação (o servidor assume desktop).
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowPainelAnalise(false);
