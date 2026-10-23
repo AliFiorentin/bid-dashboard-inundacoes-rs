@@ -19,29 +19,56 @@ export function CotaCanvasLayer({ raster, beforeId, opacity = 0.82 }: { raster: 
   const layerId = canvasId ? `cota-raster-${canvasId}` : ""
 
   // Cria a fonte/camada uma vez por canvas (o frame>0 garante que já há imagem colorida).
+  // O estilo base (CARTO) pode demorar ou falhar (rede lenta/bloqueada): mexer em fontes/camadas antes
+  // de ele carregar lança "Style is not done loading" e derruba a página. Por isso espera o estilo
+  // (isStyleLoaded) e protege as chamadas com try/catch.
   useEffect(() => {
     const map = mapRef?.getMap()
     if (!map || !pronto || !meta || !canvasId) return
-    if (!map.getSource(sourceId)) {
-      map.addSource(sourceId, { type: "canvas", canvas: canvasId, coordinates: meta.coordinates, animate: false })
-    }
-    if (!map.getLayer(layerId)) {
-      // A âncora (beforeId) é montada pelo react-map-gl de forma assíncrona: se ainda não existe,
-      // a camada entra no topo e é reposicionada assim que a âncora aparecer.
-      map.addLayer(
-        { id: layerId, type: "raster", source: sourceId, paint: { "raster-opacity": opacity, "raster-fade-duration": 0 } },
-        beforeId && map.getLayer(beforeId) ? beforeId : undefined,
-      )
-    }
+    let cancelado = false
+    let montada = false
+
     const reposicionar = () => {
-      if (beforeId && map.getLayer(layerId) && map.getLayer(beforeId)) {
-        map.moveLayer(layerId, beforeId)
-        map.off("styledata", reposicionar)
+      try {
+        if (beforeId && map.getLayer(layerId) && map.getLayer(beforeId)) {
+          map.moveLayer(layerId, beforeId)
+          map.off("styledata", reposicionar)
+        }
+      } catch { /* estilo recarregando: tenta no próximo styledata */ }
+    }
+
+    const montar = () => {
+      if (cancelado || montada) return
+      if (!map.isStyleLoaded()) return // tenta de novo no próximo styledata/load
+      try {
+        if (!map.getSource(sourceId)) {
+          map.addSource(sourceId, { type: "canvas", canvas: canvasId, coordinates: meta.coordinates, animate: false })
+        }
+        if (!map.getLayer(layerId)) {
+          // A âncora (beforeId) é montada pelo react-map-gl de forma assíncrona: se ainda não existe,
+          // a camada entra no topo e é reposicionada assim que a âncora aparecer.
+          map.addLayer(
+            { id: layerId, type: "raster", source: sourceId, paint: { "raster-opacity": opacity, "raster-fade-duration": 0 } },
+            beforeId && map.getLayer(beforeId) ? beforeId : undefined,
+          )
+        }
+        montada = true
+        map.off("styledata", montar)
+        map.off("load", montar)
+        if (beforeId) { map.on("styledata", reposicionar); reposicionar() }
+      } catch (e) {
+        console.warn("CotaCanvasLayer: mapa ainda não está pronto", e)
       }
     }
-    if (beforeId) { map.on("styledata", reposicionar); reposicionar() }
+
+    montar()
+    if (!montada) { map.on("styledata", montar); map.on("load", montar) }
+
     return () => {
+      cancelado = true
       try { // o mapa pode já ter sido destruído ao desmontar
+        map.off("styledata", montar)
+        map.off("load", montar)
         map.off("styledata", reposicionar)
         if (map.getLayer(layerId)) map.removeLayer(layerId)
         if (map.getSource(sourceId)) map.removeSource(sourceId)
