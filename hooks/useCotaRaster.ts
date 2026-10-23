@@ -1,5 +1,5 @@
 "use client"
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 
 // Raster de "cota de alagamento" (pipeline/climada_cota_mapa.py) recolorido no navegador a
 // cada cota. Cada pixel guarda o índice da primeira cota em que alaga; para uma cota c o pixel
@@ -41,7 +41,10 @@ export interface CotaRaster {
   setCota: (c: number) => void
   tocando: boolean
   setTocando: (t: boolean | ((t: boolean) => boolean)) => void
-  url: string | null
+  /** Id do <canvas> (no DOM) que o MapLibre lê como fonte `canvas`; null até o primeiro quadro. */
+  canvasId: string | null
+  /** Contador de quadros desenhados: o consumidor pede ao MapLibre para reler o canvas a cada mudança. */
+  frame: number
   /** Índice (1..N) da primeira cota em que o ponto alaga; 0 = nunca alaga / fora da grade. */
   amostrar: (lon: number, lat: number) => number
   minimo: number
@@ -51,17 +54,20 @@ export interface CotaRaster {
 
 /** slug null = inativo (nada é baixado). autoplay = começa a tocar assim que carrega. */
 export function useCotaRaster(slug: string | null, opts: { cotaInicial?: string; autoplay?: boolean } = {}): CotaRaster {
-  const { cotaInicial, autoplay = false } = opts
+  const { cotaInicial } = opts
+  // Quem pede menos movimento (prefers-reduced-motion) não recebe animação automática.
+  const autoplay = (opts.autoplay ?? false) && !(typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches)
   const [meta, setMeta] = useState<CotaMeta | null>(null)
   const [erro, setErro] = useState(false)
   const [cota, setCotaState] = useState<number | null>(null)
   const [tocando, setTocando] = useState(false)
-  const [url, setUrl] = useState<string | null>(null)
+  const [canvasId, setCanvasId] = useState<string | null>(null)
+  const [frame, setFrame] = useState(0)
+  const baseId = useId().replace(/[^a-zA-Z0-9_-]/g, "")
   const idx = useRef<Uint8Array | null>(null)
   const canvas = useRef<HTMLCanvasElement | null>(null)
   const ultima = useRef<number | null>(null)
   const pendente = useRef(false)
-  const urlAtual = useRef<string | null>(null)
 
   const passo = meta ? passoDe(meta) : 1
   const minimo = meta ? meta.cotas[0] - passo : 0
@@ -70,10 +76,9 @@ export function useCotaRaster(slug: string | null, opts: { cotaInicial?: string;
   useEffect(() => {
     // Reiniciar o estado quando o slug muda é intencional (o raster é outro).
     /* eslint-disable react-hooks/set-state-in-effect */
-    setMeta(null); setErro(false); setUrl(null); setCotaState(null); setTocando(false)
+    setMeta(null); setErro(false); setCanvasId(null); setFrame(0); setCotaState(null); setTocando(false)
     idx.current = null; canvas.current = null; ultima.current = null
     /* eslint-enable react-hooks/set-state-in-effect */
-    if (urlAtual.current) { URL.revokeObjectURL(urlAtual.current); urlAtual.current = null }
     if (!slug) return
     let vivo = true
     ;(async () => {
@@ -82,15 +87,21 @@ export function useCotaRaster(slug: string | null, opts: { cotaInicial?: string;
         const m: CotaMeta = await (await fetch(`${base}/cota_mapa.json`)).json()
         const blob = await (await fetch(`${base}/cota_mapa.webp`)).blob()
         const bmp = await createImageBitmap(blob, { premultiplyAlpha: "none" })
-        const c = document.createElement("canvas")
-        c.width = m.width; c.height = m.height
-        const ctx = c.getContext("2d", { willReadFrequently: true })!
-        ctx.drawImage(bmp, 0, 0)
-        const px = ctx.getImageData(0, 0, m.width, m.height).data
+        const leitura = document.createElement("canvas")
+        leitura.width = m.width; leitura.height = m.height
+        const lctx = leitura.getContext("2d", { willReadFrequently: true })!
+        lctx.drawImage(bmp, 0, 0)
+        const px = lctx.getImageData(0, 0, m.width, m.height).data
         const ix = new Uint8Array(m.width * m.height)
         for (let i = 0; i < ix.length; i++) ix[i] = px[i * 4 + 3] ? px[i * 4] : 0
         if (!vivo) return
         idx.current = ix
+        // Canvas de exibição: fica no DOM (oculto) para o MapLibre lê-lo como fonte `canvas`.
+        const c = document.createElement("canvas")
+        c.width = m.width; c.height = m.height
+        c.id = `cota-canvas-${baseId}-${slug}`
+        c.style.display = "none"
+        document.body.appendChild(c)
         canvas.current = c
         const ini = parseFloat(cotaInicial ?? "")
         const min = m.cotas[0] - passoDe(m)
@@ -104,7 +115,7 @@ export function useCotaRaster(slug: string | null, opts: { cotaInicial?: string;
     })()
     return () => {
       vivo = false
-      if (urlAtual.current) { URL.revokeObjectURL(urlAtual.current); urlAtual.current = null }
+      canvas.current?.remove()
     }
   }, [slug]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -153,7 +164,7 @@ export function useCotaRaster(slug: string | null, opts: { cotaInicial?: string;
     return t
   }, [meta])
 
-  // Recolore (um quadro por vez, coalescendo movimentos) e publica a url da imagem.
+  // Recolore o canvas (um quadro por vez, coalescendo movimentos); sem codificar PNG a cada quadro.
   useEffect(() => {
     if (!meta || cota === null || !tabela || !idx.current || !canvas.current) return
     ultima.current = cota
@@ -167,28 +178,24 @@ export function useCotaRaster(slug: string | null, opts: { cotaInicial?: string;
       const c = ultima.current
       const ctx = cv.getContext("2d")!
       const img = ctx.createImageData(meta.width, meta.height)
-      const d = img.data
+      const px32 = new Uint32Array(img.data.buffer) // RGBA little-endian: A<<24 | B<<16 | G<<8 | R
+      const ALAGADO = ((255 << 24) | (COR_ALAGADO[2] << 16) | (COR_ALAGADO[1] << 8) | COR_ALAGADO[0]) >>> 0
+      const frenteRgb = (COR_FRENTE[2] << 16) | (COR_FRENTE[1] << 8) | COR_FRENTE[0]
+      const limiar = (t: number) => t - passo // abaixo disso o pixel ainda está seco
       for (let i = 0; i < ix.length; i++) {
         const k = ix[i]
         if (!k) continue
-        const a = Math.min(1, Math.max(0, (c - (tabela[k] - passo)) / passo))
+        const t = tabela[k]
+        if (c >= t) { px32[i] = ALAGADO; continue }
+        const a = (c - limiar(t)) / passo
         if (a <= 0) continue
-        const cor = a < 1 ? COR_FRENTE : COR_ALAGADO
-        const o = i * 4
-        d[o] = cor[0]; d[o + 1] = cor[1]; d[o + 2] = cor[2]
-        d[o + 3] = 255 * (a < 1 ? 0.4 + 0.6 * a : 1)
+        px32[i] = ((Math.round(255 * (0.4 + 0.6 * a)) << 24) | frenteRgb) >>> 0
       }
       ctx.putImageData(img, 0, 0)
-      cv.toBlob((b) => {
-        if (!b) return
-        const novo = URL.createObjectURL(b)
-        const antigo = urlAtual.current
-        urlAtual.current = novo
-        setUrl(novo)
-        if (antigo) setTimeout(() => URL.revokeObjectURL(antigo), 3000)
-      })
+      setCanvasId((atual) => atual ?? cv.id)
+      setFrame((f) => f + 1)
     })
   }, [cota, meta, tabela, passo])
 
-  return { meta, erro, cota, setCota, tocando, setTocando, url, amostrar, minimo, maximo, passo }
+  return { meta, erro, cota, setCota, tocando, setTocando, canvasId, frame, amostrar, minimo, maximo, passo }
 }

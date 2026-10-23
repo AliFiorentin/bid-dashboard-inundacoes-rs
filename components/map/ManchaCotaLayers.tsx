@@ -1,5 +1,6 @@
 import { Source, Layer } from "react-map-gl/maplibre"
 import { COLORS, MANCHA_DURACAO_CENARIO } from "@/lib/constants"
+import { CotaCanvasLayer } from "@/components/CotaCanvasLayer"
 import type { DashboardState } from "@/hooks/useDashboard"
 
 /** Manchas de inundação (Visão Geral / cenário), textura de duração, água por cota e limite municipal. */
@@ -113,26 +114,10 @@ export function ManchaCotaLayers({ dash }: { dash: DashboardState }) {
           </Source>
         )}
 
-      {/* Cenário "Todas as cotas": água avançando conforme o slider (hooks/useCotaRaster). */}
-      {cotasAtivo &&
-        !isTransitioning &&
-        showMancha &&
-        cotaRaster.url &&
-        cotaRaster.meta && (
-          <Source
-            id="cota-img"
-            type="image"
-            url={cotaRaster.url}
-            coordinates={cotaRaster.meta.coordinates}
-          >
-            <Layer
-              id="cota-raster"
-              beforeId="anchor-infra"
-              type="raster"
-              paint={{ "raster-opacity": 0.82, "raster-fade-duration": 0 }}
-            />
-          </Source>
-        )}
+      {/* Cenário "Todas as cotas": água avançando conforme o slider (fonte canvas; ver CotaCanvasLayer). */}
+      {cotasAtivo && !isTransitioning && showMancha && (
+        <CotaCanvasLayer raster={cotaRaster} beforeId="anchor-infra" />
+      )}
 
       {/* 2. Limite, Agricultura, Infraestrutura */}
       {limitePA && (
