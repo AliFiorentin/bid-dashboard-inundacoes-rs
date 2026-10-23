@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 import { join } from "path";
-import type { ClimadaData } from "@/app/danos/DanosClient";
+import type { ClimadaData } from "@/app/danos/types";
 
 /**
  * Leitura server-side compartilhada entre a página cheia (app/metodologia/page.tsx)
