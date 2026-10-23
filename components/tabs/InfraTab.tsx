@@ -20,8 +20,8 @@ interface Props {
     | "isVisaoGeral"
     | "mostraImpacto"
     | "isCenarioAtivo"
-    | "baseInfra"
-    | "atingidosInfra"
+    | "infraPainel"
+    | "infraCenarioSlug"
     | "allMunInfraStats"
     | "showListaLogradouros"
     | "setShowListaLogradouros"
@@ -38,8 +38,8 @@ export function InfraTab({ dash }: Props) {
     isVisaoGeral,
     mostraImpacto,
     isCenarioAtivo,
-    baseInfra,
-    atingidosInfra,
+    infraPainel,
+    infraCenarioSlug,
     allMunInfraStats,
     showListaLogradouros,
     setShowListaLogradouros,
@@ -195,8 +195,8 @@ export function InfraTab({ dash }: Props) {
 
   // Mostra a KPI de TODOS os tipos de infra do municipio, marcados ou nao no
   // mapa -- infraAtivas so controla o que desenha no mapa (DashboardMap.tsx),
-  // nao o que aparece aqui. Os dados sao pre-carregados em useDashboard.ts
-  // assim que o municipio/cenario muda, entao a metrica ja vem pronta.
+  // nao o que aparece aqui. As metricas vem de infraPainel (JSON leve por
+  // municipio/cenario, ver pipeline/10_infra_stats.py), sem baixar GeoJSON.
   const todosTipos = INFRAESTRUTURA_CONFIG[municipio] ?? [];
 
   return (
@@ -211,8 +211,8 @@ export function InfraTab({ dash }: Props) {
         {todosTipos.includes("Logradouros") && (
           <LogradourosSection
             dash={{
-              baseInfra,
-              atingidosInfra,
+              infraPainel,
+              infraCenarioSlug,
               mostraImpacto,
               isCenarioAtivo,
               showListaLogradouros,
@@ -223,13 +223,13 @@ export function InfraTab({ dash }: Props) {
 
         {todosTipos.includes("Quadras") && (
           <QuadrasSection
-            dash={{ baseInfra, atingidosInfra, mostraImpacto }}
+            dash={{ infraPainel, infraCenarioSlug, mostraImpacto }}
           />
         )}
 
         {todosTipos.includes("Terrenos") && (
           <TerrenosSection
-            dash={{ baseInfra, atingidosInfra, mostraImpacto }}
+            dash={{ infraPainel, infraCenarioSlug, mostraImpacto }}
           />
         )}
 
@@ -240,8 +240,8 @@ export function InfraTab({ dash }: Props) {
               key={infraNome}
               infraNome={infraNome}
               dash={{
-                baseInfra,
-                atingidosInfra,
+                infraPainel,
+                infraCenarioSlug,
                 mostraImpacto,
                 showListaEixos,
                 setShowListaEixos,

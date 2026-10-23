@@ -1,14 +1,7 @@
 ﻿import React from "react";
 import { ChevronDown } from "lucide-react";
 import { INFRA_COLORS, PANEL_CARD_BG } from "@/lib/constants";
-import {
-  compactoBr,
-  calcPct,
-  getRotas,
-  getLen,
-  countRuasUnicasPOA,
-  getRuasListPOA,
-} from "@/lib/geo-utils";
+import { compactoBr, calcPct } from "@/lib/geo-utils";
 import { KPICard } from "@/components/KPICard";
 import { cn } from "@/lib/utils";
 import type { DashboardState } from "@/hooks/useDashboard";
@@ -19,8 +12,8 @@ interface Props {
   infraNome: string;
   dash: Pick<
     DashboardState,
-    | "baseInfra"
-    | "atingidosInfra"
+    | "infraPainel"
+    | "infraCenarioSlug"
     | "mostraImpacto"
     | "showListaEixos"
     | "setShowListaEixos"
@@ -28,15 +21,14 @@ interface Props {
 }
 
 export function GenericInfraSection({ infraNome, dash }: Props) {
-  const { baseInfra, atingidosInfra, mostraImpacto, showListaEixos, setShowListaEixos } = dash;
+  const { infraPainel, infraCenarioSlug, mostraImpacto, showListaEixos, setShowListaEixos } = dash;
 
-  const base     = baseInfra[infraNome];
-  const atingido = atingidosInfra[infraNome];
-  const totalBase = base?.features?.length ?? 0;
-  const totalAtg  = atingido?.features?.length ?? 0;
+  const entry    = infraPainel?.[infraNome];
+  const base     = entry?.base;
+  const atingido = entry?.cenarios[infraCenarioSlug];
+  const totalBase = base?.count ?? 0;
+  const totalAtg  = atingido?.count ?? 0;
   const cor = INFRA_COLORS[infraNome] ?? "#f59e0b";
-  const baseF = base?.features ?? [];
-  const atgF  = atingido?.features ?? [];
 
   let valBase = totalBase;
   let valAtg  = totalAtg;
@@ -44,25 +36,21 @@ export function GenericInfraSection({ infraNome, dash }: Props) {
 
   switch (infraNome) {
     case "Edificações":
-      kpi2 = {
-        titulo: "Área Construída (m²)",
-        valBase: baseF.reduce((s, f) => s + (Number((f.properties as Record<string, unknown>)?.area_m2) || 0), 0),
-        valAtg:  atgF.reduce((s, f) => s + (Number((f.properties as Record<string, unknown>)?.area_m2) || 0), 0),
-      };
+      kpi2 = { titulo: "Área Construída (m²)", valBase: base?.area_m2 ?? 0, valAtg: atingido?.area_m2 ?? 0 };
       break;
     case "Ônibus":
-      valBase = getRotas(baseF);
-      valAtg  = getRotas(atgF);
-      kpi2 = { titulo: "KM de Rotas", valBase: getLen(baseF), valAtg: getLen(atgF) };
+      valBase = base?.rotas ?? 0;
+      valAtg  = atingido?.rotas ?? 0;
+      kpi2 = { titulo: "KM de Rotas", valBase: base?.km ?? 0, valAtg: atingido?.km ?? 0 };
       break;
     case "Eixos Logradouros":
-      valBase = countRuasUnicasPOA(baseF);
-      valAtg  = countRuasUnicasPOA(atgF);
+      valBase = base?.ruas_unicas ?? 0;
+      valAtg  = atingido?.ruas_unicas ?? 0;
       kpi2 = { titulo: "Segmentos", valBase: totalBase, valAtg: totalAtg };
       break;
   }
 
-  const listaRuas = infraNome === "Eixos Logradouros" && mostraImpacto ? getRuasListPOA(atgF) : [];
+  const listaRuas = infraNome === "Eixos Logradouros" && mostraImpacto ? [...(atingido?.ruas ?? [])].sort((a, b) => a.localeCompare(b, "pt-BR")) : [];
 
   return (
     <div key={infraNome}>

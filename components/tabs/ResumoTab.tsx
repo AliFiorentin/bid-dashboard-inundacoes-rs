@@ -39,8 +39,8 @@ interface Props {
     | "conabStats"
     | "allMunAgriStats"
     | "allMunAgriAtingidosStats"
-    | "baseInfra"
-    | "atingidosInfra"
+    | "infraPainel"
+    | "infraCenarioSlug"
     | "allMunInfraStats"
     | "areaData"
   >;
@@ -103,7 +103,7 @@ export function ResumoTab({ dash }: Props) {
     metricasEmp, metricasEdu, metricasSau,
     baseAgriStats, atingidosAgriStats, conabStats,
     allMunAgriStats, allMunAgriAtingidosStats,
-    baseInfra, atingidosInfra, allMunInfraStats,
+    infraPainel, infraCenarioSlug, allMunInfraStats,
     areaData,
   } = dash;
 
@@ -148,10 +148,10 @@ export function ResumoTab({ dash }: Props) {
   // ── Edificações (Infraestrutura) ────────────────────────────────────────────
   const edifBase = isVisaoGeral
     ? MUNICIPIOS.reduce((s, mun) => s + (allMunInfraStats?.[mun]?.["Edificações"]?.count_base ?? 0), 0)
-    : (baseInfra["Edificações"]?.features?.length ?? 0);
+    : (infraPainel?.["Edificações"]?.base.count ?? 0);
   const edifAtg = isVisaoGeral
     ? MUNICIPIOS.reduce((s, mun) => s + (allMunInfraStats?.[mun]?.["Edificações"]?.count_atingido ?? 0), 0)
-    : (atingidosInfra["Edificações"]?.features?.length ?? 0);
+    : (infraPainel?.["Edificações"]?.cenarios[infraCenarioSlug]?.count ?? 0);
 
   // ── Área Atingida: território do município x extensão da mancha ────────────
   // Na Visão Geral usa o próprio cenário do RS (mancha estadual única "ADA

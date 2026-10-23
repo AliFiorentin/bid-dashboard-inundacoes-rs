@@ -13,6 +13,30 @@ export interface AreaAtingidaMunData {
 }
 export type AreaAtingidaData = Record<string, AreaAtingidaMunData>;
 
+// Metricas do Painel por tipo de infra (BASE e cada cenario) -- ver
+// pipeline/10_infra_stats.py (infraestrutura_painel.json).
+export interface InfraPainelMetricas {
+  count: number;
+  area_m2?: number;
+  rotas?: number;
+  km?: number;
+  ruas_unicas?: number;
+  ruas?: string[];
+  drenagem?: number;
+  iluminacao?: number;
+  agua?: number;
+  coleta_lix?: number;
+  esgoto_plu?: number;
+  esgoto_cloacal?: number;
+  fossa?: number;
+  condominio?: number;
+}
+export interface InfraPainelEntry {
+  base: InfraPainelMetricas;
+  cenarios: Record<string, InfraPainelMetricas>;
+}
+export type InfraPainel = Record<string, InfraPainelEntry>;
+
 export interface InfraStatsEntry {
   count_base: number;
   count_atingido: number;
@@ -96,6 +120,7 @@ export function useDashboard() {
   // volta a um municipio ja visitado nesta sessao.
   const infraBaseCacheRef = useRef<Record<string, Record<string, FeatureCollection>>>({});
   const infraAtingidosCacheRef = useRef<Record<string, Record<string, FeatureCollection>>>({});
+  const infraPainelCacheRef = useRef<Record<string, InfraPainel>>({});
   const [headerBottom, setHeaderBottom] = useState(82);
 
   const [municipio, setMunicipio] = useState<string>("Visão Geral RS");
@@ -117,6 +142,7 @@ export function useDashboard() {
   const [baseEducacao, setBaseEducacao] = useState<FeatureCollection | null>(null);
   const [baseSaude, setBaseSaude] = useState<FeatureCollection | null>(null);
   const [baseInfra, setBaseInfra] = useState<Record<string, FeatureCollection>>({});
+  const [infraPainel, setInfraPainel] = useState<InfraPainel | null>(null);
 
   const [atingidosEmpresas, setAtingidosEmpresas] = useState<FeatureCollection | null>(null);
   const [atingidosEducacao, setAtingidosEducacao] = useState<FeatureCollection | null>(null);
@@ -549,20 +575,51 @@ export function useDashboard() {
     return () => controller.abort();
   }, [municipio, cenario]);
 
-  // Pre-carrega ATINGIDOS de TODOS os tipos de infra do municipio (leves e
-  // pesados, marcados ou nao em infraAtivas) -- as metricas do Painel devem
-  // aparecer mesmo sem nenhuma camada marcada no mapa (infraAtivas so
-  // controla o que desenha no mapa, ver DashboardMap.tsx). Efeito separado do
-  // de empresas/educacao/saude/agricultura pra nao re-buscar tudo isso toda
-  // vez que cenario muda por causa so da infra.
+  // As metricas do Painel (abas Resumo e Infraestrutura) vem de um JSON leve
+  // pre-calculado por municipio e cenario (pipeline/10_infra_stats.py ->
+  // infraestrutura_painel.json), entao nenhum GeoJSON de infra e' baixado so'
+  // para mostrar numeros. Os GeoJSONs (pesados: ~400MB em Porto Alegre) so'
+  // sao buscados quando o tipo e' ligado no mapa (infraAtivas), nos dois
+  // efeitos abaixo.
+  useEffect(() => {
+    if (municipio === "Visão Geral RS" || (INFRAESTRUTURA_CONFIG[municipio]?.length ?? 0) === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setInfraPainel(null);
+      return;
+    }
+    const cached = infraPainelCacheRef.current[municipio];
+    if (cached) { setInfraPainel(cached); return; }
+
+    setInfraPainel(null);
+    const controller = new AbortController();
+    fetch(`/dados_convertidos/${slugify(municipio)}/infraestrutura_painel.json?v=1`, { signal: controller.signal })
+      .then(r => r.ok ? r.json() : null)
+      .then((d: InfraPainel | null) => {
+        if (d && !controller.signal.aborted) {
+          infraPainelCacheRef.current[municipio] = d;
+          setInfraPainel(d);
+        }
+      })
+      .catch(e => { if ((e as Error).name !== 'AbortError') console.error(e); });
+    return () => controller.abort();
+  }, [municipio]);
+
+  // Baixa o ATINGIDOS do cenario so' dos tipos ligados no mapa.
   useEffect(() => {
     if (municipio === "Visão Geral RS" || !cenario || cenario === "(nenhum)" || cenario === COTAS_CENARIO) return;
 
     const cacheKey = `${municipio}::${cenario}`;
     const cache = infraAtingidosCacheRef.current[cacheKey] ?? (infraAtingidosCacheRef.current[cacheKey] = {});
-    if (Object.keys(cache).length > 0) setAtingidosInfra(prev => ({ ...cache, ...prev }));
+    const cacheados = infraAtivas.filter(infra => cache[infra]);
+    if (cacheados.length > 0) {
+      setAtingidosInfra(prev => {
+        const novo = { ...prev };
+        cacheados.forEach(infra => { novo[infra] = cache[infra]; });
+        return novo;
+      });
+    }
 
-    const tipos = (INFRAESTRUTURA_CONFIG[municipio] || []).filter(infra => !cache[infra]);
+    const tipos = infraAtivas.filter(infra => !cache[infra]);
     if (tipos.length === 0) return;
 
     const controller = new AbortController();
@@ -584,28 +641,23 @@ export function useDashboard() {
     });
 
     return () => controller.abort();
-  }, [municipio, cenario]);
+  }, [municipio, cenario, infraAtivas]);
 
-  // Pre-carrega BASE de TODOS os tipos de infra do municipio (leves e
-  // pesados), independente de estarem marcados em infraAtivas -- mesma logica
-  // do efeito acima, so que para o total (nao filtrado por cenario). Isso
-  // baixa todos os arquivos de infra do municipio de uma vez (para Porto
-  // Alegre, ~400MB+ somados) -- aceito de proposito para que o Painel mostre
-  // a metrica de qualquer camada sem exigir selecao previa; INFRA_TAMANHOS_MB
-  // continua usado so para o aviso de confirmacao antes de desenhar a camada
-  // no MAPA (toggleInfra), que e' a parte cara de renderizar, nao de baixar.
+  // Baixa o BASE so' dos tipos ligados no mapa (infraAtivas).
   useEffect(() => {
-    const tipos = INFRAESTRUTURA_CONFIG[municipio] || [];
-    if (municipio === "Visão Geral RS" || tipos.length === 0) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setBaseInfra(prev => Object.keys(prev).length === 0 ? prev : {});
-      return;
-    }
+    if (municipio === "Visão Geral RS" || infraAtivas.length === 0) return;
 
     const cache = infraBaseCacheRef.current[municipio] ?? (infraBaseCacheRef.current[municipio] = {});
-    if (Object.keys(cache).length > 0) setBaseInfra(prev => ({ ...cache, ...prev }));
+    const cacheados = infraAtivas.filter(infra => cache[infra]);
+    if (cacheados.length > 0) {
+      setBaseInfra(prev => {
+        const novo = { ...prev };
+        cacheados.forEach(infra => { novo[infra] = cache[infra]; });
+        return novo;
+      });
+    }
 
-    const toLoad = tipos.filter(infra => !cache[infra]);
+    const toLoad = infraAtivas.filter(infra => !cache[infra]);
     if (toLoad.length === 0) return;
 
     const controller = new AbortController();
@@ -630,8 +682,8 @@ export function useDashboard() {
       setIsLoading(false);
     });
 
-    return () => controller.abort();
-  }, [municipio]);
+    return () => { controller.abort(); setIsLoading(false); };
+  }, [municipio, infraAtivas]);
 
   const toggleCamada = (camada: string) => { setCamadas(prev => prev.includes(camada) ? prev.filter(c => c !== camada) : [...prev, camada]); setPopupInfo(null); };
   const toggleInfra = (infra: string) => {
@@ -759,6 +811,7 @@ export function useDashboard() {
     }
   }, [camadas, isVisaoGeral, tabAtiva, municipio]);
 
+  const infraCenarioSlug = scenarioSlug(municipio, cenario);
   const possuiInfra = INFRAESTRUTURA_CONFIG[municipio] && INFRAESTRUTURA_CONFIG[municipio].length > 0;
   const mostraImpacto = isVisaoGeral || isCenarioAtivo;
   const temCamadaTabular = camadas.includes("Empresas") || camadas.includes("Educação") || camadas.includes("Saúde") || camadas.includes("Agricultura") || camadas.includes("Infraestrutura") || camadas.includes("População");
@@ -995,7 +1048,7 @@ export function useDashboard() {
     showLegenda, setShowLegenda,
     is3D, setIs3D,
     isLoading,
-    baseEmpresas, baseEducacao, baseSaude, baseInfra,
+    baseEmpresas, baseEducacao, baseSaude, baseInfra, infraPainel, infraCenarioSlug,
     atingidosEmpresas, atingidosEducacao, atingidosSaude, atingidosInfra,
     manchaCenario, manchaRS, limitePA,
     baseAgriStats, atingidosAgriStats, conabStats,
