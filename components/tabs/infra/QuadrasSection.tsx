@@ -7,16 +7,17 @@ import { KPIRow } from "@/components/KPIRow";
 import type { DashboardState } from "@/hooks/useDashboard";
 
 interface Props {
-  dash: Pick<DashboardState, "baseInfra" | "atingidosInfra" | "mostraImpacto">;
+  dash: Pick<DashboardState, "infraPainel" | "infraAtg" | "mostraImpacto">;
 }
 
 export function QuadrasSection({ dash }: Props) {
-  const { baseInfra, atingidosInfra, mostraImpacto } = dash;
+  const { infraPainel, infraAtg, mostraImpacto } = dash;
 
-  const base = baseInfra["Quadras"];
-  const atg = atingidosInfra["Quadras"];
-  const total = base?.features?.length ?? 0;
-  const totalAtg = atg?.features?.length ?? 0;
+  const entry = infraPainel?.["Quadras"];
+  const base = entry?.base;
+  const atg = infraAtg["Quadras"];
+  const total = base?.count ?? 0;
+  const totalAtg = atg?.count ?? 0;
   const cor = INFRA_COLORS["Quadras"];
 
   // Mesmo padrao de GenericInfraSection: o header (com titulo) so' aparece

@@ -2,7 +2,7 @@ import React from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import type { ValueType } from "recharts/types/component/DefaultTooltipContent";
 import { C, INFRA_COLORS } from "@/lib/constants";
-import { compactoBr, calcPct, countFlag, countEquals } from "@/lib/geo-utils";
+import { compactoBr, calcPct } from "@/lib/geo-utils";
 import { BarServico } from "@/components/ui/BarServico";
 import { KPICard } from "@/components/KPICard";
 import type { DashboardState } from "@/hooks/useDashboard";
@@ -10,32 +10,25 @@ import type { DashboardState } from "@/hooks/useDashboard";
 const PANEL_HDR = { background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)" } as const;
 
 interface Props {
-  dash: Pick<DashboardState, "baseInfra" | "atingidosInfra" | "mostraImpacto">;
+  dash: Pick<DashboardState, "infraPainel" | "infraAtg" | "mostraImpacto">;
 }
 
 export function TerrenosSection({ dash }: Props) {
-  const { baseInfra, atingidosInfra, mostraImpacto } = dash;
+  const { infraPainel, infraAtg, mostraImpacto } = dash;
 
-  const base = baseInfra["Terrenos"];
-  const atg = atingidosInfra["Terrenos"];
-  const baseF = base?.features ?? [];
-  const atgF = atg?.features ?? [];
+  const entry = infraPainel?.["Terrenos"];
+  const base = entry?.base;
+  const atg = infraAtg["Terrenos"];
 
-  const total = baseF.length;
-  const totalAtg = atgF.length;
+  const total = base?.count ?? 0;
+  const totalAtg = atg?.count ?? 0;
 
-  const agua    = { b: countFlag(baseF, "agua"),        a: countFlag(atgF, "agua") };
-  const lixo    = { b: countFlag(baseF, "coleta_lix"),  a: countFlag(atgF, "coleta_lix") };
-  const pluvial = { b: countFlag(baseF, "esgoto_plu"),  a: countFlag(atgF, "esgoto_plu") };
-  const cloacal = {
-    b: countEquals(baseF, "esgoto_clo", ["esgoto_cloacal", "cloacal", "1"]),
-    a: countEquals(atgF,  "esgoto_clo", ["esgoto_cloacal", "cloacal", "1"]),
-  };
-  const fossa = {
-    b: countEquals(baseF, "esgoto_clo", ["fossa_septica", "fossa"]),
-    a: countEquals(atgF,  "esgoto_clo", ["fossa_septica", "fossa"]),
-  };
-  const condo = { b: countFlag(baseF, "condominio"), a: countFlag(atgF, "condominio") };
+  const agua    = { b: base?.agua ?? 0,           a: atg?.agua ?? 0 };
+  const lixo    = { b: base?.coleta_lix ?? 0,     a: atg?.coleta_lix ?? 0 };
+  const pluvial = { b: base?.esgoto_plu ?? 0,     a: atg?.esgoto_plu ?? 0 };
+  const cloacal = { b: base?.esgoto_cloacal ?? 0, a: atg?.esgoto_cloacal ?? 0 };
+  const fossa   = { b: base?.fossa ?? 0,          a: atg?.fossa ?? 0 };
+  const condo   = { b: base?.condominio ?? 0,     a: atg?.condominio ?? 0 };
 
   const cor = INFRA_COLORS["Terrenos"];
 
