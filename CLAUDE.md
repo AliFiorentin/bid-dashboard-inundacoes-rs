@@ -45,6 +45,7 @@ python pipeline/11_area_atingida.py     # municipal area + flooded area per scen
 python pipeline/climada_cota.py          # physical damage per cota (CLIMADA methodology) -> climada_cota_{slug}.json
 python pipeline/climada_cota_detalhe.py  # per-category indicators per cota -> climada_cota_detalhe_{slug}.json
 python pipeline/climada_cota_mapa.py     # (regenerating it resets cota_mapa.json: re-run 10_infra_stats.py afterwards, it adds area_por_cota_km2) cota_mapa.webp (first-wet cota index per pixel) + cota_mapa.json (incl. WorldPop population per cota)
+python pipeline/climada_cota_pontos.py   # cota_pontos.json: cota de entrada de cada ponto (5 m) -> abas do Dashboard batem com a aba "Por cota"
 python pipeline/climada_rp_por_cota.py   # RP -> cota conversion (RP views); climada_exposicao.py = exposure without damage curve
 ```
 

@@ -56,3 +56,20 @@ def test_cotas_do_mapa_batem_com_o_detalhe(slug):
     meta = _carrega(RAIZ / slug / "cota_mapa.json")
     det = _carrega(RAIZ / f"climada_cota_detalhe_{slug}.json")
     assert sorted(det["por_cota"], key=float) == [f"{c:.2f}" for c in meta["cotas"]]
+
+
+@pytest.mark.parametrize("slug", MUNICIPIOS_COTA)
+def test_cota_pontos_bate_com_o_detalhe_por_cota(slug):
+    """A contagem de pontos atingidos por cota (cota_pontos.json, usada nas abas do Dashboard) tem que ser
+    IGUAL a da aba "Por cota" (climada_cota_detalhe_*.json): mesma amostragem de 5 m."""
+    pontos = _carrega(RAIZ / slug / "cota_pontos.json")
+    det = _carrega(RAIZ / f"climada_cota_detalhe_{slug}.json")
+    cotas = sorted(det["por_cota"], key=float)
+    assert [f"{c:.2f}" for c in pontos["cotas"]] == cotas
+    for setor in ("empresas", "saude", "educacao"):
+        idx = pontos["idx"][setor]
+        assert len(idx) == pontos["n"][setor]
+        assert sum(1 for k in idx if k >= 0) == det["totais"][setor]["n"], f"{setor}: pontos dentro do municipio"
+        for j, c in enumerate(cotas, start=1):
+            n = sum(1 for k in idx if 1 <= k <= j)
+            assert n == det["por_cota"][c][setor]["n"], f"{setor} cota {c}: {n} != {det['por_cota'][c][setor]['n']}"
