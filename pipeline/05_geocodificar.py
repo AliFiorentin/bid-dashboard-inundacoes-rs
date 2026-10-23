@@ -52,7 +52,7 @@ def geocode_with_fallback(addr: str, viewbox: str = None) -> tuple:
         lat, lon = _nominatim_search(addr, viewbox)
         return (lat, lon, "original") if lat else (None, None, "falhou")
 
-    rua, numero, bairro, cep, cidade_uf = parts[0], parts[1], parts[2], parts[3], parts[4]
+    rua, numero, _bairro, cep, cidade_uf = parts[0], parts[1], parts[2], parts[3], parts[4]
     cidade = cidade_uf.replace(" - RS", "").strip()
 
     attempts = [

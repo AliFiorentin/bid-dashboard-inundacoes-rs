@@ -129,7 +129,7 @@ def carregar_agricultura(slug: str):
     # Area total por cultura = soma GEODESICA dos poligonos (elipsoide WGS84), independente da grade do raster
     geod = Geod(ellps="WGS84")
     total = {c: 0.0 for c in classes}
-    for g_, n in zip(geoms, nomes):
+    for g_, n in zip(geoms, nomes, strict=False):
         total[n] += abs(geod.geometry_area_perimeter(g_)[0]) / 1e4
     return geoms, ids, classes, {c: round(v, 2) for c, v in total.items()}
 
@@ -146,7 +146,7 @@ def agricultura_por_cota(agri, tifs: list[Path]):
     geoms, ids, classes, _ = agri
     minx = min(g.bounds[0] for g in geoms); miny = min(g.bounds[1] for g in geoms)
     maxx = max(g.bounds[2] for g in geoms); maxy = max(g.bounds[3] for g in geoms)
-    out, prev, cobertura, area_total = {}, None, None, None
+    out, prev, area_total = {}, None, None
     for tif in tifs:
         cota = tif.stem.split("_")[0]
         with rasterio.open(tif) as src:
@@ -163,7 +163,7 @@ def agricultura_por_cota(agri, tifs: list[Path]):
                 wet &= arr != nd
             if prev is None or prev.shape != wet.shape:
                 prev = np.zeros_like(wet)
-                lab = features.rasterize(zip(geoms, ids), out_shape=arr.shape, transform=tr, fill=0, dtype="int16")
+                lab = features.rasterize(zip(geoms, ids, strict=False), out_shape=arr.shape, transform=tr, fill=0, dtype="int16")
                 ha = area_pixel_ha(tr, np.arange(arr.shape[0]))[:, None] * np.ones((1, arr.shape[1]))
                 area_total = {c: float(ha[lab == i + 1].sum()) for i, c in enumerate(classes)}
             prev = prev | wet  # maximo acumulado entre cotas

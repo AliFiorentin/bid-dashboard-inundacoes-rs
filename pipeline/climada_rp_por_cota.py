@@ -181,7 +181,7 @@ def profundidades_por_rp(mun: str, filtrar: bool = False) -> dict:
     alvo_max = min(max(cota_rp[rp][1] for rp in rps), niveis[-1])
     usar = [n for n in niveis if n <= alvo_max] + [n for n in niveis if n > alvo_max][:1]
     profs, prev = {}, {s: np.zeros(len(coords[s])) for s in SETORES}
-    for n, tif in zip(niveis, rasters):
+    for n, tif in zip(niveis, rasters, strict=False):
         if n not in usar:
             continue
         print(f"  lendo raster {n}...", flush=True)

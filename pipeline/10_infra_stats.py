@@ -262,7 +262,7 @@ def gerar_painel(slug: str, tipos: list[str], grade_cota=None) -> dict:
             meta, primeira = grade_cota
             ks = _indice_cota(base_feats, meta, primeira)
             entry["por_cota"] = [
-                _metricas(tipo, [f for f, k in zip(base_feats, ks) if 0 < k <= i])
+                _metricas(tipo, [f for f, k in zip(base_feats, ks, strict=False) if 0 < k <= i])
                 for i in range(1, len(meta["cotas"]) + 1)
             ]
         prefixo = f"infra_{tipo_slug}_ATINGIDOS_"
