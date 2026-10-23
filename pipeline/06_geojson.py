@@ -170,7 +170,7 @@ def make_agricultura(df_stats: pd.DataFrame, nome: str, slug: str) -> int:
 
         ano_recente = max(MAPBIOMAS_ANOS)
         sub_recente = sub_stats[sub_stats["ano"] == ano_recente]
-        stats_dict = dict(zip(sub_recente["cultura"], sub_recente["area_ha"].round(1)))
+        stats_dict = dict(zip(sub_recente["cultura"], sub_recente["area_ha"].round(1), strict=False))
         out_stats_base = DASH_DATA / slug / "agricultura_stats_BASE.json"
         with open(out_stats_base, "w", encoding="utf-8") as f:
             json.dump(stats_dict, f, ensure_ascii=False, indent=2)

@@ -101,7 +101,7 @@ def expostos(d: dict, medida: dict | None) -> dict:
 
 def por_cota(mun: str, d: dict) -> dict:
     cfg = cc.MUNICIPIOS[mun]
-    gjs, coords, is_ind, valores = d["gjs"], None, d["is_ind"], d["valores"]
+    gjs, valores = d["gjs"], d["valores"]
     coords = {s: np.array([f["geometry"]["coordinates"][:2] for f in g["features"]], dtype=float) for s, g in gjs.items()}
     rasters = sorted(cfg["raster_dir"].glob("*_clip.tif"), key=lambda p: float(p.stem.split("_")[0]))
     prev = {s: np.zeros(len(coords[s])) for s in SETORES}

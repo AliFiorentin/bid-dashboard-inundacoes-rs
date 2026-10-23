@@ -105,15 +105,15 @@ def imputar_remuneracao(df: pd.DataFrame, media_cnae_cbo_est, media_cnae_est, me
     zeros = df.loc[mask_zero, ["cnae_classe", "cbo", "municipio"]].copy()
 
     # Nivel 1: media municipal (cnae, cbo, mun)
-    zeros["_key_cc"] = list(zip(zeros["cnae_classe"], zeros["cbo"], zeros["municipio"]))
+    zeros["_key_cc"] = list(zip(zeros["cnae_classe"], zeros["cbo"], zeros["municipio"], strict=False))
     zeros["_val_cc"] = zeros["_key_cc"].map(media_cc)
 
     # Nivel 2: media municipal (cnae, mun)
-    zeros["_key_c"] = list(zip(zeros["cnae_classe"], zeros["municipio"]))
+    zeros["_key_c"] = list(zip(zeros["cnae_classe"], zeros["municipio"], strict=False))
     zeros["_val_c"] = zeros["_key_c"].map(media_c)
 
     # Nivel 3: fallback estadual (cnae, cbo) → cnae → geral
-    zeros["_key_est_cc"] = list(zip(zeros["cnae_classe"], zeros["cbo"]))
+    zeros["_key_est_cc"] = list(zip(zeros["cnae_classe"], zeros["cbo"], strict=False))
     zeros["_val_est_cc"] = zeros["_key_est_cc"].map(media_cnae_cbo_est)
     zeros["_val_est_c"] = zeros["cnae_classe"].map(media_cnae_est)
 

@@ -121,7 +121,6 @@ def compute_pixel_area_ha(transform, shape):
 def process_municipio(tiff_path: Path, nome: str, cfg: dict, ano: int) -> tuple:
     """Recorta raster pelo municipio, conta areas e gera GeoJSON."""
     ibge7 = cfg["ibge7"]
-    slug = cfg["slug"]
     print(f"\n  {nome} ({ano}):")
 
     mun_gdf = get_municipio_geom(ibge7)

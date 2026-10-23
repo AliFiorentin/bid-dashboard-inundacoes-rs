@@ -104,7 +104,7 @@ def filtrar_no_municipio(gjs: dict, mun: str) -> dict:
     for s, g in gjs.items():
         xy = np.array([f["geometry"]["coordinates"][:2] for f in g["features"]], dtype=float)
         dentro = contains_xy(poly, xy[:, 0], xy[:, 1])
-        out[s] = {**g, "features": [f for f, ok in zip(g["features"], dentro) if ok]}
+        out[s] = {**g, "features": [f for f, ok in zip(g["features"], dentro, strict=False) if ok]}
         n_excl[s] = int((~dentro).sum())
     EXCLUIDOS[mun] = n_excl
     return out
