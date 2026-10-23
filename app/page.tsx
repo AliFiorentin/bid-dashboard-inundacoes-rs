@@ -41,7 +41,7 @@ export default function Dashboard() {
   const mostraDuracaoClimada = renderMunicipio === "Porto Alegre" && cenario === MANCHA_DURACAO_CENARIO;
 
   return (
-    <div className="relative w-screen h-screen font-sans overflow-hidden bg-slate-100 text-slate-900 print:overflow-visible print:h-auto print:w-full">
+    <main className="relative w-screen h-screen font-sans overflow-hidden bg-slate-100 text-slate-900 print:overflow-visible print:h-auto print:w-full">
 
       <div className="lg:hidden fixed inset-0 z-[100] flex flex-col items-center justify-center gap-6 px-8 text-center bg-white">
         <Image src="/BID.webp" alt="BID" width={160} height={64} className="h-12 w-auto object-contain" />
@@ -135,10 +135,10 @@ export default function Dashboard() {
                     <div className="w-16 h-3 rounded-sm shrink-0" style={{ background: "linear-gradient(to right, #cbd5e1, #93c5fd, #fbbf24, #f97316, #dc2626, #7f1d1d)" }} />
                     <div className="flex flex-col leading-none gap-0.5">
                       <span className="text-[10px] text-slate-700 font-medium">Dano Físico (CLIMADA) · {rpDanoFisico}</span>
-                      <span className="text-[8px] text-slate-400">0% → 100% do valor de reposição</span>
+                      <span className="text-[8px] text-slate-500">0% → 100% do valor de reposição</span>
                     </div>
                   </div>
-                  <span className="text-[8px] leading-tight text-slate-400 max-w-[180px]">
+                  <span className="text-[8px] leading-tight text-slate-500 max-w-[180px]">
                     Protótipo exploratório — ver página de Danos para detalhes e limitações.
                   </span>
                 </div>
@@ -167,10 +167,10 @@ export default function Dashboard() {
                     <div className="w-16 h-3 rounded-sm shrink-0" style={{ background: MANCHA_DURACAO_GRADIENT_CSS }} />
                     <div className="flex flex-col leading-none gap-0.5">
                       <span className="text-[10px] text-slate-700 font-medium">Duração da inundação (dias)</span>
-                      <span className="text-[8px] text-slate-400">0 → {manchaDuracaoClimada.duracao_max_dias.toFixed(0)} dias</span>
+                      <span className="text-[8px] text-slate-500">0 → {manchaDuracaoClimada.duracao_max_dias.toFixed(0)} dias</span>
                     </div>
                   </div>
-                  <span className="text-[8px] leading-tight text-slate-400 max-w-[180px]">
+                  <span className="text-[8px] leading-tight text-slate-500 max-w-[180px]">
                     Evento real de maio/2024 (CLIMADA/UNU-EHS).
                   </span>
                 </div>
@@ -178,7 +178,7 @@ export default function Dashboard() {
                 manchaCenario && !isVisaoGeral && showMancha && (
                   <>
                     <LegendItem cor={COLORS.cenario} label={cenarioLabel(cenario)} area />
-                    <span className="text-[8px] leading-tight text-slate-400 max-w-[180px]">
+                    <span className="text-[8px] leading-tight text-slate-500 max-w-[180px]">
                       Extensão da área alagada. Não há dado de profundidade da água para este cenário.
                     </span>
                   </>
@@ -190,7 +190,7 @@ export default function Dashboard() {
                   <div className="w-16 h-3 rounded-sm shrink-0" style={{ background: "linear-gradient(to right, #0d0887, #9c179e, #ed7953, #f0f921)" }} />
                   <div className="flex flex-col leading-none gap-0.5">
                     <span className="text-[10px] text-slate-700 font-medium">Pop. (hab./pixel)</span>
-                    <span className="text-[8px] text-slate-400">baixo → alto</span>
+                    <span className="text-[8px] text-slate-500">baixo → alto</span>
                   </div>
                 </div>
               )}
@@ -215,7 +215,7 @@ export default function Dashboard() {
       <FiltersPanel dash={dash} />
 
       <AnalysisPanel dash={dash} />
-    </div>
+    </main>
   );
 }
 

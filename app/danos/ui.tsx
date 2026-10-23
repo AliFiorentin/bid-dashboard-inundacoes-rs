@@ -26,7 +26,7 @@ export function KpiRow({ label, value, sub, color }: {
         <span className="text-slate-500 truncate">{label}</span>
       </div>
       <span className="font-bold text-slate-700 shrink-0">
-        {value} <span className="text-[9px] font-normal text-slate-400">({sub})</span>
+        {value} <span className="text-[9px] font-normal text-slate-500">({sub})</span>
       </span>
     </div>
   );

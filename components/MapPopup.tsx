@@ -42,7 +42,7 @@ export function MapPopup({ source, properties: p, rp = "RP200" }: Props) {
             <span className="text-xs font-black text-slate-800">R$ {compactoBr(dano, 1)} ({pct.toFixed(0)}%)</span>
           </div>
         </div>
-        <span className="text-[8px] text-slate-400 leading-tight">Protótipo exploratório — ver Metodologia.</span>
+        <span className="text-[8px] text-slate-500 leading-tight">Protótipo exploratório — ver Metodologia.</span>
       </div>
     );
   }

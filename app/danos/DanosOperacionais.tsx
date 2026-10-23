@@ -91,7 +91,7 @@ export function DanosOperacionais({ ctx }: { ctx: DanosCtx }) {
                   <div key={cen} className="bg-white border border-[#b3cdd8] rounded-xl overflow-hidden shadow-sm">
                     <div className="px-4 py-2.5 bg-[#f0f7fa] border-b border-[#b3cdd8] flex items-baseline justify-between">
                       <p className="text-[11px] font-black text-[#055071] uppercase tracking-wide">{cenarioLabel(cen)}</p>
-                      <p className="text-[9px] text-slate-400 font-mono">{dias} dias ef. · f = {v.f_interrup.toFixed(4)}</p>
+                      <p className="text-[9px] text-slate-500 font-mono">{dias} dias ef. · f = {v.f_interrup.toFixed(4)}</p>
                     </div>
                     <div className="px-4 pt-3 pb-4">
                       <p className="text-xl font-black text-slate-800 mb-3">{fmtBRL(v.total)}</p>
@@ -112,7 +112,7 @@ export function DanosOperacionais({ ctx }: { ctx: DanosCtx }) {
                               </div>
                               <div className="flex items-center gap-2">
                                 <span className="font-bold text-slate-700">{fmtBRL(value)}</span>
-                                <span className="text-slate-400 w-8 text-right">{pct(value, v.total)}</span>
+                                <span className="text-slate-500 w-8 text-right">{pct(value, v.total)}</span>
                               </div>
                             </div>
                             <div className="h-1.5 bg-[#e8f4f8] rounded-full overflow-hidden">

@@ -29,7 +29,7 @@ export function CotaControle({ raster, className = "", vertical = false }: { ras
           className="flex-1 min-h-0 accent-[#055071]" aria-label="Cota do rio" aria-valuetext={`cota ${fmt(cota)} metros`}
           style={{ writingMode: "vertical-lr", direction: "rtl", width: 20 }}
         />
-        <div className="text-[9px] font-bold text-slate-400 tabular-nums">{fmt(minimo)}</div>
+        <div className="text-[9px] font-bold text-slate-500 tabular-nums">{fmt(minimo)}</div>
       </div>
     )
   }

@@ -45,7 +45,7 @@ export function DanosToolbar({ ctx }: { ctx: DanosCtx }) {
                 <span className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94]">
                   Duração da interrupção
                 </span>
-                <span className="text-[9px] text-slate-400">(dias efetivos)</span>
+                <span className="text-[9px] text-slate-500">(dias efetivos)</span>
               </div>
               <div className="flex gap-1.5">
                 {DIAS_OPCOES.map((d) => (
@@ -109,7 +109,7 @@ export function DanosToolbar({ ctx }: { ctx: DanosCtx }) {
                 <>
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94]">Cota do rio</span>
-                    <span className="text-[9px] text-slate-400">(m)</span>
+                    <span className="text-[9px] text-slate-500">(m)</span>
                   </div>
                   <div className="flex gap-1.5 flex-wrap">
                     {cotasDisponiveis.map((c) => (
@@ -139,7 +139,7 @@ export function DanosToolbar({ ctx }: { ctx: DanosCtx }) {
                 <span className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94]">
                   Período de retorno
                 </span>
-                <span className="text-[9px] text-slate-400">{dadosClimada?.rp_por_cota ? "(derivado das cotas do rio)" : "(cenário sintético CLIMADA)"}</span>
+                <span className="text-[9px] text-slate-500">{dadosClimada?.rp_por_cota ? "(derivado das cotas do rio)" : "(cenário sintético CLIMADA)"}</span>
               </div>
               <div className="flex gap-1.5 flex-wrap">
                 {rpsDisponiveis.map((r) => (
