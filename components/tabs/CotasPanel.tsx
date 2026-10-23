@@ -45,7 +45,8 @@ export function CotasPanel({ raster, detalhe, municipio }: Props) {
   // lado a lado; agricultura em uma linha.
   const card = (titulo: string, icone: React.ReactNode, cor: string, linhas: [string, string][], valor: number, colunas = 2) => (
     <div className="rounded-lg border bg-white/70 px-3 py-2 min-w-0 flex flex-col justify-center h-full" style={{ borderColor: cor + "55" }}>
-      <div className="flex items-center justify-between gap-2">
+      {/* Cartões de meia largura (colunas=1): título e valor em linhas separadas, para o valor não encostar na borda. */}
+      <div className={colunas === 2 ? "flex items-center justify-between gap-2" : "flex flex-col items-start gap-0.5"}>
         <div className="flex items-center gap-1 font-black text-xs shrink-0" style={{ color: cor }}>{icone}{titulo}</div>
         <div className="font-black text-[13px] whitespace-nowrap tabular-nums text-slate-800">{fmtBRL(valor)}</div>
       </div>

@@ -41,7 +41,7 @@ export const formatName = (str: string | undefined | null) => {
 };
 
 // ── Formatação ───────────────────────────────────────────────────────────────
-export const formatoBr = (num: number, casas = 0) =>
+const formatoBr = (num: number, casas = 0) =>
   num.toLocaleString("pt-BR", { minimumFractionDigits: casas, maximumFractionDigits: casas });
 
 export const inteiroBr = (n: number): string =>
@@ -79,25 +79,6 @@ export const mergeGeoJSON = (arrays: (FeatureCollection | null | undefined)[]): 
 };
 
 // ── Contagens / métricas ─────────────────────────────────────────────────────
-export const countFlag = (feats: Feature[], prop: string): number => {
-  if (!feats?.length) return 0;
-  return feats.filter(f => {
-    const v = (f.properties as Record<string, unknown>)?.[prop];
-    if (v === null || v === undefined) return false;
-    const n = Number(v);
-    if (!isNaN(n)) return n === 1;
-    return ["1", "sim", "true", "yes"].includes(String(v).trim().toLowerCase());
-  }).length;
-};
-
-export const countEquals = (feats: Feature[], prop: string, values: string[]): number => {
-  if (!feats?.length) return 0;
-  const set = new Set(values.map(v => v.toLowerCase()));
-  return feats.filter(f =>
-    set.has(String((f.properties as Record<string, unknown>)?.[prop] ?? "").trim().toLowerCase())
-  ).length;
-};
-
 export const countRuasUnicas = (feats: Feature[]): number => {
   if (!feats?.length) return 0;
   const ids = new Set(feats.map(f => {

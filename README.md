@@ -37,12 +37,24 @@ O painel integra dados das enchentes de 2024 que afetaram mais de 400 município
 
 | Município       | Cenários                                        | Evento de referência       |
 |-----------------|-------------------------------------------------|----------------------------|
-| Eldorado do Sul | Cenário ADA                                     | Enchentes de maio de 2024  |
-| Lajeado         | Cenário 27m · Cenário 30m                       | Enchentes de maio de 2024  |
-| Porto Alegre    | Cenário ADA · Climada Evento 2024               | Enchentes de maio de 2024  |
+| Eldorado do Sul | Cenário ADA · Todas as cotas                    | Enchentes de maio de 2024  |
+| Lajeado         | Cenário 27m · Cenário 30m · Todas as cotas      | Enchentes de maio de 2024  |
+| Porto Alegre    | Cenário ADA · Climada Evento 2024 · Todas as cotas | Enchentes de maio de 2024  |
 | Rio Grande      | Cenário Maio 2024 · Cenário Maio 2024 +50% · Cenário Setembro 2023 | Tormenta de maio de 2024 · Setembro de 2023 |
 
 A **Visão Geral RS** exibe os 4 municípios simultaneamente com o pior cenário de cada um aplicado e a mancha de inundação estadual de referência (`mancha_rs_enchente_2024.geojson`).
+
+### Cenário "Todas as cotas" (Lajeado, Eldorado do Sul e Porto Alegre)
+
+Em vez de um polígono fixo, o cenário **Todas as cotas** mostra a água **avançando cota a cota** a partir dos rasters de profundidade por cota do rio (Lajeado: 18,45–34,45 m em passos de 1 m; Porto Alegre e Eldorado do Sul: 1,75–6,00 m em passos de 0,25 m):
+
+- **Mapa:** a água avança sozinha em loop, com transição gradual entre as manchas. A área já alagada aparece em azul-escuro e a **frente de avanço** (o que está alagando entre uma cota e a seguinte) em azul-claro; a cor **não** representa profundidade. A água fica acima da agricultura e abaixo da infraestrutura. Durante a reprodução os pontos de empresas/escolas/saúde ficam ocultos.
+- **Controles:** slider vertical ao lado do painel, com play/pause. Arrastar o slider pausa a animação.
+- **Painel:** a aba **Por cota** mostra o valor exposto atingido, a população atingida (WorldPop) e os indicadores de empresas, educação, saúde e agricultura da cota atual; as demais abas (Resumo, Empresas, Educação, Saúde, Agricultura, Infraestrutura) acompanham a cota do slider.
+- **Link compartilhável:** ao pausar numa cota, a URL ganha `?cota=27.05` (ex.: `/?m=lajeado&c=todas_as_cotas&cota=27.05`); abrir esse link entra pausado nessa cota. Sem `cota`, a água avança sozinha (exceto para quem pede menos movimento via `prefers-reduced-motion`).
+- **O que é:** exposição (valor de reposição do que fica sob água), **não** dano. A mesma base alimenta a visão "Por cota" da página `/danos`, que ganhou a seção "Mapa por cota" ao final.
+- **Dados:** `public/dados_convertidos/{slug}/cota_mapa.webp` e `cota_mapa.json` (índice da primeira cota em que cada pixel alaga + população atingida por cota), `climada_cota_detalhe_{slug}.json` (indicadores por categoria) e `{slug}/infraestrutura_painel.json` (métricas de infraestrutura por cota). Gerados pelos scripts `pipeline/climada_cota_mapa.py`, `climada_cota_detalhe.py` e `10_infra_stats.py`.
+- **Limites:** Rio Grande não tem rasters por cota (não tem esse cenário); em Eldorado do Sul a grade dos rasters não cobre o oeste do município (população e áreas atingidas são mínimos).
 
 > **Porto Alegre** também tem um protótipo de **Dano Físico (CLIMADA)**, independente dos cenários acima: usa 7 rasters de profundidade máxima por período de retorno sintético (RP10 a RP500) do exercício de adaptação climática CLIMADA/UNU-EHS para estimar destruição de patrimônio (não perda de fluxo) — ver [§ 5 abaixo](#5-dano-físico--climada-protótipo) e a página `/danos` (aba Dano Físico).
 
@@ -210,7 +222,11 @@ Dashboard BID/
 │       ├── page.tsx          # Página de metodologia completa
 │       └── MetodologiaContent.tsx
 ├── components/
-│   ├── DashboardMap.tsx      # Mapa MapLibre (Source/Layer) + popup
+│   ├── DashboardMap.tsx      # Mapa MapLibre: monta os subcomponentes de `components/map/` + popup
+│   ├── map/                  # Camadas do mapa por grupo (mancha/cota, agricultura, infra, pontos, heatmaps)
+│   ├── CotaCanvasLayer.tsx   # Água por cota como fonte `canvas` do MapLibre (sem PNG por quadro)
+│   ├── CotaControle.tsx      # Slider de cota + play/pause (horizontal e vertical)
+│   ├── CotaMapa.tsx          # Mapa com slider da seção "Mapa por cota" de /danos
 │   ├── DashboardHeader.tsx   # Seleção município/cenário + botões de camada
 │   ├── AnalysisPanel.tsx     # Painel lateral com abas
 │   ├── FiltersPanel.tsx      # Filtros dinâmicos
@@ -222,13 +238,16 @@ Dashboard BID/
 │       ├── SaudeTab.tsx
 │       ├── EducacaoTab.tsx
 │       ├── InfraTab.tsx
+│       ├── CotasPanel.tsx    # Aba "Por cota" do cenário "Todas as cotas"
 │       └── infra/            # Seções específicas de infraestrutura
 │           ├── GenericInfraSection.tsx
 │           ├── LogradourosSection.tsx
 │           ├── QuadrasSection.tsx
 │           └── TerrenosSection.tsx
 ├── hooks/
-│   └── useDashboard.ts       # Todo o estado, fetches, memos, callbacks
+│   ├── useDashboard.ts       # Orquestra os hooks de `hooks/dashboard/` (seleção, derivados)
+│   ├── useCotaRaster.ts      # Raster de cota: recolor no canvas, play/pause, amostragem de pontos
+│   └── dashboard/            # useScenarioData, useInfraData, useCotas, usePermalink (?m ?c ?cota câmera), useMapCamera...
 ├── lib/
 │   ├── constants.ts          # Configurações (municípios, cenários, cores, coeficientes)
 │   └── geo-utils.ts          # slugify, scenarioSlug, formatoBr, calcEmp/Edu/Sau
@@ -327,6 +346,8 @@ python pipeline/05_geocodificar.py   # requer Nominatim em localhost:8080
 python pipeline/06_geojson.py
 python pipeline/07_danos.py          # → danos_operacionais.json (aceita --dias N)
 ```
+
+Cenário **"Todas as cotas"** (precisa dos rasters de profundidade por cota, fora do repositório): `python pipeline/climada_cota.py`, `climada_cota_detalhe.py`, `climada_cota_mapa.py` e `10_infra_stats.py`.
 
 Scripts **08–11** são independentes da cadeia acima (rodam ad hoc, uma vez que 01–07 já tenham gerado seus outputs): `08_icms_validacao.py` (valida a perda de VAB contra o ICMS observado), `09_populacao.py` (população exposta via WorldPop), `10_infra_stats.py` (estatísticas leves de infraestrutura) e `11_area_atingida.py` (área territorial × área atingida). Os scripts do protótipo CLIMADA (`vetorizar_climada.py`, `gerar_mancha_duracao_climada.py`, `gerar_infra_climada_evento_2024.py`, `climada_risco_prototipo.py`) também são independentes e específicos de Porto Alegre.
 
