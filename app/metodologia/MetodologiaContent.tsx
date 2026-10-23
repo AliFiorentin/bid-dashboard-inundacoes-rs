@@ -26,10 +26,10 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
         <div className="max-w-[1200px] mx-auto flex items-start justify-between gap-6">
           <div className="min-w-0">
             <div className="flex items-center gap-2 mb-5 print:hidden">
-              <Link href="/" className="text-[10px] font-bold text-white/70 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">← Dashboard</Link>
-              <Link href="/danos" className="text-[10px] font-bold text-white/70 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">Danos Operacionais →</Link>
+              <Link href="/" className="text-[10px] font-bold text-white/95 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">← Dashboard</Link>
+              <Link href="/danos" className="text-[10px] font-bold text-white/95 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">Danos Operacionais →</Link>
             </div>
-            <p className="text-[11px] uppercase tracking-[0.18em] font-semibold opacity-60 mb-2">
+            <p className="text-[11px] uppercase tracking-[0.18em] font-semibold opacity-85 mb-2">
               BID · GPEA · FURG
             </p>
             <h1 className="text-4xl font-black leading-none mb-2 tracking-tight flex items-center gap-3">
@@ -41,7 +41,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             <p className="text-base opacity-75 font-medium">
               Avaliação de Impactos Socioeconômicos das Enchentes no Rio Grande do Sul
             </p>
-            <p className="text-[11px] opacity-50 mt-3 font-mono">
+            <p className="text-[11px] opacity-75 mt-3 font-mono">
               Enchentes de Maio/2024 e Setembro/2023 · 4 municípios avaliados
             </p>
           </div>
@@ -55,7 +55,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
         <aside className="hidden lg:block w-52 shrink-0 print:hidden">
           <div className="sticky top-6 flex flex-col gap-3">
             <nav className="bg-white border border-[#b3cdd8] rounded-xl p-4 shadow-sm">
-              <p className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94] mb-2">Índice</p>
+              <p className="text-[10px] font-black uppercase tracking-wider text-[#2f6a83] mb-2">Índice</p>
               <ol className="flex flex-col gap-1">
                 {([
                   ["#manchas",        "1. Manchas de Inundação"],
@@ -86,7 +86,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
 
         {/* ── Contexto ────────────────────────────────────────────────────────── */}
         <div className="bg-white border border-[#b3cdd8] rounded-xl p-5 mb-8 shadow-sm">
-          <p className="text-[11px] font-black uppercase tracking-wider text-[#3d7a94] mb-2">Contexto</p>
+          <p className="text-[11px] font-black uppercase tracking-wider text-[#2f6a83] mb-2">Contexto</p>
           <p className="text-sm leading-relaxed text-slate-700 mt-2">
             A metodologia distingue dois planos analíticos: (a) a{" "}
             <strong>exposição física</strong>, identificação dos estabelecimentos, escolas,
@@ -204,7 +204,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           ]} />
 
           <GeoCard title="Pontos: Empresas · Escolas · Unidades de Saúde" operation='geopandas.sjoin(predicate="within")'>
-            <p className="text-sm text-[#3d7a94] mb-2">
+            <p className="text-sm text-[#2f6a83] mb-2">
               Um ponto <em>p</em> com coordenadas <Math tex={"(\\lambda, \\phi)"} /> é classificado
               como atingido se e somente se está geometricamente contido no interior ou fronteira
               do polígono da mancha <em>M</em>:
@@ -212,7 +212,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             <MathBlock exprs={[
               { tex: "\\text{atingido}(p) = \\mathbf{1}[p \\in M]" },
             ]} />
-            <p className="text-[11px] text-[#3d7a94] mt-2">
+            <p className="text-[11px] text-[#2f6a83] mt-2">
               Empresas e escolas: o ponto geocodificado só é aceito se estiver dentro do polígono
               do município declarado (IBGE). Unidades de saúde: coordenadas informadas pelo próprio
               CNES. Em todas as camadas, pontos em (0, 0) ou fora do retângulo do RS
@@ -221,7 +221,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           </GeoCard>
 
           <GeoCard title="Polígonos: Lotes · Quadras · Agricultura · Edificações" operation='sjoin(predicate="intersects") → intersection() → área em EPSG:32722'>
-            <p className="text-sm text-[#3d7a94] mb-2">
+            <p className="text-sm text-[#2f6a83] mb-2">
               Um polígono <em>F</em> é atingido se sua interseção com a mancha é não-vazia.
               A área atingida é calculada reprojetando para UTM Zone 22S (EPSG:32722):
             </p>
@@ -233,7 +233,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           </GeoCard>
 
           <GeoCard title="Linhas: Logradouros · Eixos · Rede de Esgoto" operation='sjoin(predicate="intersects") → intersection() → comprimento em EPSG:32722'>
-            <p className="text-sm text-[#3d7a94] mb-2">
+            <p className="text-sm text-[#2f6a83] mb-2">
               Um segmento <em>L</em> é atingido se intersecta a mancha. O comprimento atingido
               é o trecho da linha dentro do polígono:
             </p>
@@ -258,7 +258,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             { label: "Razão de cobertura",     tex: "r_i = \\dfrac{\\mathcal{A}(F_i \\cap M_j)}{\\mathcal{A}(F_i)}, \\quad r_i \\in [0,\\,1]" },
             { label: "Intensidade média",      tex: "R = \\dfrac{\\sum_i \\mathcal{A}(F_i \\cap M_j)}{\\sum_i \\mathcal{A}(F_i)} \\times 100\\,\\%" },
           ]} />
-          <p className="text-[11px] italic text-[#3d7a94]">
+          <p className="text-[11px] italic text-[#2f6a83]">
             Fluxo CRS: SIRGAS 2000 (EPSG:4674) nos dados cadastrais →
             WGS 84 (EPSG:4326) para as manchas → EPSG:32722 para cálculos de área e comprimento →
             EPSG:4326 na saída GeoJSON para MapLibre GL.
@@ -408,7 +408,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             { label: "Área por pixel [ha]", tex: "a_{\\text{pixel}} = \\dfrac{|\\Delta\\lambda| \\cdot 111{.}320 \\cdot \\cos\\varphi_c \\cdot |\\Delta\\varphi| \\cdot 111{.}320}{10{.}000}" },
             { label: "Área total [ha]",     tex: "A_{\\text{total}} = N_{\\text{pixels}} \\times a_{\\text{pixel}}" },
           ]} />
-          <p className="text-[12px] text-slate-500">
+          <p className="text-[12px] text-slate-600">
             Δλ e Δφ: resolução angular do raster; φ<sub>c</sub>: latitude central do recorte municipal.
             A área atingida é medida sobre os polígonos de cultura recortados pela mancha
             (EPSG:32722), após suavização da geometria e descarte de fragmentos menores que 5 m².
@@ -692,7 +692,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             title="Polígonos: Edificações"
             operation="geopandas.sjoin(predicate=intersects), pré-computado offline"
           >
-            <p className="text-sm text-[#3d7a94] mb-2">
+            <p className="text-sm text-[#2f6a83] mb-2">
               Uma edificação <em>F</em> é classificada como atingida se seu polígono intersecta
               o polígono da mancha <em>M</em>:
             </p>
@@ -824,7 +824,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             { label: "Custo adicional (reposição)", tex: "C_{\\text{adic}} = c \\times N_{\\text{alunos}} \\times d_a" },
             { label: "Total educação",              tex: "L_{\\text{edu}} = P_{\\text{edu}} + C_{\\text{adic}} = 2\\,c\\,N\\,d_a" },
           ]} />
-          <p className="text-[12px] text-slate-500 mt-1">
+          <p className="text-[12px] text-slate-600 mt-1">
             Usa <em>d</em><sub>a</sub> (dias de fechamento real), não <em>d</em><sub>ef</sub>,
             porque escolas são obrigadas a compensar 100% dos dias perdidos; não há recuperação
             parcial como em firmas.
@@ -957,7 +957,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             { label: "Valor exposto atingido", tex: "VE(c) = \\sum_i V_i \\cdot \\chi_i(c)" },
             { label: "Atributo ponderado", tex: "Q(c) = \\sum_i q_i \\cdot \\chi_i(c)" },
           ]} />
-          <p className="text-sm text-[#3d7a94] mt-2">
+          <p className="text-sm text-[#2f6a83] mt-2">
             <Math tex={"h_i(c)"} />: profundidade do ponto <em>i</em> no raster da cota <em>c</em>. <Math tex={"V_i"} />: valor
             de reposição do ponto (seção &ldquo;Custo de reposição&rdquo; abaixo: CUB/RS × área por proxy de porte × fator de
             conteúdo). <Math tex={"q_i"} />: atributo do ponto (empregados, massa salarial, leitos, matrículas etc.). O fator de
@@ -1018,7 +1018,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             partir da base JRC (Huizinga et al., 2017).
           </p>
           <div className="bg-white border border-[#b3cdd8] rounded-xl p-5 shadow-sm mt-3">
-            <p className="text-[10px] text-slate-500 font-medium mb-2">
+            <p className="text-[10px] text-slate-600 font-medium mb-2">
               Eixo horizontal: profundidade da água no ponto (m). Eixo vertical: % do valor do
               imóvel destruída nessa profundidade. Curva mais alta/íngreme no início = setor mais
               vulnerável a alagamentos rasos; todas achatam (platô) a partir de ~2-3m, quando o
@@ -1029,7 +1029,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
               {Object.keys(dadosClimada.premissas.curvas).map((s) => (
                 <div key={s} className="flex items-center gap-1.5">
                   <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: SETOR_COLORS[s] }} />
-                  <span className="text-[10px] text-slate-500 font-medium">{SETOR_LABEL[s] ?? s}</span>
+                  <span className="text-[10px] text-slate-600 font-medium">{SETOR_LABEL[s] ?? s}</span>
                 </div>
               ))}
             </div>
@@ -1052,7 +1052,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             { label: "Dano físico", tex: "D_i = \\text{MDD}(h_i) \\times PAA \\times V_i" },
             { label: "PAA", tex: "PAA = 1" },
           ]} />
-          <p className="text-[12px] text-slate-500">
+          <p className="text-[12px] text-slate-600">
             <Math tex="D_i" />: dano físico do ponto <Math tex="i" />.{" "}
             <Math tex="\text{MDD}(h_i)" />: fração do valor destruída na profundidade{" "}
             <Math tex="h_i" /> (curvas acima). PAA: percentual de ativos afetados, fixo em 1
@@ -1076,7 +1076,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             { label: "Saúde", tex: "V_i = a \\times N_i \\times c_{\\text{inst}} \\times k_{\\text{sau}}" },
             { label: "Educação", tex: "V_i = S_i \\times a_{\\text{sala}} \\times c_{\\text{inst}} \\times k_{\\text{edu}}" },
           ]} />
-          <p className="text-[12px] text-slate-500">
+          <p className="text-[12px] text-slate-600">
             Nas Empresas, os pontos com CNAE industrial ({dadosClimada.premissas.n_empresas_industria} de{" "}
             {dadosClimada.premissas.n_empresas_total.toLocaleString("pt-BR")} estabelecimentos) usam{" "}
             <Math tex="c_{\text{ind}}" /> e <Math tex="k_{\text{ind}}" /> em vez de{" "}
@@ -1143,7 +1143,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             ["Ensino Fundamental (+ Especial)", `${dadosClimada.premissas.lotacao_fundamental} alunos/turma`, `${dadosClimada.premissas.turnos_padrao}`, "Média ponderada dos limites da rede estadual RS por ano (25 no 1º ano, 30 do 2º ao 4º, 35 do 5º ao 9º)"],
             ["Ensino Médio, Profissional e EJA", `${dadosClimada.premissas.lotacao_medio} alunos/turma`, `${dadosClimada.premissas.turnos_padrao}`, "Parecer CEEd/RS nº 580/2000, também usado para Profissional/EJA por falta de norma específica"],
           ]} />
-          <p className="text-[12px] text-slate-500">
+          <p className="text-[12px] text-slate-600">
             Área construída do projeto padrão FNDE (6 salas): {dadosClimada.premissas.area_escola_padrao_m2.toLocaleString("pt-BR")} m².
             Cobre salas de aula, bloco administrativo, cozinha, banheiros, circulação e pátio
             coberto (área construída total do prédio, não só as 6 salas); não inclui quadra
@@ -1372,10 +1372,10 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
 
         {/* ── Rodapé ──────────────────────────────────────────────────────────── */}
         <footer className="mt-12 pt-6 border-t border-[#b3cdd8] text-center print:mt-4">
-          <p className="text-[11px] text-[#3d7a94]">
+          <p className="text-[11px] text-[#2f6a83]">
             Painel desenvolvido por GPEA/FURG em parceria com o BID (Banco Interamericano de Desenvolvimento).
           </p>
-          <p className="text-[11px] text-[#3d7a94] mt-0.5">
+          <p className="text-[11px] text-[#2f6a83] mt-0.5">
             © 2024 Alisson Tallys Geraldo Fiorentin · Dados de referência: 2024.
           </p>
         </footer>
@@ -1469,7 +1469,7 @@ function MathBlock({ exprs }: { exprs: Array<{ label?: string; tex: string }> })
       {exprs.map(({ label, tex }, i) => (
         <div key={i} className="flex items-baseline gap-4 flex-wrap">
           {label && (
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#3d7a94] shrink-0 w-52">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#2f6a83] shrink-0 w-52">
               {label}
             </span>
           )}
@@ -1486,7 +1486,7 @@ function GeoCard({ title, operation, children }: {
   return (
     <div className="rounded-xl border border-[#b3cdd8] bg-white p-4 mt-3 shadow-sm">
       <p className="text-[11px] font-black text-[#055071] uppercase tracking-wider mb-0.5">{title}</p>
-      <p className="text-[10px] text-[#3d7a94] font-mono mb-3">{operation}</p>
+      <p className="text-[10px] text-[#2f6a83] font-mono mb-3">{operation}</p>
       {children}
     </div>
   );
@@ -1536,7 +1536,7 @@ function Note({ type, children }: { type: "warning" | "info"; children: React.Re
 function SectionSources({ links }: { links: [string, string][] }) {
   return (
     <div className="mt-4 pt-3 border-t border-[#b3cdd8]">
-      <p className="text-[10px] font-bold uppercase tracking-wider text-[#3d7a94] mb-1.5">Fontes desta seção</p>
+      <p className="text-[10px] font-bold uppercase tracking-wider text-[#2f6a83] mb-1.5">Fontes desta seção</p>
       <ul className="space-y-0.5">
         {links.map(([label, href]) => (
           <li key={label}>
@@ -1546,7 +1546,7 @@ function SectionSources({ links }: { links: [string, string][] }) {
                 ↗ {label}
               </a>
             ) : (
-              <span className="text-[11px] text-[#3d7a94]">— {label}</span>
+              <span className="text-[11px] text-[#2f6a83]">— {label}</span>
             )}
           </li>
         ))}
@@ -1558,7 +1558,7 @@ function SectionSources({ links }: { links: [string, string][] }) {
 function RefBlock({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="bg-white border border-[#b3cdd8] rounded-xl p-4 shadow-sm">
-      <p className="text-[11px] font-black uppercase tracking-wider text-[#3d7a94] mb-3">{title}</p>
+      <p className="text-[11px] font-black uppercase tracking-wider text-[#2f6a83] mb-3">{title}</p>
       <div className="space-y-3">{children}</div>
     </div>
   );
@@ -1575,7 +1575,7 @@ function RefItem({ href, label, desc }: { href: string; label: string; desc: str
       ) : (
         <span className="text-sm font-semibold text-slate-700">{label}</span>
       )}
-      <p className="text-[11px] text-[#3d7a94] mt-0.5 leading-relaxed">{desc}</p>
+      <p className="text-[11px] text-[#2f6a83] mt-0.5 leading-relaxed">{desc}</p>
     </div>
   );
 }

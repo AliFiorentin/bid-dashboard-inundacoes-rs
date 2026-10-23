@@ -42,10 +42,10 @@ export function DanosClient(props: DanosProps) {
           ) : null}
 
         <footer className="mt-12 pt-6 border-t border-[#b3cdd8] text-center print:mt-4">
-          <p className="text-[11px] text-[#3d7a94]">
+          <p className="text-[11px] text-[#2f6a83]">
             Painel desenvolvido por GPEA/FURG em parceria com o BID (Banco Interamericano de Desenvolvimento).
           </p>
-          <p className="text-[11px] text-[#3d7a94] mt-0.5">© 2024 Alisson Tallys Geraldo Fiorentin · Dados de referência: 2024.</p>
+          <p className="text-[11px] text-[#2f6a83] mt-0.5">© 2024 Alisson Tallys Geraldo Fiorentin · Dados de referência: 2024.</p>
         </footer>
         </main>
       </div>

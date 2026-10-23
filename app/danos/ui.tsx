@@ -23,10 +23,10 @@ export function KpiRow({ label, value, sub, color }: {
     <div className="flex items-baseline justify-between gap-1 text-[11px]">
       <div className="flex items-center gap-1 min-w-0">
         <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: color }} />
-        <span className="text-slate-500 truncate">{label}</span>
+        <span className="text-slate-600 truncate">{label}</span>
       </div>
       <span className="font-bold text-slate-700 shrink-0">
-        {value} <span className="text-[9px] font-normal text-slate-500">({sub})</span>
+        {value} <span className="text-[9px] font-normal text-slate-600">({sub})</span>
       </span>
     </div>
   );
@@ -65,7 +65,7 @@ export function MathBlock({ exprs }: { exprs: Array<{ label?: string; tex: strin
         return (
           <div key={i} className="flex items-baseline gap-4 flex-wrap">
             {label && (
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#3d7a94] shrink-0 w-44">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#2f6a83] shrink-0 w-44">
                 {label}
               </span>
             )}

@@ -38,7 +38,7 @@ export function ExposicaoView({ expo, mun, visao, rp, cota, setAba, diag }: {
           ), que medem outra coisa (produção e serviço interrompidos){mun !== "Porto Alegre" && "; também não se compara ao dano físico de Porto Alegre"}.
         </Note>
         <div className="my-4 rounded-xl border border-[#b3cdd8] bg-white px-4 py-3 text-sm text-slate-700 shadow-sm">
-          <p className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94] mb-2">Como ler os resultados</p>
+          <p className="text-[10px] font-black uppercase tracking-wider text-[#2f6a83] mb-2">Como ler os resultados</p>
           <ul className="list-disc list-inside space-y-1.5">
             <li>
               <strong>Como é calculado:</strong> cada empresa, escola ou unidade de saúde é um ponto com um valor de
@@ -81,9 +81,9 @@ export function ExposicaoView({ expo, mun, visao, rp, cota, setAba, diag }: {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-5">
           <div className="bg-white border border-[#b3cdd8] rounded-xl overflow-hidden shadow-sm">
             <div className="px-4 py-3" style={{ backgroundColor: "#055071" }}>
-              <p className="text-[10px] font-black uppercase tracking-wider text-white/70 mb-0.5">{titulo}</p>
+              <p className="text-[10px] font-black uppercase tracking-wider text-white/95 mb-0.5">{titulo}</p>
               <p className="text-2xl font-black text-white leading-none">{fmtBRL(total)}</p>
-              <p className="text-[9px] text-white/60 font-mono mt-1">
+              <p className="text-[9px] text-white/95 font-mono mt-1">
                 valor exposto atingido (3 setores) · {expTotal ? ((total / expTotal) * 100).toFixed(1) : "0,0"}% da exposição total · teto, não dano
               </p>
             </div>
@@ -107,11 +107,11 @@ export function ExposicaoView({ expo, mun, visao, rp, cota, setAba, diag }: {
             </div>
           </div>
           <div className="bg-white border border-[#b3cdd8] rounded-xl p-4 shadow-sm">
-            <p className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94] mb-2">Exposição total (patrimônio no município)</p>
+            <p className="text-[10px] font-black uppercase tracking-wider text-[#2f6a83] mb-2">Exposição total (patrimônio no município)</p>
             <p className="text-2xl font-black text-slate-800 leading-none mb-3">{fmtBRL(expTotal)}</p>
             {setores.map((st) => (
               <div key={st} className="flex items-center justify-between text-[11px] py-1 border-t border-slate-100 first:border-t-0">
-                <span className="text-slate-500">{SETOR_LABEL[st]}: {atual[st].n_atingidos}/{atual[st].n_total} pontos atingidos</span>
+                <span className="text-slate-600">{SETOR_LABEL[st]}: {atual[st].n_atingidos}/{atual[st].n_total} pontos atingidos</span>
                 <span className="font-bold text-slate-700">prof. média {atual[st].profundidade_media_atingidos_m.toFixed(2)}m</span>
               </div>
             ))}
@@ -149,9 +149,9 @@ export function ExposicaoView({ expo, mun, visao, rp, cota, setAba, diag }: {
             </p>
             <div className="bg-white border border-[#b3cdd8] rounded-xl overflow-hidden shadow-sm mt-3">
               <div className="px-4 py-3" style={{ backgroundColor: "#055071" }}>
-                <p className="text-[10px] font-black uppercase tracking-wider text-white/70 mb-0.5">{mun} · todos os setores</p>
+                <p className="text-[10px] font-black uppercase tracking-wider text-white/95 mb-0.5">{mun} · todos os setores</p>
                 <p className="text-2xl font-black text-white leading-none">{fmtBRL(expo.eai_exposto.total)} / ano</p>
-                <p className="text-[9px] text-white/60 font-mono mt-1">
+                <p className="text-[9px] text-white/95 font-mono mt-1">
                   exposição atingida anual esperada, integrada sobre {rpsLista.length} período(s) de retorno ({rpsLista[0]}..{rpsLista[rpsLista.length - 1]}) · sem a cauda assumida: {fmtBRL(expo.eai_exposto_sem_cauda_brl)}/ano
                 </p>
               </div>
@@ -178,7 +178,7 @@ export function ExposicaoView({ expo, mun, visao, rp, cota, setAba, diag }: {
               { label: "Frequência de excedência", tex: "f_i = \\dfrac{1}{RP_i}" },
               { label: "Exposição anual esperada (aproximada)", tex: "\\text{EAI} \\approx \\sum_i \\dfrac{(f_i - f_{i+1})(L_i + L_{i+1})}{2}" },
             ]} />
-            <p className="text-[11px] text-slate-500">
+            <p className="text-[11px] text-slate-600">
               A cauda abaixo do RP10 é uma reta assumida até &ldquo;evento anual, nada atingido&rdquo; e
               responde por boa parte do número; a versão sem ela é a que os RPs calculados sustentam.
               Aproximação por pontos de RP interpolados: tratar como ordem de grandeza. Ver{" "}
@@ -198,11 +198,11 @@ export function ExposicaoView({ expo, mun, visao, rp, cota, setAba, diag }: {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-5">
                 <div className="bg-white border border-[#b3cdd8] rounded-xl overflow-hidden shadow-sm">
                   <div className="px-4 py-3" style={{ backgroundColor: "#055071" }}>
-                    <p className="text-[10px] font-black uppercase tracking-wider text-white/70 mb-0.5">Exposição atingida anual esperada</p>
+                    <p className="text-[10px] font-black uppercase tracking-wider text-white/95 mb-0.5">Exposição atingida anual esperada</p>
                     <p className="text-2xl font-black text-white leading-none">
                       {fmtBRL(proj.total.risco_2025_brl)} <span className="text-sm opacity-60">→</span> {fmtBRL(proj.total.risco_2050_brl)}
                     </p>
-                    <p className="text-[9px] text-white/60 font-mono mt-1">2025 → 2050 · {proj.premissas.rps_usados.length} RPs com remapeamento oficial</p>
+                    <p className="text-[9px] text-white/95 font-mono mt-1">2025 → 2050 · {proj.premissas.rps_usados.length} RPs com remapeamento oficial</p>
                   </div>
                   <div className="px-4 py-4 grid grid-cols-1 gap-y-1.5">
                     <KpiRow label="Aumento total" value={`${fmtBRL(proj.total.aumento_total_brl)}/ano`} sub="2025→2050" color="#055071" />
@@ -211,18 +211,18 @@ export function ExposicaoView({ expo, mun, visao, rp, cota, setAba, diag }: {
                   </div>
                 </div>
                 <div className="bg-white border border-[#b3cdd8] rounded-xl p-4 shadow-sm">
-                  <p className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94] mb-2">Premissas</p>
+                  <p className="text-[10px] font-black uppercase tracking-wider text-[#2f6a83] mb-2">Premissas</p>
                   <div className="flex flex-col gap-1.5 text-[11px]">
                     <div className="flex justify-between border-t border-slate-100 pt-1 first:border-t-0 first:pt-0">
-                      <span className="text-slate-500">Crescimento econômico</span>
+                      <span className="text-slate-600">Crescimento econômico</span>
                       <span className="font-bold text-slate-700">{(proj.premissas.crescimento_anual * 100).toFixed(0)}%/ano · {proj.premissas.anos_projecao} anos (×{proj.premissas.fator_crescimento.toFixed(2)})</span>
                     </div>
                     <div className="flex justify-between border-t border-slate-100 pt-1">
-                      <span className="text-slate-500">RPs usados</span>
+                      <span className="text-slate-600">RPs usados</span>
                       <span className="font-bold text-slate-700">{proj.premissas.rps_usados.join(", ")}</span>
                     </div>
                   </div>
-                  <p className="text-[10px] text-slate-500 mt-2 leading-relaxed">{proj.premissas.crescimento_fonte}. O remapeamento de frequência é o do Guaíba, aplicado ao Taquari como premissa.</p>
+                  <p className="text-[10px] text-slate-600 mt-2 leading-relaxed">{proj.premissas.crescimento_fonte}. O remapeamento de frequência é o do Guaíba, aplicado ao Taquari como premissa.</p>
                 </div>
               </div>
               <SubTitle>Decomposição por setor</SubTitle>
@@ -242,7 +242,7 @@ export function ExposicaoView({ expo, mun, visao, rp, cota, setAba, diag }: {
               maior a área atingida. O gráfico mostra o valor exposto atingido (3 setores) para cada RP.
             </p>
             <div className="bg-white border border-[#b3cdd8] rounded-xl p-5 shadow-sm mt-3">
-              <p className="text-[10px] text-slate-500 font-medium mb-2">
+              <p className="text-[10px] text-slate-600 font-medium mb-2">
                 Cada barra soma o valor exposto atingido dos 3 setores para aquele RP, dividida por cor
                 (proporcional). O número no topo é o total; a barra com contorno âmbar é o RP
                 selecionado acima.{acima.size > 0 ? ` ${Array.from(acima).join(" e ")} estão acima do último raster (extrapolados).` : ""}
@@ -258,7 +258,7 @@ export function ExposicaoView({ expo, mun, visao, rp, cota, setAba, diag }: {
                 {setores.map((st) => (
                   <div key={st} className="flex items-center gap-1.5">
                     <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: SETOR_COLORS[st] }} />
-                    <span className="text-[10px] text-slate-500 font-medium">{SETOR_LABEL[st]}</span>
+                    <span className="text-[10px] text-slate-600 font-medium">{SETOR_LABEL[st]}</span>
                   </div>
                 ))}
               </div>
@@ -279,7 +279,7 @@ export function ExposicaoView({ expo, mun, visao, rp, cota, setAba, diag }: {
                 ];
               }),
             ]} />
-            <p className="text-[11px] text-slate-500">* acima do último raster (extrapolado).</p>
+            <p className="text-[11px] text-slate-600">* acima do último raster (extrapolado).</p>
           </Section>
 
           <Section id="c-medidas" num="6" title="Medidas de Adaptação">
@@ -327,7 +327,7 @@ export function ExposicaoView({ expo, mun, visao, rp, cota, setAba, diag }: {
               ...cotasLista.map((c) => {
                 const r = expo.por_cota[c];
                 return [
-                  <span key="c" className={c === cotaAtiva ? "font-black text-amber-700" : "font-bold"}>{c}</span>,
+                  <span key="c" className={c === cotaAtiva ? "font-black text-amber-800" : "font-bold"}>{c}</span>,
                   `${r.empresas.n_atingidos}/${r.empresas.n_total}`,
                   `${r.educacao.n_atingidos}/${r.educacao.n_total}`,
                   `${r.saude.n_atingidos}/${r.saude.n_total}`,

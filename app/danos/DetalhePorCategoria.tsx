@@ -9,18 +9,18 @@ export function DetalhePorCategoria({ det, cota, mun }: { det: DetalheCota; cota
   const cotas = Object.keys(det.por_cota).sort((a, b) => parseFloat(a) - parseFloat(b));
   const c = det.por_cota[cota] ?? det.por_cota[cotas[Math.floor(cotas.length / 2)]];
   const idxCota = cotas.indexOf(cota);
-  const destaque = (k: string) => (k === cota ? "font-black text-amber-700" : "font-bold");
+  const destaque = (k: string) => (k === cota ? "font-black text-amber-800" : "font-bold");
   const kpis = (itens: [string, string][]) => (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 my-4">
       {itens.map(([l, v]) => (
         <div key={l} className="bg-white border border-[#b3cdd8] rounded-xl px-4 py-3 shadow-sm">
-          <p className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94]">{l}</p>
+          <p className="text-[10px] font-black uppercase tracking-wider text-[#2f6a83]">{l}</p>
           <p className="text-xl font-black text-slate-800 leading-tight">{v}</p>
         </div>
       ))}
     </div>
   );
-  const sub = (t: string) => <h4 className="text-sm font-black text-[#055071] mt-5 mb-2">{t}</h4>;
+  const sub = (t: string) => <h3 className="text-sm font-black text-[#055071] mt-5 mb-2">{t}</h3>;
   const cotaCell = (k: string) => <span key="c" className={destaque(k)}>{k}</span>;
   return (
     <>
@@ -43,7 +43,7 @@ export function DetalhePorCategoria({ det, cota, mun }: { det: DetalheCota; cota
           ["Cota (m)", "Estabelecimentos", "Empregados", "Massa salarial", "Salário médio", "Valor exposto"],
           ...cotas.map((k) => { const e = det.por_cota[k].empresas; return [cotaCell(k), fmtN(e.n), fmtN(e.empregados), fmtBRL(e.massa_salarial_brl), fmtRS(e.salario_medio_brl), fmtBRL(e.valor_exposto_brl)]; }),
         ]} />
-        <p className="text-[11px] text-slate-500 mt-2">Massa salarial = soma dos salários mensais dos vínculos (RAIS 2023). Salário médio = massa salarial ÷ empregados.</p>
+        <p className="text-[11px] text-slate-600 mt-2">Massa salarial = soma dos salários mensais dos vínculos (RAIS 2023). Salário médio = massa salarial ÷ empregados.</p>
       </Section>
 
       <Section id="c-saude" num="4" title="Saúde">
@@ -120,7 +120,7 @@ export function DetalhePorCategoria({ det, cota, mun }: { det: DetalheCota; cota
                 return [cotaCell(k), ...Object.keys(det.area_agricola_total_ha).map((cl) => fmtHa(a?.culturas[cl] ?? 0)), fmtHa(a?.area_ha ?? 0)];
               }),
             ]} />
-            <p className="text-[11px] text-slate-500 mt-2">Sem valor exposto: não há valor de reposição para lavouras nesta metodologia.</p>
+            <p className="text-[11px] text-slate-600 mt-2">Sem valor exposto: não há valor de reposição para lavouras nesta metodologia.</p>
           </>
         ) : <p>Sem dados de agricultura para este município.</p>}
       </Section>

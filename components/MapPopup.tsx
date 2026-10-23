@@ -28,7 +28,7 @@ export function MapPopup({ source, properties: p, rp = "RP200" }: Props) {
     const valor = Number(p.valor_reposicao_brl ?? 0);
     return (
       <div className="flex flex-col gap-1.5 p-3 w-56 bg-white rounded-xl shadow-lg border border-slate-100">
-        <strong className="text-amber-700 uppercase tracking-wider text-[10px] border-b border-slate-100 pb-1">
+        <strong className="text-amber-800 uppercase tracking-wider text-[10px] border-b border-slate-100 pb-1">
           🧪 Dano Físico (CLIMADA) · {DANO_FISICO_SETOR_LABEL[source] ?? source}
         </strong>
         <span className="text-[10px] text-slate-500">{rp} · profundidade estimada {prof.toFixed(2)} m</span>

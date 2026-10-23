@@ -1,7 +1,7 @@
 "use client";
 
 import { cenarioLabel } from "@/lib/constants";
-import { MUN_COLORS, COMP_COLORS, DIAS_OPCOES, fmtBRL, pct, scaleTo } from "./helpers";
+import { MUN_COLORS, MUN_CARD_COLORS, COMP_COLORS, DIAS_OPCOES, fmtBRL, pct, scaleTo } from "./helpers";
 import { CompositionBar, TotaisBarChart, SensibChart } from "./charts";
 import { DiasBadge, KpiRow, Section, SubTitle, DataTable, Note } from "./ui";
 import type { DanosCtx } from "./ctx";
@@ -20,10 +20,10 @@ export function DanosOperacionais({ ctx }: { ctx: DanosCtx }) {
           <div className="grid grid-cols-2 gap-4 my-5">
             {pioresCenarios.map(({ mun, cenNome, cenVal }) => (
               <div key={mun} className="bg-white border border-[#b3cdd8] rounded-xl overflow-hidden shadow-sm">
-                <div className="px-4 py-3" style={{ backgroundColor: MUN_COLORS[mun] ?? "#055071" }}>
-                  <p className="text-[10px] font-black uppercase tracking-wider text-white/70 mb-0.5">{mun}</p>
+                <div className="px-4 py-3" style={{ backgroundColor: MUN_CARD_COLORS[mun] ?? "#055071" }}>
+                  <p className="text-[10px] font-black uppercase tracking-wider text-white/95 mb-0.5">{mun}</p>
                   <p className="text-2xl font-black text-white leading-none">{fmtBRL(cenVal.total)}</p>
-                  <p className="text-[9px] text-white/60 font-mono mt-1">{cenarioLabel(cenNome)} · {dias} dias ef.</p>
+                  <p className="text-[9px] text-white/95 font-mono mt-1">{cenarioLabel(cenNome)} · {dias} dias ef.</p>
                 </div>
                 <div className="px-4 pt-3 pb-1">
                   <CompositionBar v={cenVal} />
@@ -47,7 +47,7 @@ export function DanosOperacionais({ ctx }: { ctx: DanosCtx }) {
               {Object.entries(MUN_COLORS).map(([mun, cor]) => (
                 <div key={mun} className="flex items-center gap-1.5">
                   <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: cor }} />
-                  <span className="text-[10px] text-slate-500 font-medium">{mun}</span>
+                  <span className="text-[10px] text-slate-600 font-medium">{mun}</span>
                 </div>
               ))}
             </div>
@@ -91,7 +91,7 @@ export function DanosOperacionais({ ctx }: { ctx: DanosCtx }) {
                   <div key={cen} className="bg-white border border-[#b3cdd8] rounded-xl overflow-hidden shadow-sm">
                     <div className="px-4 py-2.5 bg-[#f0f7fa] border-b border-[#b3cdd8] flex items-baseline justify-between">
                       <p className="text-[11px] font-black text-[#055071] uppercase tracking-wide">{cenarioLabel(cen)}</p>
-                      <p className="text-[9px] text-slate-500 font-mono">{dias} dias ef. · f = {v.f_interrup.toFixed(4)}</p>
+                      <p className="text-[9px] text-slate-600 font-mono">{dias} dias ef. · f = {v.f_interrup.toFixed(4)}</p>
                     </div>
                     <div className="px-4 pt-3 pb-4">
                       <p className="text-xl font-black text-slate-800 mb-3">{fmtBRL(v.total)}</p>
@@ -108,11 +108,11 @@ export function DanosOperacionais({ ctx }: { ctx: DanosCtx }) {
                             <div className="flex justify-between text-[10px] mb-0.5">
                               <div className="flex items-center gap-1">
                                 <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color }} />
-                                <span className="text-slate-500">{label}</span>
+                                <span className="text-slate-600">{label}</span>
                               </div>
                               <div className="flex items-center gap-2">
                                 <span className="font-bold text-slate-700">{fmtBRL(value)}</span>
-                                <span className="text-slate-500 w-8 text-right">{pct(value, v.total)}</span>
+                                <span className="text-slate-600 w-8 text-right">{pct(value, v.total)}</span>
                               </div>
                             </div>
                             <div className="h-1.5 bg-[#e8f4f8] rounded-full overflow-hidden">
@@ -142,7 +142,7 @@ export function DanosOperacionais({ ctx }: { ctx: DanosCtx }) {
 
           {/* Gráfico agrupado */}
           <div className="bg-white border border-[#b3cdd8] rounded-xl p-5 shadow-sm mt-3">
-            <p className="text-[11px] font-black uppercase tracking-wider text-[#3d7a94] mb-4">
+            <p className="text-[11px] font-black uppercase tracking-wider text-[#2f6a83] mb-4">
               Total por duração (cenário principal de cada município)
             </p>
             <SensibChart dados={dados} diasSelecionado={dias} />
@@ -162,7 +162,7 @@ export function DanosOperacionais({ ctx }: { ctx: DanosCtx }) {
                     const sc = scaleTo(cenValOrig, d);
                     const isSelected = d === dias;
                     return [
-                      <span key="d" className={`font-mono font-black ${isSelected ? "text-[#055071]" : "text-slate-500"}`}>
+                      <span key="d" className={`font-mono font-black ${isSelected ? "text-[#055071]" : "text-slate-600"}`}>
                         {d} dias{isSelected ? " ◀" : ""}
                       </span>,
                       fmtBRL(sc.empresas_vab),
