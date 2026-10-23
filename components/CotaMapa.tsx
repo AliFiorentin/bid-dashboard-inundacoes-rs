@@ -1,16 +1,17 @@
 "use client"
 import React, { useEffect, useRef } from "react"
-import Map, { Source, Layer, NavigationControl } from "react-map-gl/maplibre"
+import Map, { NavigationControl } from "react-map-gl/maplibre"
 import "maplibre-gl/dist/maplibre-gl.css"
 import { useCotaRaster, COR_FRENTE, COR_ALAGADO } from "@/hooks/useCotaRaster"
 import { CotaControle } from "@/components/CotaControle"
+import { CotaCanvasLayer } from "@/components/CotaCanvasLayer"
 
 // Mapa com slider de cota do rio na página de Danos por cota. A animação começa sozinha
 // quando o mapa entra na tela (loop); pausar ou arrastar o slider assume o controle.
 
 export function CotaMapa({ slug, cotaInicial }: { slug: string; cotaInicial?: string }) {
   const raster = useCotaRaster(slug, { cotaInicial })
-  const { meta, erro, cota, url, setTocando } = raster
+  const { meta, erro, cota, setTocando } = raster
   const raiz = useRef<HTMLDivElement>(null)
   const iniciouAuto = useRef(false)
 
@@ -47,11 +48,7 @@ export function CotaMapa({ slug, cotaInicial }: { slug: string; cotaInicial?: st
           attributionControl={{ compact: true }}
         >
           <NavigationControl position="top-right" showCompass={false} />
-          {url && (
-            <Source id="cota-img" type="image" url={url} coordinates={meta.coordinates}>
-              <Layer id="cota-raster" type="raster" paint={{ "raster-opacity": 0.82, "raster-fade-duration": 0 }} />
-            </Source>
-          )}
+          <CotaCanvasLayer raster={raster} />
         </Map>
         <div className="absolute left-3 bottom-3 bg-white/95 rounded-lg shadow px-3 py-2 text-[11px] text-slate-600">
           <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-sm" style={{ background: `rgb(${COR_ALAGADO})` }} />Área alagada</div>

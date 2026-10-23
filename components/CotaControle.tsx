@@ -21,12 +21,12 @@ export function CotaControle({ raster, className = "", vertical = false }: { ras
           type="button"
           onClick={() => setTocando((t) => !t)}
           className="shrink-0 h-9 w-9 rounded-full bg-[#055071] text-white flex items-center justify-center text-sm"
-          aria-label={tocando ? "Pausar" : "Reproduzir"}
+          aria-label={tocando ? "Pausar" : "Reproduzir"} aria-pressed={tocando}
         >{tocando ? "❚❚" : "▶"}</button>
         <input
           type="range" min={minimo} max={maximo} step={passo / 20} value={cota}
           onChange={(ev) => setCota(parseFloat(ev.target.value))}
-          className="flex-1 min-h-0 accent-[#055071]" aria-label="Cota do rio"
+          className="flex-1 min-h-0 accent-[#055071]" aria-label="Cota do rio" aria-valuetext={`cota ${fmt(cota)} metros`}
           style={{ writingMode: "vertical-lr", direction: "rtl", width: 20 }}
         />
         <div className="text-[9px] font-bold text-slate-400 tabular-nums">{fmt(minimo)}</div>
@@ -43,12 +43,12 @@ export function CotaControle({ raster, className = "", vertical = false }: { ras
         type="button"
         onClick={() => setTocando((t) => !t)}
         className="shrink-0 h-9 w-9 rounded-full bg-[#055071] text-white flex items-center justify-center text-sm"
-        aria-label={tocando ? "Pausar" : "Reproduzir"}
+        aria-label={tocando ? "Pausar" : "Reproduzir"} aria-pressed={tocando}
       >{tocando ? "❚❚" : "▶"}</button>
       <input
         type="range" min={minimo} max={maximo} step={passo / 20} value={cota}
         onChange={(ev) => setCota(parseFloat(ev.target.value))}
-        className="flex-1 accent-[#055071]" aria-label="Cota do rio"
+        className="flex-1 accent-[#055071]" aria-label="Cota do rio" aria-valuetext={`cota ${fmt(cota)} metros`}
       />
     </div>
   )
