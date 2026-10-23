@@ -164,7 +164,7 @@ export function SensibChart({
           <div key={d} className="flex items-center gap-1.5">
             <div className="w-4 h-3 rounded-sm bg-[#055071]"
               style={{ opacity: d === diasSelecionado ? 1 : 0.3 }} />
-            <span className={`text-[10px] font-medium ${d === diasSelecionado ? "text-[#055071]" : "text-slate-400"}`}>
+            <span className={`text-[10px] font-medium ${d === diasSelecionado ? "text-[#055071]" : "text-slate-500"}`}>
               {d} dias{d === diasSelecionado ? " ◀" : ""}
             </span>
           </div>

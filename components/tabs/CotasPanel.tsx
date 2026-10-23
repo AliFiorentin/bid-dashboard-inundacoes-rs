@@ -52,7 +52,7 @@ export function CotasPanel({ raster, detalhe, municipio }: Props) {
       </div>
       <div className={`mt-1 grid gap-x-3 gap-y-1 ${colunas === 2 ? "grid-cols-2" : "grid-cols-1"}`}>
         {linhas.map(([k, val]) => (
-          <div key={k} className="flex justify-between gap-1 text-[11px] leading-snug text-slate-600"><span className="truncate">{k}</span><span className="font-bold tabular-nums text-slate-800 shrink-0">{val}</span></div>
+          <div key={k} className="flex justify-between gap-1 text-[11px] leading-snug text-slate-600"><span className="min-w-0 break-words">{k}</span><span className="font-bold tabular-nums text-slate-800 shrink-0">{val}</span></div>
         ))}
       </div>
     </div>

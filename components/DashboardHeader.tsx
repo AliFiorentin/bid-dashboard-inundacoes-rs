@@ -95,7 +95,7 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
         <div className="flex flex-col gap-0 shrink-0" style={{ width: "clamp(122px, 9vw, 160px)" }}>
           <label className="font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap" style={{ fontSize: SELECT_LABEL_SIZE }}>Município</label>
           <Select value={municipio} onValueChange={setMunicipio}>
-            <SelectTrigger className="bg-slate-50/80 w-full min-w-0" style={{ height: SELECT_H, fontSize: SELECT_TRIGGER_SIZE }}><SelectValue /></SelectTrigger>
+            <SelectTrigger aria-label="Município" className="bg-slate-50/80 w-full min-w-0" style={{ height: SELECT_H, fontSize: SELECT_TRIGGER_SIZE }}><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="Visão Geral RS" className="font-bold text-blue-600">Visão Geral RS</SelectItem>
               {MUNICIPIOS.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
@@ -106,7 +106,7 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
         <div className="flex flex-col gap-0 border-r border-slate-200/60 shrink-0" style={{ width: "clamp(155px, 13vw, 210px)", paddingRight: SELECT_GAP }}>
           <label className="font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap" style={{ fontSize: SELECT_LABEL_SIZE }}>Cenário de Inundação</label>
           <Select value={cenario} onValueChange={setCenario} disabled={isVisaoGeral}>
-            <SelectTrigger className="bg-slate-50/80 w-full min-w-0" style={{ height: SELECT_H, fontSize: SELECT_TRIGGER_SIZE }}><SelectValue placeholder={isVisaoGeral ? "Piores Cenários" : "(nenhum)"} /></SelectTrigger>
+            <SelectTrigger aria-label="Cenário de inundação" className="bg-slate-50/80 w-full min-w-0" style={{ height: SELECT_H, fontSize: SELECT_TRIGGER_SIZE }}><SelectValue placeholder={isVisaoGeral ? "Piores Cenários" : "(nenhum)"} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="(nenhum)">(Ver Total)</SelectItem>
               {(CENARIOS_CONFIG[municipio] || []).map(c => <SelectItem key={c} value={c}>{cenarioLabel(c)}</SelectItem>)}

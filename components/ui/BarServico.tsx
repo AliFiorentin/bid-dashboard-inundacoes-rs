@@ -12,7 +12,7 @@ export function BarServico({ label, value, total, cor }: BarServicoProps) {
       <div className="flex items-center justify-between gap-1">
         <span className="text-[10px] text-slate-500">{label}</span>
         <span className="text-[10px] font-bold shrink-0 text-slate-700">
-          {value.toLocaleString("pt-BR")} <span className="font-normal text-slate-400">({pct}%)</span>
+          {value.toLocaleString("pt-BR")} <span className="font-normal text-slate-500">({pct}%)</span>
         </span>
       </div>
       <div className="h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: `${cor}25` }}>

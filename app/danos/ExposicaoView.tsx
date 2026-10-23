@@ -222,7 +222,7 @@ export function ExposicaoView({ expo, mun, visao, rp, cota, setAba, diag }: {
                       <span className="font-bold text-slate-700">{proj.premissas.rps_usados.join(", ")}</span>
                     </div>
                   </div>
-                  <p className="text-[10px] text-slate-400 mt-2 leading-relaxed">{proj.premissas.crescimento_fonte}. O remapeamento de frequência é o do Guaíba, aplicado ao Taquari como premissa.</p>
+                  <p className="text-[10px] text-slate-500 mt-2 leading-relaxed">{proj.premissas.crescimento_fonte}. O remapeamento de frequência é o do Guaíba, aplicado ao Taquari como premissa.</p>
                 </div>
               </div>
               <SubTitle>Decomposição por setor</SubTitle>
@@ -242,7 +242,7 @@ export function ExposicaoView({ expo, mun, visao, rp, cota, setAba, diag }: {
               maior a área atingida. O gráfico mostra o valor exposto atingido (3 setores) para cada RP.
             </p>
             <div className="bg-white border border-[#b3cdd8] rounded-xl p-5 shadow-sm mt-3">
-              <p className="text-[10px] text-slate-400 font-medium mb-2">
+              <p className="text-[10px] text-slate-500 font-medium mb-2">
                 Cada barra soma o valor exposto atingido dos 3 setores para aquele RP, dividida por cor
                 (proporcional). O número no topo é o total; a barra com contorno âmbar é o RP
                 selecionado acima.{acima.size > 0 ? ` ${Array.from(acima).join(" e ")} estão acima do último raster (extrapolados).` : ""}

@@ -1018,7 +1018,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             partir da base JRC (Huizinga et al., 2017).
           </p>
           <div className="bg-white border border-[#b3cdd8] rounded-xl p-5 shadow-sm mt-3">
-            <p className="text-[10px] text-slate-400 font-medium mb-2">
+            <p className="text-[10px] text-slate-500 font-medium mb-2">
               Eixo horizontal: profundidade da água no ponto (m). Eixo vertical: % do valor do
               imóvel destruída nessa profundidade. Curva mais alta/íngreme no início = setor mais
               vulnerável a alagamentos rasos; todas achatam (platô) a partir de ~2-3m, quando o

@@ -224,7 +224,7 @@ export function ClimadaPorRp({ ctx }: { ctx: DanosCtx }) {
                           <span className="font-bold text-slate-700">{premissas.rps_usados.join(", ")}</span>
                         </div>
                       </div>
-                      <p className="text-[10px] text-slate-400 mt-2 leading-relaxed">{premissas.crescimento_fonte}</p>
+                      <p className="text-[10px] text-slate-500 mt-2 leading-relaxed">{premissas.crescimento_fonte}</p>
                     </div>
                   </div>
 
@@ -268,7 +268,7 @@ export function ClimadaPorRp({ ctx }: { ctx: DanosCtx }) {
             para cada RP disponível.
           </p>
           <div className="bg-white border border-[#b3cdd8] rounded-xl p-5 shadow-sm mt-3">
-            <p className="text-[10px] text-slate-400 font-medium mb-2">
+            <p className="text-[10px] text-slate-500 font-medium mb-2">
               Cada barra soma o dano físico dos 3 setores para aquele RP, dividida por cor
               (proporcional). O número no topo é o total; a barra com contorno âmbar é o RP
               selecionado acima.
