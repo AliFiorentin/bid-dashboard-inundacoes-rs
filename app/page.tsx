@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 
 import {
   COLORS, INFRA_COLORS,
@@ -52,6 +53,37 @@ export default function Dashboard() {
 
   return (
     <main className="relative w-screen h-screen max-lg:h-dvh font-sans overflow-hidden bg-slate-100 text-slate-900 print:overflow-visible print:h-auto print:w-full" style={varsMovel}>
+
+      <div className="md:hidden fixed inset-0 z-[100] flex flex-col items-center justify-center gap-6 px-8 text-center bg-white">
+        <Image src="/BID.webp" alt="BID" width={160} height={64} className="h-12 w-auto object-contain" />
+        <div className="flex flex-col gap-2">
+          <h1 className="text-xl font-black leading-tight" style={{ color: "#055071" }}>Avaliação de Impactos Socioeconômicos</h1>
+          <p className="text-sm text-slate-500">Painel de Monitoramento</p>
+        </div>
+        <div className="rounded-2xl px-6 py-5 flex flex-col items-center gap-3 max-w-sm" style={{ backgroundColor: "#f0f7fa", border: "1px solid #b3cdd8" }}>
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#055071" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" />
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="17" x2="12" y2="21" />
+          </svg>
+          <p className="font-bold text-sm" style={{ color: "#055071" }}>Acesse pelo computador</p>
+          <p className="text-slate-500 text-xs leading-relaxed">
+            Este painel interativo com mapas e gráficos foi projetado para telas maiores.
+            Para a melhor experiência, acesse em um computador ou tablet em modo paisagem.
+          </p>
+        </div>
+        <div className="flex items-center gap-3 mt-2">
+          <div className="relative h-11 w-20">
+            <Image src="/GPEA.webp" alt="GPEa" fill sizes="80px" className="object-contain" />
+          </div>
+          <div className="relative h-11 w-20">
+            <Image src="/CIEX2.webp" alt="CIEX" fill sizes="80px" className="object-contain" />
+          </div>
+          <div className="relative h-11 w-20">
+            <Image src="/IPH.webp" alt="IPH" fill sizes="80px" className="object-contain rounded-sm" />
+          </div>
+        </div>
+      </div>
 
       <DashboardMap dash={dash} />
 
