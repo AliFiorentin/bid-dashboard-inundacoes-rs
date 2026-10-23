@@ -7,6 +7,13 @@ export const MUN_COLORS: Record<string, string> = {
   "Porto Alegre":    "#e35d4b",
   "Rio Grande":      "#4d9e3a",
 };
+// Fundo dos cartões com texto branco: versões mais escuras (contraste >= 4,5:1); MUN_COLORS segue para gráficos.
+export const MUN_CARD_COLORS: Record<string, string> = {
+  "Eldorado do Sul": "#055071",
+  "Lajeado":         "#1a7592",
+  "Porto Alegre":    "#c9402e",
+  "Rio Grande":      "#3d7f2c",
+};
 export const COMP_COLORS = {
   empresas:    "#055071",
   educacao:    "#2da8cc",

@@ -8,7 +8,7 @@ export function DanosIndice({ ctx }: { ctx: DanosCtx }) {
         <aside className="hidden lg:block w-52 shrink-0 print:hidden">
           <div className="sticky top-[56px] flex flex-col gap-3">
             <nav className="bg-white border border-[#b3cdd8] rounded-xl p-4 shadow-sm">
-              <p className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94] mb-2">Índice</p>
+              <p className="text-[10px] font-black uppercase tracking-wider text-[#2f6a83] mb-2">Índice</p>
               <ol className="flex flex-col gap-1">
                 {(aba === "dala" ? [
                   ["#resumo",      "1. Resumo Geral"],

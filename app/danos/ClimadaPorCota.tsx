@@ -43,9 +43,9 @@ export function ClimadaPorCota({ ctx }: { ctx: DanosCtx }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-5">
             <div className="bg-white border border-[#b3cdd8] rounded-xl overflow-hidden shadow-sm">
               <div className="px-4 py-3" style={{ backgroundColor: "#055071" }}>
-                <p className="text-[10px] font-black uppercase tracking-wider text-white/70 mb-0.5">{munClimadaAtivo} · cota {cotaAtiva} m</p>
+                <p className="text-[10px] font-black uppercase tracking-wider text-white/95 mb-0.5">{munClimadaAtivo} · cota {cotaAtiva} m</p>
                 <p className="text-2xl font-black text-white leading-none">{fmtBRL(totalCota(atualCota, "dano_fisico_brl_poa"))}</p>
-                <p className="text-[9px] text-white/60 font-mono mt-1">
+                <p className="text-[9px] text-white/95 font-mono mt-1">
                   dano físico estimado (3 setores) · incerteza até {fmtBRL(totalCota(atualCota, "dano_fisico_brl_jrc_crua"))} (curva JRC crua)
                 </p>
               </div>
@@ -70,13 +70,13 @@ export function ClimadaPorCota({ ctx }: { ctx: DanosCtx }) {
             </div>
 
             <div className="bg-white border border-[#b3cdd8] rounded-xl p-4 shadow-sm">
-              <p className="text-[10px] font-black uppercase tracking-wider text-[#3d7a94] mb-2">Exposição total (patrimônio no raio de risco)</p>
+              <p className="text-[10px] font-black uppercase tracking-wider text-[#2f6a83] mb-2">Exposição total (patrimônio no raio de risco)</p>
               <p className="text-2xl font-black text-slate-800 leading-none mb-3">
                 {fmtBRL(climadaSetores.reduce((sum, st) => sum + atualCota[st].exposicao_total_brl, 0))}
               </p>
               {climadaSetores.map((st) => (
                 <div key={st} className="flex items-center justify-between text-[11px] py-1 border-t border-slate-100 first:border-t-0">
-                  <span className="text-slate-500">{SETOR_LABEL[st]}: {atualCota[st].n_atingidos}/{atualCota[st].n_total} pontos atingidos</span>
+                  <span className="text-slate-600">{SETOR_LABEL[st]}: {atualCota[st].n_atingidos}/{atualCota[st].n_total} pontos atingidos</span>
                   <span className="font-bold text-slate-700">prof. média {atualCota[st].profundidade_media_atingidos_m.toFixed(2)}m</span>
                 </div>
               ))}
@@ -121,7 +121,7 @@ export function ClimadaPorCota({ ctx }: { ctx: DanosCtx }) {
               ...cotasDisponiveis.map((c) => {
                 const r = dadosCotas.resultados_por_cota[c];
                 return [
-                  <span key="c" className={c === cotaAtiva ? "font-black text-amber-700" : "font-bold"}>{c}</span>,
+                  <span key="c" className={c === cotaAtiva ? "font-black text-amber-800" : "font-bold"}>{c}</span>,
                   `${r.empresas.n_atingidos}/${r.empresas.n_total}`,
                   `${r.educacao.n_atingidos}/${r.educacao.n_total}`,
                   `${r.saude.n_atingidos}/${r.saude.n_total}`,
