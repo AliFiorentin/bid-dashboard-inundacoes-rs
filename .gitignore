@@ -59,3 +59,8 @@ Thumbs.db
 lista_arquivos.txt
 test-merge.ts
 graphify-out/
+
+# Fora do repositorio (copia local mantida): documento de design, Dockerfile e base agricola 2023 (o app usa so a de 2024)
+DESIGN_DASHBOARD.md
+Dockerfile
+public/dados_convertidos/*/agricultura_2023_BASE.geojson
