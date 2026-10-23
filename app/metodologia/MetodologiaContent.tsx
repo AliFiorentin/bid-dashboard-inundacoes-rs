@@ -446,7 +446,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
           <SectionSources links={[
             ["MapBiomas: Coleção 10", "https://brasil.mapbiomas.org/downloads/mapas-para-download-geotiff/"],
             ["MapBiomas: Códigos da legenda da Coleção 10", "https://brasil.mapbiomas.org/wp-content/uploads/sites/4/2025/08/Legenda-Colecao-10-Legend-Code.pdf"],
-            ["CONAB: Preços Mínimos 2024", "https://www.conab.gov.br/politica-agricola/precos-minimos"],
+            ["CONAB: Preços Mínimos 2024", ""],
           ]} />
         </Section>
 
@@ -911,7 +911,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             ["Karabarbounis & Neiman (2014, QJE): The Global Decline of the Labor Share", "https://doi.org/10.1093/qje/qjt032"],
             ["LDB: Lei nº 9.394/1996, Art. 24", "https://www.planalto.gov.br/ccivil_03/leis/l9394.htm"],
             ["Portaria Interministerial MEC/MF nº 9, 28/08/2024 (VAAT-MIN FUNDEB 2024)", "https://www.fnde.gov.br"],
-            ["CONAB: Preços Mínimos 2024", "https://www.conab.gov.br/politica-agricola/precos-minimos"],
+            ["CONAB: Preços Mínimos 2024", ""],
             ["MapBiomas: Coleção 10", "https://brasil.mapbiomas.org/downloads/mapas-para-download-geotiff/"],
             ["FNDE: FUNDEB 2024", "https://www.fnde.gov.br"],
             ["DataSUS: Produção Hospitalar SIH/SUS", "https://datasus.saude.gov.br/acesso-a-informacao/producao-hospitalar-sih-sus"],
@@ -1323,7 +1323,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
               <RefItem href="https://brasil.mapbiomas.org/downloads/mapas-para-download-geotiff/"
                 label="MapBiomas: Coleção 10"
                 desc="Mapeamento anual de uso e cobertura do solo no Brasil em raster de 30 m, fonte da área cultivada. Anos 2023 e 2024 utilizados conforme o período do cenário. Classes: Soja (39), Arroz (40), Outras Lavouras Temporárias (41, 20 e 62)." />
-              <RefItem href="https://www.conab.gov.br/politica-agricola/precos-minimos"
+              <RefItem href=""
                 label="CONAB: Preços Mínimos 2024"
                 desc="Base para calibração dos coeficientes R$/ha de impacto direto por cultura e estágio fenológico." />
             </RefBlock>
