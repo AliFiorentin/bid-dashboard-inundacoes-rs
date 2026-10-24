@@ -63,7 +63,7 @@ export function DanosOperacionais({ ctx }: { ctx: DanosCtx }) {
               realizado). Para <strong>destruição de patrimônio</strong> (estoque) em Porto
               Alegre, ver a aba{" "}
               <button onClick={() => setAba("climada")} className="underline underline-offset-2 font-bold">
-                Dano Físico
+                Danos Físicos
               </button>{" "}
               acima. São métricas complementares, não somáveis.
             </Note>
@@ -91,7 +91,7 @@ export function DanosOperacionais({ ctx }: { ctx: DanosCtx }) {
                   <div key={cen} className="bg-white border border-[#b3cdd8] rounded-xl overflow-hidden shadow-sm">
                     <div className="px-4 py-2.5 bg-[#f0f7fa] border-b border-[#b3cdd8] flex items-baseline justify-between">
                       <p className="text-[11px] font-black text-[#055071] uppercase tracking-wide">{cenarioLabel(cen)}</p>
-                      <p className="text-[9px] text-slate-600 font-mono">{dias} dias ef. · f = {v.f_interrup.toFixed(4)}</p>
+                      <p className="text-[9px] text-slate-600 font-mono" title="f = fator de interrupção: fração do ano em que a atividade ficou parada (dias efetivos ÷ 365). Ver 'O que é o f' em Notas e Ressalvas.">{dias} dias ef. · f = {v.f_interrup.toFixed(4)}</p>
                     </div>
                     <div className="px-4 pt-3 pb-4">
                       <p className="text-xl font-black text-slate-800 mb-3">{fmtBRL(v.total)}</p>
@@ -200,6 +200,20 @@ export function DanosOperacionais({ ctx }: { ctx: DanosCtx }) {
               página de Metodologia ↗
             </a>. Esta seção reúne apenas as ressalvas de interpretação dos números acima.
           </Note>
+
+          <SubTitle>O que é o f (fator de interrupção)</SubTitle>
+          <p>
+            O <strong>f</strong> é a <strong>fração do ano em que a atividade ficou parada</strong>:
+            f = dias efetivos de interrupção ÷ 365. Os dias efetivos seguem a curva de recuperação DaLA
+            (período agudo + período de recuperação × 0,5). Ex.: 60 dias efetivos → f = 0,1644, ou seja,
+            ≈ 16,4% de um ano de atividade perdida.
+          </p>
+          <p>
+            Ele multiplica as bases <em>anuais</em>: a perda das <strong>empresas</strong> é o VAB anual
+            (massa salarial anual ÷ participação do trabalho no valor adicionado) × f, e a perda da{" "}
+            <strong>saúde</strong> é a produção SUS anual × f. Educação (custo FUNDEB por aluno e dia
+            de aula) e agricultura (R$/ha por cultura e período do evento) usam outros parâmetros, sem o f.
+          </p>
 
           <SubTitle>Administração Pública (CNAE 84)</SubTitle>
           <p>
