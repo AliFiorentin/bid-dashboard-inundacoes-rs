@@ -8,10 +8,14 @@
 /* Layout do Dashboard: "desk" = layout de desktop (painel lateral); "movel" = tablet/celular (bottom sheet).
    Quem usa mouse (pointer: fine) SEMPRE recebe o layout de desktop, mesmo com a janela estreita
    (o tamanho minimo 1150 x 768 e forcado no fim deste arquivo, com rolagem); o layout movel e' so' para aparelhos de toque
-   com tela < 1024 px. "telefone" = toque e < 768 px (aviso "acesse pelo computador"). */
+   com tela < 1024 px. "telefone" = janela menor que o tamanho mínimo do Dashboard (1150 x 768 px): mostra só o aviso de tamanho,
+   sem rolagem e sem reduzir o layout. */
 @custom-variant desk (@media (min-width: 64rem), (pointer: fine));
 @custom-variant movel (@media (max-width: 63.99rem) and (pointer: coarse));
-@custom-variant telefone (@media (max-width: 47.99rem) and (pointer: coarse));
+@custom-variant telefone {
+  @media (max-width: 1149.98px) { @slot; }
+  @media (max-height: 767.98px) { @slot; }
+}
 
 @theme inline {
     --font-heading: var(--font-sans);
@@ -270,11 +274,4 @@
    de câmera (3D/girar/inclinar) já cobre a bússola; assim nada disputa o canto com a legenda. */
 @media (max-width: 1023.98px) and (pointer: coarse) {
   .maplibregl-ctrl-bottom-right .maplibregl-ctrl-group { display: none; }
-}
-
-/* Dashboard no desktop (mouse): tamanho mínimo de 1150 x 768 px. Em janelas menores o layout NÃO se
-   comprime nem troca para o de tablet: mantém o tamanho mínimo e rola (horizontal e/ou vertical). */
-@media (pointer: fine) {
-  html { overflow: auto; }
-  .dash-root { min-width: 1150px; min-height: 768px; }
 }
