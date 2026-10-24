@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Download, EyeOff, PanelLeft, LayoutDashboard, Building2, GraduationCap, HeartPulse, Sprout, Wrench, Users, Waves } from "lucide-react";
+import { EyeOff, PanelLeft, LayoutDashboard, Building2, GraduationCap, HeartPulse, Sprout, Wrench, Users, Waves } from "lucide-react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { AGRI_BOUNDS, INFRAESTRUTURA_CONFIG } from "@/lib/constants";
@@ -24,7 +24,6 @@ interface AnalysisPanelProps {
 export function AnalysisPanel({ dash }: AnalysisPanelProps) {
   const {
     showPainelAnalise, setShowPainelAnalise,
-    exportarExcel,
     municipio, cenario,
     mostraImpacto, isVisaoGeral,
     tabAtiva, setTabAtiva,
@@ -97,9 +96,6 @@ export function AnalysisPanel({ dash }: AnalysisPanelProps) {
             <h2 className="font-black text-white tracking-tight flex items-center justify-between" style={{ fontSize: "clamp(12px, 1.7vh, 16px)" }}>
               Painel
               <div className="flex gap-1">
-                <Button variant="outline" size="xs" onClick={exportarExcel} className="movel:h-11 movel:text-xs text-[9px] font-bold border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
-                  <Download size={10} strokeWidth={2.5} />Baixar
-                </Button>
                 <Button variant="outline" size="xs" onClick={() => setShowPainelAnalise(false)} className="movel:h-11 movel:text-xs text-[9px] font-bold border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white print:hidden">
                   <EyeOff size={10} strokeWidth={2.5} />Ocultar
                 </Button>

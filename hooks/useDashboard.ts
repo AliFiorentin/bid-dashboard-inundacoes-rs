@@ -1,8 +1,7 @@
-import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import type { MapRef } from "react-map-gl/maplibre";
 import { INFRAESTRUTURA_CONFIG, INFRA_TAMANHOS_MB } from "@/lib/constants";
 import { scenarioSlug, countRuasUnicas, getRuasListPOA, countRuasUnicasPOA, getRotas, getLen } from "@/lib/geo-utils";
-import { exportarExcel as exportarExcelArquivo } from "@/lib/exportar-excel";
 import type { InfraFC, InfraPainelMetricas, PopupInfo } from "@/hooks/dashboard/types";
 import { usePermalink } from "@/hooks/dashboard/usePermalink";
 import { useMapCamera } from "@/hooks/dashboard/useMapCamera";
@@ -184,12 +183,6 @@ export function useDashboard() {
   const mostraImpacto = isVisaoGeral || isCenarioAtivo;
   const temCamadaTabular = camadas.includes("Empresas") || camadas.includes("Educação") || camadas.includes("Saúde") || camadas.includes("Agricultura") || camadas.includes("Infraestrutura") || camadas.includes("População");
 
-  const exportarExcel = useCallback(() => exportarExcelArquivo({
-    camadas, municipio, cenario, isVisaoGeral, isCenarioAtivo, infraAtivas,
-    atingidosEmpresas, baseEmpresas, atingidosEducacao, baseEducacao, atingidosSaude, baseSaude,
-    atingidosInfra, baseInfra, baseAgriStats, atingidosAgriStats, conabStats,
-  }), [camadas, municipio, cenario, isVisaoGeral, isCenarioAtivo, infraAtivas, atingidosEmpresas, baseEmpresas, atingidosEducacao, baseEducacao, atingidosSaude, baseSaude, atingidosInfra, baseInfra, baseAgriStats, atingidosAgriStats, conabStats]);
-
   const { interactiveLayerIds, handleMapClick } = useMapInteraction({
     mapRef, camadas, infraAtivas, isVisaoGeral, isCenarioAtivo,
     showDanoFisico: dano.showDanoFisico, renderMunicipio,
@@ -250,7 +243,6 @@ export function useDashboard() {
     interactiveLayerIds,
     toggleCamada, toggleInfra, toggleMenuInfra,
     handleMapClick,
-    exportarExcel,
     popData,
     areaData,
     // geo-utils re-exports needed in JSX

@@ -124,21 +124,21 @@ export default function Dashboard() {
       </div>
 
       {/* Legenda: canto direito, acima da logo GPEa e dos controles do mapa. */}
-      <div className="absolute right-2 desk:right-[10px] bottom-[calc(var(--dock)+62px)] desk:bottom-[106px] z-10 print:hidden w-[194px] max-h-[calc(100dvh-var(--dock)-var(--hb)-80px)] desk:max-h-[calc(100vh-250px)] flex flex-col justify-end">
+      <div className="absolute right-2 desk:right-2 bottom-[calc(var(--dock)+62px)] desk:bottom-[88px] z-10 print:hidden w-[194px] desk:w-[168px] max-h-[calc(100dvh-var(--dock)-var(--hb)-80px)] desk:max-h-[calc(100vh-230px)] flex flex-col justify-end">
         <div
           className="rounded-xl overflow-hidden"
           style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}
         >
           <button
             onClick={() => setShowLegenda(p => !p)}
-            className="w-full flex items-center justify-between gap-3 px-2.5 py-2 movel:min-h-11"
+            className="w-full flex items-center justify-between gap-3 px-2.5 py-2 desk:px-2 desk:py-1.5 movel:min-h-11"
             style={{ background: "linear-gradient(135deg, #055071 0%, #0a6e9a 100%)" }}
           >
-            <span className="text-[9px] font-black uppercase tracking-wider text-white">Legenda</span>
+            <span className="text-[9px] desk:text-[8px] font-black uppercase tracking-wider text-white">Legenda</span>
             <span className="text-white" style={{ fontSize: 8 }}>{showLegenda ? "▼" : "▲"}</span>
           </button>
           {showLegenda && (
-            <div className="flex flex-col gap-1.5 px-2.5 py-2.5">
+            <div className="flex flex-col gap-1.5 desk:gap-1 px-2.5 py-2.5 desk:px-2 desk:py-2">
               {showDanoFisico && renderMunicipio === "Porto Alegre" ? (
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-2">

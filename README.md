@@ -367,7 +367,6 @@ python pipeline/limpar_geometrias_infra.py
 | Mapa | MapLibre GL + react-map-gl | 5 / 8 |
 | Estilo | Tailwind CSS v4 + shadcn/ui | 4 |
 | Gráficos | Recharts | — |
-| Excel | xlsx (SheetJS) | 0.18 |
 | Tema | next-themes | — |
 | Geoprocessamento offline | GeoPandas / Shapely | — |
 
