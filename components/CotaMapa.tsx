@@ -11,7 +11,7 @@ import { CotaCanvasLayer } from "@/components/CotaCanvasLayer"
 
 export function CotaMapa({ slug, cotaInicial }: { slug: string; cotaInicial?: string }) {
   const raster = useCotaRaster(slug, { cotaInicial })
-  const { meta, erro, cota, setTocando } = raster
+  const { meta, erro, cota, setTocando, pronta } = raster
   const raiz = useRef<HTMLDivElement>(null)
   const iniciouAuto = useRef(false)
 
@@ -21,7 +21,7 @@ export function CotaMapa({ slug, cotaInicial }: { slug: string; cotaInicial?: st
   // ambientes embutidos não entregam).
   useEffect(() => {
     const el = raiz.current
-    if (!meta || !el || iniciouAuto.current) return
+    if (!meta || !pronta || !el || iniciouAuto.current) return
     const id = setInterval(() => {
       const r = el.getBoundingClientRect()
       const visivel = Math.min(r.bottom, innerHeight) - Math.max(r.top, 0)
@@ -32,7 +32,7 @@ export function CotaMapa({ slug, cotaInicial }: { slug: string; cotaInicial?: st
       }
     }, 400)
     return () => clearInterval(id)
-  }, [meta, setTocando])
+  }, [meta, pronta, setTocando])
 
   if (erro) return <p className="text-sm text-slate-500">Mapa por cota indisponível para este município.</p>
   if (!meta || cota === null) return <div className="h-[520px] rounded-xl bg-slate-100 animate-pulse" />

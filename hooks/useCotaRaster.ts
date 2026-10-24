@@ -41,6 +41,10 @@ export interface CotaRaster {
   setCota: (c: number) => void
   tocando: boolean
   setTocando: (t: boolean | ((t: boolean) => boolean)) => void
+  /** Tudo pronto para tocar: raster carregado, camada já desenhada no mapa e dados externos (opts.prontoExterno). */
+  pronta: boolean
+  /** Chamado pela camada do mapa quando a água já foi desenhada pela primeira vez. */
+  marcarCamadaPronta: () => void
   /** Id do <canvas> (no DOM) que o MapLibre lê como fonte `canvas`; null até o primeiro quadro. */
   canvasId: string | null
   /** Contador de quadros desenhados: o consumidor pede ao MapLibre para reler o canvas a cada mudança. */
@@ -53,8 +57,8 @@ export interface CotaRaster {
 }
 
 /** slug null = inativo (nada é baixado). autoplay = começa a tocar assim que carrega. */
-export function useCotaRaster(slug: string | null, opts: { cotaInicial?: string; autoplay?: boolean } = {}): CotaRaster {
-  const { cotaInicial } = opts
+export function useCotaRaster(slug: string | null, opts: { cotaInicial?: string; autoplay?: boolean; prontoExterno?: boolean } = {}): CotaRaster {
+  const { cotaInicial, prontoExterno = true } = opts
   // Quem pede menos movimento (prefers-reduced-motion) não recebe animação automática.
   const autoplay = (opts.autoplay ?? false) && !(typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches)
   const [meta, setMeta] = useState<CotaMeta | null>(null)
@@ -63,12 +67,16 @@ export function useCotaRaster(slug: string | null, opts: { cotaInicial?: string;
   const [tocando, setTocando] = useState(false)
   const [canvasId, setCanvasId] = useState<string | null>(null)
   const [frame, setFrame] = useState(0)
+  const [camadaPronta, setCamadaPronta] = useState(false)
+  const iniciouAuto = useRef(false)
   const baseId = useId().replace(/[^a-zA-Z0-9_-]/g, "")
   const idx = useRef<Uint8Array | null>(null)
   const canvas = useRef<HTMLCanvasElement | null>(null)
   const ultima = useRef<number | null>(null)
   const pendente = useRef(false)
 
+  const marcarCamadaPronta = useCallback(() => setCamadaPronta(true), [])
+  const pronta = meta !== null && camadaPronta && prontoExterno
   const passo = meta ? passoDe(meta) : 1
   const minimo = meta ? meta.cotas[0] - passo : 0
   const maximo = meta ? meta.cotas[meta.cotas.length - 1] : 0
@@ -76,7 +84,7 @@ export function useCotaRaster(slug: string | null, opts: { cotaInicial?: string;
   useEffect(() => {
     // Reiniciar o estado quando o slug muda é intencional (o raster é outro).
     /* eslint-disable react-hooks/set-state-in-effect */
-    setMeta(null); setErro(false); setCanvasId(null); setFrame(0); setCotaState(null); setTocando(false)
+    setMeta(null); setErro(false); setCanvasId(null); setFrame(0); setCotaState(null); setTocando(false); setCamadaPronta(false); iniciouAuto.current = false
     idx.current = null; canvas.current = null; ultima.current = null
     /* eslint-enable react-hooks/set-state-in-effect */
     if (!slug) return
@@ -108,7 +116,6 @@ export function useCotaRaster(slug: string | null, opts: { cotaInicial?: string;
         const alvo = autoplay ? min : Number.isFinite(ini) ? ini : m.cotas[Math.floor(m.cotas.length / 2)]
         setMeta(m)
         setCotaState(Math.min(m.cotas[m.cotas.length - 1], Math.max(min, alvo)))
-        if (autoplay) setTocando(true)
       } catch {
         if (vivo) setErro(true)
       }
@@ -128,6 +135,13 @@ export function useCotaRaster(slug: string | null, opts: { cotaInicial?: string;
     const row = Math.floor(((n - lat) / (n - s)) * meta.height)
     return ix[row * meta.width + col] ?? 0
   }, [meta])
+
+  // Reprodução automática: só começa depois que raster, camada no mapa e dados do painel estão carregados.
+  useEffect(() => {
+    if (!autoplay || !pronta || iniciouAuto.current) return
+    iniciouAuto.current = true
+    setTocando(true)
+  }, [autoplay, pronta])
 
   // Slider manual para o play; o hook expõe setCota que já desliga o avanço automático.
   const setCota = (c: number) => { setTocando(false); setCotaState(c) }
@@ -197,5 +211,5 @@ export function useCotaRaster(slug: string | null, opts: { cotaInicial?: string;
     })
   }, [cota, meta, tabela, passo])
 
-  return { meta, erro, cota, setCota, tocando, setTocando, canvasId, frame, amostrar, minimo, maximo, passo }
+  return { meta, erro, cota, setCota, tocando, setTocando, pronta, marcarCamadaPronta, canvasId, frame, amostrar, minimo, maximo, passo }
 }
