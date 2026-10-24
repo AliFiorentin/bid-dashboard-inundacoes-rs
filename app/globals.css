@@ -275,3 +275,11 @@
 @media (max-width: 1023.98px) and (pointer: coarse) {
   .maplibregl-ctrl-bottom-right .maplibregl-ctrl-group { display: none; }
 }
+
+/* Desktop: botões de zoom do mapa menores (24 px, margem 8), acompanhando a linha de câmera e a logo GPEa
+   (MapControls.tsx) -- o topo do zoom fica a 8 + 3 x 24 = 80 px da base, onde a logo e a legenda se apoiam. */
+@media (min-width: 1024px), (pointer: fine) {
+  .maplibregl-map .maplibregl-ctrl-bottom-right .maplibregl-ctrl { margin: 0 8px 8px 0; }
+  .maplibregl-ctrl-bottom-right .maplibregl-ctrl-group button { width: 24px; height: 24px; }
+  .maplibregl-ctrl-bottom-right .maplibregl-ctrl-group button .maplibregl-ctrl-icon { background-size: 18px 18px; }
+}
