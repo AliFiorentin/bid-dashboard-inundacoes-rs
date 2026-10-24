@@ -20,9 +20,15 @@ export function useCotas(municipio: string, cenario: string) {
   const cotasAtivo = COTAS_MUNICIPIOS.includes(municipio) && cenario === COTAS_CENARIO;
   // Link com ?cota=: abre pausado nessa cota; sem ele, a água avança sozinha.
   const [cotaPermalink] = useState<number | null>(() => lerCotaDaURL());
+  const [cotaDetalhe, setCotaDetalhe] = useState<DetalheCotaMun | null>(null);
+  // Cota de entrada de cada ponto (5 m, igual à aba "Por cota"); sem ele cai na amostragem do raster reduzido.
+  const [cotaPontos, setCotaPontos] = useState<CotaPontos | null>(null);
+  // Os dois arquivos do painel já foram buscados (com ou sem sucesso): a água só começa a avançar depois.
+  const [dadosOk, setDadosOk] = useState({ pontos: false, detalhe: false });
   const cotaRaster = useCotaRaster(cotasAtivo ? slugify(municipio) : null, {
     autoplay: cotaPermalink === null,
     cotaInicial: cotaPermalink === null ? undefined : String(cotaPermalink),
+    prontoExterno: dadosOk.pontos && dadosOk.detalhe,
   });
   const cotaUrl = cotasAtivo && !cotaRaster.tocando && cotaRaster.cota !== null ? cotaRaster.cota : null;
   useEffect(() => {
@@ -34,29 +40,28 @@ export function useCotas(municipio: string, cenario: string) {
     }, 300);
     return () => clearTimeout(t);
   }, [cotaUrl]);
-  const [cotaDetalhe, setCotaDetalhe] = useState<DetalheCotaMun | null>(null);
-  // Cota de entrada de cada ponto (5 m, igual à aba "Por cota"); sem ele cai na amostragem do raster reduzido.
-  const [cotaPontos, setCotaPontos] = useState<CotaPontos | null>(null);
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setCotaPontos(null);
+    setCotaPontos(null); setDadosOk((o) => ({ ...o, pontos: false }));
     if (!cotasAtivo) return;
     const controller = new AbortController();
     fetch(`/dados_convertidos/${slugify(municipio)}/cota_pontos.json`, { signal: controller.signal })
       .then(r => r.ok ? r.json() : null)
       .then(d => { if (!controller.signal.aborted) setCotaPontos(d); })
-      .catch(e => { if ((e as Error).name !== "AbortError") console.error(e); });
+      .catch(e => { if ((e as Error).name !== "AbortError") console.error(e); })
+      .finally(() => { if (!controller.signal.aborted) setDadosOk((o) => ({ ...o, pontos: true })); });
     return () => controller.abort();
   }, [cotasAtivo, municipio]);
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setCotaDetalhe(null);
+    setCotaDetalhe(null); setDadosOk((o) => ({ ...o, detalhe: false }));
     if (!cotasAtivo) return;
     const controller = new AbortController();
     fetch(`/dados_convertidos/climada_cota_detalhe_${slugify(municipio)}.json`, { signal: controller.signal })
       .then(r => r.ok ? r.json() : null)
       .then(d => { if (!controller.signal.aborted) setCotaDetalhe(d); })
-      .catch(e => { if ((e as Error).name !== "AbortError") console.error(e); });
+      .catch(e => { if ((e as Error).name !== "AbortError") console.error(e); })
+      .finally(() => { if (!controller.signal.aborted) setDadosOk((o) => ({ ...o, detalhe: true })); });
     return () => controller.abort();
   }, [cotasAtivo, municipio]);
 

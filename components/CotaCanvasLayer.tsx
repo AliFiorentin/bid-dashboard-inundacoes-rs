@@ -20,8 +20,9 @@ export function CotaCanvasLayer({ raster, beforeId, opacity = 0.82 }: { raster: 
 
   // Cria a fonte/camada uma vez por canvas (o frame>0 garante que já há imagem colorida).
   // O estilo base (CARTO) pode demorar ou falhar (rede lenta/bloqueada): mexer em fontes/camadas antes
-  // de ele carregar lança "Style is not done loading" e derruba a página. Por isso espera o estilo
-  // (isStyleLoaded) e protege as chamadas com try/catch.
+  // de o JSON do estilo carregar lança "Style is not done loading", então tenta e, se falhar, repete em
+  // styledata/load/idle. NÃO usa isStyleLoaded(): ele só fica true quando os tiles do mapa-base terminam
+  // e nenhum evento avisa disso -- com tiles lentos a camada nunca era montada.
   useEffect(() => {
     const map = mapRef?.getMap()
     if (!map || !pronto || !meta || !canvasId) return
@@ -39,7 +40,6 @@ export function CotaCanvasLayer({ raster, beforeId, opacity = 0.82 }: { raster: 
 
     const montar = () => {
       if (cancelado || montada) return
-      if (!map.isStyleLoaded()) return // tenta de novo no próximo styledata/load
       try {
         if (!map.getSource(sourceId)) {
           map.addSource(sourceId, { type: "canvas", canvas: canvasId, coordinates: meta.coordinates, animate: false })
@@ -55,26 +55,29 @@ export function CotaCanvasLayer({ raster, beforeId, opacity = 0.82 }: { raster: 
         montada = true
         map.off("styledata", montar)
         map.off("load", montar)
+        map.off("idle", montar)
         if (beforeId) { map.on("styledata", reposicionar); reposicionar() }
-      } catch (e) {
-        console.warn("CotaCanvasLayer: mapa ainda não está pronto", e)
-      }
+        // Só libera a reprodução depois que o MapLibre desenhou um quadro com a camada.
+        map.once("render", () => { if (!cancelado) requestAnimationFrame(() => { if (!cancelado) raster.marcarCamadaPronta() }) })
+        map.triggerRepaint()
+      } catch { /* estilo ainda carregando: tenta no próximo evento */ }
     }
 
     montar()
-    if (!montada) { map.on("styledata", montar); map.on("load", montar) }
+    if (!montada) { map.on("styledata", montar); map.on("load", montar); map.on("idle", montar) }
 
     return () => {
       cancelado = true
       try { // o mapa pode já ter sido destruído ao desmontar
         map.off("styledata", montar)
         map.off("load", montar)
+        map.off("idle", montar)
         map.off("styledata", reposicionar)
         if (map.getLayer(layerId)) map.removeLayer(layerId)
         if (map.getSource(sourceId)) map.removeSource(sourceId)
       } catch { /* mapa removido */ }
     }
-  }, [mapRef, pronto, canvasId, meta, sourceId, layerId, beforeId, opacity])
+  }, [mapRef, pronto, canvasId, meta, sourceId, layerId, beforeId, opacity, raster])
 
   // A cada quadro novo, pede ao MapLibre que releia o canvas (play -> 2 quadros -> pause).
   useEffect(() => {

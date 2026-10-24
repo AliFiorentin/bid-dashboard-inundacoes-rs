@@ -33,22 +33,21 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
   const temPopulacao = camadas.includes("População") && !isVisaoGeral;
   const showPanel = temCamadaTabular && !isVisaoGeral;
   const [abertoFiltros, setAbertoFiltros] = React.useState(false);
-  // Celular/tablet: o popover nasce aberto (descobribilidade) e se recolhe sozinho uma vez, a menos
-  // que a pessoa interaja com ele antes.
+  // O popover nasce aberto (descobribilidade) e se recolhe sozinho uma vez (em qualquer dispositivo),
+  // a menos que a pessoa interaja com ele antes.
   const interagiu = React.useRef(false);
   const jaRecolheu = React.useRef(false);
   // Trocar de município ou cenário reabre o popover (e rearma o recolhimento automático).
   const primeiraSelecao = React.useRef(true);
   React.useEffect(() => {
     if (primeiraSelecao.current) { primeiraSelecao.current = false; return; }
-    if (window.matchMedia("(min-width: 1024px), (pointer: fine)").matches) return;
     interagiu.current = false;
     jaRecolheu.current = false;
     setShowFiltros(true);
   }, [municipio, cenario, setShowFiltros]);
   const visivel = showFiltros && showPanel;
   React.useEffect(() => {
-    if (!visivel || jaRecolheu.current || window.matchMedia("(min-width: 1024px), (pointer: fine)").matches) return;
+    if (!visivel || jaRecolheu.current) return;
     const t = setTimeout(() => {
       jaRecolheu.current = true;
       if (!interagiu.current) setShowFiltros(false);
@@ -91,7 +90,7 @@ export function FiltersPanel({ dash }: FiltersPanelProps) {
   return (
     <>
       {showFiltros && showPanel && (
-        <div onPointerDown={() => { interagiu.current = true; }} className="print:hidden absolute top-[var(--hb)] desk:top-[100px] right-2 desk:right-4 flex flex-col gap-1.5 p-2 rounded-xl z-10 w-56 desk:w-44 max-h-[calc(100dvh-var(--hb)-var(--dock)-8px)] desk:max-h-[calc(100vh-130px)] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-thumb]:rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}>
+        <div onPointerDown={() => { interagiu.current = true; }} onPointerEnter={() => { interagiu.current = true; }} onFocus={() => { interagiu.current = true; }} className="print:hidden absolute top-[var(--hb)] desk:top-[100px] right-2 desk:right-4 flex flex-col gap-1.5 p-2 rounded-xl z-10 w-56 desk:w-44 max-h-[calc(100dvh-var(--hb)-var(--dock)-8px)] desk:max-h-[calc(100vh-130px)] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-thumb]:rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.55)", backdropFilter: "saturate(200%) blur(24px)", WebkitBackdropFilter: "saturate(200%) blur(24px)", border: "0.5px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}>
           <div className="flex justify-between items-center border-b border-slate-200/60 pb-1">
             <span className="text-[9px] font-black text-slate-700 uppercase tracking-wider">Filtros de Mapa</span>
             <button onClick={() => setShowFiltros(false)} className="text-slate-500 hover:text-slate-600 font-black text-xs px-1 movel:min-h-11 movel:min-w-11" aria-label="Fechar filtros">✖</button>
