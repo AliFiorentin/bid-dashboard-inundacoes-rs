@@ -130,16 +130,15 @@ export function useDashboard() {
   const isVisaoGeral = renderMunicipio === "Visão Geral RS";
   const isCenarioAtivo = isVisaoGeral ? true : ((cenario !== "(nenhum)" && manchaCenario != null) || cotaPausada);
 
-  // "Todas as cotas" em reprodução: a água avança sozinha, então os pontos (e seus clusters) ficam
-  // ocultos para não se sobreporem à mancha em transição; ao pausar, aparecem só os atingidos.
-  const cotasTocando = cotasAtivo && cotaRaster.tocando;
+  // "Todas as cotas": os pontos das camadas aparecem aos poucos, conforme a água avança (só os atingidos até a
+  // cota atual), tanto em reprodução quanto pausado.
   // Em "Todas as cotas" a base exclui os pontos fora do município, como a aba "Por cota" (totais iguais).
   const baseEmpMun = useBaseDentroDoMunicipio(cotas, "empresas", baseEmpresas);
   const baseEduMun = useBaseDentroDoMunicipio(cotas, "educacao", baseEducacao);
   const baseSauMun = useBaseDentroDoMunicipio(cotas, "saude", baseSaude);
-  const showEmp = cotasTocando ? null : isCenarioAtivo ? atingidosEmpresas : baseEmpMun;
-  const showEdu = cotasTocando ? null : isCenarioAtivo ? atingidosEducacao : baseEduMun;
-  const showSau = cotasTocando ? null : isCenarioAtivo ? atingidosSaude : baseSauMun;
+  const showEmp = isCenarioAtivo ? atingidosEmpresas : baseEmpMun;
+  const showEdu = isCenarioAtivo ? atingidosEducacao : baseEduMun;
+  const showSau = isCenarioAtivo ? atingidosSaude : baseSauMun;
 
   const isTransitioning = municipio !== renderMunicipio;
 

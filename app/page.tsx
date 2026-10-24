@@ -53,7 +53,6 @@ export default function Dashboard() {
 
   return (
     <main className="dash-root relative w-screen h-screen movel:h-dvh font-sans overflow-hidden bg-slate-100 text-slate-900 print:overflow-visible print:h-auto print:w-full" style={varsMovel}>
-
       <div className="hidden telefone:flex fixed inset-0 z-[100] flex-col items-center justify-center gap-6 px-8 text-center bg-white">
         <Image src="/BID.webp" alt="BID" width={160} height={64} className="h-12 w-auto object-contain" />
         <div className="flex flex-col gap-2">
@@ -66,10 +65,10 @@ export default function Dashboard() {
             <line x1="8" y1="21" x2="16" y2="21" />
             <line x1="12" y1="17" x2="12" y2="21" />
           </svg>
-          <p className="font-bold text-sm" style={{ color: "#055071" }}>Acesse pelo computador</p>
+          <p className="font-bold text-sm" style={{ color: "#055071" }}>Tamanho de tela insuficiente</p>
           <p className="text-slate-500 text-xs leading-relaxed">
-            Este painel interativo com mapas e gráficos foi projetado para telas maiores.
-            Para a melhor experiência, acesse em um computador ou tablet em modo paisagem.
+            O painel precisa de uma janela de, no mínimo, <strong>1150 × 768 px</strong>. Aumente a janela do navegador
+            ou acesse em um computador (ou tablet na horizontal com tela grande).
           </p>
         </div>
         <div className="flex items-center gap-3 mt-2">
