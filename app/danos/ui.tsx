@@ -10,7 +10,7 @@ export function DiasBadge({ dias }: { dias: number }) {
     <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#055071]/10 border border-[#055071]/20 mb-2">
       <div className="w-1.5 h-1.5 rounded-full bg-[#055071]" />
       <span className="text-[10px] font-black text-[#055071] uppercase tracking-wider">
-        {dias} dias efetivos selecionados · f = {(dias / 365).toFixed(4)}
+        {dias} dias efetivos selecionados · f (fração do ano parada) = {(dias / 365).toFixed(4)}
       </span>
     </div>
   );

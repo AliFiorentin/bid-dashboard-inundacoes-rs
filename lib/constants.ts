@@ -167,7 +167,7 @@ export const MUNICIPIO_VIEW: Record<
   string,
   { center: [number, number]; zoom: number; pitch?: number; bearing?: number }
 > = {
-  "Visão Geral RS": { center: [-53.5, -29.8], zoom: 5.8 },
+  "Visão Geral RS": { center: [-53.42428, -30.13891], zoom: 5.8 },
   "Eldorado do Sul": { center: [-51.33511, -30.00367], zoom: 11.57, pitch: 65, bearing: -12 },
   Lajeado: { center: [-51.95678, -29.45013], zoom: 12.57, pitch: 65, bearing: -12 },
   "Porto Alegre": { center: [-51.21824, -30.04355], zoom: 12.56, pitch: 72, bearing: -8.8 },

@@ -29,9 +29,6 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
               <Link href="/" className="text-[10px] max-lg:text-xs max-lg:min-h-11 font-bold text-white/95 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">← Dashboard</Link>
               <Link href="/danos" className="text-[10px] max-lg:text-xs max-lg:min-h-11 font-bold text-white/95 hover:text-white transition-colors px-3 py-1 rounded-full border border-white/20 hover:border-white/40 flex items-center gap-1.5">Danos Operacionais →</Link>
             </div>
-            <p className="text-[11px] uppercase tracking-[0.18em] font-semibold opacity-85 mb-2">
-              BID · GPEA · FURG
-            </p>
             <h1 className="text-4xl font-black leading-none mb-2 tracking-tight flex items-center gap-3">
               <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-80 shrink-0">
                 <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
@@ -67,7 +64,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
                   ["#infraestrutura", "7. Infraestrutura"],
                   ["#edificacoes",    "8. Edificações"],
                   ["#danos",          "9. Danos Operacionais"],
-                  ["#dano-fisico",    "10. Dano Físico (Por Cota e CLIMADA)"],
+                  ["#dano-fisico",    "10. Danos Físicos (Por Cota e CLIMADA)"],
                   ["#populacao",      "11. População Exposta"],
                   ["#fontes",         "12. Fontes e Referências"],
                 ] as [string, string][]).map(([href, label]) => (
@@ -743,7 +740,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             deixou de ocorrer. Os danos físicos (estoque) têm uma estimativa à parte, via
             protótipo CLIMADA; ver{" "}
             <a href="#dano-fisico" className="text-[#055071] font-semibold hover:underline underline-offset-4">
-              Seção 10: Dano Físico
+              Seção 10: Danos Físicos
             </a>.
           </p>
 
@@ -923,10 +920,10 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             10. DANO FÍSICO — CLIMADA (PROTÓTIPO)
         ══════════════════════════════════════════════════════════════════════ */}
         {dadosClimada && (
-        <Section id="dano-fisico" num="10" title="Dano Físico: Por Cota do Rio e Metodologia CLIMADA">
+        <Section id="dano-fisico" num="10" title="Danos Físicos: Por Cota do Rio e Metodologia CLIMADA">
           <SubTitle>Por Cota do Rio: Valor Exposto</SubTitle>
           <Note type="info">
-            <strong>Exposição, não dano.</strong> A visão <em>Por cota</em> da aba Dano Físico mostra o que fica sob água
+            <strong>Exposição, não dano.</strong> A visão <em>Por cota</em> da aba Danos Físicos mostra o que fica sob água
             em cada cota do rio e o valor de reposição desses ativos (<em>valor exposto atingido</em>). É o{" "}
             <strong>teto</strong> do dano (equivale a perda total de tudo que molha), não uma estimativa dele. Não usa o
             modelo CLIMADA nem curva de dano, e não deve ser somado aos Danos Operacionais (Seção 9).
@@ -1007,7 +1004,7 @@ export function MetodologiaContent({ dadosClimada }: { dadosClimada: ClimadaData
             por período de retorno e limitações completas na{" "}
             <a href="/danos?aba=climada" target="_blank" rel="noopener noreferrer"
               className="font-semibold hover:underline underline-offset-4">
-              página de Danos, aba Dano Físico ↗
+              página de Danos, aba Danos Físicos ↗
             </a>.
           </Note>
 

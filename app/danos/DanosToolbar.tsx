@@ -32,7 +32,7 @@ export function DanosToolbar({ ctx }: { ctx: DanosCtx }) {
                 }`}
               >
                 <FlaskConical size={16} strokeWidth={2.5} />
-                Dano Físico
+                Danos Físicos
               </button>
             )}
           </div>
@@ -62,10 +62,10 @@ export function DanosToolbar({ ctx }: { ctx: DanosCtx }) {
                   </button>
                 ))}
               </div>
-              <div className="ml-auto flex items-center gap-1.5">
+              <div className="ml-auto flex items-center gap-1.5 whitespace-nowrap">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#4d9e3a] animate-pulse" />
-                <span className="text-[10px] text-slate-600 font-medium">
-                  f = {(dias / 365).toFixed(4)} · Todos os resultados atualizados
+                <span className="text-[10px] text-slate-600 font-medium" title="f = fator de interrupção: fração do ano em que a atividade ficou parada (dias efetivos ÷ 365). Ver 'O que é o f' em Notas e Ressalvas.">
+                  f = {(dias / 365).toFixed(4)} (fração do ano parada)
                 </span>
               </div>
             </>
@@ -90,7 +90,7 @@ export function DanosToolbar({ ctx }: { ctx: DanosCtx }) {
               )}
               {dadosClimada && dadosCotas && (
                 <div className="flex gap-1.5">
-                  {([["rp", "Por RP"], ["cota", "Por cota"]] as const).map(([v, label]) => (
+                  {([["rp", "CLIMADA"], ["cota", "Por cota"]] as const).map(([v, label]) => (
                     <button
                       key={v}
                       onClick={() => setVisao(v)}
