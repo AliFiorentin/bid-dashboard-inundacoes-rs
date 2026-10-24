@@ -7,14 +7,14 @@
 
 /* Layout do Dashboard: "desk" = layout de desktop (painel lateral); "movel" = tablet/celular (bottom sheet).
    Quem usa mouse (pointer: fine) SEMPRE recebe o layout de desktop, mesmo com a janela estreita
-   (o tamanho minimo 1150 x 700 e aplicado pelo aviso de tamanho, sem rolagem); o layout movel e' so' para aparelhos de toque
-   com tela < 1024 px. "telefone" = janela menor que o tamanho mínimo do Dashboard (1150 x 700 px): mostra só o aviso de tamanho,
+   (o tamanho minimo 1150 x 650 e aplicado pelo aviso de tamanho, sem rolagem); o layout movel e' so' para aparelhos de toque
+   com tela < 1024 px. "telefone" = janela menor que o tamanho mínimo do Dashboard (1150 x 650 px): mostra só o aviso de tamanho,
    sem rolagem e sem reduzir o layout. */
 @custom-variant desk (@media (min-width: 64rem), (pointer: fine));
 @custom-variant movel (@media (max-width: 63.99rem) and (pointer: coarse));
 @custom-variant telefone {
   @media (max-width: 1149.98px) { @slot; }
-  @media (max-height: 699.98px) { @slot; }
+  @media (max-height: 649.98px) { @slot; }
 }
 
 @theme inline {
