@@ -114,7 +114,7 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
         </div>
       </div>
 
-      <div className="flex items-center movel:w-full movel:overflow-x-auto movel:[scrollbar-width:none] max-xl:desk:w-full max-xl:desk:justify-between max-xl:desk:border-t max-xl:desk:border-slate-200/60 max-xl:desk:mt-1 max-xl:desk:pt-1" style={{ gap: "var(--layer-gap)" }}>
+      <div className="flex items-center movel:w-full movel:overflow-x-auto movel:[scrollbar-width:none] max-xl:desk:grid max-xl:desk:grid-cols-2 max-xl:desk:shrink-0" style={{ gap: "var(--layer-gap)" }}>
         {([
           { camada: "Empresas", icon: <Building2 size={10} strokeWidth={2.5} /> },
           { camada: "Educação", icon: <GraduationCap size={10} strokeWidth={2.5} /> },
@@ -126,7 +126,7 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
             variant={camadas.includes(camada) ? "default" : "outline"}
             size="xs"
             onClick={() => toggleCamada(camada)}
-            className="font-black gap-0.5 shrink-0 max-xl:desk:flex-1"
+            className="font-black gap-0.5 shrink-0 max-xl:desk:w-full"
             style={{ fontSize: BTN_SIZE, height: BTN_H, paddingInline: "var(--btn-px)" }}
           >
             {icon}{camada}
@@ -138,7 +138,7 @@ export function DashboardHeader({ dash }: DashboardHeaderProps) {
             <Button
               variant={camadas.includes("Infraestrutura") && infraAtivas.length > 0 ? "default" : "outline"}
               size="xs"
-              className="font-black gap-1 shrink-0 max-xl:desk:flex-1"
+              className="font-black gap-1 shrink-0 max-xl:desk:w-full max-xl:desk:col-span-2"
               style={{ fontSize: BTN_SIZE, height: BTN_H, paddingInline: "var(--btn-px)" }}
             >
               <Wrench size={11} strokeWidth={2.5} />Infraestrutura {infraAtivas.length > 0 && `(${infraAtivas.length})`}
