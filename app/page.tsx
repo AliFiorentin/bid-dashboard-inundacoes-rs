@@ -67,7 +67,7 @@ export default function Dashboard() {
           </svg>
           <p className="font-bold text-sm" style={{ color: "#055071" }}>Tamanho de tela insuficiente</p>
           <p className="text-slate-500 text-xs leading-relaxed">
-            O painel precisa de uma janela de, no mínimo, <strong>1150 × 768 px</strong>. Aumente a janela do navegador
+            O painel precisa de uma janela de, no mínimo, <strong>1150 × 700 px</strong>. Aumente a janela do navegador
             ou acesse em um computador (ou tablet na horizontal com tela grande).
           </p>
         </div>
