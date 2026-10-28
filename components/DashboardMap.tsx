@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useRef } from "react"
 import Map, { NavigationControl, AttributionControl } from "react-map-gl/maplibre"
+import { setWorkerUrl } from "maplibre-gl"
 import "maplibre-gl/dist/maplibre-gl.css"
 import type { DashboardState } from "@/hooks/useDashboard"
 import { MapControls } from "@/components/map/MapControls"
@@ -10,6 +11,9 @@ import { AgriculturaLayer } from "@/components/map/AgriculturaLayer"
 import { InfraLayers, Edificios3D } from "@/components/map/InfraLayers"
 import { HeatmapLayers } from "@/components/map/HeatmapLayers"
 import { PontosLayers } from "@/components/map/PontosLayers"
+
+// MapLibre 6 e' so ESM: com bundler o worker precisa de URL explicita (Next/Turbopack emite o arquivo como asset)
+setWorkerUrl(new URL("maplibre-gl/dist/maplibre-gl-worker.mjs", import.meta.url).toString())
 
 const TERRAIN_EXAGGERATION = 1.0
 
