@@ -33,12 +33,25 @@ export function FitHeight({ children, min = 0.55, max = 1.25, className }: Props
         return;
       }
       setRolavel(false);
-      const natural = i.offsetHeight; // transform nao altera o layout: altura natural
-      if (!natural) return;
       const cs = getComputedStyle(o);
       const disponivel = o.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
-      const s = Math.min(max, Math.max(min, disponivel / natural));
-      setEscala(prev => (Math.abs(prev - s) < 0.005 ? prev : s));
+      // A altura natural depende da escala (a largura do filho e' 100/escala %, e o texto quebra de
+      // linha diferente). Calcular s = disponivel / altura-em-escala-atual oscilava entre dois valores
+      // sem nunca parar: busca binaria pela maior escala cuja altura *escalada* cabe, medindo cada
+      // candidata. O resultado so depende de `disponivel`, entao nao ha laco com o ResizeObserver.
+      const cabe = (s: number) => {
+        i.style.width = `${100 / s}%`;
+        const h = i.offsetHeight; // transform nao altera o layout
+        return h > 0 && h * s <= disponivel + 0.5;
+      };
+      let lo = min, hi = max;
+      if (cabe(hi)) lo = hi;
+      else for (let k = 0; k < 7; k++) {
+        const mid = (lo + hi) / 2;
+        if (cabe(mid)) lo = mid; else hi = mid;
+      }
+      i.style.width = `${100 / lo}%`;
+      setEscala(prev => (Math.abs(prev - lo) < 0.005 ? prev : lo));
     };
     medir();
     const ro = new ResizeObserver(medir);
