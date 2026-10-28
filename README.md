@@ -205,7 +205,7 @@ $$\text{EAI} \approx \sum_i \frac{(f_i - f_{i+1})(L_i + L_{i+1})}{2}$$
 ## Estrutura do Projeto
 
 ```
-Dashboard BID/
+dashboard/
 ├── app/
 │   ├── page.tsx              # Shell do dashboard (monta componentes, passa `dash`)
 │   ├── layout.tsx            # Root layout + fonte Geist
@@ -303,23 +303,23 @@ Dashboard BID/
 
 ```bash
 # Instalar dependências
-npm install
+pnpm install
 
 # Iniciar servidor de desenvolvimento (Turbopack)
-npm run dev        # → http://localhost:3000
+pnpm dev        # → http://localhost:3000
 
 # Build de produção
-npm run build
+pnpm build
 
 # Verificação de tipos TypeScript
-npm run typecheck
+pnpm typecheck
 
 # Linting e formatação
-npm run lint
-npm run format
+pnpm lint
+pnpm format
 ```
 
-> **Atenção:** nunca rodar `npm run build` e depois `npm run dev` sem antes deletar a pasta `.next/`.
+> **Atenção:** nunca rodar `pnpm build` e depois `pnpm dev` sem antes deletar a pasta `.next/`.
 
 ---
 
